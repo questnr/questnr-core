@@ -1,0 +1,54 @@
+<header class="mdl-layout__header mdl-layout__header--transparent mdl-layout__header--waterfall">
+  <div class="mdl-layout__header-row">
+    <!-- Title -->
+    <span class="mdl-layout-title">
+            <img src="/logo/screenshott.png" alt="questNR">
+          </span>
+    <!-- Add spacer, to align navigation to the right -->
+    <div class="mdl-layout-spacer"></div>
+    <!-- Navigation -->
+    <nav class="mdl-navigation">
+      <a class="mdl-navigation__link" href="">Trending</a>
+      <a class="mdl-navigation__link" href="">Popular</a>
+      <a class="mdl-navigation__link" href="/dashboard">dashboard</a>
+      <a class="mdl-navigation__link" id="signout" onclick="signOut_common();">SignOut</a>
+      <div class="user-icon-mobile" style="position: relative; order: 6;">
+        <a style="display: block;" id="user"
+           class="mdl-button mdl-js-button mdl-button--icon"> </a>
+        <ul
+            class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect"
+            for="user">
+          <li class="mdl-menu__item"><a id="logout"
+                                        >Logout</a></li>
+        </ul>
+
+      </div>
+    </nav>
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+      <label class="mdl-button mdl-js-button mdl-button--icon"
+             for="text8">
+        <i class="material-icons">search</i>
+      </label>
+      <div class="mdl-textfield__expandable-holder">
+        <input class="mdl-textfield__input" type="text" id="text8">
+        <label class="mdl-textfield__label" for="sample-expandable">
+          Expandable Input</label>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<div class="mdl-layout__drawer">
+  <span class="mdl-layout-title">Title</span>
+  <nav class="mdl-navigation">
+    <a class="mdl-navigation__link" href="">Trending</a>
+    <a class="mdl-navigation__link" href="">Popular</a>
+    <a class="mdl-navigation__link" href="">Recent</a>
+    <a class="mdl-navigation__link" href="">Spoilers</a>
+  </nav>
+</div>
+<div id="demo-toast-example" class="mdl-js-snackbar mdl-snackbar">
+  <div class="mdl-snackbar__text"></div>
+  <button class="mdl-snackbar__action" type="button"></button>
+</div>

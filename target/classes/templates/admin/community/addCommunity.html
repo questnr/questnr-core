@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<!--/*/ <th:block th:include="common/commonHead"></th:block> /*/-->
+<link rel="stylesheet" media="screen"
+      th:href="@{${@mvcResourceUrlProvider.getForLookupPath('/css/adminStyle.css')}}"/>
+<link rel="stylesheet" media="screen"
+      th:href="@{${@mvcResourceUrlProvider.getForLookupPath('/admin/bootstrap.css')}}"/>
+<link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" rel="stylesheet"
+      type="text/css">
+<style>
+  #page-wrapper{
+    width: 100%;
+  }
+  .voffset10 {
+    margin-top: 16px;
+  }
+  .btn {
+    white-space: normal;
+    min-width: 115px;
+    margin: 2px 0px;
+    padding: 2px 2px;
+  }
+</style>
+
+<body>
+<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+  <!--/*/ <th:block th:include="common/adminHeader"></th:block> /*/-->
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div class="mdl-grid demo-content">
+      <div id="page-wrapper">
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-255">
+              <h1 th:inline="text" class="page-header">[[${title}]]</h1>
+            </div>
+          </div>
+          <form role="form" name="communityCreation" id="communityCreation">
+            <div class="row">
+              <div class="col-md-12">
+
+                <div class="form-horizontal">
+                  <div class="row">
+
+                    <div class="">
+
+                      <div class="col-sm-12">
+                        <label>Title</label> <input type="text" name="communityTitle"
+                                                    id="communityTitle" class="form-control"
+                                                    placeholder="course title eg Pub AD.." autofocus
+                                                    required
+                                                    maxlength="255">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <label style="margin-top: 20px">Slug(URL)</label>
+                <div class="input-group">
+
+                  <span class="input-group-addon"
+                        id="slug-name">https://questnr.com/community/</span>
+
+                  <input id="slug" type="text" class="form-control" name="slug"
+                         placeholder="slug..."
+                         onkeypress="slugExistence(event,this.value,'community')"
+                         maxlength="255">
+                </div>
+                <div id="errMsg"></div>
+
+
+                <div class="form-group">
+                  <label style="margin-top: 10px" ;>Icon Url</label> <input
+                    name="iconUrl" required id="iconUrl"
+                    class="form-control" data-live-search="true"
+                    title="enter icon url">
+                </div>
+                <div class="form-group">
+                  <label>Description</label><br/>
+                  <textarea id="description" name="description" style="width: 100%" th:colspan="4"></textarea>
+                </div>
+                <br/>
+
+                <div class="form-group">
+                  <label>Community rules</label><br/>
+                  <textarea id="rules" name="rules" style="width: 100%" th:colspan="4"></textarea>
+                </div>
+                <br/>
+
+                <br/> <label class="radio-inline" style="margin-top: 10px;"><input
+                  type="radio" name="optradio" id="publish" value="publish">Publish</label>
+                <label class="radio-inline" style="margin-top: 10px;"><input
+                    type="radio" name="optradio" id="draft" value="draft">Draft</label>
+
+
+                <div class="row">
+                  <div class="col-md-9" style="margin-top: 20px;">
+                    <button class="submit btn btn-success" type="submit"
+                            value="submit">Submit
+                    </button>
+                    <i class="fa fa-spinner fa-spin" id="loader"></i> <a
+                      href="/admin/communities" class="btn btn-default"
+                      style="margin-left: 60px;">All community</a>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </form>
+
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!--/*/ <th:block th:include="common/commonJS"></th:block> /*/-->
+<script>
+  $(document).ready(function(){
+    $('#all-courses').DataTable({
+      columnDefs: [
+        {
+          targets: [0, 1, 2],
+          className: 'mdl-data-table__cell--non-numeric'
+        }
+      ]
+    });
+
+    $('form[name=communityCreation]').validate({
+      rules: {
+        communityTitle: {
+          required: true,
+        },
+
+        iconUrl: {
+          required: true
+        },
+
+        description: {
+          required: true
+        },
+
+        slug: {
+          required: true
+        },
+
+        rules: {
+          required: true
+        }
+      },
+      messages: {
+        communityTitle: {
+          required: "Please enter community title"
+        },
+
+        iconUrl: {
+          required: "Please enter community icon url"
+        },
+
+        description: {
+          required: "Please enter community description"
+        },
+
+        slug: {
+          required: "Please enter community slug"
+        },
+
+        rules: {
+          required: "Please enter community rules"
+        }
+      },
+
+      submitHandler: function () {
+        $('#loader').show();
+        submitRequest()
+
+      }
+
+    });
+
+    function submitRequest() {
+      var  input = {
+        communityName : $('#communityTitle').val(),
+        iconUrl : $('#iconUrl').val(),
+        descrrption : $('#description').val(),
+        rules: $('#rules').val(),
+        slug : $('#slug').val(),
+        status: getStatus()
+      }
+
+      $.ajax({
+        url: apiBasePath + "/create-community",
+        type: "PUT",
+        data: JSON.stringify(input),
+        dataType: "json",
+        contentType: "application/json",
+        processData: false,
+        success: function (response) {
+          if (response == true) {
+            alert("sucesss");
+          }else {
+            alert("error while creatig community")
+          }
+
+        },
+
+        error: function (response) {
+          alert("error while creatig community");
+        }
+      });
+    }
+  });
+  $('#communityTitle').on('keypress', function() {
+    var dInput = this.value;
+    var str = dInput.replace(/\s+/g, '-').toLowerCase();
+    $('#slug').val(str);
+  });
+
+  function slugExistence(event, value, slugType) {
+    event.preventDefault();
+    if (event.keyCode == 13) {
+      $
+      .ajax({
+        async: true,
+        type: 'GET',
+        url: apiBasePath + "/slug/" + value + "/type/" + slugType + "/exist",
+        processData: false,
+        success: function (response) {
+
+          if(!response){
+
+            $("div#errMsg").css("color", "green");
+            $("div#errMsg").html("Slug is available");
+          }
+
+          else{
+            $("div#errMsg").css("color", "red");
+            $("div#errMsg").html("Slug is not available");
+          }
+        },
+
+        error: function (response) {
+          $("div#errMsg").css("color", "red");
+          $("div#errMsg").html("Slug is not available");
+        }
+      });
+    }
+
+  }
+  function getStatus() {
+    var status;
+    if (document.getElementById('publish').checked) {
+      status = document.getElementById('publish').value;
+    } else if (document.getElementById('draft').checked) {
+      status = document.getElementById('draft').value;
+    } else {
+      status = document.getElementById('draft').value;
+    }
+
+    return status;
+  }
+
+</script>
+
+</body>
+
+</html>
