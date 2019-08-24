@@ -119,14 +119,6 @@
 <!--/*/ <th:block th:include="common/commonJS"></th:block> /*/-->
 <script>
   $(document).ready(function(){
-    $('#all-courses').DataTable({
-      columnDefs: [
-        {
-          targets: [0, 1, 2],
-          className: 'mdl-data-table__cell--non-numeric'
-        }
-      ]
-    });
 
     $('form[name=communityCreation]').validate({
       rules: {

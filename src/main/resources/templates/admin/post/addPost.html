@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<!--/*/ <th:block th:include="common/commonHead"></th:block> /*/-->
+<link rel="stylesheet" media="screen"
+      th:href="@{${@mvcResourceUrlProvider.getForLookupPath('/css/adminStyle.css')}}"/>
+<link rel="stylesheet" media="screen"
+      th:href="@{${@mvcResourceUrlProvider.getForLookupPath('/admin/bootstrap.css')}}"/>
+<link href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css" rel="stylesheet"
+      type="text/css">
+<style>
+  #page-wrapper {
+    width: 100%;
+  }
+
+  .voffset10 {
+    margin-top: 16px;
+  }
+
+  .btn {
+    white-space: normal;
+    min-width: 115px;
+    margin: 2px 0px;
+    padding: 2px 2px;
+  }
+</style>
+
+<body>
+<div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+  <!--/*/ <th:block th:include="common/adminHeader"></th:block> /*/-->
+  <main class="mdl-layout__content mdl-color--grey-100">
+    <div class="mdl-grid demo-content">
+      <div id="page-wrapper">
+
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-lg-12">
+              <h1 class="page-header">Add New Post</h1>
+            </div>
+          </div>
+          <form name="postCreation" id="add-new-post">
+            <div class="col-md-9">
+              <div class="form-group" style="margin-top: 10px" ;>
+                <label>Title</label> <input type="text" name="postTitle"
+                                            id="postTitle" value="" class="form-control"
+                                            placeholder="Title of the post" required>
+              </div>
+
+              <label>URL(Slug)</label>
+              <div class="input-group">
+                <span class="input-group-addon">http://questnr.com/posts/</span> <input
+                  type="text" name="slug" id="slug" value=""
+                  class="form-control" onkeypress="slugExistence(event, value, 'post')"
+                  placeholder="Post URL....." required>
+              </div>
+              <div id="errMsg"></div>
+              <br/>
+              <div class="form-group">
+                <label>Text</label><br/>
+                <textarea id="tinymce" name="tinymce" required style="width: 100%"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Video Url</label><input type="text"
+                                               class="form-control" name="videoUrl"
+                                               id="videoUrl"
+                                               placeholder="video url..">
+              </div>
+
+              <div class="form-group">
+                <label>Meta title </label><input type="text"
+                                               class="form-control" name="titleTag"
+                                               id="titleTag"
+                                               placeholder="meta title">
+              </div>
+
+              <div class="form-group">
+                <label>Post Tags</label><input type="text"
+                                               class="form-control" name="postTags"
+                                               id="postTags"
+                                               placeholder="Post tags ...... ">
+              </div>
+
+              <div th:if="${enablePublishButton}">
+                <label class="radio-inline" style="margin-top: 10px;"><input
+                    type="radio" name="status" id="publish" value="publish">Publish</label>
+                <label class="radio-inline" style="margin-top: 10px;"><input
+                    type="radio" name="status" id="draft" value="draft">Draft</label>
+              </div>
+
+              <div class="row" style="margin-top: 20px" ;>
+                <div class="col-md-9">
+                  <button type="submit" class="submit btn btn-primary" id="Submit">Submit</button>
+                  <i class="fa fa-spinner fa-spin" id="loader"></i> <a
+                    href="/admin/posts" class="btn btn-default"
+                    style="margin-left: 60px;">All Post</a>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-9">
+                  <label class="error-single" id="add-new-post-error"></label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!--/*/ <th:block th:include="common/commonJS"></th:block> /*/-->
+<script>
+  $(document).ready(function () {
+
+    $('form[name=postCreation]').validate({
+      rules: {
+        postTitle: {
+          required: true,
+        },
+
+        slug: {
+          required: true
+        },
+
+        tinymce: {
+          required: true
+        },
+
+        videoUrl: {
+          required: true
+        },
+
+        titleTag: {
+          required: true
+        },
+        postTags:{
+          required: true
+        }
+      },
+      messages: {
+        postTitle: {
+          required: "Please enter  title"
+        },
+
+        slug: {
+          required: "Please enter slug"
+        },
+
+        tinymce: {
+          required: "Please enter  description"
+        },
+
+        videoUrl: {
+          required: "Please enter video Url"
+        },
+        postTags: {
+          required: "Please enter post tags"
+        },
+
+        titleTag: {
+          required: "Please enter title tags"
+        }
+      },
+
+      submitHandler: function () {
+        $('#loader').show();
+        submitRequest()
+
+      }
+
+    });
+
+    function submitRequest() {
+      var input = {
+        communityName: $('#communityTitle').val(),
+        iconUrl: $('#iconUrl').val(),
+        descrrption: $('#description').val(),
+        rules: $('#rules').val(),
+        slug: $('#slug').val(),
+        status: getStatus()
+      }
+
+      $.ajax({
+        url: apiBasePath + "/create-community",
+        type: "PUT",
+        data: JSON.stringify(input),
+        dataType: "json",
+        contentType: "application/json",
+        processData: false,
+        success: function (response) {
+          if (response == true) {
+            alert("sucesss");
+          } else {
+            alert("error while creating community")
+          }
+
+        },
+
+        error: function (response) {
+          alert("error while creating community");
+        }
+      });
+    }
+  });
+  $('#postTitle').on('keypress', function () {
+    var dInput = this.value;
+    var str = dInput.replace(/\s+/g, '-').toLowerCase();
+    $('#slug').val(str);
+  });
+
+  function slugExistence(event, value, slugType) {
+    event.preventDefault();
+    if (event.keyCode == 13) {
+      $
+      .ajax({
+        async: true,
+        type: 'GET',
+        url: apiBasePath + "/slug/" + value + "/type/" + slugType + "/exist",
+        processData: false,
+        success: function (response) {
+
+          if (!response) {
+
+            $("div#errMsg").css("color", "green");
+            $("div#errMsg").html("Slug is available");
+          }
+
+          else {
+            $("div#errMsg").css("color", "red");
+            $("div#errMsg").html("Slug is not available");
+          }
+        },
+
+        error: function (response) {
+          $("div#errMsg").css("color", "red");
+          $("div#errMsg").html("Slug is not available");
+        }
+      });
+    }
+
+  }
+
+  function getStatus() {
+    var status;
+    if (document.getElementById('publish').checked) {
+      status = document.getElementById('publish').value;
+    } else if (document.getElementById('draft').checked) {
+      status = document.getElementById('draft').value;
+    } else {
+      status = document.getElementById('draft').value;
+    }
+
+    return status;
+  }
+
+</script>
+
+</body>
+
+</html>
