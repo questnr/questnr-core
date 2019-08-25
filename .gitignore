@@ -13,5 +13,5 @@ totality.iml
 /com.totality.model.entities.Community/
 /com.totality.model.entities.Post/
 /com.totality.model.entities.User/
-.idea
+.idea/
 target/
