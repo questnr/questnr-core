@@ -1,6 +1,7 @@
 package com.totality.controllers;
 
 import com.totality.model.entities.Community;
+import com.totality.model.entities.Post;
 import com.totality.requests.CommunityRequests;
 import com.totality.responses.CommunityResponse;
 import com.totality.services.BaseService;
@@ -26,6 +27,12 @@ public class AdminController {
   @RequestMapping(value = "/create-community", method = RequestMethod.PUT)
   Boolean signup(@RequestBody Community requests) {
     Boolean response = service.createCommunity(requests);
+    return response;
+  }
+
+  @RequestMapping(value = "/create-post", method = RequestMethod.PUT)
+  Boolean signup(@RequestBody Post requests) {
+    Boolean response = service.creatPost(requests);
     return response;
   }
 

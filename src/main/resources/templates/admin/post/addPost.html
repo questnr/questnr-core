@@ -39,7 +39,7 @@
             </div>
           </div>
           <form name="postCreation" id="add-new-post">
-            <div class="col-md-9">
+            <div class="col-md-12">
               <div class="form-group" style="margin-top: 10px" ;>
                 <label>Title</label> <input type="text" name="postTitle"
                                             id="postTitle" value="" class="form-control"
@@ -81,7 +81,7 @@
                                                placeholder="Post tags ...... ">
               </div>
 
-              <div th:if="${enablePublishButton}">
+              <div>
                 <label class="radio-inline" style="margin-top: 10px;"><input
                     type="radio" name="status" id="publish" value="publish">Publish</label>
                 <label class="radio-inline" style="margin-top: 10px;"><input
@@ -91,7 +91,7 @@
               <div class="row" style="margin-top: 20px" ;>
                 <div class="col-md-9">
                   <button type="submit" class="submit btn btn-primary" id="Submit">Submit</button>
-                  <i class="fa fa-spinner fa-spin" id="loader"></i> <a
+                  <div class="mdl-spinner mdl-js-spinner is-active" id="loader" style="display: none; margin-top: 5px"></div> <a
                     href="/admin/posts" class="btn btn-default"
                     style="margin-left: 60px;">All Post</a>
                 </div>
@@ -112,7 +112,26 @@
 </div>
 
 <!--/*/ <th:block th:include="common/commonJS"></th:block> /*/-->
+<script src="https://cdn.tiny.cloud/1/mqk1plzbzshh7m6gqj7gmf4oyet1s53h13avek6x288yxb7a/tinymce/5/tinymce.min.js"></script>
 <script>
+  function tinymceInit(){
+
+    tinymce.init({
+      selector: '#tinymce',
+      height: 200,
+      menubar: true,
+      plugins: [
+        'advlist autolink lists link image charmap print preview anchor',
+        'searchreplace visualblocks code fullscreen',
+        'insertdatetime media table paste code help wordcount'
+      ],
+      toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+    });
+  }
+  $(window).on('load',function () {
+    tinymceInit();
+  });
+
   $(document).ready(function () {
 
     $('form[name=postCreation]').validate({
@@ -140,30 +159,6 @@
           required: true
         }
       },
-      messages: {
-        postTitle: {
-          required: "Please enter  title"
-        },
-
-        slug: {
-          required: "Please enter slug"
-        },
-
-        tinymce: {
-          required: "Please enter  description"
-        },
-
-        videoUrl: {
-          required: "Please enter video Url"
-        },
-        postTags: {
-          required: "Please enter post tags"
-        },
-
-        titleTag: {
-          required: "Please enter title tags"
-        }
-      },
 
       submitHandler: function () {
         $('#loader').show();
@@ -175,16 +170,17 @@
 
     function submitRequest() {
       var input = {
-        communityName: $('#communityTitle').val(),
-        iconUrl: $('#iconUrl').val(),
-        descrrption: $('#description').val(),
-        rules: $('#rules').val(),
-        slug: $('#slug').val(),
+        title: $('#postTitle').val(),
+        text: tinyMCE.activeEditor.getContent(),
+        videoUrl: $('#videoUrl').val(),
+        postSlug: $('#slug').val(),
+        titleTag : $('#titleTag').val(),
+        tags: $('#postTags').val(),
         status: getStatus()
       }
 
       $.ajax({
-        url: apiBasePath + "/create-community",
+        url: apiBasePath + "/create-post",
         type: "PUT",
         data: JSON.stringify(input),
         dataType: "json",

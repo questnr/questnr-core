@@ -2,8 +2,10 @@ package com.totality.web;
 
 import com.totality.model.entities.Community;
 import com.totality.model.entities.Post;
+import com.totality.model.entities.User;
 import com.totality.model.repositories.CommunityRepository;
 import com.totality.model.repositories.PostRepository;
+import com.totality.model.repositories.UserRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +21,9 @@ public class HomeController {
 
   @Autowired
   PostRepository postRepository;
+
+  @Autowired
+  UserRepository userRepository;
 
 
   @RequestMapping(value = "/feeds", method = RequestMethod.GET)
@@ -46,13 +51,6 @@ public class HomeController {
     return "admin/community/index";
   }
 
-  @RequestMapping(value = "/admin/posts", method = RequestMethod.GET)
-  String allPosts(Model model){
-    List<Post> posts = postRepository.findAll();
-    model.addAttribute("all", posts);
-    return "admin/post/index";
-  }
-
   @RequestMapping(value = "/admin/communities/add", method = RequestMethod.GET)
   String addCommunities(){
     return "admin/community/addCommunity";
@@ -62,4 +60,19 @@ public class HomeController {
   String addPosts(){
     return "admin/post/addPost";
   }
+
+  @RequestMapping(value = "/admin/posts", method = RequestMethod.GET)
+  String allPosts(Model model){
+    List<Post> posts = postRepository.findAll();
+    model.addAttribute("all", posts);
+    return "admin/post/index";
+  }
+
+  @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
+  String allUsers(Model model){
+    List<User> users = userRepository.findAll();
+    model.addAttribute("all", users);
+    return "admin/users/index";
+  }
+
 }

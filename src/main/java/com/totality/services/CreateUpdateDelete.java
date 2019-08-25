@@ -2,7 +2,9 @@ package com.totality.services;
 
 import com.totality.exceptions.InvalidInputException;
 import com.totality.model.entities.Community;
+import com.totality.model.entities.Post;
 import com.totality.model.repositories.CommunityRepository;
+import com.totality.model.repositories.PostRepository;
 import com.totality.requests.CommunityRequests;
 import com.totality.responses.CommunityResponse;
 import com.totality.security.JwtTokenUtil;
@@ -24,6 +26,9 @@ public class CreateUpdateDelete {
   @Autowired
   CommunityRepository communityRepository;
 
+  @Autowired
+  PostRepository postRepository;
+
   public Boolean createCommunity (Community requests){
     long userId = jwtTokenUtil.getLoggedInUserID();
     Boolean response = false;
@@ -40,6 +45,27 @@ public class CreateUpdateDelete {
       }
     } else {
       throw new InvalidInputException(Community.class.getName(), null, null);
+    }
+    return response;
+  }
+
+  public Boolean creatPost(Post post){
+    long userId = jwtTokenUtil.getLoggedInUserID();
+    Boolean response = false;
+    if(post != null){
+      try{
+        post.setCreatedBy((int) userId);
+        post.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        post.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
+        postRepository.saveAndFlush(post);
+        response = true;
+      }catch (Exception e){
+        LOGGER.error(Post.class.getName() + " Exception Occured");
+        response =false;
+      }
+    }else {
+      throw new InvalidInputException(Post.class.getName(), null, null);
     }
     return response;
   }

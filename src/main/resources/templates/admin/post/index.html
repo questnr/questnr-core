@@ -69,19 +69,19 @@
                   </tr>
                   </thead>
                   <tbody>
-                  <!--<tr th:each="all : ${all}">-->
-                    <!--<td class="no-sort"><input type="checkbox" name="select-course" class="select-course"-->
-                                               <!--th:value="${all?.id}"></td>-->
+                  <tr th:each="all : ${all}">
+                    <td class="no-sort"><input type="checkbox" name="select-course" class="select-course"
+                                               th:value="${all?.postId}"></td>
 
-                    <!--<td id="course-id" th:text="${all?.id}"></td>-->
-                    <!--<td id="course-slug"><a th:href="@{'/community/' + ${all?.slug}}"-->
-                                            <!--th:text="${all?.slug}"-->
-                                            <!--target="_blank"></a></td>-->
-                    <!--<td id="course-name" th:text="${all?.communityName}"></td>-->
-                    <!--<td id="course-created-at" th:text="${all?.createdAt}"></td>-->
-                    <!--<td id="course-updated-at" th:text="${course?.updatedAt}"></td>-->
-                    <!--<td id="course-type" th:text="${all?.status}"></td>-->
-                  <!--</tr>-->
+                    <td id="course-id" th:text="${all?.postId}"></td>
+                    <td id="course-slug"><a th:href="@{'/post/' + ${all?.postSlug}}"
+                                            th:text="${all?.postSlug}"
+                                            target="_blank"></a></td>
+                    <td id="course-name" th:text="${all?.title}"></td>
+                    <td id="course-created-at" th:text="${all?.createdAt}"></td>
+                    <td id="course-updated-at" th:text="${all?.updatedAt}"></td>
+                    <td id="course-type" th:text="${all?.status}"></td>
+                  </tr>
                   </tbody>
                 </table>
               </div>

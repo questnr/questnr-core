@@ -117,9 +117,30 @@
 </div>
 
 <!--/*/ <th:block th:include="common/commonJS"></th:block> /*/-->
-<script>
-  $(document).ready(function(){
 
+<script
+    src='https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=mqk1plzbzshh7m6gqj7gmf4oyet1s53h13avek6x288yxb7a'></script>
+<script>
+function tinymceInit(){
+
+  tinymce.init({
+    selector: '#description',
+    height: 200,
+    menubar: true,
+    plugins: [
+      'advlist autolink lists link image charmap print preview anchor',
+      'searchreplace visualblocks code fullscreen',
+      'insertdatetime media table paste code help wordcount'
+    ],
+    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+  });
+}
+$(window).on('load',function () {
+  tinymceInit();
+});
+
+
+  $(document).ready(function(){
     $('form[name=communityCreation]').validate({
       rules: {
         communityTitle: {
@@ -176,7 +197,7 @@
       var  input = {
         communityName : $('#communityTitle').val(),
         iconUrl : $('#iconUrl').val(),
-        descrrption : $('#description').val(),
+        descrrption :tinyMCE.activeEditor.getContent(),
         rules: $('#rules').val(),
         slug : $('#slug').val(),
         status: getStatus()

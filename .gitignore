@@ -6,6 +6,12 @@
 .springBeans
 target/
 WebContent
+com.totality.model.entities.*
 out
+totality.iml
+/com.totality.model.entities./
+/com.totality.model.entities.Community/
+/com.totality.model.entities.Post/
+/com.totality.model.entities.User/
 .idea
-
+target/
