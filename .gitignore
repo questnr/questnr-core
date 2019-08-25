@@ -14,4 +14,4 @@ totality.iml
 /com.totality.model.entities.Post/
 /com.totality.model.entities.User/
 .idea/
-target/
+.target/
