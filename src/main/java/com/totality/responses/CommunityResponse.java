@@ -1,5 +1,6 @@
 package com.totality.responses;
 
+import com.totality.common.enums.PublishStatus;
 import com.totality.model.entities.Post;
 import com.totality.model.entities.User;
 import java.util.Date;
@@ -13,6 +14,9 @@ public class CommunityResponse {
   String rules;
   String slug;
   long ownerId ;
+  long id;
+  PublishStatus status;
+
 
   public String getCommunityName() {
     return communityName;
@@ -68,5 +72,21 @@ public class CommunityResponse {
 
   public void setOwnerId(long ownerId) {
     this.ownerId = ownerId;
+  }
+
+  public long getId() {
+    return id;
+  }
+
+  public void setId(long id) {
+    this.id = id;
+  }
+
+  public PublishStatus getStatus() {
+    return status;
+  }
+
+  public void setStatus(PublishStatus status) {
+    this.status = status;
   }
 }

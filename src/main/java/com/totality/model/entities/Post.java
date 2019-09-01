@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import org.hibernate.search.annotations.Analyze;
@@ -76,6 +78,10 @@ public class Post extends DomainObject {
 
   @Column(name = "title_tag")
   private String titleTag;
+
+  @ManyToOne
+  @JoinColumn(name="community_id")
+  private Community community;
 
 
   public int getPostId() {
@@ -172,5 +178,13 @@ public class Post extends DomainObject {
 
   public void setTitleTag(String titleTag) {
     this.titleTag = titleTag;
+  }
+
+  public Community getCommunity() {
+    return community;
+  }
+
+  public void setCommunity(Community community) {
+    this.community = community;
   }
 }

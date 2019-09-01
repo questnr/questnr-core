@@ -26,14 +26,15 @@ public class BaseService {
         flag = true;
       }
     }
-//    else if (type.equalsIgnoreCase("post")) {
-//      TeacherDetails teacher = teacherDetailsRepository.findBySlug(slug);
-//      if (teacher != null) {
-//        flag = true;
-//      }
-//    } else if (type.equalsIgnoreCase("institute")) {
-//      TeacherDetails teacher = teacherDetailsRepository.findBySlug(slug);
-//      if (teacher != null) {
+    else if (type.equalsIgnoreCase("post")) {
+      CommunityResponse community = communityRepository.findAllByCommunityName(slug);
+      if (community != null) {
+        flag = true;
+      }
+    }
+//    else if (type.equalsIgnoreCase("institute")) {
+//      CommunityResponse community = communityRepository.findAllByCommunityName(slug);
+//      if (community != null) {
 //        flag = true;
 //      }
 //    }

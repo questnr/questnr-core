@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import org.hibernate.search.annotations.Field;
@@ -34,10 +35,10 @@ public class Community extends DomainObject{
   @Column(name = "community_id")
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_seq")
   @SequenceGenerator(name = "community_seq", sequenceName = "community_seq", allocationSize = 1)
-  private Long id;
+  public Long id;
 
   @Column(name = "community_name", length = 100, unique = true)
-  private String communityName;
+  public String communityName;
 
   @Column(name = "icon_url")
   private String icon_url;
@@ -57,7 +58,7 @@ public class Community extends DomainObject{
   private String rules;
 
   @Column(name = "slug")
-  private String slug;
+  public String slug;
 
   @Column(name = "ownerId")
   private long ownerId;
@@ -74,11 +75,7 @@ public class Community extends DomainObject{
       inverseJoinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")})
   private Set<User> users;
 
-  @JsonIgnoreProperties("posts")
-  @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(name = "QR_COMMUNITY_POSTS",
-      joinColumns = {@JoinColumn(name = "community_id", referencedColumnName = "community_id")},
-      inverseJoinColumns = {@JoinColumn(name = "POST_Id", referencedColumnName = "post_id")})
+  @OneToMany(mappedBy = "community")
   private Set<Post> posts;
 
   public Long getId() {

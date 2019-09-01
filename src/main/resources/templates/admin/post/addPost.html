@@ -54,6 +54,20 @@
                   placeholder="Post URL....." required>
               </div>
               <div id="errMsg"></div>
+
+              <div class="form-group">
+                <label style="margin-top: 10px" ;>Community</label> <select
+                  name="communityName" required id="communityName"
+                  class="form-control selectpicker" data-live-search="true"
+                  title="Select community">
+                <option> select community</option>
+                <option th:each="all : ${communities}"
+                        th:data-subtext="${all.id}" th:text="${all.communityName}"
+                        th:value="${all.id}"></option>
+
+              </select>
+              </div>
+
               <br/>
               <div class="form-group">
                 <label>Text</label><br/>
@@ -176,7 +190,10 @@
         postSlug: $('#slug').val(),
         titleTag : $('#titleTag').val(),
         tags: $('#postTags').val(),
-        status: getStatus()
+        status: getStatus(),
+        community: {
+          id : $('#communityName').val()
+        }
       }
 
       $.ajax({
@@ -189,14 +206,18 @@
         success: function (response) {
           if (response == true) {
             alert("sucesss");
+            document.getElementById("postCreation").reset();
+            $('#loader').hide();
           } else {
-            alert("error while creating community")
+            alert("error while creating community");
+            $('#loader').hide();
           }
 
         },
 
         error: function (response) {
           alert("error while creating community");
+          $('#loader').hide();
         }
       });
     }

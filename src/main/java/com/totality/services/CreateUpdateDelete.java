@@ -1,5 +1,6 @@
 package com.totality.services;
 
+import com.totality.common.enums.PublishStatus;
 import com.totality.exceptions.InvalidInputException;
 import com.totality.model.entities.Community;
 import com.totality.model.entities.Post;
@@ -10,6 +11,7 @@ import com.totality.responses.CommunityResponse;
 import com.totality.security.JwtTokenUtil;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.apache.tomcat.util.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +70,18 @@ public class CreateUpdateDelete {
       throw new InvalidInputException(Post.class.getName(), null, null);
     }
     return response;
+  }
+
+  public List<Community> findAllCommunityNames(){
+
+    List<Community> communities = null;
+    try {
+      communities = communityRepository.findAllByStatus(PublishStatus.publish);
+    } catch (Exception e) {
+      LOGGER.error(Community.class.getName() + " Exception Occured");
+      e.printStackTrace();
+    }
+    return communities;
   }
 
 

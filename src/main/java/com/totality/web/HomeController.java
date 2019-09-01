@@ -6,6 +6,7 @@ import com.totality.model.entities.User;
 import com.totality.model.repositories.CommunityRepository;
 import com.totality.model.repositories.PostRepository;
 import com.totality.model.repositories.UserRepository;
+import com.totality.services.CreateUpdateDelete;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,9 @@ public class HomeController {
 
   @Autowired
   UserRepository userRepository;
+
+  @Autowired
+  CreateUpdateDelete crudService;
 
 
   @RequestMapping(value = "/feeds", method = RequestMethod.GET)
@@ -52,12 +56,15 @@ public class HomeController {
   }
 
   @RequestMapping(value = "/admin/communities/add", method = RequestMethod.GET)
-  String addCommunities(){
+  String addCommunities(Model model){
     return "admin/community/addCommunity";
   }
 
   @RequestMapping(value = "/admin/posts/add", method = RequestMethod.GET)
-  String addPosts(){
+  String addPosts(Model model)
+  {
+    List<Community> communities = crudService.findAllCommunityNames();
+    model.addAttribute("communities", communities);
     return "admin/post/addPost";
   }
 

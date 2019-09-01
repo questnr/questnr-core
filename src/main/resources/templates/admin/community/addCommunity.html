@@ -68,7 +68,6 @@
                 </div>
                 <div id="errMsg"></div>
 
-
                 <div class="form-group">
                   <label style="margin-top: 10px" ;>Icon Url</label> <input
                     name="iconUrl" required id="iconUrl"
@@ -200,7 +199,7 @@ $(window).on('load',function () {
         descrrption :tinyMCE.activeEditor.getContent(),
         rules: $('#rules').val(),
         slug : $('#slug').val(),
-        status: getStatus()
+        status: getStatus(),
       }
 
       $.ajax({
@@ -212,15 +211,19 @@ $(window).on('load',function () {
         processData: false,
         success: function (response) {
           if (response == true) {
+            document.getElementById("communityCreation").reset();
             alert("sucesss");
+            $('#loader').hide();
           }else {
-            alert("error while creatig community")
+            alert("error while creatig community");
+            $('#loader').hide();
           }
 
         },
 
         error: function (response) {
           alert("error while creatig community");
+          $('#loader').hide();
         }
       });
     }
