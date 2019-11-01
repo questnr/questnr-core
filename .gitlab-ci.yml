@@ -10,7 +10,7 @@ stages:
 build:
   stage: build
   only:
-    - master
+    - questnr
 
   script:
     - cp -r /var/tmp/tokens .
