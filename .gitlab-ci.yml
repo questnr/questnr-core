@@ -1,0 +1,24 @@
+image: maven:latest
+
+variables:
+  GIT_SSL_NO_VERIFY: "true"
+
+stages:
+  - build
+
+
+build:
+  stage: build
+  only:
+    - master
+
+  script:
+    - cp -r /var/tmp/tokens .
+    - mvn clean install
+    - export  WEBSITE_URL="https://questnr.com"
+    - export DATASOURCE_URL="jdbc:postgresql://localhost:5432/nsproddb"
+    - export DATASOURCE_USERNAME="questprodb"
+    - export DATASOURCE_PASSWORD="yDYITyOHHfpvPvbOyGj1"
+    - export  WEBSITE_API_URL="https://beta4.neostencil.com/api/v1"
+    - pkill java || true
+    - screen -d -m bash -c "java -jar target/NSWebCore-1.0.jar > /var/tmp/server.log 2>&1"
