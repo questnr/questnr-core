@@ -21,4 +21,4 @@ build:
     - export DATASOURCE_PASSWORD="yDYITyOHHfpvPvbOyGj1"
     - export  WEBSITE_API_URL="https://beta4.neostencil.com/api/v1"
     - pkill java || true
-    - screen -d -m bash -c "java -jar target/NSWebCore-1.0.jar > /var/tmp/server.log 2>&1"
+    - screen -d -m bash -c "java -jar -Dapple.awt.UIElement="true" target/myproject-1.0-SNAPSHOT.jar > /var/tmp/server.log 2>&1"
