@@ -11,8 +11,10 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class HomeController {
@@ -39,7 +41,7 @@ public class HomeController {
   @RequestMapping(value = "/", method = RequestMethod.GET)
   String loginpage() {
 
-    return "homepage/loginpage";
+    return "homepage/landingPage";
   }
 
   @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
@@ -57,6 +59,12 @@ public class HomeController {
 
   @RequestMapping(value = "/admin/communities/add", method = RequestMethod.GET)
   String addCommunities(Model model){
+    return "admin/community/addCommunity";
+  }
+  @RequestMapping(value = "/admin/communities/{slug}/update", method = RequestMethod.GET)
+  String updateCommunity(@PathVariable("slug") String slug, Model model){
+    Community community = communityRepository.findAllBySlug(slug);
+    model.addAttribute("community", community);
     return "admin/community/addCommunity";
   }
 

@@ -3377,6 +3377,10 @@ select[multiple].input-lg,textarea.input-lg {
     font-size: 12px
   }
 }
+.error{
+  color: red;
+  font-weight: 500 !important;
+}
 
 .btn {
   display:inline-block;

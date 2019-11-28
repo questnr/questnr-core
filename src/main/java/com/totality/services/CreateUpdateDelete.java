@@ -72,7 +72,7 @@ public class CreateUpdateDelete {
     return response;
   }
 
-  public List<Community> findAllCommunityNames(){
+  public List<Community> findAllCommunityNames() {
 
     List<Community> communities = null;
     try {

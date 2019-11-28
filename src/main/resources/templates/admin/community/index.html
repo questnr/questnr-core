@@ -66,6 +66,7 @@
                     <th>Created At</th>
                     <th>Last Updated</th>
                     <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -81,6 +82,9 @@
                     <td id="course-created-at" th:text="${all?.createdAt}"></td>
                     <td id="course-updated-at" th:text="${all?.updatedAt}"></td>
                     <td id="course-type" th:text="${all?.status}"></td>
+                    <td id="actions">
+                      <a class="btn btn-primary" style="color: white" th:href="@{'/admin/communities/'+${all.slug}+'/update'}">Edit</a>
+                    </td>
                   </tr>
                   </tbody>
                 </table>

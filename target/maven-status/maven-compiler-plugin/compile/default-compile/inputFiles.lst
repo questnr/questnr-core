@@ -4,6 +4,7 @@
 /home/satish/totality/src/main/java/com/totality/TIMainApplication.java
 /home/satish/totality/src/main/java/com/totality/responses/LoginResponse.java
 /home/satish/totality/src/main/java/com/totality/model/entities/User.java
+/home/satish/totality/src/main/java/com/totality/model/repositories/PostRepository.java
 /home/satish/totality/src/main/java/com/totality/services/UserService.java
 /home/satish/totality/src/main/java/com/totality/model/repositories/AuthorityRepository.java
 /home/satish/totality/src/main/java/com/totality/utils/PHPass.java

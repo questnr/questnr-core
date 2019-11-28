@@ -59,13 +59,14 @@
                   <!--<table id="all-courses" class="table table-striped table-bordered" cellspacing="0" width="100%">-->
                   <thead>
                   <tr>
-                    <th><input type="checkbox" name="select-all-courses" id="select-all-courses"></th>
+                    <th><input type="checkbox" name="select-all-community" id="select-all-community"></th>
                     <th>ID</th>
                     <th>Slug (URL)</th>
                     <th>Community Name</th>
                     <th>Created At</th>
                     <th>Last Updated</th>
                     <th>Status</th>
+                    <th>Actions</th>
                   </tr>
                   </thead>
                   <tbody>
@@ -79,8 +80,11 @@
                                             target="_blank"></a></td>
                     <td id="course-name" th:text="${all?.communityName}"></td>
                     <td id="course-created-at" th:text="${all?.createdAt}"></td>
-                    <td id="course-updated-at" th:text="${course?.updatedAt}"></td>
+                    <td id="course-updated-at" th:text="${all?.updatedAt}"></td>
                     <td id="course-type" th:text="${all?.status}"></td>
+                    <td id="actions">
+                      <a class="btn btn-primary" style="color: white" th:href="@{'/admin/communities/'+${all.slug}+'/update'}">Edit</a>
+                    </td>
                   </tr>
                   </tbody>
                 </table>
