@@ -41,7 +41,7 @@ public class HomeController {
   @RequestMapping(value = "/", method = RequestMethod.GET)
   String loginpage() {
 
-    return "homepage/landingPage";
+    return "homepage/loginpage";
   }
 
   @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
