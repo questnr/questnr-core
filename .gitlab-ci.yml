@@ -19,9 +19,6 @@ build:
     - export DATASOURCE_URL="jdbc:postgresql://questprodbd.cnuafajg7tg4.ap-south-1.rds.amazonaws.com:5432/questprodb"
     - export DATASOURCE_USERNAME="questpro"
     - export DATASOURCE_PASSWORD="yDYITyOHHfpvPvbOyGj1"
-    - export  WEBSITE_API_URL="https://sats.questnr.com/api/v1"
-    - export  FACEBOOK_REDIRECTION_URL="https://sats.questnr.com/facebook-redirect"
-    - export  GOOGLE_REDIRECTION_URL="https://sats.questnr.com/google-redirect"
     - export SSL_ENABLED=false
     - export SHOW_HIBERNATE_LOGS=false
     - pkill java || true
