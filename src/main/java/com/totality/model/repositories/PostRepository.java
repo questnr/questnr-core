@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PostRepository extends JpaRepository <Post, Integer > {
 
-  List<Post> findAllByPostSlug( String slug);
+  List<Post> findAllByPostSlug(String slug);
+
+  Post findByPostId(Long postId);
 
 }

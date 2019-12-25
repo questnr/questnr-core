@@ -3,20 +3,9 @@ package com.totality.model.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.springframework.stereotype.Indexed;
@@ -83,6 +72,13 @@ public class User extends  DomainObject{
       joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
       inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
   private Set<Authority> authorities;
+
+  @OneToMany(mappedBy = "user")
+  private List<Post> postList;
+
+  @ManyToOne
+  @JoinColumn(name = "like_action_id")
+  private LikeAction likeAction;
 
   public Long getUserId() {
     return userId;
@@ -195,4 +191,13 @@ public class User extends  DomainObject{
   public void setCreatedAt(Date createdAt) {
     this.createdAt = createdAt;
   }
+
+  public List<Post> getPostList() {
+    return postList;
+  }
+
+  public void setPostList(List<Post> postList) {
+    this.postList = postList;
+  }
+
 }

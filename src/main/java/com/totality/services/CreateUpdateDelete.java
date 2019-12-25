@@ -6,6 +6,7 @@ import com.totality.model.entities.Community;
 import com.totality.model.entities.Post;
 import com.totality.model.repositories.CommunityRepository;
 import com.totality.model.repositories.PostRepository;
+import com.totality.model.repositories.UserRepository;
 import com.totality.requests.CommunityRequests;
 import com.totality.responses.CommunityResponse;
 import com.totality.security.JwtTokenUtil;
@@ -31,6 +32,9 @@ public class CreateUpdateDelete {
   @Autowired
   PostRepository postRepository;
 
+  @Autowired
+  UserRepository userRepository;
+
   public Boolean createCommunity (Community requests){
     long userId = jwtTokenUtil.getLoggedInUserID();
     Boolean response = false;
@@ -42,7 +46,7 @@ public class CreateUpdateDelete {
        communityRepository.saveAndFlush(requests);
        response = true;
       } catch (Exception e) {
-        LOGGER.error(Community.class.getName() + " Exception Occured");
+        LOGGER.error(Community.class.getName() + " Exception Occurred");
         response =false;
       }
     } else {
@@ -56,14 +60,14 @@ public class CreateUpdateDelete {
     Boolean response = false;
     if(post != null){
       try{
-        post.setCreatedBy((int) userId);
+        post.setUser(userRepository.findByUserId(userId));
         post.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
         post.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
         postRepository.saveAndFlush(post);
         response = true;
       }catch (Exception e){
-        LOGGER.error(Post.class.getName() + " Exception Occured");
+        LOGGER.error(Post.class.getName() + " Exception Occurred");
         response =false;
       }
     }else {
@@ -78,7 +82,7 @@ public class CreateUpdateDelete {
     try {
       communities = communityRepository.findAllByStatus(PublishStatus.publish);
     } catch (Exception e) {
-      LOGGER.error(Community.class.getName() + " Exception Occured");
+      LOGGER.error(Community.class.getName() + " Exception Occurred");
       e.printStackTrace();
     }
     return communities;

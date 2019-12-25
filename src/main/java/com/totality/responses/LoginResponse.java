@@ -12,7 +12,6 @@ public class LoginResponse {
   }
 
   public LoginResponse(boolean loginSucces) {
-    super();
     this.loginSucces = loginSucces;
   }
 
