@@ -17,23 +17,14 @@ import javax.validation.Valid;
 public class LikeActionController {
 
     @Autowired
-    BaseService service;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    BaseService baseService;
-
-    @Autowired
     LikeActionService likeActionService;
 
-    @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.PUT)
+    @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.GET)
     Page<LikeAction> getAllLikesByPostId(@PathVariable(value = "postId") Long postId, Pageable pageable) {
         return likeActionService.getAllLikeActionByPostId(postId, pageable);
     }
 
-    @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.PUT)
+    @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.POST)
     LikeAction createLike(@PathVariable(value = "postId") Long postId, @Valid @RequestBody LikeAction likeAction) {
         return likeActionService.createLikeAction(postId, likeAction);
     }

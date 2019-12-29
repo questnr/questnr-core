@@ -1,6 +1,7 @@
 package com.questnr.base;
 
 import com.questnr.model.entities.PostAction;
+import com.questnr.model.projections.PostActionProjection;
 import com.questnr.services.PostActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,7 @@ public class PostActionController {
     PostActionService postActionService;
 
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
-    Page<PostAction> getAllPostsByUserId(Pageable pageable) {
+    Page<PostActionProjection> getAllPostsByUserId(Pageable pageable) {
         return postActionService.getAllPostActionsByUserId(pageable);
     }
 

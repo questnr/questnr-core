@@ -25,19 +25,19 @@ public class LikeAction {
     @JoinColumn(name = "post_action_id", nullable = false)
     private PostAction postAction;
 
-    public int getLikeId() {
+    public int getLikeActionId() {
         return likeActionId;
     }
 
-    public void setLikeId(int likeId) {
-        this.likeActionId = likeId;
+    public void setLikeActionId(int likeActionId) {
+        this.likeActionId = likeActionId;
     }
 
-    public PostAction getPost() {
+    public PostAction getPostAction() {
         return postAction;
     }
 
-    public void setPost(PostAction postAction) {
+    public void setPostAction(PostAction postAction) {
         this.postAction = postAction;
     }
 

@@ -19,9 +19,6 @@ public class BaseController {
     @Autowired
     UserService userService;
 
-    @Autowired
-    PostActionService postActionService;
-
     @RequestMapping(value = "/signup", method = RequestMethod.PUT)
     SignUpResponse signup(@RequestBody User user) {
         SignUpResponse response = userService.signUp(user);
@@ -36,6 +33,5 @@ public class BaseController {
 
         return response;
     }
-
 
 }

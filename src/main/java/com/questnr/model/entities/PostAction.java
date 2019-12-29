@@ -28,11 +28,11 @@ public class PostAction extends DomainObject {
     @Column(name = "post_action_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_action_seq")
     @SequenceGenerator(name = "post_action_seq", sequenceName = "post_action_seq", allocationSize = 1)
-    private Long postId;
+    private Long postActionId;
 
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "post_action_slug", length = 20000)
-    private String postSlug;
+    private String slug;
 
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "post_action_title", length = 10000)
@@ -77,26 +77,25 @@ public class PostAction extends DomainObject {
     @JoinColumn(name = "community_id")
     private Community community;
 
-    @OneToMany(cascade = CascadeType.ALL,
-            fetch = FetchType.LAZY,
-            mappedBy = "postAction")
-    private Set<LikeAction> likeActionSet = new HashSet<>();
+//    @OneToMany(cascade = CascadeType.ALL,
+//            fetch = FetchType.LAZY,
+//            mappedBy = "postAction")
+//    private Set<LikeAction> likeActionSet = new HashSet<>();
 
-
-    public Long getPostId() {
-        return postId;
+    public Long getPostActionId() {
+        return postActionId;
     }
 
-    public void setPostId(Long postId) {
-        this.postId = postId;
+    public void setPostActionId(Long postActionId) {
+        this.postActionId = postActionId;
     }
 
-    public String getPostSlug() {
-        return postSlug;
+    public String getSlug() {
+        return slug;
     }
 
-    public void setPostSlug(String postSlug) {
-        this.postSlug = postSlug;
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public String getTitle() {
@@ -187,11 +186,12 @@ public class PostAction extends DomainObject {
         this.community = community;
     }
 
-    public Set<LikeAction> getLikeActionSet() {
-        return likeActionSet;
-    }
 
-    public void setLikeActionSet(Set<LikeAction> likeActionSet) {
-        this.likeActionSet = likeActionSet;
-    }
+//    public Set<LikeAction> getLikeActionSet() {
+//        return likeActionSet;
+//    }
+//
+//    public void setLikeActionSet(Set<LikeAction> likeActionSet) {
+//        this.likeActionSet = likeActionSet;
+//    }
 }

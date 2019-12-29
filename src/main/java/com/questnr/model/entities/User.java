@@ -72,8 +72,8 @@ public class User extends  DomainObject{
       inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
   private Set<Authority> authorities;
 
-  @OneToMany(mappedBy = "user")
-  private Set<PostAction> postActionSet;
+//  @OneToMany(mappedBy = "user")
+//  private Set<PostAction> postActionSet;
 
   public Long getUserId() {
     return userId;
@@ -187,11 +187,11 @@ public class User extends  DomainObject{
     this.createdAt = createdAt;
   }
 
-  public Set<PostAction> getPostActionSet() {
-    return postActionSet;
-  }
-
-  public void setPostActionSet(Set<PostAction> postActionSet) {
-    this.postActionSet = postActionSet;
-  }
+//  public Set<PostAction> getPostActionSet() {
+//    return postActionSet;
+//  }
+//
+//  public void setPostActionSet(Set<PostAction> postActionSet) {
+//    this.postActionSet = postActionSet;
+//  }
 }
