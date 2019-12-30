@@ -1,6 +1,7 @@
 package com.questnr.base;
 
 import com.questnr.model.entities.LikeAction;
+import com.questnr.model.projections.LikeActionProjection;
 import com.questnr.services.BaseService;
 import com.questnr.services.LikeActionService;
 import com.questnr.services.UserService;
@@ -20,18 +21,17 @@ public class LikeActionController {
     LikeActionService likeActionService;
 
     @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.GET)
-    Page<LikeAction> getAllLikesByPostId(@PathVariable(value = "postId") Long postId, Pageable pageable) {
+    Page<LikeActionProjection> getAllLikesByPostId(@PathVariable Long postId, Pageable pageable) {
         return likeActionService.getAllLikeActionByPostId(postId, pageable);
     }
 
     @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.POST)
-    LikeAction createLike(@PathVariable(value = "postId") Long postId, @Valid @RequestBody LikeAction likeAction) {
-        return likeActionService.createLikeAction(postId, likeAction);
+    LikeAction createLike(@PathVariable Long postId) {
+        return likeActionService.createLikeAction(postId);
     }
 
-    @RequestMapping(value = "/posts/{postId}/like/{likeId}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteLike(@PathVariable(value = "postId") Long postId,
-                                        @PathVariable(value = "likeId") Long likeId) {
-        return likeActionService.deleteLikeAction(postId, likeId);
+    @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.DELETE)
+    public ResponseEntity<?> deleteLike(@PathVariable Long postId) {
+        return likeActionService.deleteLikeAction(postId);
     }
 }

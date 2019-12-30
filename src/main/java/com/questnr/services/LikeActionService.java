@@ -1,9 +1,10 @@
 package com.questnr.services;
 
-import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.LikeAction;
-import com.questnr.model.repositories.CommunityRepository;
+import com.questnr.model.entities.PostAction;
+import com.questnr.model.entities.User;
+import com.questnr.model.projections.LikeActionProjection;
 import com.questnr.model.repositories.LikeActionRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
@@ -32,30 +33,30 @@ public class LikeActionService {
     @Autowired
     PostActionRepository postActionRepository;
 
-    public Page<LikeAction> getAllLikeActionByPostId(Long postId,
-                                                     Pageable pageable) {
+    public Page<LikeActionProjection> getAllLikeActionByPostId(Long postId,
+                                                               Pageable pageable) {
         return likeActionRepository.findByPostAction(postActionRepository.findByPostActionId(postId), pageable);
     }
 
-    public LikeAction createLikeAction(Long postId, LikeAction likeAction){
-        if (likeAction != null) {
-            try {
-                likeAction.setPostAction(postActionRepository.findByPostActionId(postId));
-                return likeActionRepository.saveAndFlush(likeAction);
-            } catch (Exception e) {
-                LOGGER.error(LikeAction.class.getName() + " Exception Occurred");
-            }
+    public LikeAction createLikeAction(Long postId){
+        LikeAction likeAction = new LikeAction();
+        PostAction postAction = postActionRepository.findByPostActionId(postId);
+        long userId = jwtTokenUtil.getLoggedInUserID();
+        User user = userRepository.findByUserId(userId);
+        if (likeActionRepository.countByPostActionAndUser(postAction, user) == 0) {
+            likeAction.setUser(user);
+            likeAction.setPostAction(postAction);
+            return likeActionRepository.saveAndFlush(likeAction);
         } else {
-            throw new InvalidInputException(LikeAction.class.getName(), null, null);
+            return null;
         }
-        return null;
     }
 
-    public ResponseEntity<?> deleteLikeAction(Long postId, Long likeId){
+    public ResponseEntity<?> deleteLikeAction(Long postId) throws ResourceNotFoundException{
         long userId = jwtTokenUtil.getLoggedInUserID();
-        return likeActionRepository.findByLikeActionIdAndPostActionAndUser(likeId, postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
+        return likeActionRepository.findByPostActionAndUser(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
             likeActionRepository.delete(likeAction);
             return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Comment not found with id " + likeId + " and postId " + postId));
+        }).orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
     }
 }

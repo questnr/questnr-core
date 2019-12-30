@@ -18,7 +18,8 @@ public class LikeAction {
     @SequenceGenerator(name = "like_action_seq", sequenceName = "like_action_seq", allocationSize = 1)
     private int likeActionId;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
