@@ -13,7 +13,6 @@ build:
     - master
 
   script:
-    - cp -r /var/tmp/tokens .
     - mvn clean install
     - export WEBSITE_URL="https://sats.questnr.com/"
     - export DATASOURCE_URL="jdbc:postgresql://questprodbd.cnuafajg7tg4.ap-south-1.rds.amazonaws.com:5432/questprodb"
