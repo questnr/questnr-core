@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="639723f0-4d74-4841-b286-0e4f42a25213" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/questnr/base/LikeActionController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/questnr/base/LikeActionController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/questnr/model/entities/LikeAction.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/questnr/model/entities/LikeAction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/questnr/model/repositories/LikeActionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/questnr/model/repositories/LikeActionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/questnr/services/LikeActionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/questnr/services/LikeActionService.java" afterDir="false" />
-    </list>
+    <list default="true" id="639723f0-4d74-4841-b286-0e4f42a25213" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -94,8 +88,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/questnr/model/projections/UserProjection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="99">
-              <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+            <state relative-caret-position="105">
+              <caret line="7" column="21" lean-forward="true" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -648,12 +642,12 @@
       <workItem from="1573454850957" duration="50000" />
       <workItem from="1577371527973" duration="928000" />
       <workItem from="1577600474095" duration="12166000" />
-      <workItem from="1577723631877" duration="5207000" />
+      <workItem from="1577723631877" duration="5383000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="259235000" />
+    <option name="totallyTimeSpent" value="259411000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -666,7 +660,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.4883227" visible="true" weight="0.26752505" />
       <window_info id="Structure" order="1" sideWeight="0.51167727" side_tool="true" weight="0.25679544" />
@@ -680,16 +673,16 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32891566" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.38915664" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" sideWeight="0.4985694" visible="true" weight="0.43253013" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.4985694" weight="0.43253013" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" sideWeight="0.49928468" weight="0.32891566" />
       <window_info anchor="bottom" id="Spring" order="7" sideWeight="0.49928468" weight="0.32891566" />
       <window_info anchor="bottom" id="Database Console" order="8" weight="0.32897604" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49928468" weight="0.32891566" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="9" sideWeight="0.49928468" visible="true" weight="0.32891566" />
       <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50143063" side_tool="true" weight="0.43253013" />
       <window_info anchor="bottom" id="Messages" order="11" weight="0.32891566" />
-      <window_info anchor="bottom" id="Problems" order="12" />
+      <window_info anchor="bottom" id="Problems" order="12" weight="0.32891566" />
       <window_info anchor="bottom" id="Java Enterprise" order="13" />
       <window_info anchor="bottom" id="Database Changes" order="14" />
       <window_info anchor="bottom" id="Version Control" order="15" />
@@ -1280,8 +1273,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/questnr/model/projections/UserProjection.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="99">
-          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        <state relative-caret-position="105">
+          <caret line="7" column="21" lean-forward="true" selection-start-line="7" selection-start-column="21" selection-end-line="7" selection-end-column="21" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
