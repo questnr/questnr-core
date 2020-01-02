@@ -11,6 +11,10 @@ build:
   stage: build
   only:
     - master
+  tags:
+    - maven
+    - java
+    - ubuntu
 
   script:
     - cp -r /var/tmp/tokens .
