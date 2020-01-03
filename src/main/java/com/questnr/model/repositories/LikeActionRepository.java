@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface LikeActionRepository extends JpaRepository<LikeAction, Long> {
 
-    Long countByPostActionAndUser(PostAction postAction, User user);
+    Long countByPostActionAndUserActor(PostAction postAction, User user);
 
     Page<LikeActionProjection> findByPostAction(PostAction postAction, Pageable pageable);
 
-    Optional<LikeAction> findByPostActionAndUser(PostAction postAction, User user);
+    Optional<LikeAction> findByPostActionAndUserActor(PostAction postAction, User user);
 }

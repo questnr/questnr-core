@@ -15,5 +15,5 @@ public interface PostActionRepository extends JpaRepository <PostAction, Long > 
 
   PostAction findByPostActionId(Long postId);
 
-  Page<PostActionProjection> findAllByUser(User user, Pageable pageable);
+  Page<PostActionProjection> findAllByUserActor(User user, Pageable pageable);
 }

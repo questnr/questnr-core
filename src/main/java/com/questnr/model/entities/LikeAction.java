@@ -16,21 +16,21 @@ public class LikeAction {
     @Column(name = "like_action_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "like_action_seq")
     @SequenceGenerator(name = "like_action_seq", sequenceName = "like_action_seq", allocationSize = 1)
-    private int likeActionId;
+    private Long likeActionId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    private User userActor;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_action_id", nullable = false)
     private PostAction postAction;
 
-    public int getLikeActionId() {
+    public Long getLikeActionId() {
         return likeActionId;
     }
 
-    public void setLikeActionId(int likeActionId) {
+    public void setLikeActionId(Long likeActionId) {
         this.likeActionId = likeActionId;
     }
 
@@ -42,11 +42,11 @@ public class LikeAction {
         this.postAction = postAction;
     }
 
-    public User getUser() {
-        return user;
+    public User getUserActor() {
+        return userActor;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserActor(User userActor) {
+        this.userActor = userActor;
     }
 }

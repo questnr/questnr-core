@@ -37,14 +37,14 @@ public class PostActionService {
 
     public Page<PostActionProjection> getAllPostActionsByUserId(Pageable pageable){
         long userId = jwtTokenUtil.getLoggedInUserID();
-        return postActionRepository.findAllByUser(userRepository.findByUserId(userId),pageable);
+        return postActionRepository.findAllByUserActor(userRepository.findByUserId(userId),pageable);
     }
 
     public PostAction creatPostAction(PostAction post) {
         long userId = jwtTokenUtil.getLoggedInUserID();
         if (post != null) {
             try {
-                post.setUser(userRepository.findByUserId(userId));
+                post.setUserActor(userRepository.findByUserId(userId));
                 post.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
                 post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
                 post.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
@@ -61,7 +61,7 @@ public class PostActionService {
     public PostAction updatePostAction(Long postId, PostAction postActionRequest){
         long userId = jwtTokenUtil.getLoggedInUserID();
         return postActionRepository.findById(postId).map(post -> {
-            postActionRequest.setUser(userRepository.findByUserId(userId));
+            postActionRequest.setUserActor(userRepository.findByUserId(userId));
             postActionRequest.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
             return postActionRepository.save(postActionRequest);
         }).orElseThrow(() -> new ResourceNotFoundException("PostId " + postId + " not found"));

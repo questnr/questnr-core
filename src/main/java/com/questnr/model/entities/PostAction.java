@@ -65,7 +65,7 @@ public class PostAction extends DomainObject {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User userActor;
 
     @Column(name = "post_action_tags")
     private String tags;
@@ -154,12 +154,12 @@ public class PostAction extends DomainObject {
         this.postDate = postDate;
     }
 
-    public User getUser() {
-        return user;
+    public User getUserActor() {
+        return userActor;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserActor(User userActor) {
+        this.userActor = userActor;
     }
 
     public String getTags() {

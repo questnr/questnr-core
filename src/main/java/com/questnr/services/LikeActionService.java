@@ -43,8 +43,8 @@ public class LikeActionService {
         PostAction postAction = postActionRepository.findByPostActionId(postId);
         long userId = jwtTokenUtil.getLoggedInUserID();
         User user = userRepository.findByUserId(userId);
-        if (likeActionRepository.countByPostActionAndUser(postAction, user) == 0) {
-            likeAction.setUser(user);
+        if (likeActionRepository.countByPostActionAndUserActor(postAction, user) == 0) {
+            likeAction.setUserActor(user);
             likeAction.setPostAction(postAction);
             return likeActionRepository.saveAndFlush(likeAction);
         } else {
@@ -54,7 +54,7 @@ public class LikeActionService {
 
     public ResponseEntity<?> deleteLikeAction(Long postId) throws ResourceNotFoundException{
         long userId = jwtTokenUtil.getLoggedInUserID();
-        return likeActionRepository.findByPostActionAndUser(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
+        return likeActionRepository.findByPostActionAndUserActor(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
             likeActionRepository.delete(likeAction);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
