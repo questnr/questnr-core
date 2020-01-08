@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.PostAction;
@@ -43,35 +44,51 @@ public class CommentActionService {
     public CommentAction createCommentAction(CommentActionRequest commentActionRequest) {
         CommentAction commentAction = new CommentAction();
         User user = userRepository.findByUserId(jwtTokenUtil.getLoggedInUserID());
-        if (commentActionRequest.getParentCommentId() != null && commentActionRepository.existsByCommentActionId(commentActionRequest.getParentCommentId())) {
-            CommentAction parentCommentAction = commentActionRepository.findByCommentActionId(commentActionRequest.getParentCommentId());
-            commentAction.setPostAction(parentCommentAction.getPostAction());
-            commentAction.setCommentObject(commentActionRequest.getCommentObject());
-            commentAction.setParentCommentAction(parentCommentAction);
-            commentAction.setUserActor(user);
+        if (commentActionRequest != null) {
+            try {
+                if (commentActionRequest.getParentCommentId() != null && commentActionRepository.existsByCommentActionId(commentActionRequest.getParentCommentId())) {
+                    CommentAction parentCommentAction = commentActionRepository.findByCommentActionId(commentActionRequest.getParentCommentId());
+                    commentAction.setPostAction(parentCommentAction.getPostAction());
+                    commentAction.setCommentObject(commentActionRequest.getCommentObject());
+                    commentAction.setParentCommentAction(parentCommentAction);
+                    commentAction.setUserActor(user);
+                } else {
+                    commentAction.setPostAction(postActionRepository.findByPostActionId(commentActionRequest.getPostId()));
+                    commentAction.setCommentObject(commentActionRequest.getCommentObject());
+                    commentAction.setUserActor(user);
+                }
+                return commentActionRepository.save(commentAction);
+            } catch (Exception e) {
+                LOGGER.error(CommentAction.class.getName() + " Exception Occurred");
+            }
         } else {
-            commentAction.setPostAction(postActionRepository.findByPostActionId(commentActionRequest.getPostId()));
-            commentAction.setCommentObject(commentActionRequest.getCommentObject());
-            commentAction.setUserActor(user);
+            throw new InvalidInputException(CommentAction.class.getName(), null, null);
         }
-        return commentActionRepository.save(commentAction);
+        return null;
     }
 
     public ResponseEntity<?> deleteCommentAction(Long postId, Long commentId) throws ResourceNotFoundException {
         long userId = jwtTokenUtil.getLoggedInUserID();
         PostAction postAction = postActionRepository.findByPostActionId(postId);
-        if (postAction.getUserActor().getUserId() == userId) {
-            try {
-                CommentAction commentAction = commentActionRepository.findByCommentActionId(commentId);
-                commentActionRepository.delete(commentAction);
-                return ResponseEntity.ok().build();
-            }catch (Exception e){
-                throw new ResourceNotFoundException("CommentAction not found with id " + commentId);
-            }
-        }
-        return commentActionRepository.findByPostActionAndUserActorAndCommentActionId(postAction, userRepository.findByUserId(userId), commentId).map(commentAction -> {
+        CommentAction commentAction = this.getCommentActionUsingPostActionAndUserIdAndCommentId(postAction, userId, commentId);
+        if (commentAction != null) {
             commentActionRepository.delete(commentAction);
             return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("CommentAction not found with id " + commentId));
+        } else {
+            throw new ResourceNotFoundException("Comment not found" + commentId);
+        }
+    }
+
+    // If user has made the comment, then he and the post owner can only take action on the same comment
+    public CommentAction getCommentActionUsingPostActionAndUserIdAndCommentId(PostAction postAction, Long userId, Long commentId) {
+        try {
+            if (postAction.getUserActor().getUserId() == userId) {
+                return commentActionRepository.findByCommentActionId(commentId);
+            } else {
+                return commentActionRepository.findByPostActionAndUserActorAndCommentActionId(postAction, userRepository.findByUserId(userId), commentId);
+            }
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("Comment not found" + commentId);
+        }
     }
 }

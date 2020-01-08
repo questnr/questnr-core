@@ -35,9 +35,9 @@ public class PostActionService {
     @Autowired
     PostActionRepository postActionRepository;
 
-    public Page<PostActionProjection> getAllPostActionsByUserId(Pageable pageable){
+    public Page<PostActionProjection> getAllPostActionsByUserId(Pageable pageable) {
         long userId = jwtTokenUtil.getLoggedInUserID();
-        return postActionRepository.findAllByUserActor(userRepository.findByUserId(userId),pageable);
+        return postActionRepository.findAllByUserActor(userRepository.findByUserId(userId), pageable);
     }
 
     public PostAction creatPostAction(PostAction post) {
@@ -58,19 +58,19 @@ public class PostActionService {
         return null;
     }
 
-    public PostAction updatePostAction(Long postId, PostAction postActionRequest){
+    public PostAction updatePostAction(Long postId, PostAction postActionRequest) {
         long userId = jwtTokenUtil.getLoggedInUserID();
         return postActionRepository.findById(postId).map(post -> {
             postActionRequest.setUserActor(userRepository.findByUserId(userId));
             postActionRequest.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
             return postActionRepository.save(postActionRequest);
-        }).orElseThrow(() -> new ResourceNotFoundException("PostId " + postId + " not found"));
+        }).orElseThrow(() -> new ResourceNotFoundException("Post not found: " + postId));
     }
 
-    public ResponseEntity<?> deletePostAction(Long postId){
+    public ResponseEntity<?> deletePostAction(Long postId) {
         return postActionRepository.findById(postId).map(post -> {
             postActionRepository.delete(post);
             return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("PostId " + postId + " not found"));
+        }).orElseThrow(() -> new ResourceNotFoundException("Post  not found: " + postId));
     }
 }

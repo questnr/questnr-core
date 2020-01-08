@@ -18,7 +18,7 @@ public interface CommentActionRepository extends JpaRepository<CommentAction, Lo
 
     Page<CommentActionProjection> findByPostAction(PostAction postAction, Pageable pageable);
 
-    Optional<CommentAction> findByPostActionAndUserActorAndCommentActionId(PostAction postAction, User user, Long commentActionId);
+    CommentAction findByPostActionAndUserActorAndCommentActionId(PostAction postAction, User user, Long commentActionId);
 
     Boolean existsByCommentActionId(Long commentId);
 }

@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostAction;
@@ -38,25 +39,32 @@ public class LikeActionService {
         return likeActionRepository.findByPostAction(postActionRepository.findByPostActionId(postId), pageable);
     }
 
-    public LikeAction createLikeAction(Long postId){
+    public LikeAction createLikeAction(Long postId) {
         LikeAction likeAction = new LikeAction();
         PostAction postAction = postActionRepository.findByPostActionId(postId);
         long userId = jwtTokenUtil.getLoggedInUserID();
         User user = userRepository.findByUserId(userId);
-        if (likeActionRepository.countByPostActionAndUserActor(postAction, user) == 0) {
-            likeAction.setUserActor(user);
-            likeAction.setPostAction(postAction);
-            return likeActionRepository.saveAndFlush(likeAction);
+        if (postId != null) {
+            if (likeActionRepository.countByPostActionAndUserActor(postAction, user) == 0) {
+                try {
+                    likeAction.setUserActor(user);
+                    likeAction.setPostAction(postAction);
+                    return likeActionRepository.saveAndFlush(likeAction);
+                } catch (Exception e) {
+                    LOGGER.error(LikeAction.class.getName() + " Exception Occurred");
+                }
+            }
         } else {
-            return null;
+            throw new InvalidInputException(LikeAction.class.getName(), null, null);
         }
+        return null;
     }
 
-    public ResponseEntity<?> deleteLikeAction(Long postId) throws ResourceNotFoundException{
+    public ResponseEntity<?> deleteLikeAction(Long postId) throws ResourceNotFoundException {
         long userId = jwtTokenUtil.getLoggedInUserID();
         return likeActionRepository.findByPostActionAndUserActor(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
             likeActionRepository.delete(likeAction);
             return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Post not found with id " + postId));
+        }).orElseThrow(() -> new ResourceNotFoundException("Like not found: " + postId));
     }
 }
