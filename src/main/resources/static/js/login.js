@@ -144,26 +144,23 @@ $('#register').on('click',function () {
 function signUpForm() {
 
   var input = {
-    fullName: $('#username').val(),
+    userName: $('#username').val(),
     password: $('#password').val(),
     emailId: $('#email').val()
   }
 
+  alert(JSON.stringify(input));
   $.ajax({
     url: apiBasePath + "/signup",
     type: "PUT",
     data: JSON.stringify(input),
     dataType: "json",
-    headers : {
-      "authorization" : "Bearer " +  window.localStorage.getItem('access_token')
-    },
     contentType: "application/json",
     processData: false,
     success: function (response) {
       loginUserSignedUoUser(response.accessToken, "/");
 
     },
-
     error: function (response) {
       alert(response.errorMessage);
     }

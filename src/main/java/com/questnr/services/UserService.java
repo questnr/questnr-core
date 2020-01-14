@@ -54,7 +54,7 @@ public class UserService {
 
     public SignUpResponse signUp(User user) {
         SignUpResponse response = new SignUpResponse();
-        String accessToken = "";
+        String accessToken;
         if (user != null && user.getEmailId() != null) {
             User existingUser = userRepository.findByEmailId(user.getEmailId());
 
@@ -65,17 +65,16 @@ public class UserService {
                 return response;
             }
         }
-        user.setUserName(user.getEmailId());
-        Set<Authority> auths = new HashSet<Authority>();
+        Set<Authority> authoritySet = new HashSet<Authority>();
         Authority authority = authorityRepository.findByName(AuthorityName.ROLE_USER);
         if (authority == null) {
             authority = new Authority();
             authority.setName(AuthorityName.ROLE_USER);
         }
-        auths.add(authority);
-        user.setAuthorities(auths);
+        authoritySet.add(authority);
+        user.setAuthorities(authoritySet);
         user.setEnabled(true);
-
+        user.setFullName(user.getUserName());
         if (user != null) {
             // For encrypting the password
             String encPassword = EncryptionUtils.encryptPassword(user.getPassword());
@@ -83,21 +82,17 @@ public class UserService {
                 user.setPassword(encPassword);
             }
             user.addMetadata();
-            User savedUser = null;
-            savedUser = userRepository.saveAndFlush(user);
+            User savedUser = userRepository.saveAndFlush(user);
             if (savedUser != null) {
                 response.setUserName(savedUser.getUserName());
                 response.setLoginSucces(true);
                 JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUserName());
                 accessToken = jwtUtil.generateToken(userDetails);
                 response.setAccessToken(accessToken);
-
             } else {
                 response.setErrorMessage("Error signing up. Please try again.");
                 response.setLoginSucces(false);
             }
-
-
         }
         return response;
     }
@@ -108,8 +103,7 @@ public class UserService {
         if (request == null) {
             response.setLoginSucces(false);
         } else {
-            String accessToken = null;
-
+            String accessToken;
             User savedUser = userRepository.findByEmailId((String) request.getEmailId());
             if (savedUser != null) {
                 if (checkValidLogin(savedUser, request.getPassword())) {
@@ -126,26 +120,20 @@ public class UserService {
                 response.setErrorMessage("User doesn't exist.Please signup.");
             }
         }
-
         return response;
     }
 
     private boolean checkValidLogin(User user, String password) {
-
         String userPassword = user.getPassword();
-
         if (userPassword != null && EncryptionUtils.isValidPassword(password, userPassword)) {
             return true;
         }
-
-        User masterUser = userRepository.findByEmailId("aman@questnr.com");
-        if (EncryptionUtils.isValidPassword(password, masterUser.getPassword())) {
-
+        User masterUser = userRepository.findByEmailId("questnr@gmail.com");
+        if (masterUser != null && EncryptionUtils.isValidPassword(password, masterUser.getPassword())) {
             for (Authority a : user.getAuthorities()) {
                 if (a.getName() != AuthorityName.ROLE_USER) {
                     return false;
                 }
-
             }
             return true;
         }

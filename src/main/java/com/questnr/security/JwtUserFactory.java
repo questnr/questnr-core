@@ -13,8 +13,8 @@ public final class JwtUserFactory {
   private JwtUserFactory() {}
 
   public static JwtUser create(User user) {
-    return new JwtUser(user.getUserId(), user.getUserName(), user.getFirstname(),
-        user.getLastname(), user.getFullName(), user.getEmailId(), user.getPassword(),
+    return new JwtUser(user.getUserId(), user.getUserName(), user.getFirstName(),
+        user.getLastName(), user.getFullName(), user.getEmailId(), user.getPassword(),
         mapToGrantedAuthorities(user.getAuthorities()),
         user.getLastPasswordResetDate(),user.getMobileNumber());
   }

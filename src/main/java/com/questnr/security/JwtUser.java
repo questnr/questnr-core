@@ -10,8 +10,8 @@ public class JwtUser implements UserDetails {
 
   private final long id;
   private final String username;
-  private final String firstname;
-  private final String lastname;
+  private final String firstName;
+  private final String lastName;
   private final String password;
   private final String email;
   private final String fullName;
@@ -20,13 +20,13 @@ public class JwtUser implements UserDetails {
   private final Date lastPasswordResetDate;
 
 
-  public JwtUser(long id, String username, String firstname, String lastname, String fullName,
+  public JwtUser(long id, String username, String firstName, String lastName, String fullName,
       String email, String password, Collection<? extends GrantedAuthority> authorities,
       Date lastPasswordResetDate,String phoneNumber) {
     this.id = id;
     this.username = username;
-    this.firstname = firstname;
-    this.lastname = lastname;
+    this.firstName = firstName;
+    this.lastName = lastName;
     this.email = email;
     this.password = password;
     this.authorities = authorities;
@@ -68,12 +68,12 @@ public class JwtUser implements UserDetails {
     return false;
   }
 
-  public String getFirstname() {
-    return firstname;
+  public String getFirstName() {
+    return firstName;
   }
 
-  public String getLastname() {
-    return lastname;
+  public String getLastName() {
+    return lastName;
   }
 
   public String getEmail() {

@@ -16,50 +16,50 @@ import org.springframework.stereotype.Indexed;
 public class User extends  DomainObject{
 
   @Id
-  @Column(name = "ID")
+  @Column(name = "id")
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
   @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
   private Long userId;
 
-  @Column(name = "USERNAME", length = 50, unique = true)
+  @Column(name = "username", length = 50, unique = true)
   private String userName;
 
-  @Column(name = "PASSWORD", length = 100)
+  @Column(name = "password", length = 100)
   @Size(min = 4, max = 100)
   private String password;
 
-  @Column(name = "FIRSTNAME", length = 50)
-  private String firstname;
+  @Column(name = "first_name", length = 50)
+  private String firstName;
 
-  @Column(name = "LASTNAME", length = 50)
-  private String lastname;
+  @Column(name = "last_name", length = 50)
+  private String lastName;
 
-  @Column(name = "fullname", length = 50)
+  @Column(name = "full_name", length = 50)
   @NotNull
   @Size(min = 4, max = 100)
   private String fullName;
 
-  @Column(name = "EMAIL", unique = true)
+  @Column(name = "email_id", unique = true)
   @NotNull
   @Size(min = 4)
   private String emailId;
 
-  @Column(name = "mobile", length = 15)
+  @Column(name = "mobile_number", length = 15)
   private String mobileNumber;
 
   @Column(name = "is_mobile_verified")
   private boolean isMobileNumberVerified;
 
-  @Column(name = "ENABLED")
-  private boolean enabled;
+  @Column(name = "is_enabled")
+  private boolean isEnabled;
 
   @JsonIgnore
-  @Column(name = "LASTPASSWORDRESETDATE")
+  @Column(name = "last_password_reset_date")
   @Temporal(TemporalType.TIMESTAMP)
   private Date lastPasswordResetDate;
 
   @JsonIgnore
-  @Column(name="createdAt")
+  @Column(name="created_at")
   private  Date createdAt;
 
   @Column(name = "avatar")
@@ -77,14 +77,6 @@ public class User extends  DomainObject{
 
   public Long getUserId() {
     return userId;
-  }
-
-  public Set<Authority> getAuthorities() {
-    return authorities;
-  }
-
-  public void setAuthorities(Set<Authority> authorities) {
-    this.authorities = authorities;
   }
 
   public void setUserId(Long userId) {
@@ -107,20 +99,20 @@ public class User extends  DomainObject{
     this.password = password;
   }
 
-  public String getFirstname() {
-    return firstname;
+  public String getFirstName() {
+    return firstName;
   }
 
-  public void setFirstname(String firstname) {
-    this.firstname = firstname;
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
   }
 
-  public String getLastname() {
-    return lastname;
+  public String getLastName() {
+    return lastName;
   }
 
-  public void setLastname(String lastname) {
-    this.lastname = lastname;
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
   }
 
   public String getFullName() {
@@ -156,11 +148,11 @@ public class User extends  DomainObject{
   }
 
   public boolean isEnabled() {
-    return enabled;
+    return isEnabled;
   }
 
   public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+    isEnabled = enabled;
   }
 
   public Date getLastPasswordResetDate() {
@@ -171,6 +163,16 @@ public class User extends  DomainObject{
     this.lastPasswordResetDate = lastPasswordResetDate;
   }
 
+  @Override
+  public Date getCreatedAt() {
+    return createdAt;
+  }
+
+  @Override
+  public void setCreatedAt(Date createdAt) {
+    this.createdAt = createdAt;
+  }
+
   public String getAvatar() {
     return avatar;
   }
@@ -179,13 +181,14 @@ public class User extends  DomainObject{
     this.avatar = avatar;
   }
 
-  public Date getCreatedAt() {
-    return createdAt;
+  public Set<Authority> getAuthorities() {
+    return authorities;
   }
 
-  public void setCreatedAt(Date createdAt) {
-    this.createdAt = createdAt;
+  public void setAuthorities(Set<Authority> authorities) {
+    this.authorities = authorities;
   }
+
 
 //  public Set<PostAction> getPostActionSet() {
 //    return postActionSet;
