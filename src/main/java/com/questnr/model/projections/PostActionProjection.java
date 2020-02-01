@@ -30,4 +30,6 @@ public interface PostActionProjection {
     String getTags();
 
     String getTitleTag();
+
+    String getHashTags();
 }

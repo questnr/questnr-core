@@ -77,6 +77,15 @@ public class PostAction extends DomainObject {
     @JoinColumn(name = "community_id")
     private Community community;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {
+            CascadeType.PERSIST,
+            CascadeType.MERGE
+    })
+    @JoinTable(name = "post_hash_tags",
+            joinColumns = {@JoinColumn(name = "post_id")},
+            inverseJoinColumns = {@JoinColumn(name = "hash_tag_id")})
+    private Set<HashTag> hashTags = new HashSet<>();
+
 //    @OneToMany(cascade = CascadeType.ALL,
 //            fetch = FetchType.LAZY,
 //            mappedBy = "postAction")
@@ -186,12 +195,19 @@ public class PostAction extends DomainObject {
         this.community = community;
     }
 
-
-//    public Set<LikeAction> getLikeActionSet() {
+    //    public Set<LikeAction> getLikeActionSet() {
 //        return likeActionSet;
 //    }
 //
 //    public void setLikeActionSet(Set<LikeAction> likeActionSet) {
 //        this.likeActionSet = likeActionSet;
 //    }
+
+    public Set<HashTag> getHashTags() {
+        return hashTags;
+    }
+
+    public void setHashTags(Set<HashTag> hashTags) {
+        this.hashTags = hashTags;
+    }
 }

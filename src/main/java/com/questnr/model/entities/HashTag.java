@@ -5,10 +5,12 @@ import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Indexed
-@Table(name = "qr_hash_tag")
+@Table(name = "qr_hash_tags")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class HashTag {
@@ -21,8 +23,17 @@ public class HashTag {
     @Column(name = "hash_tag_value")
     private String hashTagValue;
 
-    @Column(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User userCreator;
+
+//    @ManyToMany(fetch = FetchType.LAZY,
+//            cascade = {
+//                    CascadeType.PERSIST,
+//                    CascadeType.MERGE
+//            },
+//            mappedBy = "tags")
+//    private Set<PostAction> posts = new HashSet<>();
 
     public Long getHashTagId() {
         return hashTagId;
@@ -47,4 +58,12 @@ public class HashTag {
     public void setUserCreator(User userCreator) {
         this.userCreator = userCreator;
     }
+
+//    public Set<PostAction> getPosts() {
+//        return posts;
+//    }
+//
+//    public void setPosts(Set<PostAction> posts) {
+//        this.posts = posts;
+//    }
 }

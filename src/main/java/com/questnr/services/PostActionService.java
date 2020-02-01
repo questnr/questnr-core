@@ -2,9 +2,11 @@ package com.questnr.services;
 
 import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.projections.PostActionProjection;
 import com.questnr.model.repositories.CommunityRepository;
+import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.security.JwtTokenUtil;
@@ -18,6 +20,9 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 @Service
 public class PostActionService {
@@ -35,6 +40,9 @@ public class PostActionService {
     @Autowired
     PostActionRepository postActionRepository;
 
+    @Autowired
+    HashTagRepository hashTagRepository;
+
     public Page<PostActionProjection> getAllPostActionsByUserId(Pageable pageable) {
         long userId = jwtTokenUtil.getLoggedInUserID();
         return postActionRepository.findAllByUserActor(userRepository.findByUserId(userId), pageable);
@@ -44,6 +52,7 @@ public class PostActionService {
         long userId = jwtTokenUtil.getLoggedInUserID();
         if (post != null) {
             try {
+                post.setHashTags(this.parsePostText(post.getText()));
                 post.setUserActor(userRepository.findByUserId(userId));
                 post.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
                 post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
@@ -72,5 +81,31 @@ public class PostActionService {
             postActionRepository.delete(post);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new ResourceNotFoundException("Post  not found: " + postId));
+    }
+
+    public Set<HashTag> parsePostText(String postText) {
+        long userId = jwtTokenUtil.getLoggedInUserID();
+        Set<HashTag> hashTags = new HashSet<HashTag>();
+        StringTokenizer tokenizer = new StringTokenizer(postText);
+
+        while (tokenizer.hasMoreTokens()) {
+            String hashToken = tokenizer.nextToken();
+            if (hashToken.startsWith("#")) {
+                hashToken = hashToken.replaceAll("#", "").trim();
+                if (!hashToken.equals("")) {
+                    HashTag hashTag = hashTagRepository.findByHashTagValue(hashToken.toLowerCase());
+                    // @Todo: Check if the hashTag exits
+                    if (hashTag != null) {
+                        hashTags.add(hashTag);
+                    } else {
+                        hashTag = new HashTag();
+                        hashTag.setHashTagValue(hashToken.toLowerCase());
+                        hashTag.setUserCreator(userRepository.findByUserId(userId));
+                        hashTags.add(hashTagRepository.save(hashTag));
+                    }
+                }
+            }
+        }
+        return hashTags;
     }
 }

@@ -9,6 +9,8 @@ import java.util.Set;
 
 public interface HashTagRepository extends JpaRepository<HashTag, Long> {
 
+    HashTag findByHashTagValue(String hashTag);
+
     @Query("Select h from HashTag h where h.hashTagValue like %:hashTag%")
     Set<HashTagProjection> findByHashTagValueContaining(String hashTag);
 }
