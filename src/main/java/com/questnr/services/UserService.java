@@ -2,12 +2,18 @@ package com.questnr.services;
 
 import com.questnr.common.enums.AuthorityName;
 import com.questnr.model.entities.Authority;
+import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
+import com.questnr.model.projections.PostActionProjection;
 import com.questnr.model.repositories.AuthorityRepository;
+import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
+import com.questnr.model.specifications.PostActionSpecificationBuilder;
+import com.questnr.requests.Filter;
 import com.questnr.requests.LoginRequest;
 import com.questnr.requests.UsersRequest;
 import com.questnr.responses.LoginResponse;
+import com.questnr.responses.PostActionResponse;
 import com.questnr.responses.SignUpResponse;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUser;
@@ -16,6 +22,8 @@ import com.questnr.utils.EncryptionUtils;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -23,12 +31,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     UserRepository userRepository;
 
     @Autowired
-    JwtTokenUtil jwtUtil;
+    JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -87,7 +96,7 @@ public class UserService {
                 response.setUserName(savedUser.getUserName());
                 response.setLoginSucces(true);
                 JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUserName());
-                accessToken = jwtUtil.generateToken(userDetails);
+                accessToken = jwtTokenUtil.generateToken(userDetails);
                 response.setAccessToken(accessToken);
             } else {
                 response.setErrorMessage("Error signing up. Please try again.");
@@ -109,7 +118,7 @@ public class UserService {
                 if (checkValidLogin(savedUser, request.getPassword())) {
                     response.setLoginSucces(true);
                     JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUserName());
-                    accessToken = jwtUtil.generateToken(userDetails);
+                    accessToken = jwtTokenUtil.generateToken(userDetails);
                     response.setUserName(savedUser.getUserName());
                     response.setAccessToken(accessToken);
                 } else {
@@ -117,7 +126,7 @@ public class UserService {
                     response.setErrorMessage("Wrong credentials");
                 }
             } else {
-                response.setErrorMessage("User doesn't exist.Please signup.");
+                response.setErrorMessage("User doesn't exist. Please sign up.");
             }
         }
         return response;
