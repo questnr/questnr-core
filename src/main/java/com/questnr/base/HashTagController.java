@@ -16,7 +16,7 @@ public class HashTagController {
     @Autowired
     HashTagService hashTagService;
 
-    @RequestMapping(value = "/hashTag/{hashTag}", method = RequestMethod.GET)
+    @RequestMapping(value = "/hash_tag/{hashTag}", method = RequestMethod.GET)
     Set<HashTagProjection> searchHashTag(@PathVariable String hashTag) {
         return hashTagService.searchHashTag(hashTag);
     }

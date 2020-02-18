@@ -1,10 +1,14 @@
 package com.questnr.model.projections;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questnr.common.enums.PublishStatus;
+import com.questnr.model.entities.HashTag;
+import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostAction;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.util.Date;
+import java.util.Set;
 
 @Projection(name = "postActionProjection", types = PostAction.class)
 public interface PostActionProjection {
@@ -19,9 +23,9 @@ public interface PostActionProjection {
 
     PublishStatus getStatus();
 
-    boolean isFeatured();
+    Boolean isFeatured();
 
-    boolean isPopular();
+    Boolean isPopular();
 
     String getVideoUrl();
 
@@ -31,5 +35,9 @@ public interface PostActionProjection {
 
     String getTitleTag();
 
-    String getHashTags();
+    Set<HashTagProjection> getHashTags();
+
+    UserProjection getUserActor();
+
+    Integer getTotalLikes();
 }

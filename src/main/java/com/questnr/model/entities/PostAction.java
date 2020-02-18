@@ -1,5 +1,6 @@
 package com.questnr.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.PublishStatus;
 
@@ -86,10 +87,20 @@ public class PostAction extends DomainObject {
             inverseJoinColumns = {@JoinColumn(name = "hash_tag_id")})
     private Set<HashTag> hashTags = new HashSet<>();
 
-//    @OneToMany(cascade = CascadeType.ALL,
-//            fetch = FetchType.LAZY,
-//            mappedBy = "postAction")
-//    private Set<LikeAction> likeActionSet = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "postAction")
+    private Set<LikeAction> likeActionSet = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "postAction")
+    private Set<PostView> postViewSet = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "postAction")
+    private Set<CommentAction> commentActionSet = new HashSet<>();
 
     public Long getPostActionId() {
         return postActionId;
@@ -163,6 +174,7 @@ public class PostAction extends DomainObject {
         this.postDate = postDate;
     }
 
+    @JsonIgnore
     public User getUserActor() {
         return userActor;
     }
@@ -195,13 +207,32 @@ public class PostAction extends DomainObject {
         this.community = community;
     }
 
-    //    public Set<LikeAction> getLikeActionSet() {
-//        return likeActionSet;
-//    }
-//
-//    public void setLikeActionSet(Set<LikeAction> likeActionSet) {
-//        this.likeActionSet = likeActionSet;
-//    }
+    @JsonIgnore
+    public Set<LikeAction> getLikeActionSet() {
+        return likeActionSet;
+    }
+
+    public void setLikeActionSet(Set<LikeAction> likeActionSet) {
+        this.likeActionSet = likeActionSet;
+    }
+
+    @JsonIgnore
+    public Set<PostView> getPostViewSet() {
+        return postViewSet;
+    }
+
+    public void setPostViewSet(Set<PostView> postViewSet) {
+        this.postViewSet = postViewSet;
+    }
+
+    @JsonIgnore
+    public Set<CommentAction> getCommentActionSet() {
+        return commentActionSet;
+    }
+
+    public void setCommentActionSet(Set<CommentAction> commentActionSet) {
+        this.commentActionSet = commentActionSet;
+    }
 
     public Set<HashTag> getHashTags() {
         return hashTags;

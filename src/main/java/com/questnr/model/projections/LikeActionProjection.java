@@ -7,5 +7,5 @@ import org.springframework.data.rest.core.config.Projection;
 public interface LikeActionProjection {
     int getLikeActionId();
 
-    UserProjection getUser();
+    UserProjection getUserActor();
 }
