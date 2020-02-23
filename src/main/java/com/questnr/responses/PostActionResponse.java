@@ -30,7 +30,9 @@ public class PostActionResponse {
 
     private int totalLikes;
 
-    private int totalPostViews;
+//    private int totalPostViews;
+
+    private  int totalPostVisits;
 
     private int totalComments;
 
@@ -144,12 +146,21 @@ public class PostActionResponse {
         this.totalLikes = totalLikes;
     }
 
-    public int getTotalPostViews() {
-        return totalPostViews;
+//    public int getTotalPostViews() {
+//        return totalPostViews;
+//    }
+//
+//    public void setTotalPostViews(int totalPostViews) {
+//        this.totalPostViews = totalPostViews;
+//    }
+
+
+    public int getTotalPostVisits() {
+        return totalPostVisits;
     }
 
-    public void setTotalPostViews(int totalPostViews) {
-        this.totalPostViews = totalPostViews;
+    public void setTotalPostVisits(int totalPostVisits) {
+        this.totalPostVisits = totalPostVisits;
     }
 
     public int getTotalComments() {

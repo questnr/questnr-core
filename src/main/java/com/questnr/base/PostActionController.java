@@ -18,7 +18,7 @@ public class PostActionController {
     PostActionService postActionService;
 
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
-    Page<PostActionProjection> getAllPostsByUserId(Pageable pageable) {
+    Page<PostAction> getAllPostsByUserId(Pageable pageable) {
         return postActionService.getAllPostActionsByUserId(pageable);
     }
 

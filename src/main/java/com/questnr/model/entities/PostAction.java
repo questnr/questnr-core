@@ -82,7 +82,7 @@ public class PostAction extends DomainObject {
             CascadeType.PERSIST,
             CascadeType.MERGE
     })
-    @JoinTable(name = "post_hash_tags",
+    @JoinTable(name = "qr_post_hash_tags",
             joinColumns = {@JoinColumn(name = "post_id")},
             inverseJoinColumns = {@JoinColumn(name = "hash_tag_id")})
     private Set<HashTag> hashTags = new HashSet<>();
@@ -95,7 +95,7 @@ public class PostAction extends DomainObject {
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             mappedBy = "postAction")
-    private Set<PostView> postViewSet = new HashSet<>();
+    private Set<PostVisit> postViewSet = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -207,7 +207,6 @@ public class PostAction extends DomainObject {
         this.community = community;
     }
 
-    @JsonIgnore
     public Set<LikeAction> getLikeActionSet() {
         return likeActionSet;
     }
@@ -216,16 +215,14 @@ public class PostAction extends DomainObject {
         this.likeActionSet = likeActionSet;
     }
 
-    @JsonIgnore
-    public Set<PostView> getPostViewSet() {
+    public Set<PostVisit> getPostViewSet() {
         return postViewSet;
     }
 
-    public void setPostViewSet(Set<PostView> postViewSet) {
+    public void setPostViewSet(Set<PostVisit> postViewSet) {
         this.postViewSet = postViewSet;
     }
 
-    @JsonIgnore
     public Set<CommentAction> getCommentActionSet() {
         return commentActionSet;
     }

@@ -1,18 +1,16 @@
 package com.questnr.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Indexed
 @Table(name = "qr_comment_actions")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class CommentAction {
+public class CommentAction extends DomainObject {
     @Id
     @Column(name = "comment_action_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_action_seq")
@@ -50,6 +48,7 @@ public class CommentAction {
         this.commentObject = commentObject;
     }
 
+    @JsonIgnore
     public User getUserActor() {
         return userActor;
     }
@@ -58,6 +57,7 @@ public class CommentAction {
         this.userActor = userActor;
     }
 
+    @JsonIgnore
     public PostAction getPostAction() {
         return postAction;
     }

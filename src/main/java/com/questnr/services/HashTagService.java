@@ -3,7 +3,6 @@ package com.questnr.services;
 import com.questnr.model.projections.HashTagProjection;
 import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.UserRepository;
-import com.questnr.security.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +13,6 @@ import java.util.Set;
 @Service
 public class HashTagService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
-    @Autowired
-    JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     UserRepository userRepository;

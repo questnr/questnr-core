@@ -5,7 +5,7 @@ import java.util.Set;
 
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.LikeAction;
-import com.questnr.model.entities.PostView;
+import com.questnr.model.entities.PostVisit;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.projections.PostActionProjection;
@@ -21,8 +21,8 @@ public interface PostActionRepository extends JpaRepository <PostAction, Long>, 
 
   PostAction findByPostActionId(Long postId);
 
-  Page<PostActionProjection> findAllByUserActor(User user, Pageable pageable);
+  Page<PostAction> findAllByUserActor(User user, Pageable pageable);
 
-  @Query(value = "select pa.postActionId, count(la) as totalLikes, count(pv) as totalPostViews, count(ca) as totalComments from PostAction pa left outer join LikeAction la on la.postAction = pa left outer join PostView pv on pv.postAction = pa left outer join CommentAction ca on ca.postAction = pa group by pa.postActionId, la.likeActionId, pv.postViewId, ca.commentActionId ORDER BY totalLikes DESC nulls last, totalPostViews DESC nulls last, totalComments DESC nulls last")
+  @Query(value = "select pa.postActionId, count(la) as totalLikes, count(pv) as totalVisits, count(ca) as totalComments from PostAction pa left outer join LikeAction la on la.postAction = pa left outer join PostVisit pv on pv.postAction = pa left outer join CommentAction ca on ca.postAction = pa group by pa.postActionId, la.likeActionId, pv.postVisitId, ca.commentActionId ORDER BY totalLikes DESC nulls last, totalVisits DESC nulls last, totalComments DESC nulls last")
   List<Object[]> findAllByTrendingPost(Pageable pageable);
 }

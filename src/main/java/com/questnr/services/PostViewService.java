@@ -32,7 +32,7 @@ public class PostViewService {
     @Autowired
     PostActionRepository postActionRepository;
 
-    public Page<LikeActionProjection> getAllPostViewByPostId(Long postId,
+    public Page<PostView> getAllPostViewByPostId(Long postId,
                                                                Pageable pageable) {
         return postViewRepository.findByPostAction(postActionRepository.findByPostActionId(postId), pageable);
     }
@@ -45,6 +45,7 @@ public class PostViewService {
         if (postId != null) {
             if (postViewRepository.countByPostActionAndUserActor(postAction, user) == 0) {
                 try {
+                    postView.addMetadata();
                     postView.setUserActor(user);
                     postView.setPostAction(postAction);
                     return postViewRepository.saveAndFlush(postView);
@@ -54,6 +55,18 @@ public class PostViewService {
             }
         } else {
             throw new InvalidInputException(PostView.class.getName(), null, null);
+        }
+        return null;
+    }
+
+    public PostView createPostViewFromPostVisit(User user, PostAction postAction){
+        PostView postView = new PostView();
+        try {
+            postView.setUserActor(user);
+            postView.setPostAction(postAction);
+            return postViewRepository.saveAndFlush(postView);
+        } catch (Exception e) {
+            LOGGER.error(PostView.class.getName() + " Exception Occurred");
         }
         return null;
     }

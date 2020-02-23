@@ -23,7 +23,7 @@ public class LikeActionService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    JwtTokenUtil jwtTokenUtil;
+    CommonUserService commonUserService;
 
     @Autowired
     UserRepository userRepository;
@@ -42,11 +42,12 @@ public class LikeActionService {
     public LikeAction createLikeAction(Long postId) {
         LikeAction likeAction = new LikeAction();
         PostAction postAction = postActionRepository.findByPostActionId(postId);
-        long userId = jwtTokenUtil.getLoggedInUserID();
+        Long userId = commonUserService.getUserId();
         User user = userRepository.findByUserId(userId);
         if (postId != null) {
             if (likeActionRepository.countByPostActionAndUserActor(postAction, user) == 0) {
                 try {
+                    likeAction.addMetadata();
                     likeAction.setUserActor(user);
                     likeAction.setPostAction(postAction);
                     return likeActionRepository.saveAndFlush(likeAction);
@@ -61,7 +62,7 @@ public class LikeActionService {
     }
 
     public ResponseEntity<?> deleteLikeAction(Long postId) throws ResourceNotFoundException {
-        long userId = jwtTokenUtil.getLoggedInUserID();
+        Long userId = commonUserService.getUserId();
         return likeActionRepository.findByPostActionAndUserActor(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
             likeActionRepository.delete(likeAction);
             return ResponseEntity.ok().build();

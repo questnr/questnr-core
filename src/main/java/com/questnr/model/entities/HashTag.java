@@ -1,19 +1,16 @@
 package com.questnr.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Indexed
 @Table(name = "qr_hash_tags")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class HashTag {
+public class HashTag extends DomainObject {
     @Id
     @Column(name = "hash_tag_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hash_tag_seq")
@@ -51,6 +48,7 @@ public class HashTag {
         this.hashTagValue = hashTagValue;
     }
 
+    @JsonIgnore
     public User getUserCreator() {
         return userCreator;
     }

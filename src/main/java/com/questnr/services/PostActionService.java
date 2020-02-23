@@ -4,12 +4,11 @@ import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.PostAction;
+import com.questnr.model.entities.User;
 import com.questnr.model.projections.PostActionProjection;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.PostActionRepository;
-import com.questnr.model.repositories.UserRepository;
-import com.questnr.security.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,13 +28,10 @@ public class PostActionService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    JwtTokenUtil jwtTokenUtil;
+    CommonUserService commonUserService;
 
     @Autowired
     CommunityRepository communityRepository;
-
-    @Autowired
-    UserRepository userRepository;
 
     @Autowired
     PostActionRepository postActionRepository;
@@ -43,19 +39,27 @@ public class PostActionService {
     @Autowired
     HashTagRepository hashTagRepository;
 
-    public Page<PostActionProjection> getAllPostActionsByUserId(Pageable pageable) {
-        long userId = jwtTokenUtil.getLoggedInUserID();
-        return postActionRepository.findAllByUserActor(userRepository.findByUserId(userId), pageable);
+    public Page<PostAction> getAllPostActionsByUserId(Pageable pageable) {
+        User user = commonUserService.getUser();
+        if(user != null){
+            try {
+                return postActionRepository.findAllByUserActor(user, pageable);
+            }catch (Exception e){
+                LOGGER.error(PostAction.class.getName() + " Exception Occurred");
+            }
+        }else{
+            throw new InvalidInputException(User.class.getName(), null, null);
+        }
+        return null;
     }
 
     public PostAction creatPostAction(PostAction post) {
-        long userId = jwtTokenUtil.getLoggedInUserID();
+        User user = commonUserService.getUser();
         if (post != null) {
             try {
+                post.addMetadata();
                 post.setHashTags(this.parsePostText(post.getText()));
-                post.setUserActor(userRepository.findByUserId(userId));
-                post.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-                post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+                post.setUserActor(user);
                 post.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
                 return postActionRepository.saveAndFlush(post);
             } catch (Exception e) {
@@ -68,9 +72,9 @@ public class PostActionService {
     }
 
     public PostAction updatePostAction(Long postId, PostAction postActionRequest) {
-        long userId = jwtTokenUtil.getLoggedInUserID();
+        User user = commonUserService.getUser();
         return postActionRepository.findById(postId).map(post -> {
-            postActionRequest.setUserActor(userRepository.findByUserId(userId));
+            postActionRequest.setUserActor(user);
             postActionRequest.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
             return postActionRepository.save(postActionRequest);
         }).orElseThrow(() -> new ResourceNotFoundException("Post not found: " + postId));
@@ -84,7 +88,7 @@ public class PostActionService {
     }
 
     public Set<HashTag> parsePostText(String postText) {
-        long userId = jwtTokenUtil.getLoggedInUserID();
+        User user = commonUserService.getUser();
         Set<HashTag> hashTags = new HashSet<HashTag>();
         StringTokenizer tokenizer = new StringTokenizer(postText);
 
@@ -100,7 +104,8 @@ public class PostActionService {
                     } else {
                         hashTag = new HashTag();
                         hashTag.setHashTagValue(hashToken.toLowerCase());
-                        hashTag.setUserCreator(userRepository.findByUserId(userId));
+                        hashTag.setUserCreator(user);
+                        hashTag.addMetadata();
                         hashTags.add(hashTagRepository.save(hashTag));
                     }
                 }

@@ -4,7 +4,6 @@ import com.questnr.common.enums.PublishStatus;
 import com.questnr.exceptions.InvalidInputException;
 import com.questnr.model.entities.Community;
 import com.questnr.model.repositories.CommunityRepository;
-import com.questnr.security.JwtTokenUtil;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -20,13 +19,13 @@ public class CommunityService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    JwtTokenUtil jwtTokenUtil;
+    CommonUserService commonUserService;
 
     @Autowired
     CommunityRepository communityRepository;
 
     public Boolean createCommunity(Community requests) {
-        long userId = jwtTokenUtil.getLoggedInUserID();
+        Long userId = commonUserService.getUserId();
         Boolean response = false;
         if (requests != null) {
             try {

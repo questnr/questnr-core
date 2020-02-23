@@ -48,7 +48,7 @@ public class DomainObject implements Serializable {
     }
 
     public void addMetadata() {
-        setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        this.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        this.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
     }
 }

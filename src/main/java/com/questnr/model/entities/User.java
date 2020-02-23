@@ -13,7 +13,7 @@ import org.springframework.stereotype.Indexed;
 @Entity
 @Table(name="qr_users")
 @Indexed
-public class User extends  DomainObject{
+public class User extends DomainObject{
 
   @Id
   @Column(name = "id")
@@ -67,9 +67,9 @@ public class User extends  DomainObject{
 
   @JsonIgnoreProperties("users")
   @ManyToMany(fetch = FetchType.EAGER)
-  @JoinTable(name = "QR_USER_AUTHORITY",
-      joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")},
-      inverseJoinColumns = {@JoinColumn(name = "AUTHORITY_ID", referencedColumnName = "ID")})
+  @JoinTable(name = "qr_user_authority",
+      joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+      inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
   private Set<Authority> authorities;
 
 //  @OneToMany(mappedBy = "user")

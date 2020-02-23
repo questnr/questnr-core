@@ -10,7 +10,6 @@ import com.questnr.model.repositories.CommentActionRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.requests.CommentActionRequest;
-import com.questnr.security.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,7 @@ public class CommentActionService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    JwtTokenUtil jwtTokenUtil;
+    CommonUserService commonUserService;
 
     @Autowired
     UserRepository userRepository;
@@ -43,16 +42,18 @@ public class CommentActionService {
 
     public CommentAction createCommentAction(CommentActionRequest commentActionRequest) {
         CommentAction commentAction = new CommentAction();
-        User user = userRepository.findByUserId(jwtTokenUtil.getLoggedInUserID());
+        User user = commonUserService.getUser();
         if (commentActionRequest != null) {
             try {
                 if (commentActionRequest.getParentCommentId() != null && commentActionRepository.existsByCommentActionId(commentActionRequest.getParentCommentId())) {
                     CommentAction parentCommentAction = commentActionRepository.findByCommentActionId(commentActionRequest.getParentCommentId());
+                    commentAction.addMetadata();
                     commentAction.setPostAction(parentCommentAction.getPostAction());
                     commentAction.setCommentObject(commentActionRequest.getCommentObject());
                     commentAction.setParentCommentAction(parentCommentAction);
                     commentAction.setUserActor(user);
                 } else {
+                    commentAction.addMetadata();
                     commentAction.setPostAction(postActionRepository.findByPostActionId(commentActionRequest.getPostId()));
                     commentAction.setCommentObject(commentActionRequest.getCommentObject());
                     commentAction.setUserActor(user);
@@ -68,7 +69,7 @@ public class CommentActionService {
     }
 
     public ResponseEntity<?> deleteCommentAction(Long postId, Long commentId) throws ResourceNotFoundException {
-        long userId = jwtTokenUtil.getLoggedInUserID();
+        Long userId = commonUserService.getUserId();
         PostAction postAction = postActionRepository.findByPostActionId(postId);
         CommentAction commentAction = this.getCommentActionUsingPostActionAndUserIdAndCommentId(postAction, userId, commentId);
         if (commentAction != null) {

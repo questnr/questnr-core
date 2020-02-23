@@ -19,7 +19,7 @@ public class PostViewController {
     PostViewService postViewService;
 
     @RequestMapping(value = "/posts/{postId}/post_view", method = RequestMethod.GET)
-    Page<LikeActionProjection> getAllViewByPostId(@PathVariable Long postId, Pageable pageable) {
+    Page<PostView> getAllViewByPostId(@PathVariable Long postId, Pageable pageable) {
         return postViewService.getAllPostViewByPostId(postId, pageable);
     }
 
