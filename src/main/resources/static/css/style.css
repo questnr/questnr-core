@@ -26,7 +26,7 @@
 
 .mdl-navigation .mdl-navigation__link {
   color: #000000 !important;
-  font-weight: 600;
+  /*font-weight: 600;*/
 }
 
 @media only screen and (min-width: 1025px) {
@@ -43,7 +43,7 @@
 }
 
 .web-frame .logo {
-  font-weight: 900;
+  /*font-weight: 900;*/
   font-size: 24px;
   float: left;
   position: relative;
@@ -71,7 +71,7 @@
   border: none;
   color: #ffffff !important;
   margin-left: 20px !important;
-  font-weight: 600 !important
+  /*font-weight: 600 !important*/
 }
 
 .float-right {
@@ -103,13 +103,13 @@ input::-webkit-input-placeholder {
   line-height: 4;
   letter-spacing: 1px;
   color: #868686 !important;
-  font-weight: 600;
+  /*font-weight: 600;*/
 }
 
 .banner-heading {
   font-family: serif;
   color: #fff;
-  font-weight: 900;
+  /*font-weight: 900;*/
   letter-spacing: 2px;
   font-size: 67px;
 }
@@ -158,7 +158,7 @@ input::-webkit-input-placeholder {
   background-color: #ffffff;
   position: relative;
   top: 12%;
-  right: 5%;
+  /*right: 5%;*/
   border-radius: 2px;
   width: 90%;
 }
@@ -170,24 +170,26 @@ input::-webkit-input-placeholder {
 .login-form h3 {
   margin-bottom: 4px;
   font-size: 28px;
-  font-weight: 600;
+  /*font-weight: 600;*/
 }
 
 .login-form p {
   font-size: 20px;
-  font-weight: 600;
+  /*font-weight: 600;*/
   color: #979797;
   line-height: 25px;
 }
 
 .login-form input {
-  padding: 18px;
+  padding: 10px;
   width: -webkit-fill-available;
   background: #f8f8f8;
-  margin-bottom: 45px;
+  margin-bottom: 30px;
   -webkit-appearance: listitem;
   height: 35px;
   font-size: 20px;
+  border: none;
+  border-radius: 4px;
 }
 
 .login-form .btn-color {
@@ -200,7 +202,7 @@ input::-webkit-input-placeholder {
   width: fit-content;
   width: -moz-fit-content;
   color: #868686;
-  font-weight: 600;
+  /*font-weight: 600;*/
   position: relative;
   top: 15px;
 
@@ -208,7 +210,7 @@ input::-webkit-input-placeholder {
 
 .form-control .mdl-checkbox__label {
   color: #989898;
-  font-weight: 600;
+  /*font-weight: 600;*/
 }
 
 .login-form .label-form {
@@ -239,7 +241,7 @@ ul.hashtags li {
 
 .community-group h1 {
   font-family: serif !important;
-  font-weight: 600;
+  /*font-weight: 600;*/
 }
 
 .community-group ul {
@@ -279,7 +281,7 @@ ul.hashtags li {
 }
 
 .community-card h5 {
-  font-weight: 600;
+  /*font-weight: 600;*/
   margin: 25px 0 10px;
 }
 
@@ -296,13 +298,13 @@ ul.hashtags li {
 
 .latest-activity h3 {
   font-family: serif;
-  font-weight: 600;
+  /*font-weight: 600;*/
 }
 .members-list .rank{
   margin-top: auto;
   margin-bottom: auto;
   font-size: 20px;
-  font-weight: 600;
+  /*font-weight: 600;*/
   color: #959595;
 }
 .latest-activity .members-list {
@@ -322,7 +324,7 @@ ul.hashtags li {
   font-size: 18px;
 }
 .members-list p, .info-graphics p {
-  font-weight: 600;
+  /*font-weight: 600;*/
   color: #999999;
   margin: 0;
 }
@@ -335,14 +337,14 @@ ul.hashtags li {
 }
 .info-graphics h1, .taglines h1{
   font-family: serif;
-  font-weight: 600;
+  /*font-weight: 600;*/
   letter-spacing: 1px;
 }
 .taglines p{
   padding: 0 0 40px;
   font-size: 18px;
   color: #999999;
-  font-weight: 600;
+  /*font-weight: 600;*/
 }
 .taglines{
   padding: 80px 0 80px;
@@ -354,7 +356,7 @@ ul.hashtags li {
 .mdl-mega-footer--heading{
   padding: 0 !important;
   font-size: 18px !important;
-  font-weight: 600 !important;
+  /*font-weight: 600 !important;*/
   color: #ffffff !important;
 }
 .mdl-mega-footer--middle-section{
@@ -412,7 +414,7 @@ ul.hashtags li {
 
 .noOfUpvotes {
   padding: 8px 5px;
-  font-weight: 900;
+  /*font-weight: 900;*/
   color: #ffffff;
   background: transparent !important;
   text-align: center;
@@ -427,7 +429,7 @@ ul.hashtags li {
 /*background: linear-gradient(-45deg, #000000b8, rgba(124, 41, 41, 0));*/
 /*}*/
 .communityName {
-  font-weight: 900;
+  /*font-weight: 900;*/
   letter-spacing: 1px;
 }
 
@@ -446,7 +448,7 @@ ul.hashtags li {
   float: right;
   border-radius: 50px;
   line-height: 24px;
-  font-weight: 900;
+  /*font-weight: 900;*/
   border: 1px solid #b2a6a6;
   top: 2px;
   position: relative;

@@ -36,13 +36,13 @@ public class HomeController {
     @RequestMapping(value = "/feeds", method = RequestMethod.GET)
     String index() {
 
-        return "index";
+        return "angularProject";
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     String loginpage() {
 
-        return "homepage/loginPage";
+        return "homepage/landingPage";
     }
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)

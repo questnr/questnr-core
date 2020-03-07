@@ -58,22 +58,38 @@
                 <div class="login-form-container">
                   <h3>Log In</h3>
                   <p>Login to your account and check out the <br>new messages.</p>
-                  <input type="text" name="username" id="username" placeholder="Username">
-                  <input type="text" name="password" id="password" placeholder="Password">
-                  <div>
-                    <label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
-                      <input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value='0'/>
-                      <span class="mdl-checkbox__label">Remember me</span>
-                    </label>
-                    <button class="mdl-button btn-color">
-                      Login
-                    </button>
-                  </div>
+                  <form action="" id="loginForm" style="display: none">
+                    <input type="email" name="username" id="loginUsername" placeholder="Username">
+                    <input type="password" name="password" id="loginPassword" placeholder="Password">
+                    <div>
+                      <label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+                        <input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value='0'/>
+                        <span class="mdl-checkbox__label">Remember me</span>
+                      </label>
+                      <button class="mdl-button btn-color" >Login</button>
+                    </div>
+                  </form>
+
+                  <form action="" id="signupForm" style="display: block">
+                    <input type="text" name="username" id="username" placeholder="Username">
+                    <input type="email" name="email" id="email" placeholder="email">
+                    <input type="password" name="password" id="password" placeholder="Password">
+                    <div>
+                      <label id="check" class="mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect">
+                        <input id="MdlCheckBox" type="checkbox" class="mdl-checkbox__input" value='0'/>
+                        <span class="mdl-checkbox__label">Remember me</span>
+                      </label>
+                      <button class="mdl-button btn-color" >Signup</button>
+                    </div>
+                  </form>
+
+
                 </div>
                 <hr style="margin-bottom: 32px">
-                <div style="padding: 0 20px 25px;">
+                <div style="padding: 0 45px 25px; ">
                   <span class="label-form">Forgot your password?</span>
-                  <span class="label-form" style="float: right">Create New Account!</span>
+                  <span class="label-form" id="createNewAccount"style="float: right; display: none; cursor: pointer;">Create New Account!</span>
+                  <span class="label-form" style="float: right; cursor: pointer;" id="loginNow">Login Now!!!</span>
                 </div>
               </div>
             </div>
@@ -730,8 +746,31 @@
 
 </div>
 
-
+<script defer
+        th:src="@{${@mvcResourceUrlProvider.getForLookupPath('/js/login.js')}}"></script>
 <!--/*/ <th:block th:include="common/commonJS"></th:block> /*/-->
+
+<script>
+  $(document).ready(function () {
+    var username= localStorage.getItem("userName");
+    var password = localStorage.getItem("password");
+    $('#loginUsername').val(username);
+    $('#loginPassword').val(password);
+
+    $('#createNewAccount').on('click',function(){
+      $('#signupForm').show();
+      $('#loginForm').hide();
+      $('#loginNow').show();
+      $('#createNewAccount').hide();
+    });
+    $('#loginNow').on('click',function(){
+      $('#signupForm').hide();
+      $('#loginForm').show();
+      $('#createNewAccount').show();
+      $('#loginNow').hide();
+    });
+  });
+</script>
 
 </body>
 </html>

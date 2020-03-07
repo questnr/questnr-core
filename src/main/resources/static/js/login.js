@@ -92,12 +92,39 @@ function eraseCookieFromAllPaths(name) {
   }
 }
 
+
+
+$("#loginForm").validate({
+  rules: {
+    password: "required",
+    username: {
+      required: true,
+      email: true
+    }
+  },
+  messages: {
+    password: "min password",
+    email: {
+      required: "We need your email address to contact you",
+      email: "Your email address must be in the format of name@domain.com"
+    }
+  },
+  submitHandler: function (form) {
+    loginQRUser();
+  }
+
+});
+
+
 function loginQRUser() {
   var input = {
     emailId : $('#loginUsername').val(),
     password : $('#loginPassword').val()
+  };
+  if($('#MdlCheckBox:checkbox:checked').length > 0 == true){
+    localStorage.setItem("userName",$('#loginUsername').val());
+    localStorage.setItem("password",$('#loginPassword').val());
   }
-
   $.ajax({
     url: apiBasePath + "/login",
     type: "PUT",
@@ -120,8 +147,11 @@ function loginQRUser() {
     }
   });
 }
+
+
+
 $(document).ready(function () {
-  $('#loginForm').hide();
+  // $('#loginForm').hide();
   $('#forgotpassword').hide();
   $("#signout").hide();
 
@@ -135,12 +165,40 @@ $(document).ready(function () {
 });
 $('#register').on('click',function () {
   $('#register').hide();
-  $('#loginForm').hide();
+  // $('#loginForm').hide();
   $('#forgotpassword').hide();
   $('#signupform').show();
   $('#login').show();
 
-})
+});
+
+
+
+
+$("#signupForm").validate({
+  rules: {
+    password: "required",
+    email: {
+      required: true,
+      email: true
+    },
+    username:"required"
+  },
+  messages: {
+    password: "min password",
+    username:"enter Your name .",
+    email: {
+      required: "We need your email address to contact you",
+      email: "Your email address must be in the format of name@domain.com"
+    }
+  },
+  submitHandler: function (form) {
+    signUpForm();
+  }
+
+});
+
+
 function signUpForm() {
 
   var input = {
