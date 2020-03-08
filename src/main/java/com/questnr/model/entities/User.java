@@ -35,7 +35,6 @@ public class User extends DomainObject{
   private String lastName;
 
   @Column(name = "full_name", length = 50)
-  @NotNull
   @Size(min = 4, max = 100)
   private String fullName;
 
@@ -66,7 +65,7 @@ public class User extends DomainObject{
   private String avatar;
 
   @JsonIgnoreProperties("users")
-  @ManyToMany(fetch = FetchType.EAGER)
+  @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
   @JoinTable(name = "qr_user_authority",
       joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
       inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
