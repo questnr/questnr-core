@@ -38,18 +38,18 @@ public class UserAvatarService {
 
     public String getUserAvatar(){
         User user = commonUserService.getUser();
-        if(user.getAvatar() != null || user.getAvatar() != ""){
-            return this.amazonS3Client.getS3BucketUrl(commonUserService.joinPathToFile(commonUserService.getUser().getAvatar()));
+        if(user.getAvatar() != null && !user.getAvatar().trim().isEmpty()){
+            return this.amazonS3Client.getS3BucketUrl(commonUserService.joinPathToFile(user.getAvatar()));
         }
         return null;
     }
 
     public ResponseEntity<?> deleteAvatar() {
         User user = commonUserService.getUser();
-        if (user.getAvatar() != null || user.getAvatar() != "")
+        if (user.getAvatar() != null && !user.getAvatar().trim().isEmpty())
             this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(commonUserService.joinPathToFile(user.getAvatar()));
         try {
-            user.setAvatar("");
+            user.setAvatar(null);
             userRepository.save(user);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
@@ -60,7 +60,7 @@ public class UserAvatarService {
 
     public byte[] getAvatar() {
         User user = commonUserService.getUser();
-        if (user.getAvatar() != null || user.getAvatar() != "") {
+        if (user.getAvatar() != null && !user.getAvatar().trim().isEmpty()) {
             return this.amazonS3Client.getFile(commonUserService.joinPathToFile(user.getAvatar()));
         }
         return null;
