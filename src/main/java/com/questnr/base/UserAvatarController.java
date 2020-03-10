@@ -17,12 +17,17 @@ public class UserAvatarController {
     @Autowired
     UserAvatarService userAvatarService;
 
-    @RequestMapping(value = "/user/upload-avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/user/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public String uploadFile(@RequestPart(value = "file") MultipartFile file) {
         return this.userAvatarService.uploadAvatar(file);
     }
 
-    @RequestMapping(value = "/user/delete-avatar", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/avatar", method = RequestMethod.GET)
+    public String getUserAvatar() {
+        return this.userAvatarService.getUserAvatar();
+    }
+
+    @RequestMapping(value = "/user/avatar", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteFileUsingPathToFile() {
         return this.userAvatarService.deleteAvatar();
     }

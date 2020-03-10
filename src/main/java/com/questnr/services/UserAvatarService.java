@@ -36,6 +36,14 @@ public class UserAvatarService {
         return userAvatarStorageData.getUrl();
     }
 
+    public String getUserAvatar(){
+        User user = commonUserService.getUser();
+        if(user.getAvatar() != null || user.getAvatar() != ""){
+            return this.amazonS3Client.getS3BucketUrl(commonUserService.joinPathToFile(commonUserService.getUser().getAvatar()));
+        }
+        return null;
+    }
+
     public ResponseEntity<?> deleteAvatar() {
         User user = commonUserService.getUser();
         if (user.getAvatar() != null || user.getAvatar() != "")
