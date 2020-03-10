@@ -1,4 +1,4 @@
-package com.questnr.controllers;
+package com.questnr.base;
 
 import com.questnr.model.entities.Community;
 import com.questnr.services.BaseService;
