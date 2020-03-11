@@ -8,7 +8,11 @@
 .mdl-layout__drawer-button {
   color: #000 !important;
 }
-
+.mdl-layout-spacer{
+    width: 200px;
+    -webkit-box-flex: 1;
+    flex: 1;
+}
 .mdl-textfield--expandable {
   transition: all 500ms !important;
 }
@@ -230,7 +234,7 @@ ul.hashtags li {
 }
 
 .web-frame {
-  width: 1400px;
+  width: calc(100% - 30px);
   margin-right: auto !important;
   margin-left: auto !important;
 }
