@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.PublishStatus;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import javax.persistence.*;
 
 import org.hibernate.search.annotations.Analyze;
@@ -54,10 +52,6 @@ public class PostAction extends DomainObject {
     @Column(name = "is_popular")
     private boolean popular;
 
-    @Column(name = "video_url", length = 20000)
-    private String videoUrl;
-
-
     /**
      * For displaying date time on screen
      */
@@ -101,6 +95,10 @@ public class PostAction extends DomainObject {
             fetch = FetchType.LAZY,
             mappedBy = "postAction")
     private Set<CommentAction> commentActionSet = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name="post_action_id", nullable=false)
+    private List<PostMedia> postMediaList = new LinkedList<>();
 
     public Long getPostActionId() {
         return postActionId;
@@ -156,14 +154,6 @@ public class PostAction extends DomainObject {
 
     public void setPopular(boolean popular) {
         this.popular = popular;
-    }
-
-    public String getVideoUrl() {
-        return videoUrl;
-    }
-
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
     }
 
     public Date getPostDate() {
@@ -237,5 +227,13 @@ public class PostAction extends DomainObject {
 
     public void setHashTags(Set<HashTag> hashTags) {
         this.hashTags = hashTags;
+    }
+
+    public List<PostMedia> getPostMediaList() {
+        return postMediaList;
+    }
+
+    public void setPostMediaList(List<PostMedia> postMediaList) {
+        this.postMediaList = postMediaList;
     }
 }

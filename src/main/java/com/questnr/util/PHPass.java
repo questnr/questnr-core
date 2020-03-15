@@ -1,4 +1,4 @@
-package com.questnr.utils;
+package com.questnr.util;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;

@@ -4,11 +4,14 @@ import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.PostAction;
+import com.questnr.model.entities.PostMedia;
 import com.questnr.model.entities.User;
 import com.questnr.model.projections.PostActionProjection;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.PostActionRepository;
+import com.questnr.requests.PostActionRequest;
+import com.questnr.responses.UserAvatarStorageData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,16 +19,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PostActionService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
+    @Autowired
+    AmazonS3Client amazonS3Client;
 
     @Autowired
     CommonUserService commonUserService;
@@ -41,27 +47,36 @@ public class PostActionService {
 
     public Page<PostAction> getAllPostActionsByUserId(Pageable pageable) {
         User user = commonUserService.getUser();
-        if(user != null){
+        if (user != null) {
             try {
                 return postActionRepository.findAllByUserActor(user, pageable);
-            }catch (Exception e){
+            } catch (Exception e) {
                 LOGGER.error(PostAction.class.getName() + " Exception Occurred");
             }
-        }else{
+        } else {
             throw new InvalidInputException(User.class.getName(), null, null);
         }
         return null;
     }
 
-    public PostAction creatPostAction(PostAction post) {
+    public PostAction creatPostAction(PostActionRequest postActionRequest, List<MultipartFile> files) {
         User user = commonUserService.getUser();
-        if (post != null) {
+        if (postActionRequest != null) {
             try {
-                post.addMetadata();
-                post.setHashTags(this.parsePostText(post.getText()));
-                post.setUserActor(user);
-                post.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
-                return postActionRepository.saveAndFlush(post);
+                List<PostMedia> postMediaList;
+                postMediaList = files.stream().map(multipartFile -> {
+                    UserAvatarStorageData userAvatarStorageData = this.amazonS3Client.uploadFile(multipartFile);
+                    PostMedia postMedia = new PostMedia();
+                    postMedia.setMediaKey(userAvatarStorageData.getFileName());
+                    return postMedia;
+                }).collect(Collectors.toList());
+                PostAction postAction = postActionRequest.getPostAction();
+                postAction.addMetadata();
+                postAction.setHashTags(this.parsePostText(postAction.getText()));
+                postAction.setUserActor(user);
+                postAction.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
+                postAction.setPostMediaList(postMediaList);
+                return postActionRepository.saveAndFlush(postAction);
             } catch (Exception e) {
                 LOGGER.error(PostAction.class.getName() + " Exception Occurred");
             }

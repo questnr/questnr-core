@@ -1,4 +1,4 @@
-package com.questnr.utils;
+package com.questnr.util;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 

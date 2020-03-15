@@ -18,8 +18,6 @@ public class PostActionResponse {
 
     private boolean popular;
 
-    private String videoUrl;
-
     private Date postDate;
 
     private String tags;
@@ -44,7 +42,6 @@ public class PostActionResponse {
         this.setFeatured(postAction.isFeatured());
         this.setPopular(postAction.isPopular());
         this.setPostDate(postAction.getPostDate());
-        this.setVideoUrl(postAction.getVideoUrl());
         this.setTags(postAction.getTags());
         this.setTitleTag(postAction.getTitleTag());
         this.setCommunity(postAction.getCommunity());
@@ -96,14 +93,6 @@ public class PostActionResponse {
 
     public void setPopular(boolean popular) {
         this.popular = popular;
-    }
-
-    public String getVideoUrl() {
-        return videoUrl;
-    }
-
-    public void setVideoUrl(String videoUrl) {
-        this.videoUrl = videoUrl;
     }
 
     public Date getPostDate() {

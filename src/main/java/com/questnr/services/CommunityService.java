@@ -24,15 +24,16 @@ public class CommunityService {
     @Autowired
     CommunityRepository communityRepository;
 
-    public Boolean createCommunity(Community requests) {
+    public Boolean createCommunity(Community communityRequest) {
         Long userId = commonUserService.getUserId();
         Boolean response = false;
-        if (requests != null) {
+        if (communityRequest != null) {
             try {
-                requests.setOwnerId(userId);
-                requests.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-                requests.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-                communityRepository.saveAndFlush(requests);
+                communityRequest.addMetadata();
+                communityRequest.setOwnerId(userId);
+                communityRequest.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+                communityRequest.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+                communityRepository.saveAndFlush(communityRequest);
                 response = true;
             } catch (Exception e) {
                 LOGGER.error(Community.class.getName() + " Exception Occurred");

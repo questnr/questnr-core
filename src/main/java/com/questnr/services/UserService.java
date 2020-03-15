@@ -11,7 +11,7 @@ import com.questnr.responses.LoginResponse;
 import com.questnr.responses.SignUpResponse;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUser;
-import com.questnr.utils.EncryptionUtils;
+import com.questnr.util.EncryptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

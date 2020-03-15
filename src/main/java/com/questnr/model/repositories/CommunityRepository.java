@@ -13,7 +13,6 @@ public interface CommunityRepository  extends JpaRepository <Community, Long>{
 
   CommunityResponse findAllByCommunityName(String name);
 
-//  @Query("select c.id as id, c.communityName as communityName, c.slug as slug from Community c where c.status='publish'")
   List<Community> findAllByStatus(PublishStatus status);
 
   Community findAllBySlug(String slug);

@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.amazonaws.HttpMethod;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -7,10 +8,14 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.questnr.exceptions.AmazonS3APIError;
 import com.questnr.responses.UserAvatarStorageData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 
 @Service
@@ -36,6 +42,8 @@ public class AmazonS3Client {
     private String accessKey;
     @Value("${amazonProperties.secretKey}")
     private String secretKey;
+
+    final String UNPROCESSABLE_ENTITY = "Requested file can not be processed";
 
 
     @PostConstruct
@@ -61,7 +69,15 @@ public class AmazonS3Client {
     }
 
     public String getS3BucketUrl(String pathToFile){
-        return this.s3Client.getUrl(bucketName, pathToFile).toExternalForm();
+        Date expiration = new Date();
+        long expTimeMillis = expiration.getTime();
+        expTimeMillis += 1000 * 10;
+        expiration.setTime(expTimeMillis);
+        GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                new GeneratePresignedUrlRequest(bucketName, pathToFile)
+                        .withMethod(HttpMethod.GET)
+                        .withExpiration(expiration);
+        return s3Client.generatePresignedUrl(generatePresignedUrlRequest).toExternalForm();
     }
 
     public UserAvatarStorageData uploadFile(MultipartFile multipartFile) {
@@ -105,9 +121,8 @@ public class AmazonS3Client {
         return "Successfully deleted";
     }
 
-//    @ExceptionHandler(AmazonS3Exception.class)
-//    public final ResponseEntity<Object> handleAmazonS3Exception(AmazonS3Exception ex, WebRequest request) {
-//        ApiError apiError = new ApiError(UNPROCESSABLE_ENTITY, ex.getLocalizedMessage(), ex.getErrors());
-//        return new ResponseEntity<>(apiError, UNPROCESSABLE_ENTITY);
-//    }
+    @ExceptionHandler(AmazonS3Exception.class)
+    public final void handleAmazonS3Exception(AmazonS3Exception ex, WebRequest request) {
+        throw new AmazonS3APIError(UNPROCESSABLE_ENTITY, ex.getLocalizedMessage());
+    }
 }

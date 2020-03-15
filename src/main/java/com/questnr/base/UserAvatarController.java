@@ -17,22 +17,22 @@ public class UserAvatarController {
     @Autowired
     UserAvatarService userAvatarService;
 
-    @RequestMapping(value = "/user/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public String uploadFile(@RequestPart(value = "file") MultipartFile file) {
         return this.userAvatarService.uploadAvatar(file);
     }
 
-    @RequestMapping(value = "/user/avatar", method = RequestMethod.GET)
+    @RequestMapping(value = "/avatar", method = RequestMethod.GET)
     public String getUserAvatar() {
         return this.userAvatarService.getUserAvatar();
     }
 
-    @RequestMapping(value = "/user/avatar", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/avatar", method = RequestMethod.DELETE)
     public ResponseEntity<?> deleteFileUsingPathToFile() {
         return this.userAvatarService.deleteAvatar();
     }
 
-    @RequestMapping(value = "/user/download-avatar", method = RequestMethod.GET)
+    @RequestMapping(value = "/download-avatar", method = RequestMethod.GET)
     public ResponseEntity<ByteArrayResource> getAvatar() throws IOException {
         byte[] data = this.userAvatarService.getAvatar();
         ByteArrayResource resource = new ByteArrayResource(data);
@@ -40,7 +40,6 @@ public class UserAvatarController {
         return ResponseEntity
                 .ok()
                 .contentLength(data.length)
-                .header("Content-type", "application/octet-stream")
                 .body(resource);
 
     }

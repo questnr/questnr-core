@@ -4,7 +4,7 @@ import com.questnr.security.JwtAuthenticationEntryPoint;
 import com.questnr.security.JwtAuthorizationTokenFilter;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUserDetailService;
-import com.questnr.utils.CaseInsensitiveRequestFilter;
+import com.questnr.util.CaseInsensitiveRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
