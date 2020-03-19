@@ -8,6 +8,7 @@ import com.questnr.model.entities.User;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.PostVisitRepository;
 import com.questnr.model.repositories.UserRepository;
+import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class PostVisitService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    CommonUserService commonUserService;
+    UserCommonService userCommonService;
 
     @Autowired
     UserRepository userRepository;
@@ -42,7 +43,7 @@ public class PostVisitService {
     public PostVisit createPostVisit(Long postId) {
         PostVisit postVisit = new PostVisit();
         PostAction postAction = postActionRepository.findByPostActionId(postId);
-        Long userId = commonUserService.getUserId();
+        Long userId = userCommonService.getUserId();
         User user = userRepository.findByUserId(userId);
         if (postId != null) {
             if (postVisitRepository.countByPostActionAndUserActor(postAction, user) == 0) {

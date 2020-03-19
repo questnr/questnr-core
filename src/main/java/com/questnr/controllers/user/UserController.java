@@ -1,0 +1,37 @@
+package com.questnr.controllers.user;
+
+import com.questnr.model.dto.UserDTO;
+import com.questnr.model.mapper.UserMapper;
+import com.questnr.services.user.UserCommonService;
+import com.questnr.services.user.UserService;
+import org.mapstruct.factory.Mappers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(value = "/api/v1")
+public class UserController {
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    UserCommonService userCommonService;
+
+    UserMapper userMapper;
+
+    UserController(){
+        userMapper = Mappers.getMapper(UserMapper.class);
+    }
+
+    @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
+    UserDTO getUser(@PathVariable long userId){
+        return userMapper.toOthersDTO(userCommonService.getUser());
+    }
+
+    @RequestMapping(value = "/delete-user", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    void deleteUser(@PathVariable long userId) {
+        userService.deleteUser();
+    }
+}

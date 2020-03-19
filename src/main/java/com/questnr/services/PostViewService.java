@@ -4,11 +4,10 @@ import com.questnr.exceptions.InvalidInputException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostView;
 import com.questnr.model.entities.User;
-import com.questnr.model.projections.LikeActionProjection;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.PostViewRepository;
 import com.questnr.model.repositories.UserRepository;
-import com.questnr.security.JwtTokenUtil;
+import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ public class PostViewService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    JwtTokenUtil jwtTokenUtil;
+    UserCommonService userCommonService;
 
     @Autowired
     UserRepository userRepository;
@@ -40,8 +39,7 @@ public class PostViewService {
     public PostView createPostView(Long postId) {
         PostView postView = new PostView();
         PostAction postAction = postActionRepository.findByPostActionId(postId);
-        long userId = jwtTokenUtil.getLoggedInUserID();
-        User user = userRepository.findByUserId(userId);
+        User user = userCommonService.getUser();
         if (postId != null) {
             if (postViewRepository.countByPostActionAndUserActor(postAction, user) == 0) {
                 try {

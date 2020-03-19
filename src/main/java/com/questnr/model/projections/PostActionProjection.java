@@ -1,6 +1,5 @@
 package com.questnr.model.projections;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.PostAction;
 import org.springframework.data.rest.core.config.Projection;

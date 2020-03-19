@@ -8,29 +8,28 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
-import com.questnr.exceptions.AmazonS3APIError;
-import com.questnr.responses.UserAvatarStorageData;
+import com.questnr.responses.AvatarStorageData;
+import com.questnr.services.community.CommunityCommonService;
+import com.questnr.services.user.UserCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.util.Date;
 
 @Service
 public class AmazonS3Client {
 
     @Autowired
-    CommonUserService commonUserService;
+    UserCommonService userCommonService;
+
+    @Autowired
+    CommunityCommonService communityCommonService;
 
     private AmazonS3 s3Client;
 
@@ -68,7 +67,7 @@ public class AmazonS3Client {
         this.s3Client.putObject(new PutObjectRequest(bucketName, pathToFile, file).withCannedAcl(CannedAccessControlList.PublicRead));
     }
 
-    public String getS3BucketUrl(String pathToFile){
+    public String getS3BucketUrl(String pathToFile) {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
         expTimeMillis += 1000 * 10;
@@ -80,20 +79,30 @@ public class AmazonS3Client {
         return s3Client.generatePresignedUrl(generatePresignedUrlRequest).toExternalForm();
     }
 
-    public UserAvatarStorageData uploadFile(MultipartFile multipartFile) {
-        UserAvatarStorageData userAvatarStorageData = new UserAvatarStorageData();
+    public AvatarStorageData uploadFileForUser(MultipartFile multipartFile) {
+        String fileName = this.generateFileName(multipartFile);
+        String pathToFile = userCommonService.joinPathToFile(fileName);
+        return this.uploadFile(multipartFile, pathToFile, fileName);
+    }
+
+    public AvatarStorageData uploadFileForCommunity(MultipartFile multipartFile, long communityId) {
+        String fileName = this.generateFileName(multipartFile);
+        String pathToFile = communityCommonService.joinPathToFile(fileName, communityId);
+        return this.uploadFile(multipartFile, pathToFile, fileName);
+    }
+
+    private AvatarStorageData uploadFile(MultipartFile multipartFile, String pathToFile, String fileName) {
+        AvatarStorageData avatarStorageData = new AvatarStorageData();
         try {
+            avatarStorageData.setFileName(fileName);
+            avatarStorageData.setUrl(this.getS3BucketUrl(pathToFile));
             File file = this.convertMultiPartToFile(multipartFile);
-            String fileName = this.generateFileName(multipartFile);
-            String pathToFile = commonUserService.joinPathToFile(fileName);
-            userAvatarStorageData.setFileName(fileName);
-            userAvatarStorageData.setUrl(this.getS3BucketUrl(pathToFile));
             this.uploadFileToS3bucket(pathToFile, file);
             file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return userAvatarStorageData;
+        return avatarStorageData;
     }
 
     public byte[] getFile(String pathToFile) {
@@ -121,8 +130,8 @@ public class AmazonS3Client {
         return "Successfully deleted";
     }
 
-    @ExceptionHandler(AmazonS3Exception.class)
-    public final void handleAmazonS3Exception(AmazonS3Exception ex, WebRequest request) {
-        throw new AmazonS3APIError(UNPROCESSABLE_ENTITY, ex.getLocalizedMessage());
-    }
+//    @ExceptionHandler(AmazonS3Exception.class)
+//    public final void handleAmazonS3Exception(AmazonS3Exception ex, WebRequest request) {
+//        throw new AmazonS3APIError(UNPROCESSABLE_ENTITY, ex.getLocalizedMessage());
+//    }
 }

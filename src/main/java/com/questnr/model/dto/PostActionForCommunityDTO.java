@@ -1,7 +1,6 @@
 package com.questnr.model.dto;
 
 import com.questnr.common.enums.PublishStatus;
-import com.questnr.model.entities.Community;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostVisit;
@@ -9,7 +8,7 @@ import com.questnr.model.entities.PostVisit;
 import java.util.List;
 import java.util.Set;
 
-public class PostActionDTO {
+public class PostActionForCommunityDTO {
     private Long postActionId;
     private String slug;
     private String title;
@@ -19,7 +18,6 @@ public class PostActionDTO {
     private boolean popular;
     private String tags;
     private String titleTag;
-    private CommunityDTO communityDTO;
     private Set<HashTag> hashTags;
     private Set<LikeAction> likeActionSet;
     private Set<PostVisit> postViewSet;
@@ -87,14 +85,6 @@ public class PostActionDTO {
 
     public void setTitleTag(String titleTag) {
         this.titleTag = titleTag;
-    }
-
-    public CommunityDTO getCommunityDTO() {
-        return communityDTO;
-    }
-
-    public void setCommunityDTO(CommunityDTO communityDTO) {
-        this.communityDTO = communityDTO;
     }
 
     public Long getPostActionId() {

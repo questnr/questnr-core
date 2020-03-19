@@ -1,5 +1,6 @@
 package com.questnr.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.io.Serializable;
@@ -31,6 +32,7 @@ public class DomainObject implements Serializable {
     @LastModifiedDate
     private Date updatedAt;
 
+    @JsonIgnore
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -39,6 +41,7 @@ public class DomainObject implements Serializable {
         this.createdAt = createdAt;
     }
 
+    @JsonIgnore
     public Date getUpdatedAt() {
         return updatedAt;
     }

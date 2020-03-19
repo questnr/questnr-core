@@ -1,32 +1,15 @@
 package com.questnr.model.entities;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.PublishStatus;
-
-import java.util.Date;
-import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Store;
 import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.springframework.stereotype.Indexed;
+
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "qr_community")
@@ -42,17 +25,6 @@ public class Community extends DomainObject {
     @Column(name = "community_name", length = 100, unique = true)
     public String communityName;
 
-    @Column(name = "icon_url")
-    private String icon_url;
-
-    @JsonIgnore
-    @Column(name = "createdAt")
-    private Date createdAt;
-
-    @JsonIgnore
-    @Column(name = "updateAt")
-    private Date updateAt;
-
     @Column(name = "description")
     private String description;
 
@@ -62,13 +34,17 @@ public class Community extends DomainObject {
     @Column(name = "slug")
     public String slug;
 
-    @Column(name = "ownerId")
-    private long ownerId;
+    @ManyToOne
+    @JoinColumn(name = "owner_user_id")
+    private User ownerUser;
 
     @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
     @Enumerated(EnumType.STRING)
     @Column(name = "community_status", length = 2000)
     private PublishStatus status;
+
+    @Column(name = "avatar")
+    private String avatar;
 
     @JsonIgnoreProperties("members")
     @ManyToMany(fetch = FetchType.EAGER)
@@ -96,22 +72,6 @@ public class Community extends DomainObject {
         this.communityName = communityName;
     }
 
-    public String getIcon_url() {
-        return icon_url;
-    }
-
-    public void setIcon_url(String icon_url) {
-        this.icon_url = icon_url;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -136,6 +96,29 @@ public class Community extends DomainObject {
         this.slug = slug;
     }
 
+    public User getOwnerUser() {
+        return ownerUser;
+    }
+
+    public void setOwnerUser(User ownerUser) {
+        this.ownerUser = ownerUser;
+    }
+
+    public PublishStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PublishStatus status) {
+        this.status = status;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
     public Set<User> getUsers() {
         return users;
     }
@@ -150,29 +133,5 @@ public class Community extends DomainObject {
 
     public void setPostActionSet(Set<PostAction> postActionSet) {
         this.postActionSet = postActionSet;
-    }
-
-    public long getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(long ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public PublishStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PublishStatus status) {
-        this.status = status;
-    }
-
-    public Date getUpdateAt() {
-        return updateAt;
-    }
-
-    public void setUpdateAt(Date updateAt) {
-        this.updateAt = updateAt;
     }
 }

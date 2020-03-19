@@ -9,7 +9,7 @@ import com.questnr.model.projections.LikeActionProjection;
 import com.questnr.model.repositories.LikeActionRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
-import com.questnr.security.JwtTokenUtil;
+import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ public class LikeActionService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    CommonUserService commonUserService;
+    UserCommonService userCommonService;
 
     @Autowired
     UserRepository userRepository;
@@ -42,7 +42,7 @@ public class LikeActionService {
     public LikeAction createLikeAction(Long postId) {
         LikeAction likeAction = new LikeAction();
         PostAction postAction = postActionRepository.findByPostActionId(postId);
-        Long userId = commonUserService.getUserId();
+        Long userId = userCommonService.getUserId();
         User user = userRepository.findByUserId(userId);
         if (postId != null) {
             if (likeActionRepository.countByPostActionAndUserActor(postAction, user) == 0) {
@@ -61,11 +61,11 @@ public class LikeActionService {
         return null;
     }
 
-    public ResponseEntity<?> deleteLikeAction(Long postId) throws ResourceNotFoundException {
-        Long userId = commonUserService.getUserId();
-        return likeActionRepository.findByPostActionAndUserActor(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
+    public void deleteLikeAction(Long postId) throws ResourceNotFoundException {
+        Long userId = userCommonService.getUserId();
+       likeActionRepository.findByPostActionAndUserActor(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
             likeActionRepository.delete(likeAction);
             return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Like not found: " + postId));
+        }).orElseThrow(() -> new ResourceNotFoundException("Like not found"));
     }
 }

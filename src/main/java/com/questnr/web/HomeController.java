@@ -6,7 +6,7 @@ import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
-import com.questnr.services.CommunityService;
+import com.questnr.services.community.CommunityService;
 
 import java.util.List;
 

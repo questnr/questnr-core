@@ -10,12 +10,12 @@ import com.questnr.model.repositories.CommentActionRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.requests.CommentActionRequest;
+import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -23,7 +23,7 @@ public class CommentActionService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    CommonUserService commonUserService;
+    UserCommonService userCommonService;
 
     @Autowired
     UserRepository userRepository;
@@ -42,7 +42,7 @@ public class CommentActionService {
 
     public CommentAction createCommentAction(CommentActionRequest commentActionRequest) {
         CommentAction commentAction = new CommentAction();
-        User user = commonUserService.getUser();
+        User user = userCommonService.getUser();
         if (commentActionRequest != null) {
             try {
                 if (commentActionRequest.getParentCommentId() != null && commentActionRepository.existsByCommentActionId(commentActionRequest.getParentCommentId())) {
@@ -68,15 +68,14 @@ public class CommentActionService {
         return null;
     }
 
-    public ResponseEntity<?> deleteCommentAction(Long postId, Long commentId) throws ResourceNotFoundException {
-        Long userId = commonUserService.getUserId();
+    public void deleteCommentAction(Long postId, Long commentId) throws ResourceNotFoundException {
+        Long userId = userCommonService.getUserId();
         PostAction postAction = postActionRepository.findByPostActionId(postId);
         CommentAction commentAction = this.getCommentActionUsingPostActionAndUserIdAndCommentId(postAction, userId, commentId);
         if (commentAction != null) {
             commentActionRepository.delete(commentAction);
-            return ResponseEntity.ok().build();
         } else {
-            throw new ResourceNotFoundException("Comment not found" + commentId);
+            throw new ResourceNotFoundException("Comment not found!");
         }
     }
 
@@ -89,7 +88,7 @@ public class CommentActionService {
                 return commentActionRepository.findByPostActionAndUserActorAndCommentActionId(postAction, userRepository.findByUserId(userId), commentId);
             }
         } catch (Exception e) {
-            throw new ResourceNotFoundException("Comment not found" + commentId);
+            throw new ResourceNotFoundException("Comment not found!");
         }
     }
 }
