@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping(value = "/api/v1")
 public class UserController {
@@ -27,6 +29,11 @@ public class UserController {
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
     UserDTO getUser(@PathVariable long userId){
         return userMapper.toOthersDTO(userCommonService.getUser());
+    }
+
+    @RequestMapping(value = "search/user/{userString}", method = RequestMethod.GET)
+    List<UserDTO> searchUserString(@PathVariable String userString){
+        return userMapper.toOthersDTOsFromProjections(userCommonService.searchUserString(userString));
     }
 
     @RequestMapping(value = "/delete-user", method = RequestMethod.DELETE)

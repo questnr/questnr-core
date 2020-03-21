@@ -39,7 +39,7 @@ public class CommunityPostActionService {
 
     public Page<PostAction> getAllPostActionsByCommunityId(long communityId, Pageable pageable) {
         try {
-            return postActionRepository.findAllByCommunity(communityCommonService.getCommunity(communityId), pageable);
+            return postActionRepository.findAllByCommunityOrderByCreatedAtDesc(communityCommonService.getCommunity(communityId), pageable);
         } catch (Exception e) {
             LOGGER.error(CommunityPostActionService.class.getName() + " Exception Occurred");
         }

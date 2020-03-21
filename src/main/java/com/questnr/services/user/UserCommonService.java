@@ -2,6 +2,7 @@ package com.questnr.services.user;
 
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.User;
+import com.questnr.model.projections.UserProjection;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.security.JwtTokenUtil;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
+import java.util.List;
 
 @Service
 public class UserCommonService {
@@ -49,5 +51,13 @@ public class UserCommonService {
 
     public String joinPathToFile(String fileName) {
         return Paths.get(this.getS3BucketUserFolder() ,fileName).toString();
+    }
+
+    public List<UserProjection> searchUserString(String userString){
+        try{
+            return userRepository.findByFullNameContaining(userString);
+        }catch (Exception e){
+            throw new ResourceNotFoundException("User not found!");
+        }
     }
 }

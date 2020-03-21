@@ -46,7 +46,7 @@ public class UserPostActionService {
         User user = userCommonService.getUser();
         if (user != null) {
             try {
-                return postActionRepository.findAllByUserActor(user, pageable);
+                return postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
             } catch (Exception e) {
                 LOGGER.error(PostAction.class.getName() + " Exception Occurred");
             }

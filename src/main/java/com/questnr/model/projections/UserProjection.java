@@ -14,4 +14,8 @@ public interface UserProjection {
     String getLastName();
 
     String getFullName();
+
+    String getEmailId();
+
+    String getAvatar();
 }
