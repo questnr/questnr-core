@@ -41,8 +41,9 @@ public class HomeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     String loginpage() {
+        return "angularProject";
 
-        return "homepage/landingPage";
+//        return "homepage/landingPage";
     }
 
     @RequestMapping(value = "/dashboard", method = RequestMethod.GET)
