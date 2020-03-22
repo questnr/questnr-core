@@ -2,12 +2,15 @@ package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.questnr.services.user.UserService;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.awt.print.Book;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -67,6 +70,12 @@ public class User extends DomainObject {
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
     private Set<Authority> authorities;
+
+    @OneToMany(mappedBy = "user")
+    private Set<CommunityUser> communityJoinedList;
+
+    @OneToMany(mappedBy = "user")
+    private Set<CommunityInvitedUser> communityInvitedUsers;
 
 //  @OneToMany(mappedBy = "user")
 //  private Set<PostAction> postActionSet;
@@ -175,8 +184,17 @@ public class User extends DomainObject {
         this.authorities = authorities;
     }
 
+    @JsonIgnore
+    public Set<CommunityUser> getCommunityJoinedList() {
+        return communityJoinedList;
+    }
 
-//  public Set<PostAction> getPostActionSet() {
+    @JsonIgnore
+    public Set<CommunityInvitedUser> getCommunityInvitedUsers() {
+        return communityInvitedUsers;
+    }
+
+    //  public Set<PostAction> getPostActionSet() {
 //    return postActionSet;
 //  }
 //

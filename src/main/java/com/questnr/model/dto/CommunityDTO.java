@@ -14,7 +14,7 @@ public class CommunityDTO {
     @Autowired
     CommunityCommonService communityCommonService;
 
-    public Long id;
+    public Long communityId;
 
     public String communityName;
 
@@ -32,12 +32,12 @@ public class CommunityDTO {
 
     private String avatarLink;
 
-    public Long getId() {
-        return id;
+    public Long getCommunityId() {
+        return communityId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCommunityId(Long communityId) {
+        this.communityId = communityId;
     }
 
     public String getCommunityName() {
@@ -101,6 +101,6 @@ public class CommunityDTO {
         if(this.getAvatar() == null || this.getAvatar().trim().isEmpty()){
             return null;
         }
-        return this.amazonS3Client.getS3BucketUrl(communityCommonService.joinPathToFile(this.getAvatar(),this.getId()));
+        return this.amazonS3Client.getS3BucketUrl(communityCommonService.joinPathToFile(this.getAvatar(),this.getCommunityId()));
     }
 }

@@ -4,6 +4,7 @@ import com.questnr.common.enums.PublishStatus;
 import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.services.AmazonS3Client;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunityService {
@@ -57,17 +59,16 @@ public class CommunityService {
 
     public void deleteCommunity(long communityId) {
         Community community = communityCommonService.getCommunity(communityId);
-        try{
-            if (!commonService.isNull(community.getAvatar())){
-                try{
+        try {
+            if (!commonService.isNull(community.getAvatar())) {
+                try {
                     this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(this.communityCommonService.joinPathToFile(community.getAvatar(), communityId));
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     LOGGER.error(CommunityService.class.getName() + " Exception Occurred. Couldn't able to delete resources of community on the cloud.");
                 }
             }
             communityRepository.delete(community);
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new ResourceNotFoundException("Community not Found!");
         }
     }
@@ -83,22 +84,23 @@ public class CommunityService {
         return communities;
     }
 
-    public List<User> getUsersFromCommunity(Long communityId){
-        try{
-            List<User> users = new ArrayList<>();
-            users.addAll(communityCommonService.getCommunity(communityId).getUsers());
+    public List<User> getUsersFromCommunity(Long communityId) {
+        try {
+            List<User> users = communityCommonService.getCommunity(communityId).getUsers().stream().map(communityUser ->
+                    communityUser.getUser()
+            ).collect(Collectors.toList());
             return users;
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
         }
         return null;
     }
 
-    public List<Community> getCommunitiesFromLikeString(String communityString){
-        try{
+    public List<Community> getCommunitiesFromLikeString(String communityString) {
+        try {
             return communityRepository.findByCommunityNameContaining(communityString);
-        }catch (Exception e){
+        } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
         }

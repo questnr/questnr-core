@@ -83,17 +83,17 @@ public class PostAction extends DomainObject {
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
-            mappedBy = "postAction")
+            mappedBy = "postAction", orphanRemoval = true)
     private Set<LikeAction> likeActionSet = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
-            mappedBy = "postAction")
+            mappedBy = "postAction", orphanRemoval = true)
     private Set<PostVisit> postViewSet = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
-            mappedBy = "postAction")
+            mappedBy = "postAction", orphanRemoval = true)
     private Set<CommentAction> commentActionSet = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)

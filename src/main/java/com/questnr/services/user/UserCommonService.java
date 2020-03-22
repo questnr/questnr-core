@@ -60,4 +60,24 @@ public class UserCommonService {
             throw new ResourceNotFoundException("User not found!");
         }
     }
+
+    public User getUser(String userEmailId){
+        User user = userRepository.findByEmailId(userEmailId);
+        if (user != null) {
+            return user;
+        } else {
+            LOGGER.error(User.class.getName() + " Exception Occurred");
+            throw new ResourceNotFoundException("Email id has not been registered!");
+        }
+    }
+
+    public User getUser(Long userId){
+        User user = userRepository.findByUserId(userId);
+        if (user != null) {
+            return user;
+        } else {
+            LOGGER.error(User.class.getName() + " Exception Occurred");
+            throw new ResourceNotFoundException("User does not exists!");
+        }
+    }
 }

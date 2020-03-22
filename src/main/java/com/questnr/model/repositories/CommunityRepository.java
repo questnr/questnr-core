@@ -2,23 +2,22 @@ package com.questnr.model.repositories;
 
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.Community;
-import com.questnr.model.entities.User;
 import com.questnr.responses.CommunityResponse;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 
-public interface CommunityRepository  extends JpaRepository <Community, Long>{
+public interface CommunityRepository extends JpaRepository<Community, Long> {
 
-  Community findById(long id);
+    Community findByCommunityId(long communityId);
 
-  CommunityResponse findAllByCommunityName(String name);
+    CommunityResponse findAllByCommunityName(String name);
 
-  List<Community> findAllByStatus(PublishStatus status);
+    List<Community> findAllByStatus(PublishStatus status);
 
-  Community findAllBySlug(String slug);
+    Community findAllBySlug(String slug);
 
-  @Query("Select c from Community c where c.communityName like %:communityString%")
-  List<Community> findByCommunityNameContaining(String communityString);
+    @Query("Select c from Community c where c.communityName like %:communityString%")
+    List<Community> findByCommunityNameContaining(String communityString);
 }

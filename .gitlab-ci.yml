@@ -28,5 +28,5 @@ build:
     - export GOOGLE_REDIRECTION_URL="https://sats.questnr.com/google-redirect"
     - export SSL_ENABLED=false
     - export SHOW_HIBERNATE_LOGS=false
-    - sudo pkill java || true
+    - pkill java || true
     - screen -d -m bash -c "java -jar target/web-1.0-SNAPSHOT.jar > /var/tmp/server.log 2>&1"

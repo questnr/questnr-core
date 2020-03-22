@@ -1,6 +1,5 @@
 package com.questnr.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.PublishStatus;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -9,6 +8,7 @@ import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -20,7 +20,7 @@ public class Community extends DomainObject {
     @Column(name = "community_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_seq")
     @SequenceGenerator(name = "community_seq", sequenceName = "community_seq", allocationSize = 1)
-    public Long id;
+    public Long communityId;
 
     @Column(name = "community_name", length = 100, unique = true)
     public String communityName;
@@ -46,22 +46,27 @@ public class Community extends DomainObject {
     @Column(name = "avatar")
     private String avatar;
 
-    @JsonIgnoreProperties("members")
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "QR_COMMUNITY_MEMBERS",
-            joinColumns = {@JoinColumn(name = "community_id", referencedColumnName = "community_id")},
-            inverseJoinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "ID")})
-    private Set<User> users;
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "community", orphanRemoval = true)
+    private Set<CommunityUser> users = new HashSet<>();
 
-    @OneToMany(mappedBy = "community")
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "community", orphanRemoval = true)
+    private Set<CommunityInvitedUser> invitedUsers = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "community", orphanRemoval = true)
     private Set<PostAction> postActionSet;
 
-    public Long getId() {
-        return id;
+    public Long getCommunityId() {
+        return communityId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCommunityId(Long communityId) {
+        this.communityId = communityId;
     }
 
     public String getCommunityName() {
@@ -119,12 +124,21 @@ public class Community extends DomainObject {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
-    public Set<User> getUsers() {
+
+    public Set<CommunityUser> getUsers() {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
+    public void setUsers(Set<CommunityUser> users) {
         this.users = users;
+    }
+
+    public Set<CommunityInvitedUser> getInvitedUsers() {
+        return invitedUsers;
+    }
+
+    public void setInvitedUsers(Set<CommunityInvitedUser> invitedUsers) {
+        this.invitedUsers = invitedUsers;
     }
 
     public Set<PostAction> getPostActionSet() {

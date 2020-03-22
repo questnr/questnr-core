@@ -20,7 +20,7 @@ public class CommunityCommonService {
     CommunityRepository communityRepository;
 
     public Community getCommunity(long communityId) {
-        Community community = communityRepository.findById(communityId);
+        Community community = communityRepository.findByCommunityId(communityId);
         if (community != null) {
             return community;
         } else {
@@ -30,7 +30,7 @@ public class CommunityCommonService {
     }
 
     public String getS3BucketUserFolder(long communityId) {
-        return Paths.get(dir,this.getCommunity(communityId).getId().toString()).toString();
+        return Paths.get(dir,this.getCommunity(communityId).getCommunityId().toString()).toString();
     }
 
     public String joinPathToFile(String fileName, long communityId) {
