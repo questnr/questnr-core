@@ -10,8 +10,6 @@ import javax.persistence.*;
 @Entity
 @Indexed
 @Table(name = "qr_post_media")
-@EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PostMedia {
     @Id
     @Column(name = "post_media_id")

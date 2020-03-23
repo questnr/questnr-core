@@ -10,8 +10,6 @@ import javax.persistence.*;
 @Entity
 @Indexed
 @Table(name = "qr_like_actions")
-@EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class LikeAction extends DomainObject {
     @Id
     @Column(name = "like_action_id")

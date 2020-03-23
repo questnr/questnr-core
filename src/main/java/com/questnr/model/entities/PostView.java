@@ -9,7 +9,6 @@ import javax.persistence.*;
 @Entity
 @Indexed
 @Table(name = "qr_post_views")
-@EntityListeners(AuditingEntityListener.class)
 public class PostView extends DomainObject {
     @Id
     @Column(name = "post_view_id")
