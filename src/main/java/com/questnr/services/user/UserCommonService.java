@@ -21,9 +21,6 @@ public class UserCommonService {
 
     private final String dir = "users";
 
-    @Value("${questNRProperties.pathSeparator}")
-    private String pathSeparator;
-
     @Autowired
     JwtTokenUtil jwtTokenUtil;
 

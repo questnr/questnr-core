@@ -26,6 +26,10 @@ build:
     - export WEBSITE_API_URL="https://sats.questnr.com/api/v1"
     - export FACEBOOK_REDIRECTION_URL="https://sats.questnr.com/facebook-redirect"
     - export GOOGLE_REDIRECTION_URL="https://sats.questnr.com/google-redirect"
+    - export AMAZON_S3_ENDPOINT_URL="https://s3.us-east-2.amazonaws.com"
+    - export AMAZON_S3_ACCESS_KEY="AKIAQFONFFIYAZBD7B54"
+    - export AMAZON_S3_SECRET_KEY="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"
+    - export AMAZON_S3_BUCKET_NAME="questnr-user-files"
     - export SSL_ENABLED=false
     - export SHOW_HIBERNATE_LOGS=false
     - pkill java || true
