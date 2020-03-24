@@ -30,10 +30,10 @@ public class CommunityAvatarService {
     CommunityRepository communityRepository;
 
     public String uploadAvatar(long communityId, MultipartFile file) {
-        AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFileForCommunity(file, communityId);
+        AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(file, communityId);
         try {
             Community community = communityCommonService.getCommunity(communityId);
-            community.setAvatar(avatarStorageData.getFileName());
+            community.setAvatar(avatarStorageData.getKey());
             communityRepository.save(community);
         } catch (Exception e) {
             LOGGER.error(CommunityAvatarService.class.getName() + " Exception Occurred");

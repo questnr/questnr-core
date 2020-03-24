@@ -2,7 +2,7 @@ package com.questnr.responses;
 
 public class AvatarStorageData {
     String url;
-    String fileName;
+    String key;
 
     public AvatarStorageData(){
 
@@ -10,7 +10,7 @@ public class AvatarStorageData {
 
     public AvatarStorageData(String url, String fileName) {
         this.url = url;
-        this.fileName = fileName;
+        this.key = fileName;
     }
 
     public String getUrl() {
@@ -21,11 +21,11 @@ public class AvatarStorageData {
         this.url = url;
     }
 
-    public String getFileName() {
-        return fileName;
+    public String getKey() {
+        return key;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setKey(String key) {
+        this.key = key;
     }
 }

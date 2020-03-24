@@ -11,6 +11,7 @@ import com.amazonaws.util.IOUtils;
 import com.questnr.responses.AvatarStorageData;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
+import com.questnr.util.ImageCompression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,7 @@ public class AmazonS3Client {
     public String getS3BucketUrl(String pathToFile) {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 10;
+        expTimeMillis += 1000 * 20;
         expiration.setTime(expTimeMillis);
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, pathToFile)
@@ -79,25 +80,27 @@ public class AmazonS3Client {
         return s3Client.generatePresignedUrl(generatePresignedUrlRequest).toExternalForm();
     }
 
-    public AvatarStorageData uploadFileForUser(MultipartFile multipartFile) {
+    public AvatarStorageData uploadFile(MultipartFile multipartFile) {
         String fileName = this.generateFileName(multipartFile);
         String pathToFile = userCommonService.joinPathToFile(fileName);
-        return this.uploadFile(multipartFile, pathToFile, fileName);
+        return this.uploadFile(multipartFile, pathToFile);
     }
 
-    public AvatarStorageData uploadFileForCommunity(MultipartFile multipartFile, long communityId) {
+    public AvatarStorageData uploadFile(MultipartFile multipartFile, long communityId) {
         String fileName = this.generateFileName(multipartFile);
         String pathToFile = communityCommonService.joinPathToFile(fileName, communityId);
-        return this.uploadFile(multipartFile, pathToFile, fileName);
+        return this.uploadFile(multipartFile, pathToFile);
     }
 
-    private AvatarStorageData uploadFile(MultipartFile multipartFile, String pathToFile, String fileName) {
+    private AvatarStorageData uploadFile(MultipartFile multipartFile, String pathToFile) {
         AvatarStorageData avatarStorageData = new AvatarStorageData();
         try {
-            avatarStorageData.setFileName(fileName);
+            avatarStorageData.setKey(pathToFile);
             avatarStorageData.setUrl(this.getS3BucketUrl(pathToFile));
             File file = this.convertMultiPartToFile(multipartFile);
-            this.uploadFileToS3bucket(pathToFile, file);
+            ImageCompression imageCompression = new ImageCompression(file);
+            File compressedFile = imageCompression.doCompression();
+            this.uploadFileToS3bucket(pathToFile, compressedFile);
             file.delete();
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.questnr.model.dto;
 
+import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.LikeAction;
@@ -14,6 +15,7 @@ public class PostActionForCommunityDTO {
     private String title;
     private String text;
     private PublishStatus status;
+    private PostActionPrivacy postActionPrivacy;
     private boolean featured;
     private boolean popular;
     private String tags;
@@ -53,6 +55,14 @@ public class PostActionForCommunityDTO {
 
     public void setStatus(PublishStatus status) {
         this.status = status;
+    }
+
+    public PostActionPrivacy getPostActionPrivacy() {
+        return postActionPrivacy;
+    }
+
+    public void setPostActionPrivacy(PostActionPrivacy postActionPrivacy) {
+        this.postActionPrivacy = postActionPrivacy;
     }
 
     public boolean isFeatured() {

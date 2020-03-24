@@ -50,9 +50,9 @@ public class CommunityPostActionService {
         if (postAction != null) {
             List<PostMedia> postMediaList;
             postMediaList = files.stream().map(multipartFile -> {
-                AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFileForCommunity(multipartFile, communityId);
+                AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(multipartFile, communityId);
                 PostMedia postMedia = new PostMedia();
-                postMedia.setMediaKey(avatarStorageData.getFileName());
+                postMedia.setMediaKey(avatarStorageData.getKey());
                 return postMedia;
             }).collect(Collectors.toList());
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
