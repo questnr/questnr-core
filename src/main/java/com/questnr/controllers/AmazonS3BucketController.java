@@ -28,7 +28,7 @@ public class AmazonS3BucketController {
 
     @RequestMapping(value = "/upload-file", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public AvatarStorageData uploadFile(@RequestPart(value = "file") MultipartFile file) {
-        return this.amazonS3Client.uploadFileForUser(file);
+        return this.amazonS3Client.uploadFile(file);
     }
 
     @RequestMapping(value = "/delete-file-using-url", method = RequestMethod.DELETE)

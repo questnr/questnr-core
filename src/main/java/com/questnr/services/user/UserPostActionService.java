@@ -60,9 +60,9 @@ public class UserPostActionService {
         if (postAction != null) {
             List<PostMedia> postMediaList;
             postMediaList = files.stream().map(multipartFile -> {
-                AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFileForUser(multipartFile);
+                AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(multipartFile);
                 PostMedia postMedia = new PostMedia();
-                postMedia.setMediaKey(avatarStorageData.getFileName());
+                postMedia.setMediaKey(avatarStorageData.getKey());
                 return postMedia;
             }).collect(Collectors.toList());
             return postActionService.creatPostAction(postAction, postMediaList);

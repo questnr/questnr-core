@@ -1,7 +1,7 @@
 package com.questnr.controllers.user;
 
-import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.dto.PostActionDTO;
+import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.services.user.UserPostActionService;
@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -35,7 +36,10 @@ public class UserPostActionController {
     @RequestMapping(value = "user/posts", method = RequestMethod.GET)
     Page<PostActionDTO> getAllPostsByUserId(Pageable pageable) {
         Page<PostAction> page = userPostActionService.getAllPostActionsByUserId(pageable);
-        return new PageImpl<PostActionDTO>(postActionMapper.toDTOs(page.getContent()), pageable, page.getTotalElements());
+        List<PostActionDTO> postActionDTOS = page.getContent().stream().map(postAction ->
+          postActionMapper.toDTO(postAction)
+        ).collect(Collectors.toList());
+        return new PageImpl<PostActionDTO>(postActionDTOS, pageable, page.getTotalElements());
     }
 
     @RequestMapping(value = "user/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})

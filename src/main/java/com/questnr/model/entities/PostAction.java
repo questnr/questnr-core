@@ -1,7 +1,7 @@
 package com.questnr.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
 
 import java.util.*;
@@ -45,6 +45,11 @@ public class PostAction extends DomainObject {
     @Column(name = "post_action_status")
     @Enumerated(EnumType.STRING)
     private PublishStatus status;
+
+    @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
+    @Column(name = "post_action_privacy")
+    @Enumerated(EnumType.STRING)
+    private PostActionPrivacy postActionPrivacy;
 
     @Column(name = "is_featured")
     private boolean featured;
@@ -140,6 +145,14 @@ public class PostAction extends DomainObject {
         this.status = status;
     }
 
+    public PostActionPrivacy getPostActionPrivacy() {
+        return postActionPrivacy;
+    }
+
+    public void setPostActionPrivacy(PostActionPrivacy postActionPrivacy) {
+        this.postActionPrivacy = postActionPrivacy;
+    }
+
     public boolean isFeatured() {
         return featured;
     }
@@ -164,7 +177,6 @@ public class PostAction extends DomainObject {
         this.postDate = postDate;
     }
 
-    @JsonIgnore
     public User getUserActor() {
         return userActor;
     }

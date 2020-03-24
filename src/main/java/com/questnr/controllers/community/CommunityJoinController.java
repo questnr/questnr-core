@@ -78,7 +78,7 @@ public class CommunityJoinController {
 
 
     // Revoke join operation
-    @RequestMapping(value = "/revoke-join/community/{communityId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/join/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void revokeJoinFromUser(@PathVariable long communityId, @RequestBody Long userId) {
         communityJoinService.revokeJoinFromUser(communityId, userId);

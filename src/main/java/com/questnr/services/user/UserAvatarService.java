@@ -29,10 +29,10 @@ public class UserAvatarService {
     UserRepository userRepository;
 
     public String uploadAvatar(MultipartFile file) {
-        AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFileForUser(file);
+        AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(file);
         try {
             User user = userCommonService.getUser();
-            user.setAvatar(avatarStorageData.getFileName());
+            user.setAvatar(avatarStorageData.getKey());
             userRepository.save(user);
         } catch (Exception e) {
             LOGGER.error(UserAvatarService.class.getName() + " Exception Occurred");
