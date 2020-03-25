@@ -1,5 +1,6 @@
 package com.questnr.controllers.community;
 
+import com.questnr.services.community.AccessService;
 import com.questnr.services.community.CommunityAvatarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -14,13 +15,21 @@ import java.io.IOException;
 @RestController
 @RequestMapping(value = "/api/v1/community")
 public class CommunityAvatarController {
+    @Autowired
+    AccessService accessService;
 
     @Autowired
     CommunityAvatarService communityAvatarService;
 
     @RequestMapping(value = "/{communityId}/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public String uploadFile(@PathVariable long communityId,@RequestPart(value = "file") MultipartFile file) {
-        return this.communityAvatarService.uploadAvatar(communityId, file);
+    public String uploadFile(@PathVariable long communityId, @RequestPart(value = "file") MultipartFile file) {
+        /*
+         * Community Avatar Security Checking
+         * */
+        if (accessService.hasAccessToCommunityAvatar(communityId)) {
+            return this.communityAvatarService.uploadAvatar(communityId, file);
+        }
+        return null;
     }
 
     @RequestMapping(value = "/{communityId}/avatar", method = RequestMethod.GET)
@@ -31,7 +40,12 @@ public class CommunityAvatarController {
     @RequestMapping(value = "/{communityId}/avatar", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteFileUsingPathToFile(@PathVariable long communityId) {
-        this.communityAvatarService.deleteAvatar(communityId);
+        /*
+         * Community Avatar Security Checking
+         * */
+        if (accessService.hasAccessToCommunityAvatar(communityId)) {
+            this.communityAvatarService.deleteAvatar(communityId);
+        }
     }
 
     @RequestMapping(value = "/{communityId}/download-avatar", method = RequestMethod.GET)
@@ -43,6 +57,5 @@ public class CommunityAvatarController {
                 .ok()
                 .contentLength(data.length)
                 .body(resource);
-
     }
 }

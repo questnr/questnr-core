@@ -34,6 +34,8 @@ public class CommentActionService {
     @Autowired
     PostActionRepository postActionRepository;
 
+    @Autowired
+    CommonService commonService;
 
     public Page<CommentActionProjection> getAllCommentActionByPostId(Long postId,
                                                                      Pageable pageable) {
@@ -43,21 +45,20 @@ public class CommentActionService {
     public CommentAction createCommentAction(CommentActionRequest commentActionRequest) {
         CommentAction commentAction = new CommentAction();
         User user = userCommonService.getUser();
+        PostAction postAction;
         if (commentActionRequest != null) {
             try {
                 if (commentActionRequest.getParentCommentId() != null && commentActionRepository.existsByCommentActionId(commentActionRequest.getParentCommentId())) {
                     CommentAction parentCommentAction = commentActionRepository.findByCommentActionId(commentActionRequest.getParentCommentId());
-                    commentAction.addMetadata();
-                    commentAction.setPostAction(parentCommentAction.getPostAction());
-                    commentAction.setCommentObject(commentActionRequest.getCommentObject());
                     commentAction.setParentCommentAction(parentCommentAction);
-                    commentAction.setUserActor(user);
+                    postAction = parentCommentAction.getPostAction();
                 } else {
-                    commentAction.addMetadata();
-                    commentAction.setPostAction(postActionRepository.findByPostActionId(commentActionRequest.getPostId()));
-                    commentAction.setCommentObject(commentActionRequest.getCommentObject());
-                    commentAction.setUserActor(user);
+                    postAction = postActionRepository.findByPostActionId(commentActionRequest.getPostId());
                 }
+                commentAction.setPostAction(postAction);
+                commentAction.setCommentObject(commentActionRequest.getCommentObject());
+                commentAction.addMetadata();
+                commentAction.setUserActor(user);
                 return commentActionRepository.save(commentAction);
             } catch (Exception e) {
                 LOGGER.error(CommentAction.class.getName() + " Exception Occurred");
