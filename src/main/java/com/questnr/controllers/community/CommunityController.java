@@ -1,10 +1,12 @@
 package com.questnr.controllers.community;
 
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
+import com.questnr.services.access.CommunityAvatarAccessService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityService;
 import org.mapstruct.factory.Mappers;
@@ -16,12 +18,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
 public class CommunityController {
+
+    final String errorMessage = "You don't have access for the particular operation";
+
+    @Autowired
+    CommunityAvatarAccessService communityAvatarService;
+
     @Autowired
     CommunityService communityService;
 
@@ -35,14 +42,19 @@ public class CommunityController {
     UserMapper userMapper;
 
     CommunityController() {
-
         communityMapper = Mappers.getMapper(CommunityMapper.class);
     }
 
     // Community CRUD Operations
     @RequestMapping(value = "/community", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     CommunityDTO createCommunity(@Valid Community requests, @Nullable @RequestParam(value = "file") MultipartFile multipartFile ) {
-        return communityMapper.toDTO(communityService.createCommunity(requests, multipartFile));
+        /*
+         * Community Creation Security Checking
+         * */
+        if(communityAvatarService.hasAccessToCommunityCreation()) {
+            return communityMapper.toDTO(communityService.createCommunity(requests, multipartFile));
+        }
+        throw new AccessException(errorMessage);
     }
 
     @RequestMapping(value = "/community/{communityId}", method = RequestMethod.GET)
@@ -53,7 +65,14 @@ public class CommunityController {
     @RequestMapping(value = "/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deleteCommunity(@PathVariable long communityId) {
-        communityService.deleteCommunity(communityId);
+        /*
+         * Community Deletion Security Checking
+         * */
+        if(communityAvatarService.hasAccessToCommunityDeletion()) {
+            communityService.deleteCommunity(communityId);
+        }else{
+            throw new AccessException(errorMessage);
+        }
     }
 
     // Get users of a single community.

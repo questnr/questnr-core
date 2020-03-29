@@ -22,15 +22,15 @@ public class BaseController {
     @Autowired
     BaseService baseService;
 
-    @RequestMapping(value = "/signup", method = RequestMethod.PUT)
-    SignUpResponse signup(@Valid @RequestBody User user) {
+    @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
+    SignUpResponse signupUser(@Valid @RequestBody User user) {
         SignUpResponse response = baseService.signUp(user);
 
         return response;
     }
 
 
-    @RequestMapping(value = "/login", method = RequestMethod.PUT)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     LoginResponse loginUser(@Valid @RequestBody LoginRequest request) {
         LoginResponse response = baseService.login(request);
 

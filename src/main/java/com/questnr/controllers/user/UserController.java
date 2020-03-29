@@ -36,9 +36,9 @@ public class UserController {
         return userMapper.toOthersDTOsFromProjections(userCommonService.searchUserString(userString));
     }
 
-    @RequestMapping(value = "/delete-user", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/delete-user/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deleteUser(@PathVariable long userId) {
-        userService.deleteUser();
+        userService.deleteUser(userId);
     }
 }

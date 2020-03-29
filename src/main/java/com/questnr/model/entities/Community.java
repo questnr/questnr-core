@@ -1,5 +1,6 @@
 package com.questnr.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questnr.common.enums.PublishStatus;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -125,6 +126,7 @@ public class Community extends DomainObject {
         this.avatar = avatar;
     }
 
+    @JsonIgnore
     public Set<CommunityUser> getUsers() {
         return users;
     }
@@ -141,6 +143,7 @@ public class Community extends DomainObject {
         this.invitedUsers = invitedUsers;
     }
 
+    @JsonIgnore
     public Set<PostAction> getPostActionSet() {
         return postActionSet;
     }

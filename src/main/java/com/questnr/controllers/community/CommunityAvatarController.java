@@ -1,6 +1,7 @@
 package com.questnr.controllers.community;
 
-import com.questnr.services.community.AccessService;
+import com.questnr.exceptions.AccessException;
+import com.questnr.services.access.CommunityAvatarAccessService;
 import com.questnr.services.community.CommunityAvatarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -15,8 +16,11 @@ import java.io.IOException;
 @RestController
 @RequestMapping(value = "/api/v1/community")
 public class CommunityAvatarController {
+
+    final String errorMessage = "You don't have access for the particular operation";
+
     @Autowired
-    AccessService accessService;
+    CommunityAvatarAccessService communityAvatarAccessService;
 
     @Autowired
     CommunityAvatarService communityAvatarService;
@@ -26,10 +30,10 @@ public class CommunityAvatarController {
         /*
          * Community Avatar Security Checking
          * */
-        if (accessService.hasAccessToCommunityAvatar(communityId)) {
+        if (communityAvatarAccessService.hasAccessToCommunityAvatar(communityId)) {
             return this.communityAvatarService.uploadAvatar(communityId, file);
         }
-        return null;
+        throw new AccessException(errorMessage);
     }
 
     @RequestMapping(value = "/{communityId}/avatar", method = RequestMethod.GET)
@@ -43,8 +47,10 @@ public class CommunityAvatarController {
         /*
          * Community Avatar Security Checking
          * */
-        if (accessService.hasAccessToCommunityAvatar(communityId)) {
+        if (communityAvatarAccessService.hasAccessToCommunityAvatar(communityId)) {
             this.communityAvatarService.deleteAvatar(communityId);
+        }else{
+            throw new AccessException(errorMessage);
         }
     }
 

@@ -5,6 +5,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Indexed
@@ -28,9 +29,15 @@ public class CommentAction extends DomainObject {
     @JoinColumn(name = "post_action_id", nullable = false)
     private PostAction postAction;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="parent_comment_action_id", referencedColumnName="comment_action_id")
+    @OneToMany(mappedBy = "parentCommentAction",cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<CommentAction> childCommentSet;
+
+    @ManyToOne
+    @JoinColumn(name = "parent_comment_id")
     private CommentAction parentCommentAction;
+
+    @Column(name = "is_child_comment")
+    private boolean childComment;
 
     public Long getCommentActionId() {
         return commentActionId;
@@ -66,7 +73,23 @@ public class CommentAction extends DomainObject {
         this.postAction = postAction;
     }
 
+    public Set<CommentAction> getChildCommentSet() {
+        return childCommentSet;
+    }
 
+    public void setChildCommentSet(Set<CommentAction> childCommentSet) {
+        this.childCommentSet = childCommentSet;
+    }
+
+    public boolean isChildComment() {
+        return childComment;
+    }
+
+    public void setChildComment(boolean childComment) {
+        this.childComment = childComment;
+    }
+
+    @JsonIgnore
     public CommentAction getParentCommentAction() {
         return parentCommentAction;
     }

@@ -1,13 +1,14 @@
 package com.questnr.controllers.community;
 
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionForCommunityDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.dto.PostActionRequestDTO;
+import com.questnr.services.access.PostActionAccessService;
 import com.questnr.services.community.CommunityPostActionService;
 import com.questnr.services.PostActionService;
-import com.questnr.services.community.AccessService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -26,11 +27,13 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api/v1")
 public class CommunityPostActionController {
 
+    final String errorMessage = "You don't have access for the particular operation";
+
     @Autowired
     CommunityPostActionService communityPostActionService;
 
     @Autowired
-    AccessService accessService;
+    PostActionAccessService postActionAccessService;
 
     @Autowired
     final PostActionMapper postActionMapper;
@@ -57,9 +60,9 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (accessService.hasAccessToCommunity(communityId))
+        if (postActionAccessService.hasAccessToPostCreation(communityId))
             return postActionMapper.toDTO(communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), files, communityId));
-        return null;
+        throw new AccessException(errorMessage);
     }
 
     @RequestMapping(value = "community/{communityId}/posts/{postId}", method = RequestMethod.PUT)
@@ -68,8 +71,11 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (accessService.hasAccessToCommunity(communityId))
+        if (postActionAccessService.hasAccessToPostModification(communityId))
             communityPostActionService.updatePostAction(communityId, postId, postActionMapper.fromPostActionRequestDTO(postActionRequest));
+        else{
+            throw new AccessException(errorMessage);
+        }
     }
 
     @RequestMapping(value = "community/{communityId}/posts/{postId}", method = RequestMethod.DELETE)
@@ -78,7 +84,11 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (accessService.hasAccessToCommunity(communityId))
+        if (postActionAccessService.hasAccessToPostDeletion(communityId))
             communityPostActionService.deletePostAction(communityId, postId);
+        else{
+            throw new AccessException(errorMessage);
+        }
     }
+
 }

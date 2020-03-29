@@ -1,10 +1,11 @@
 package com.questnr.controllers;
 
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.projections.CommentActionProjection;
 import com.questnr.requests.CommentActionRequest;
 import com.questnr.services.CommentActionService;
-import com.questnr.services.community.AccessService;
+import com.questnr.services.access.CommentActionAccessService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,11 +16,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/api/v1")
 public class CommentActionController {
 
+    final String errorMessage = "You don't have access to particular operation";
+
     @Autowired
     CommentActionService commentActionService;
 
     @Autowired
-    AccessService accessService;
+    CommentActionAccessService commentActionAccessService;
 
     @RequestMapping(value = "/posts/{postId}/comment", method = RequestMethod.GET)
     Page<CommentActionProjection> getAllCommentsByPostId(@PathVariable Long postId, Pageable pageable) {
@@ -31,11 +34,11 @@ public class CommentActionController {
         /*
          * Post Comment Security Checking
          * */
-        if (accessService.hasAccessToPost(postId)) {
+        if (commentActionAccessService.hasAccessToCommentCreation(postId)) {
             commentActionRequest.setPostId(postId);
             return commentActionService.createCommentAction(commentActionRequest);
         }
-        return null;
+        throw new AccessException(errorMessage);
     }
 
     @RequestMapping(value = "/posts/{postId}/comment/{commentId}", method = RequestMethod.DELETE)
@@ -44,8 +47,10 @@ public class CommentActionController {
         /*
          * Post Comment Security Checking
          * */
-        if (accessService.hasAccessToPost(postId)) {
+        if (commentActionAccessService.hasAccessToCommentDeletion(postId, commentId)) {
             commentActionService.deleteCommentAction(postId, commentId);
+        }else{
+            throw new AccessException(errorMessage);
         }
     }
 }

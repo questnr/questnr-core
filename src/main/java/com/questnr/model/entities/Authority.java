@@ -4,17 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.AuthorityName;
 import java.util.Objects;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -33,7 +23,10 @@ public class Authority {
   private AuthorityName name;
 
   @JsonIgnoreProperties("authorities")
-  @ManyToMany(mappedBy = "authorities", fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+  @JoinTable(name = "qr_user_authority",
+          joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+          inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
   private Set<User> users;
 
   public Long getAuthId() {

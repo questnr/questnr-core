@@ -2,15 +2,13 @@ package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.questnr.services.user.UserService;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.awt.print.Book;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -25,9 +23,11 @@ public class User extends DomainObject {
     @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
     private Long userId;
 
+    @NotBlank(message = "Username is mandatory")
     @Column(name = "username", length = 50, unique = true)
     private String userName;
 
+    @NotBlank(message = "Password is mandatory")
     @Column(name = "password", length = 100)
     @Size(min = 4, max = 100)
     private String password;
@@ -65,10 +65,7 @@ public class User extends DomainObject {
     private String avatar;
 
     @JsonIgnoreProperties("users")
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
-    @JoinTable(name = "qr_user_authority",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private Set<Authority> authorities;
 
     @OneToMany(mappedBy = "user")

@@ -18,6 +18,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 public class CommentActionService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
@@ -39,27 +41,30 @@ public class CommentActionService {
 
     public Page<CommentActionProjection> getAllCommentActionByPostId(Long postId,
                                                                      Pageable pageable) {
-        return commentActionRepository.findByPostAction(postActionRepository.findByPostActionId(postId), pageable);
+        return commentActionRepository.findAllByPostActionAndChildComment(postActionRepository.findByPostActionId(postId), false, pageable);
     }
 
     public CommentAction createCommentAction(CommentActionRequest commentActionRequest) {
         CommentAction commentAction = new CommentAction();
         User user = userCommonService.getUser();
-        PostAction postAction;
         if (commentActionRequest != null) {
             try {
-                if (commentActionRequest.getParentCommentId() != null && commentActionRepository.existsByCommentActionId(commentActionRequest.getParentCommentId())) {
-                    CommentAction parentCommentAction = commentActionRepository.findByCommentActionId(commentActionRequest.getParentCommentId());
-                    commentAction.setParentCommentAction(parentCommentAction);
-                    postAction = parentCommentAction.getPostAction();
-                } else {
-                    postAction = postActionRepository.findByPostActionId(commentActionRequest.getPostId());
-                }
+                PostAction postAction = postActionRepository.findByPostActionId(commentActionRequest.getPostId());
                 commentAction.setPostAction(postAction);
                 commentAction.setCommentObject(commentActionRequest.getCommentObject());
                 commentAction.addMetadata();
                 commentAction.setUserActor(user);
-                return commentActionRepository.save(commentAction);
+                if (commentActionRequest.getParentCommentId() != null && commentActionRepository.existsByCommentActionId(commentActionRequest.getParentCommentId())) {
+                    CommentAction parentCommentAction = commentActionRepository.findByCommentActionId(commentActionRequest.getParentCommentId());
+                    Set<CommentAction> commentActionSet = parentCommentAction.getChildCommentSet();
+                    commentAction.setChildComment(true);
+                    commentActionSet.add(commentAction);
+                    commentAction.setParentCommentAction(parentCommentAction);
+                    return commentActionRepository.save(commentAction);
+                }else {
+                    commentAction.setChildComment(false);
+                    return commentActionRepository.save(commentAction);
+                }
             } catch (Exception e) {
                 LOGGER.error(CommentAction.class.getName() + " Exception Occurred");
             }

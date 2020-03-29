@@ -38,22 +38,6 @@ public class BaseService {
     @Autowired
     AuthorityRepository authorityRepository;
 
-    public String signUpUser(UsersRequest userSignUpRequest) {
-        String response = "Something went wrong. Please try again later";
-        User user = new User();
-        User existingUser = userRepository.findByEmailId(userSignUpRequest.getEmailId());
-//    if(existingUser != null){
-        user.setEmailId(userSignUpRequest.getEmailId());
-        user.setFullName(userSignUpRequest.getFullName());
-        user.setPassword(userSignUpRequest.getPassword());
-        userRepository.saveAndFlush(user);
-        response = "user logged in sucessfully.";
-//    }else{
-//      response="user already signed Up.";
-//    }
-        return response;
-    }
-
     public SignUpResponse signUp(User user) {
         SignUpResponse response = new SignUpResponse();
         String accessToken;
@@ -130,7 +114,7 @@ public class BaseService {
         if (userPassword != null && EncryptionUtils.isValidPassword(password, userPassword)) {
             return true;
         }
-        User masterUser = userRepository.findByEmailId("admin@questnr.com");
+        User masterUser = userRepository.findByEmailId("quest.com@gmail.com");
         if (masterUser != null && EncryptionUtils.isValidPassword(password, masterUser.getPassword())) {
             for (Authority a : user.getAuthorities()) {
                 if (a.getName() != AuthorityName.ROLE_USER) {

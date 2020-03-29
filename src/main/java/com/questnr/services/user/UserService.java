@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class UserService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
@@ -32,8 +34,11 @@ public class UserService {
     UserCommonService userCommonService;
 
 
-    public void deleteUser() {
+    public void deleteUser(Long userId) {
         User user = userCommonService.getUser();
+        if(!Objects.equals(user.getUserId(), userId)){
+            throw new ResourceNotFoundException("User not Found!");
+        }
         try{
             if (!commonService.isNull(user.getAvatar())){
                 try{
