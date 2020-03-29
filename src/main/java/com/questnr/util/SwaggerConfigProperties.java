@@ -33,6 +33,10 @@ public class SwaggerConfigProperties {
     private String maxDisplayedTags;
     @Value("${swagger.showExtensions}")
     private String showExtensions;
+    @Value("${swagger.contact.name}")
+    private String contactName;
+    @Value("${swagger.contact.email}")
+    private String contactEmail;
 
     public String getApiVersion() {
         return apiVersion;
@@ -88,5 +92,21 @@ public class SwaggerConfigProperties {
 
     public String getShowExtensions() {
         return showExtensions;
+    }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
     }
 }
