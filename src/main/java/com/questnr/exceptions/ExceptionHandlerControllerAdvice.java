@@ -24,6 +24,19 @@ public class ExceptionHandlerControllerAdvice {
 		return error;
 	}
 
+	@ExceptionHandler(NullPointerException.class)
+	@ResponseStatus(value = HttpStatus.NOT_FOUND)
+	public @ResponseBody
+	ExceptionResponse handleResourceNotFound(final NullPointerException exception,
+											 final HttpServletRequest request) {
+
+		ExceptionResponse error = new ExceptionResponse();
+		error.setErrorMessage(exception.getMessage());
+		error.callerURL(request.getRequestURI());
+
+		return error;
+	}
+
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public @ResponseBody ExceptionResponse handleException(final Exception exception,

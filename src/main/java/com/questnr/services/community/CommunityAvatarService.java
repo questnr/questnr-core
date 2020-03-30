@@ -1,6 +1,7 @@
 package com.questnr.services.community;
 
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.entities.Avatar;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommunityRepository;
@@ -33,7 +34,10 @@ public class CommunityAvatarService {
         AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(file, communityId);
         try {
             Community community = communityCommonService.getCommunity(communityId);
-            community.setAvatar(avatarStorageData.getKey());
+            Avatar avatar = new Avatar();
+            avatar.addMetadata();
+            avatar.setAvatarKey(avatarStorageData.getKey());
+            community.setAvatar(avatar);
             communityRepository.save(community);
         } catch (Exception e) {
             LOGGER.error(CommunityAvatarService.class.getName() + " Exception Occurred");
@@ -43,17 +47,21 @@ public class CommunityAvatarService {
 
     public String getUserAvatar(long communityId) {
         Community community = communityCommonService.getCommunity(communityId);
-        if (!commonService.isNull(community.getAvatar())) {
-            return this.amazonS3Client.getS3BucketUrl(communityCommonService.joinPathToFile(community.getAvatar(), communityId));
+        if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
+            try {
+                return this.amazonS3Client.getS3BucketUrl(community.getAvatar().getAvatarKey());
+            } catch (Exception e) {
+                return null;
+            }
         }
         return null;
     }
 
     public void deleteAvatar(long communityId) {
         Community community = communityCommonService.getCommunity(communityId);
-        if (!commonService.isNull(community.getAvatar())) {
+        if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
             try {
-                this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(communityCommonService.joinPathToFile(community.getAvatar(), communityId));
+                this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(community.getAvatar().getAvatarKey());
             } catch (Exception e) {
                 throw new ResourceNotFoundException("User avatar not found!");
             }
@@ -68,8 +76,8 @@ public class CommunityAvatarService {
 
     public byte[] getAvatar(long communityId) {
         Community community = communityCommonService.getCommunity(communityId);
-        if (!commonService.isNull(community.getAvatar())) {
-            return this.amazonS3Client.getFile(communityCommonService.joinPathToFile(community.getAvatar(), communityId));
+        if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
+            return this.amazonS3Client.getFile(community.getAvatar().getAvatarKey());
         }
         return null;
     }

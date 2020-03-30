@@ -6,7 +6,6 @@ import com.questnr.model.entities.User;
 import com.questnr.model.repositories.AuthorityRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.requests.LoginRequest;
-import com.questnr.requests.UsersRequest;
 import com.questnr.responses.LoginResponse;
 import com.questnr.responses.SignUpResponse;
 import com.questnr.security.JwtTokenUtil;
@@ -60,7 +59,7 @@ public class BaseService {
         authoritySet.add(authority);
         user.setAuthorities(authoritySet);
         user.setEnabled(true);
-        user.setFullName(user.getUserName());
+        user.setFullName(user.getUsername());
         if (user != null) {
             // For encrypting the password
             String encPassword = EncryptionUtils.encryptPassword(user.getPassword());
@@ -70,9 +69,9 @@ public class BaseService {
             user.addMetadata();
             User savedUser = userRepository.saveAndFlush(user);
             if (savedUser != null) {
-                response.setUserName(savedUser.getUserName());
+                response.setUserName(savedUser.getUsername());
                 response.setLoginSucces(true);
-                JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUserName());
+                JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
                 accessToken = jwtTokenUtil.generateToken(userDetails);
                 response.setAccessToken(accessToken);
             } else {
@@ -94,9 +93,9 @@ public class BaseService {
             if (savedUser != null) {
                 if (checkValidLogin(savedUser, request.getPassword())) {
                     response.setLoginSucces(true);
-                    JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUserName());
+                    JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
                     accessToken = jwtTokenUtil.generateToken(userDetails);
-                    response.setUserName(savedUser.getUserName());
+                    response.setUserName(savedUser.getUsername());
                     response.setAccessToken(accessToken);
                 } else {
                     response.setLoginSucces(false);

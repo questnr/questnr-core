@@ -1,21 +1,10 @@
 package com.questnr.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.questnr.services.AmazonS3Client;
-import com.questnr.services.user.UserCommonService;
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class UserDTO {
-
-    @Autowired
-    AmazonS3Client amazonS3Client;
-
-    @Autowired
-    UserCommonService userCommonService;
 
     private long userId;
 
-    private String userName;
+    private String username;
 
     private String firstName;
 
@@ -25,9 +14,7 @@ public class UserDTO {
 
     private String emailId;
 
-    private String avatar;
-
-    private String avatarLink;
+    private AvatarDTO avatarDTO;
 
     public long getUserId() {
         return userId;
@@ -37,12 +24,12 @@ public class UserDTO {
         this.userId = userId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getFirstName() {
@@ -77,19 +64,11 @@ public class UserDTO {
         this.emailId = emailId;
     }
 
-    @JsonIgnore
-    public String getAvatar() {
-        return avatar;
+    public AvatarDTO getAvatarDTO() {
+        return avatarDTO;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getAvatarLink() {
-        if(this.getAvatar() == null || this.getAvatar().trim().isEmpty()){
-            return null;
-        }
-        return this.amazonS3Client.getS3BucketUrl(userCommonService.joinPathToFile(this.getAvatar()));
+    public void setAvatarDTO(AvatarDTO avatarDTO) {
+        this.avatarDTO = avatarDTO;
     }
 }

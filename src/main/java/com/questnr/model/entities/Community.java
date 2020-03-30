@@ -44,8 +44,9 @@ public class Community extends DomainObject {
     @Column(name = "community_status", length = 2000)
     private PublishStatus status;
 
-    @Column(name = "avatar")
-    private String avatar;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name="avatar_id")
+    private Avatar avatar;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -118,11 +119,11 @@ public class Community extends DomainObject {
         this.status = status;
     }
 
-    public String getAvatar() {
+    public Avatar getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
     }
 

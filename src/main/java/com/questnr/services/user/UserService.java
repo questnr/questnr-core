@@ -40,9 +40,9 @@ public class UserService {
             throw new ResourceNotFoundException("User not Found!");
         }
         try{
-            if (!commonService.isNull(user.getAvatar())){
+            if (!commonService.isNull(user.getAvatar().getAvatarKey())){
                 try{
-                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(this.userCommonService.joinPathToFile(user.getAvatar()));
+                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(user.getAvatar().getAvatarKey());
                 }
                 catch (Exception e){
                     LOGGER.error(Community.class.getName() + " Exception Occurred. Couldn't able to delete resources of community on the cloud.");

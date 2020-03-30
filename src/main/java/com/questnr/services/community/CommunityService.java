@@ -39,15 +39,19 @@ public class CommunityService {
     @Autowired
     UserCommonService userCommonService;
 
+    @Autowired
+    CommunityAvatarService communityAvatarService;
+
     public Community createCommunity(Community community, MultipartFile multipartFile) {
         if (community != null) {
             try {
-                community.addMetadata();
+                community.setOwnerUser(userCommonService.getUser());community.addMetadata();
+                Community communitySaved = communityRepository.saveAndFlush(community);
                 if (multipartFile != null) {
-
+                    communityAvatarService.uploadAvatar(communitySaved.getCommunityId(), multipartFile);
+                    return communityCommonService.getCommunity(communitySaved.getCommunityId());
                 }
-                community.setOwnerUser(userCommonService.getUser());
-                return communityRepository.saveAndFlush(community);
+                return communitySaved;
             } catch (Exception e) {
                 LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             }
@@ -60,9 +64,9 @@ public class CommunityService {
     public void deleteCommunity(long communityId) {
         Community community = communityCommonService.getCommunity(communityId);
         try {
-            if (!commonService.isNull(community.getAvatar())) {
+            if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
                 try {
-                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(this.communityCommonService.joinPathToFile(community.getAvatar(), communityId));
+                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(community.getAvatar().getAvatarKey());
                 } catch (Exception e) {
                     LOGGER.error(CommunityService.class.getName() + " Exception Occurred. Couldn't able to delete resources of community on the cloud.");
                 }

@@ -94,7 +94,7 @@ public class PostAction extends DomainObject {
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             mappedBy = "postAction", orphanRemoval = true)
-    private Set<PostVisit> postViewSet = new HashSet<>();
+    private Set<PostVisit> postVisitSet = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -217,12 +217,12 @@ public class PostAction extends DomainObject {
         this.likeActionSet = likeActionSet;
     }
 
-    public Set<PostVisit> getPostViewSet() {
-        return postViewSet;
+    public Set<PostVisit> getPostVisitSet() {
+        return postVisitSet;
     }
 
-    public void setPostViewSet(Set<PostVisit> postViewSet) {
-        this.postViewSet = postViewSet;
+    public void setPostVisitSet(Set<PostVisit> postVisitSet) {
+        this.postVisitSet = postVisitSet;
     }
 
     public Set<CommentAction> getCommentActionSet() {

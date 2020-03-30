@@ -23,10 +23,7 @@ public class Authority {
   private AuthorityName name;
 
   @JsonIgnoreProperties("authorities")
-  @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
-  @JoinTable(name = "qr_user_authority",
-          joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-          inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
+  @ManyToMany(mappedBy = "authorities", fetch = FetchType.LAZY)
   private Set<User> users;
 
   public Long getAuthId() {

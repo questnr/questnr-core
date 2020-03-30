@@ -21,7 +21,7 @@ public interface PostActionRepository extends JpaRepository <PostAction, Long>, 
 
   Page<PostAction> findAllByUserActorOrderByCreatedAtDesc(User user, Pageable pageable);
 
-  @Query(value = "select pa.postActionId, count(la) as totalLikes, count(pv) as totalVisits, count(ca) as totalComments from PostAction pa left outer join LikeAction la on la.postAction = pa left outer join PostVisit pv on pv.postAction = pa left outer join CommentAction ca on ca.postAction = pa group by pa.postActionId, la.likeActionId, pv.postVisitId, ca.commentActionId ORDER BY totalLikes DESC nulls last, totalVisits DESC nulls last, totalComments DESC nulls last")
+  @Query(value = "select pa.postActionId, SIZE(la) as totalLikes, SIZE(pv) as totalVisits, SIZE(ca) as totalComments from PostAction pa left outer join pa.likeActionSet la left outer join pa.postVisitSet pv left outer join pa.commentActionSet ca group by pa.postActionId, la.likeActionId, pv.postVisitId, ca.commentActionId ORDER BY totalLikes DESC nulls last, totalVisits DESC nulls last, totalComments DESC nulls last")
   List<Object[]> findAllByTrendingPost(Pageable pageable);
 
   Page<PostAction> findAllByCommunityOrderByCreatedAtDesc(Community community, Pageable pageable);

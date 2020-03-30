@@ -1,6 +1,7 @@
 package com.questnr.services.user;
 
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.entities.Avatar;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.responses.AvatarStorageData;
@@ -32,7 +33,10 @@ public class UserAvatarService {
         AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(file);
         try {
             User user = userCommonService.getUser();
-            user.setAvatar(avatarStorageData.getKey());
+            Avatar avatar = new Avatar();
+            avatar.addMetadata();
+            avatar.setAvatarKey(avatarStorageData.getKey());
+            user.setAvatar(avatar);
             userRepository.save(user);
         } catch (Exception e) {
             LOGGER.error(UserAvatarService.class.getName() + " Exception Occurred");
@@ -42,17 +46,21 @@ public class UserAvatarService {
 
     public String getUserAvatar(){
         User user = userCommonService.getUser();
-        if (!commonService.isNull(user.getAvatar())) {
-            return this.amazonS3Client.getS3BucketUrl(userCommonService.joinPathToFile(user.getAvatar()));
+        if (!commonService.isNull(user.getAvatar().getAvatarKey())) {
+            try {
+                return this.amazonS3Client.getS3BucketUrl(user.getAvatar().getAvatarKey());
+            }catch (Exception e){
+                return null;
+            }
         }
         return null;
     }
 
     public void deleteAvatar() {
         User user = userCommonService.getUser();
-        if (!commonService.isNull(user.getAvatar())) {
+        if (!commonService.isNull(user.getAvatar().getAvatarKey())) {
             try {
-                this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(userCommonService.joinPathToFile(user.getAvatar()));
+                this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(user.getAvatar().getAvatarKey());
             } catch (Exception e) {
                 throw new ResourceNotFoundException("User avatar not found!");
             }
@@ -67,8 +75,8 @@ public class UserAvatarService {
 
     public byte[] getAvatar() {
         User user = userCommonService.getUser();
-        if (!commonService.isNull(user.getAvatar())) {
-            return this.amazonS3Client.getFile(userCommonService.joinPathToFile(user.getAvatar()));
+        if (!commonService.isNull(user.getAvatar().getAvatarKey())) {
+            return this.amazonS3Client.getFile(user.getAvatar().getAvatarKey());
         }
         return null;
     }

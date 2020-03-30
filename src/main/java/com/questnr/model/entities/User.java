@@ -6,7 +6,6 @@ import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.Set;
@@ -25,7 +24,7 @@ public class User extends DomainObject {
 
     @NotBlank(message = "Username is mandatory")
     @Column(name = "username", length = 50, unique = true)
-    private String userName;
+    private String username;
 
     @NotBlank(message = "Password is mandatory")
     @Column(name = "password", length = 100)
@@ -61,11 +60,15 @@ public class User extends DomainObject {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastPasswordResetDate;
 
-    @Column(name = "avatar")
-    private String avatar;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name="avatar_id")
+    private Avatar avatar;
 
     @JsonIgnoreProperties("users")
-    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @JoinTable(name = "qr_user_authority",
+            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
     private Set<Authority> authorities;
 
     @OneToMany(mappedBy = "user")
@@ -73,6 +76,18 @@ public class User extends DomainObject {
 
     @OneToMany(mappedBy = "user")
     private Set<CommunityInvitedUser> communityInvitedUsers;
+
+
+    // Users following this user.
+    @OneToMany(mappedBy = "user")
+    private Set<UserFollower> thisBeingFollowedUserSet;
+
+
+    // This user following to another users.
+    @OneToMany(cascade = CascadeType.ALL,
+            mappedBy = "followingUser",
+            orphanRemoval = true)
+    private Set<UserFollower> thisFollowingUserSet;
 
 //  @OneToMany(mappedBy = "user")
 //  private Set<PostAction> postActionSet;
@@ -85,12 +100,12 @@ public class User extends DomainObject {
         this.userId = userId;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -165,11 +180,11 @@ public class User extends DomainObject {
         this.lastPasswordResetDate = lastPasswordResetDate;
     }
 
-    public String getAvatar() {
+    public Avatar getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar) {
+    public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
     }
 
@@ -189,6 +204,24 @@ public class User extends DomainObject {
     @JsonIgnore
     public Set<CommunityInvitedUser> getCommunityInvitedUsers() {
         return communityInvitedUsers;
+    }
+
+    @JsonIgnore
+    public Set<UserFollower> getThisBeingFollowedUserSet() {
+        return thisBeingFollowedUserSet;
+    }
+
+    public void setThisBeingFollowedUserSet(Set<UserFollower> thisBeingFollowedUserSet) {
+        this.thisBeingFollowedUserSet = thisBeingFollowedUserSet;
+    }
+
+    @JsonIgnore
+    public Set<UserFollower> getThisFollowingUserSet() {
+        return thisFollowingUserSet;
+    }
+
+    public void setThisFollowingUserSet(Set<UserFollower> thisFollowingUserSet) {
+        this.thisFollowingUserSet = thisFollowingUserSet;
     }
 
     //  public Set<PostAction> getPostActionSet() {

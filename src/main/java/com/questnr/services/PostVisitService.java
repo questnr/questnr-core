@@ -2,7 +2,6 @@ package com.questnr.services;
 
 import com.questnr.exceptions.InvalidInputException;
 import com.questnr.model.entities.PostAction;
-import com.questnr.model.entities.PostView;
 import com.questnr.model.entities.PostVisit;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.PostActionRepository;
@@ -32,9 +31,6 @@ public class PostVisitService {
     @Autowired
     PostActionRepository postActionRepository;
 
-    @Autowired
-    PostViewService postViewService;
-
     public Page<PostVisit> getAllPostVisitByPostId(Long postId,
                                                    Pageable pageable) {
         return postVisitRepository.findByPostAction(postActionRepository.findByPostActionId(postId), pageable);
@@ -59,7 +55,7 @@ public class PostVisitService {
                 }
             }
         } else {
-            throw new InvalidInputException(PostView.class.getName(), null, null);
+            throw new InvalidInputException(PostVisit.class.getName(), null, null);
         }
         return null;
     }

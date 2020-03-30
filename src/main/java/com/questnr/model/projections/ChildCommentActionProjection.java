@@ -10,4 +10,6 @@ public interface ChildCommentActionProjection {
     int getCommentActionId();
 
     String getCommentObject();
+
+    UserProjection getUserActor();
 }

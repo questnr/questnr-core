@@ -1,18 +1,8 @@
 package com.questnr.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questnr.common.enums.PublishStatus;
-import com.questnr.services.AmazonS3Client;
-import com.questnr.services.community.CommunityCommonService;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class CommunityDTO {
-
-    @Autowired
-    AmazonS3Client amazonS3Client;
-
-    @Autowired
-    CommunityCommonService communityCommonService;
 
     public Long communityId;
 
@@ -28,9 +18,7 @@ public class CommunityDTO {
 
     private PublishStatus status;
 
-    private String avatar;
-
-    private String avatarLink;
+    private AvatarDTO avatarDTO;
 
     public Long getCommunityId() {
         return communityId;
@@ -88,19 +76,11 @@ public class CommunityDTO {
         this.status = status;
     }
 
-    @JsonIgnore
-    public String getAvatar() {
-        return avatar;
+    public AvatarDTO getAvatarDTO() {
+        return avatarDTO;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
-    }
-
-    public String getAvatarLink() {
-        if(this.getAvatar() == null || this.getAvatar().trim().isEmpty()){
-            return null;
-        }
-        return this.amazonS3Client.getS3BucketUrl(communityCommonService.joinPathToFile(this.getAvatar(),this.getCommunityId()));
+    public void setAvatarDTO(AvatarDTO avatarDTO) {
+        this.avatarDTO = avatarDTO;
     }
 }

@@ -40,24 +40,24 @@ public class UserPostActionService {
     @Autowired
     PostActionRepository postActionRepository;
 
+    @Autowired
     UserCommonService userCommonService;
 
     public Page<PostAction> getAllPostActionsByUserId(Pageable pageable) {
         User user = userCommonService.getUser();
-        if (user != null) {
-            try {
-                return postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
-            } catch (Exception e) {
-                LOGGER.error(PostAction.class.getName() + " Exception Occurred");
-            }
-        } else {
-            throw new InvalidInputException(User.class.getName(), null, null);
+        try {
+            Page<PostAction> postActions = postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
+            return postActions;
+        } catch (Exception e) {
+            LOGGER.error(PostAction.class.getName() + " Exception Occurred");
         }
         return null;
     }
 
     public PostAction creatPostAction(PostAction postAction, List<MultipartFile> files) {
+        User user = userCommonService.getUser();
         if (postAction != null) {
+            postAction.setUserActor(user);
             List<PostMedia> postMediaList;
             postMediaList = files.stream().map(multipartFile -> {
                 AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(multipartFile);

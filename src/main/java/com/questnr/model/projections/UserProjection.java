@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.config.Projection;
 public interface UserProjection {
     Long getUserId();
 
-    String getUserName();
+    String getUsername();
 
     String getFirstName();
 
