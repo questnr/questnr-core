@@ -1,31 +1,36 @@
 package com.questnr.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class TrendingPostDTO extends PostActionDTO {
-    private int totalLikes;
-    private int totalPostVisits;
-    private int totalComments;
+    private int totalTrendingLikes;
+    private int totalTrendingComments;
+    private int totalTrendingPostVisits;
 
-    public int getTotalLikes() {
-        return totalLikes;
+    @JsonIgnore
+    public int getTotalTrendingLikes() {
+        return totalTrendingLikes;
     }
 
-    public void setTotalLikes(int totalLikes) {
-        this.totalLikes = totalLikes;
+    public void setTotalTrendingLikes(int totalTrendingLikes) {
+        this.totalTrendingLikes = totalTrendingLikes;
     }
 
-    public int getTotalPostVisits() {
-        return totalPostVisits;
+    @JsonIgnore
+    public int getTotalTrendingComments() {
+        return totalTrendingComments;
     }
 
-    public void setTotalPostVisits(int totalPostVisits) {
-        this.totalPostVisits = totalPostVisits;
+    public void setTotalTrendingComments(int totalTrendingComments) {
+        this.totalTrendingComments = totalTrendingComments;
     }
 
-    public int getTotalComments() {
-        return totalComments;
+    @JsonIgnore
+    public int getTotalTrendingPostVisits() {
+        return totalTrendingPostVisits;
     }
 
-    public void setTotalComments(int totalComments) {
-        this.totalComments = totalComments;
+    public void setTotalTrendingPostVisits(int totalTrendingPostVisits) {
+        this.totalTrendingPostVisits = totalTrendingPostVisits;
     }
 }

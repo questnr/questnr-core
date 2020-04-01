@@ -9,9 +9,15 @@ import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,23 +37,51 @@ public class TrendingPostService {
     @Autowired
     UserRepository userRepository;
 
-    TrendingPostService(){
+    TrendingPostService() {
         trendingPostMapper = Mappers.getMapper(TrendingPostMapper.class);
     }
 
-    public List<TrendingPostDTO> getTrendingPosts(Pageable pageable) {
-//        PostActionSpecificationBuilder builder = new PostActionSpecificationBuilder();
-//        PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "like"));
-//        return postActionRepository.findAll(builder.build(new LinkedList<Filter>()), PostActionProjection.class, pageable);
-        List<Object[]> objects = postActionRepository.findAllByTrendingPost(pageable);
+    private List<TrendingPostDTO> calculateTrend(List<TrendingPostDTO> trendingPostDTOList) {
+        return trendingPostDTOList;
+    }
+
+    private Page<TrendingPostDTO> getTrendingPostData(Date startingDate, Date endingDate, Pageable pageable) {
+        Page<Object[]> page = postActionRepository.findAllByTrendingPost(startingDate, endingDate, pageable);
         List<TrendingPostDTO> trendingPostDTOList = new LinkedList<>();
-        for (Object[] object : objects) {
+        for (Object[] object : page.getContent()) {
             TrendingPostDTO trendingPostDTO = trendingPostMapper.toDTO(postActionRepository.findByPostActionId(Long.parseLong(object[0].toString())));
-            trendingPostDTO.setTotalLikes(Integer.parseInt(object[1].toString()));
-            trendingPostDTO.setTotalPostVisits(Integer.parseInt(object[2].toString()));
-            trendingPostDTO.setTotalComments(Integer.parseInt(object[3].toString()));
+            trendingPostDTO.setTotalTrendingLikes(Integer.parseInt(object[1].toString()));
+            trendingPostDTO.setTotalTrendingComments(Integer.parseInt(object[2].toString()));
+            trendingPostDTO.setTotalTrendingPostVisits(Integer.parseInt(object[3].toString()));
             trendingPostDTOList.add(trendingPostDTO);
         }
-        return trendingPostDTOList;
+        return new PageImpl<TrendingPostDTO>(this.calculateTrend(trendingPostDTOList), pageable, page.getTotalElements());
+    }
+
+    public Page<TrendingPostDTO> getTrendingPostsOfTheWeek(Pageable pageable) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+//        Date startingDate = dateFormat.parse("2020-03-30");
+        Date startingDate;
+        Date endingDate;
+        try {
+            endingDate = new Date();
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime nowMinus7 = now.minusDays(7);
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, nowMinus7.getYear());
+            cal.set(Calendar.MONTH, nowMinus7.getMonthValue() - 1);
+            cal.set(Calendar.DAY_OF_MONTH, nowMinus7.getDayOfMonth());
+            startingDate = cal.getTime();
+            startingDate = dateFormat.parse(dateFormat.format(startingDate));
+            endingDate = dateFormat.parse(dateFormat.format(endingDate));
+        } catch (Exception e) {
+            startingDate = new Date();
+            Calendar c = Calendar.getInstance();
+            c.setTime(startingDate);
+            c.add(Calendar.DATE, 1);
+            endingDate = c.getTime();
+        }
+
+        return this.getTrendingPostData(startingDate, endingDate, pageable);
     }
 }

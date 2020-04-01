@@ -1,6 +1,7 @@
 package com.questnr.model.specifications;
 
 
+import com.questnr.common.enums.SearchCriteria;
 import com.questnr.model.entities.PostAction;
 import com.questnr.requests.Filter;
 import org.springframework.data.jpa.domain.Specification;
@@ -9,28 +10,28 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PostActionSpecificationBuilder {
+public class TrendingPostSpecificationBuilder {
 
-  private final List<Filter> params;
+  private final List<SearchCriteria> params;
 
-  public PostActionSpecificationBuilder() {
-    params = new ArrayList<Filter>();
+  public TrendingPostSpecificationBuilder() {
+    params = new ArrayList<SearchCriteria>();
   }
 
-  public PostActionSpecificationBuilder with(String key, String value) {
-    params.add(new Filter(key, value));
+  public TrendingPostSpecificationBuilder with(String key,String operation, String value) {
+    params.add(new SearchCriteria(key, operation, value));
     return this;
   }
 
-  public Specification<PostAction> build(LinkedList<Filter> params) {
+  public Specification<PostAction> build(LinkedList<SearchCriteria> params) {
     if (params.size() == 0) {
       return null;
     }
 
     LinkedList<Specification<PostAction>> specs = new LinkedList<>();
 
-    for (Filter param : params) {
-      specs.add(new PostActionSpecification(param));
+    for (SearchCriteria param : params) {
+      specs.add(new TrendingPostSpecification(param));
     }
 
     Specification<PostAction> result = specs.get(0);

@@ -8,9 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import th.co.geniustree.springdata.jpa.repository.JpaSpecificationExecutorWithProjection;
 
-import java.util.List;
+import java.util.Date;
 import java.util.Set;
 
 public interface PostActionRepository extends JpaRepository <PostAction, Long>, JpaSpecificationExecutorWithProjection<PostAction> {
@@ -21,8 +22,21 @@ public interface PostActionRepository extends JpaRepository <PostAction, Long>, 
 
   Page<PostAction> findAllByUserActorOrderByCreatedAtDesc(User user, Pageable pageable);
 
-  @Query(value = "select pa.postActionId, SIZE(la) as totalLikes, SIZE(pv) as totalVisits, SIZE(ca) as totalComments from PostAction pa left outer join pa.likeActionSet la left outer join pa.postVisitSet pv left outer join pa.commentActionSet ca group by pa.postActionId, la.likeActionId, pv.postVisitId, ca.commentActionId ORDER BY totalLikes DESC nulls last, totalVisits DESC nulls last, totalComments DESC nulls last")
-  List<Object[]> findAllByTrendingPost(Pageable pageable);
+  @Query("select pa.postActionId, " +
+          " COUNT(DISTINCT la.likeActionId) as totalLikes, " +
+          " COUNT(DISTINCT ca.commentActionId) as totalComments, " +
+          " COUNT(DISTINCT pv.postVisitId) as totalVisits " +
+          " from PostAction pa " +
+          " left outer join pa.likeActionSet la " +
+          " left outer join pa.commentActionSet ca " +
+          " left outer join pa.postVisitSet pv " +
+          " where pa.createdAt BETWEEN :startingDate and :endingDate " +
+          " group by pa.postActionId " +
+          " ORDER BY " +
+          " totalLikes DESC nulls last, " +
+          " totalComments DESC nulls last, " +
+          " totalVisits DESC nulls last")
+  Page<Object[]> findAllByTrendingPost(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, Pageable pageable);
 
   Page<PostAction> findAllByCommunityOrderByCreatedAtDesc(Community community, Pageable pageable);
 

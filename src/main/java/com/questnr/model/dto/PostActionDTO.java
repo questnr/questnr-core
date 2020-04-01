@@ -2,6 +2,7 @@ package com.questnr.model.dto;
 
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
+import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostVisit;
@@ -24,8 +25,12 @@ public class PostActionDTO {
     private CommunityDTO communityDTO;
     private Set<HashTag> hashTags;
     private Set<LikeAction> likeActionSet;
-    private Set<PostVisit> postViewSet;
+    private Set<CommentAction> commentActionSet;
+    private Set<PostVisit> postVisitSet;
     private List<PostMediaDTO> postMediaDTOList;
+    private int totalLikes;
+    private int totalComments;
+    private int totalPostVisits;
 
     public String getSlug() {
         return slug;
@@ -131,20 +136,32 @@ public class PostActionDTO {
         this.hashTags = hashTags;
     }
 
-    public Set<LikeAction> getLikeActionSet() {
-        return likeActionSet;
-    }
 
     public void setLikeActionSet(Set<LikeAction> likeActionSet) {
         this.likeActionSet = likeActionSet;
+        try {
+            this.setTotalLikes(likeActionSet.size());
+        } catch (Exception e) {
+            this.setTotalLikes(0);
+        }
     }
 
-    public Set<PostVisit> getPostViewSet() {
-        return postViewSet;
+    public void setCommentActionSet(Set<CommentAction> commentActionSet) {
+        this.commentActionSet = commentActionSet;
+        try {
+            this.setTotalComments(commentActionSet.size());
+        } catch (Exception e) {
+            this.setTotalLikes(0);
+        }
     }
 
-    public void setPostViewSet(Set<PostVisit> postViewSet) {
-        this.postViewSet = postViewSet;
+    public void setPostVisitSet(Set<PostVisit> postVisitSet) {
+        this.postVisitSet = postVisitSet;
+        try {
+            this.setTotalPostVisits(postVisitSet.size());
+        } catch (Exception e) {
+            this.setTotalLikes(0);
+        }
     }
 
     public List<PostMediaDTO> getPostMediaDTOList() {
@@ -153,5 +170,30 @@ public class PostActionDTO {
 
     public void setPostMediaDTOList(List<PostMediaDTO> postMediaDTOList) {
         this.postMediaDTOList = postMediaDTOList;
+    }
+
+
+    public int getTotalLikes() {
+        return totalLikes;
+    }
+
+    public void setTotalLikes(int totalLikes) {
+        this.totalLikes = totalLikes;
+    }
+
+    public int getTotalComments() {
+        return totalComments;
+    }
+
+    public void setTotalComments(int totalComments) {
+        this.totalComments = totalComments;
+    }
+
+    public int getTotalPostVisits() {
+        return totalPostVisits;
+    }
+
+    public void setTotalPostVisits(int totalPostVisits) {
+        this.totalPostVisits = totalPostVisits;
     }
 }
