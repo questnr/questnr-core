@@ -4,6 +4,7 @@ import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.services.access.CommunityAvatarAccessService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -78,6 +80,10 @@ public class CommunityController {
     // Get users of a single community.
     @RequestMapping(value = "/community/{communityId}/users", method = RequestMethod.GET)
     List<UserDTO> getUsersFromCommunity(@PathVariable long communityId){
+//        List<UserDTO> userDTOS = new ArrayList<>();
+//        for(User user: communityService.getUsersFromCommunity(communityId)){
+//            userDTOS.add(userMapper.toOthersDTO(user));
+//        }
         return userMapper.toOthersDTOs(communityService.getUsersFromCommunity(communityId));
     }
 

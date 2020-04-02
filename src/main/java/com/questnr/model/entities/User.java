@@ -61,7 +61,7 @@ public class User extends DomainObject {
     private Date lastPasswordResetDate;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name="avatar_id")
+    @JoinColumn(name = "avatar_id")
     private Avatar avatar;
 
     @JsonIgnoreProperties("users")
@@ -89,8 +89,9 @@ public class User extends DomainObject {
             orphanRemoval = true)
     private Set<UserFollower> thisFollowingUserSet;
 
-//  @OneToMany(mappedBy = "user")
-//  private Set<PostAction> postActionSet;
+    @JsonIgnoreProperties("userActor")
+    @OneToMany(mappedBy = "userActor")
+    private Set<PostAction> postActionSet;
 
     public Long getUserId() {
         return userId;
@@ -224,11 +225,11 @@ public class User extends DomainObject {
         this.thisFollowingUserSet = thisFollowingUserSet;
     }
 
-    //  public Set<PostAction> getPostActionSet() {
-//    return postActionSet;
-//  }
-//
-//  public void setPostActionSet(Set<PostAction> postActionSet) {
-//    this.postActionSet = postActionSet;
-//  }
+    public Set<PostAction> getPostActionSet() {
+        return postActionSet;
+    }
+
+    public void setPostActionSet(Set<PostAction> postActionSet) {
+        this.postActionSet = postActionSet;
+    }
 }

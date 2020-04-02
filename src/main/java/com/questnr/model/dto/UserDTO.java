@@ -10,8 +10,6 @@ public class UserDTO {
 
     private String lastName;
 
-    private String fullName;
-
     private String emailId;
 
     private AvatarDTO avatarDTO;
@@ -46,14 +44,6 @@ public class UserDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public String getEmailId() {

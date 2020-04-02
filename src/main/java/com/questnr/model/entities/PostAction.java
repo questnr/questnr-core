@@ -1,5 +1,6 @@
 package com.questnr.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
@@ -63,6 +64,7 @@ public class PostAction extends DomainObject {
     @Column(name = "post_action_date")
     private Date postDate;
 
+    @JsonIgnoreProperties("postActionSet")
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User userActor;

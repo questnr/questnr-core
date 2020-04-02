@@ -1,15 +1,13 @@
 package com.questnr.model.mapper;
 
+import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionForCommunityDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
-import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.entities.PostAction;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.ReportingPolicy;
-
-import java.util.List;
 
 @Mapper(uses = {PostMediaMapper.class, CommunityMapper.class, UserMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface PostActionMapper {

@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import th.co.geniustree.springdata.jpa.repository.JpaSpecificationExecutorWithProjection;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 public interface PostActionRepository extends JpaRepository <PostAction, Long>, JpaSpecificationExecutorWithProjection<PostAction> {
@@ -44,4 +45,6 @@ public interface PostActionRepository extends JpaRepository <PostAction, Long>, 
 
   @Query(value = "select pa from PostAction pa join pa.postMediaList pm where pm.postMediaId = :postMediaId")
   PostAction findByPostMediaListContaining(Long postMediaId);
+
+  List<PostAction> findAllByUserActor(User user);
 }
