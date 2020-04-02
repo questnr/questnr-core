@@ -8,6 +8,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -231,5 +232,20 @@ public class User extends DomainObject {
 
     public void setPostActionSet(Set<PostAction> postActionSet) {
         this.postActionSet = postActionSet;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        System.out.println("equals called");
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return userId.equals(user.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        System.out.println("hashCode called");
+        return Objects.hash(userId);
     }
 }

@@ -22,7 +22,7 @@ public class PostActionDTO {
     private String tags;
     private String titleTag;
     private UserDTO userDTO;
-    private CommunityDTO communityDTO;
+    private CommunityForPostActionDTO communityDTO;
     private Set<HashTag> hashTags;
     private Set<LikeAction> likeActionSet;
     private Set<CommentAction> commentActionSet;
@@ -112,11 +112,11 @@ public class PostActionDTO {
         this.userDTO = userDTO;
     }
 
-    public CommunityDTO getCommunityDTO() {
+    public CommunityForPostActionDTO getCommunityDTO() {
         return communityDTO;
     }
 
-    public void setCommunityDTO(CommunityDTO communityDTO) {
+    public void setCommunityDTO(CommunityForPostActionDTO communityDTO) {
         this.communityDTO = communityDTO;
     }
 
