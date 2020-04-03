@@ -1,6 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.common.enums.AuthorityName;
+import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.model.entities.Authority;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.AuthorityRepository;
@@ -40,15 +41,16 @@ public class BaseService {
     public SignUpResponse signUp(User user) {
         SignUpResponse response = new SignUpResponse();
         String accessToken;
-        if (user != null && user.getEmailId() != null) {
-            User existingUser = userRepository.findByEmailId(user.getEmailId());
-
-            // TODO return this message properly to front
-            if (existingUser != null) {
+        if (user != null && user.getEmailId() != null && user.getUsername() != null) {
+            try {
+                this.checkEmailIsTaken(user.getEmailId());
+                this.checkUsernameIsTaken(user.getUsername());
+            } catch (AlreadyExistsException e) {
                 response.setLoginSucces(false);
-                response.setErrorMessage("User already exists. Please login.");
+                response.setErrorMessage(e.getMessage());
                 return response;
             }
+
         }
         Set<Authority> authoritySet = new HashSet<Authority>();
         Authority authority = authorityRepository.findByName(AuthorityName.ROLE_USER);
@@ -60,25 +62,21 @@ public class BaseService {
         user.setAuthorities(authoritySet);
         user.setEnabled(true);
         user.setFullName(user.getUsername());
-        if (user != null) {
-            // For encrypting the password
-            String encPassword = EncryptionUtils.encryptPassword(user.getPassword());
-            if (encPassword != null) {
-                user.setPassword(encPassword);
-            }
-            user.addMetadata();
-            User savedUser = userRepository.saveAndFlush(user);
-            if (savedUser != null) {
-                response.setUserName(savedUser.getUsername());
-                response.setLoginSucces(true);
-                JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
-                accessToken = jwtTokenUtil.generateToken(userDetails);
-                response.setAccessToken(accessToken);
-            } else {
-                response.setErrorMessage("Error signing up. Please try again.");
-                response.setLoginSucces(false);
-            }
+
+        // For encrypting the password
+        String encPassword = EncryptionUtils.encryptPassword(user.getPassword());
+        if (encPassword != null) {
+            user.setPassword(encPassword);
         }
+        user.addMetadata();
+        user.setSlug(user.getUsername());
+        User savedUser = userRepository.saveAndFlush(user);
+        response.setUserName(savedUser.getUsername());
+        response.setLoginSucces(true);
+        JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
+        accessToken = jwtTokenUtil.generateToken(userDetails);
+        response.setAccessToken(accessToken);
+
         return response;
     }
 
@@ -125,4 +123,15 @@ public class BaseService {
         return false;
     }
 
+    public void checkUsernameIsTaken(String username) {
+        if (userRepository.existsByUsername(username)) {
+            throw new AlreadyExistsException("Username is already taken");
+        }
+    }
+
+    public void checkEmailIsTaken(String email) {
+        if (userRepository.existsByEmailId(email)) {
+            throw new AlreadyExistsException("User already exists");
+        }
+    }
 }

@@ -65,6 +65,9 @@ public class User extends DomainObject {
     @JoinColumn(name = "avatar_id")
     private Avatar avatar;
 
+    @Column(name = "slug")
+    private String slug;
+
     @JsonIgnoreProperties("users")
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinTable(name = "qr_user_authority",
@@ -188,6 +191,14 @@ public class User extends DomainObject {
 
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public Set<Authority> getAuthorities() {

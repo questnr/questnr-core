@@ -18,6 +18,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByUserId(long id);
 
+    boolean existsByUsername(String username);
+
+    boolean existsByEmailId(String emailId);
+
     @Query("Select user from User user where user.fullName like %:userString%")
     List<UserProjection> findByFullNameContaining(String userString);
 

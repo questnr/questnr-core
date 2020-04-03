@@ -24,17 +24,19 @@ public class BaseController {
 
     @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
     SignUpResponse signupUser(@Valid @RequestBody User user) {
-        SignUpResponse response = baseService.signUp(user);
-
-        return response;
+        return baseService.signUp(user);
     }
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     LoginResponse loginUser(@Valid @RequestBody LoginRequest request) {
-        LoginResponse response = baseService.login(request);
+        return baseService.login(request);
+    }
 
-        return response;
+    @RequestMapping(value = "/check-username", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    void checkUsername(@RequestParam String username) {
+        baseService.checkUsernameIsTaken(username);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
