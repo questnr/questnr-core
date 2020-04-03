@@ -31,7 +31,7 @@ public class PostAction extends DomainObject {
     private Long postActionId;
 
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
-    @Column(name = "post_action_slug", length = 20000)
+    @Column(name = "post_action_slug", length = 20000, unique = true)
     private String slug;
 
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
@@ -72,7 +72,7 @@ public class PostAction extends DomainObject {
     @Column(name = "post_action_tags")
     private String tags;
 
-    @Column(name = "title_tag")
+    @Column(name = "title_tag", length = 200000)
     private String titleTag;
 
     @ManyToOne

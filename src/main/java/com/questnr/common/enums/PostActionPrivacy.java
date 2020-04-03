@@ -1,7 +1,7 @@
 package com.questnr.common.enums;
 
 public enum PostActionPrivacy {
-  PUBLIC_POST("public"), PRIVATE_POST("private");
+  public_post("public_post"), private_post("private_post");
 
   public String jsonValue;
 
