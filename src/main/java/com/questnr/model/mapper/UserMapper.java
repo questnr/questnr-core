@@ -2,6 +2,7 @@ package com.questnr.model.mapper;
 
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.dto.UserWithRankDTO;
+import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
 import com.questnr.model.projections.UserProjection;
 import org.mapstruct.Mapper;

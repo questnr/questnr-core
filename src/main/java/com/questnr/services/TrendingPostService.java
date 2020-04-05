@@ -49,8 +49,6 @@ public class TrendingPostService {
         Page<Object[]> page = postActionRepository.findAllByTrendingPost(startingDate, endingDate, pageable);
         List<TrendingPostDTO> trendingPostDTOList = new LinkedList<>();
         List<Object[]> trendingData = page.getContent();
-        System.out.println("======0======");
-        System.out.println(trendingData.size());
         for (Object[] object : trendingData) {
             TrendingPostDTO trendingPostDTO = trendingPostMapper.toDTO(postActionRepository.findByPostActionId(Long.parseLong(object[0].toString())));
             trendingPostDTO.setTotalTrendingLikes(Integer.parseInt(object[1].toString()));
@@ -58,7 +56,7 @@ public class TrendingPostService {
             trendingPostDTO.setTotalTrendingPostVisits(Integer.parseInt(object[3].toString()));
             trendingPostDTOList.add(trendingPostDTO);
         }
-        return new PageImpl<TrendingPostDTO>(this.calculateTrend(trendingPostDTOList), pageable, page.getTotalElements());
+        return new PageImpl<>(this.calculateTrend(trendingPostDTOList), pageable, page.getTotalElements());
     }
 
     public Page<TrendingPostDTO> getTrendingPostsOfTheWeek(Pageable pageable) {

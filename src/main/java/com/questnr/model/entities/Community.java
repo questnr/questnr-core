@@ -32,7 +32,7 @@ public class Community extends DomainObject {
     @Column(name = "rules")
     private String rules;
 
-    @Column(name = "slug")
+    @Column(name = "slug", unique = true)
     public String slug;
 
     @ManyToOne

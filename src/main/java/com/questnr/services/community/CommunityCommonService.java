@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 public class CommunityCommonService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private final String dir="communities";
+    private final String DIR="communities";
 
     @Autowired
     CommunityRepository communityRepository;
@@ -29,8 +29,18 @@ public class CommunityCommonService {
         }
     }
 
+    public Community getCommunity(String communityString) {
+        Community community = communityRepository.findFirstBySlug(communityString);
+        if (community != null) {
+            return community;
+        } else {
+            LOGGER.error(Community.class.getName() + " Exception Occurred");
+            throw new ResourceNotFoundException("Community not found!");
+        }
+    }
+
     public String getS3BucketUserFolder(long communityId) {
-        return Paths.get(dir,this.getCommunity(communityId).getCommunityId().toString()).toString();
+        return Paths.get(DIR,this.getCommunity(communityId).getCommunityId().toString()).toString();
     }
 
     public String joinPathToFile(String fileName, long communityId) {

@@ -52,7 +52,7 @@ public class PostActionService {
 
     final private String POST_ACTION_PATH = "posts";
 
-    private String getPostActionSlug(PostAction postAction) {
+    private String createPostActionSlug(PostAction postAction) {
         Long timeStamp = new Date().getTime();
         List<String> titleChunks = Arrays.asList(postAction.getTitle().toLowerCase().split("\\s"));
         int maxTitleChunk = titleChunks.size();
@@ -81,7 +81,7 @@ public class PostActionService {
             postAction.setUserActor(user);
             postAction.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
             postAction.setPostMediaList(postMediaList);
-            postAction.setSlug(this.getPostActionSlug(postAction));
+            postAction.setSlug(this.createPostActionSlug(postAction));
             postAction.setTitleTag(this.getPostActionTitleTag(postAction));
             if (postAction.getPostActionPrivacy() == null) {
                 postAction.setPostActionPrivacy(PostActionPrivacy.public_post);

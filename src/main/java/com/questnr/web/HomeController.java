@@ -64,9 +64,9 @@ public class HomeController {
         return "admin/community/addCommunity";
     }
 
-    @RequestMapping(value = "/admin/communities/{slug}/update", method = RequestMethod.GET)
-    String updateCommunity(@PathVariable("slug") String slug, Model model) {
-        Community community = communityRepository.findAllBySlug(slug);
+    @RequestMapping(value = "/admin/communities/{communitySlug}/update", method = RequestMethod.GET)
+    String updateCommunity(@PathVariable String communitySlug, Model model) {
+        Community community = communityRepository.findFirstBySlug(communitySlug);
         model.addAttribute("community", community);
         return "admin/community/addCommunity";
     }

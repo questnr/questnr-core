@@ -10,6 +10,7 @@ import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.user.UserCommonService;
+import com.questnr.util.SecureRandomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,9 +44,19 @@ public class CommunityService {
     @Autowired
     CommunityAvatarService communityAvatarService;
 
-    public Community getCommunityByCommunityName(String communityName){
+    @Autowired
+    SecureRandomService secureRandomService;
+
+    private String createPostActionSlug(Community community) {
+        List<String> titleChunks = Arrays.asList(community.getCommunityName().toLowerCase().split("\\s"));
+        return String.join("-", titleChunks).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "") +
+                "-" +
+                secureRandomService.getSecureRandom().toString();
+    }
+
+    public Community getCommunityByCommunityName(String communityName) {
         Community community = communityRepository.findByCommunityName(communityName);
-        if(community != null){
+        if (community != null) {
             return community;
         }
         throw new ResourceNotFoundException("Community not found!");
@@ -53,7 +65,9 @@ public class CommunityService {
     public Community createCommunity(Community community, MultipartFile multipartFile) {
         if (community != null) {
             try {
-                community.setOwnerUser(userCommonService.getUser());community.addMetadata();
+                community.setOwnerUser(userCommonService.getUser());
+                community.addMetadata();
+                community.setSlug(this.createPostActionSlug(community));
                 Community communitySaved = communityRepository.saveAndFlush(community);
                 if (multipartFile != null) {
                     communityAvatarService.uploadAvatar(communitySaved.getCommunityId(), multipartFile);
@@ -96,9 +110,9 @@ public class CommunityService {
         return communities;
     }
 
-    public List<User> getUsersFromCommunity(Long communityId) {
+    public List<User> getUsersOfCommunity(String communitySlug) {
         try {
-            List<User> users = communityCommonService.getCommunity(communityId).getUsers().stream().map(communityUser ->
+            List<User> users = communityCommonService.getCommunity(communitySlug).getUsers().stream().map(communityUser ->
                     communityUser.getUser()
             ).collect(Collectors.toList());
             return users;
@@ -106,7 +120,7 @@ public class CommunityService {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
     }
 
     public List<Community> getCommunitiesFromLikeString(String communityString) {
@@ -116,6 +130,14 @@ public class CommunityService {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
         }
-        return null;
+        return new ArrayList<>();
+    }
+
+    public List<User> searchUserInCommunityUsers(String communitySlug, String userString) {
+        Community community = communityCommonService.getCommunity(communitySlug);
+        List<CommunityUser> communityUsers = community.getUsers().stream().filter(communityUser ->
+                communityUser.getUser().getUsername().toLowerCase().matches("(.*)" + userString.toLowerCase() + "(.*)")
+        ).collect(Collectors.toList());
+        return communityUsers.stream().map(CommunityUser::getUser).collect(Collectors.toList());
     }
 }

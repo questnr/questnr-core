@@ -64,9 +64,9 @@ public class CommunityController {
         return communityMapper.toDTO(communityCommonService.getCommunity(communityId));
     }
 
-    @RequestMapping(value = "/community/{communityName}", method = RequestMethod.GET)
-    CommunityDTO getCommunity(@PathVariable String communityName) {
-        return communityMapper.toDTO(communityService.getCommunityByCommunityName(communityName));
+    @RequestMapping(value = "/community/{communitySlug}", method = RequestMethod.GET)
+    CommunityDTO getCommunity(@PathVariable String communitySlug) {
+        return communityMapper.toDTO(communityCommonService.getCommunity(communitySlug));
     }
 
     @RequestMapping(value = "/community/{communityId}", method = RequestMethod.DELETE)
@@ -83,18 +83,24 @@ public class CommunityController {
     }
 
     // Get users of a single community.
-    @RequestMapping(value = "/community/{communityId}/users", method = RequestMethod.GET)
-    List<UserDTO> getUsersFromCommunity(@PathVariable long communityId){
+    @RequestMapping(value = "/community/{communitySlug}/users", method = RequestMethod.GET)
+    List<UserDTO> getUsersOfCommunity(@PathVariable String communitySlug){
 //        List<UserDTO> userDTOS = new ArrayList<>();
 //        for(User user: communityService.getUsersFromCommunity(communityId)){
 //            userDTOS.add(userMapper.toOthersDTO(user));
 //        }
-        return userMapper.toOthersDTOs(communityService.getUsersFromCommunity(communityId));
+        return userMapper.toOthersDTOs(communityService.getUsersOfCommunity(communitySlug));
     }
 
     // Get community list from community name like string.
     @RequestMapping(value = "/search/community/{communityString}", method = RequestMethod.GET)
     List<CommunityDTO> getCommunitiesFromLikeString(@PathVariable String communityString){
         return communityMapper.toDTOs(communityService.getCommunitiesFromLikeString(communityString));
+    }
+
+    // Search user in community user list
+    @RequestMapping(value = "/search/community/{communitySlug}/user/{userString}", method = RequestMethod.GET)
+    List<UserDTO> searchUserInCommunityUsers(@PathVariable String communitySlug, @PathVariable String userString){
+        return userMapper.toOthersDTOs(communityService.searchUserInCommunityUsers(communitySlug, userString));
     }
 }

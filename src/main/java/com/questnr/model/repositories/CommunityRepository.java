@@ -15,7 +15,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     List<Community> findAllByStatus(PublishStatus status);
 
-    Community findAllBySlug(String slug);
+    Community findFirstBySlug(String slug);
 
     @Query("Select c from Community c where c.communityName like %:communityString%")
     List<Community> findByCommunityNameContaining(String communityString);

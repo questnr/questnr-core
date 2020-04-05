@@ -2,7 +2,7 @@ package com.questnr.model.dto;
 
 import com.questnr.common.enums.PublishStatus;
 
-import java.util.Set;
+import java.util.List;
 
 public class CommunityDTO {
 
@@ -22,7 +22,7 @@ public class CommunityDTO {
 
     private AvatarDTO avatarDTO;
 
-    private Set<UserDTO> communityUsers;
+    private List<CommunityUserForCommunityDTO> communityUsers;
 
     public Long getCommunityId() {
         return communityId;
@@ -88,11 +88,11 @@ public class CommunityDTO {
         this.avatarDTO = avatarDTO;
     }
 
-    public Set<UserDTO> getCommunityUsers() {
+    public List<CommunityUserForCommunityDTO> getCommunityUsers() {
         return communityUsers;
     }
 
-    public void setCommunityUsers(Set<UserDTO> communityUsers) {
+    public void setCommunityUsers(List<CommunityUserForCommunityDTO> communityUsers) {
         this.communityUsers = communityUsers;
     }
 }

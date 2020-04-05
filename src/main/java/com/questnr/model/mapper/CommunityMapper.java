@@ -7,19 +7,18 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(uses = {UserMapper.class, AvatarMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
+@Mapper(uses = {UserMapper.class, AvatarMapper.class, CommunityUserMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface CommunityMapper {
 
     @Mappings({
             @Mapping(source = "ownerUser", target = "ownerUserDTO"),
             @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
+            @Mapping(source = "users", target = "communityUsers")
     })
     CommunityDTO toDTO(final Community community);
-
-    Community toDomain(final CommunityDTO communityDTO);
 
     List<CommunityDTO> toDTOs(final List<Community> communities);
 
     @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
-    CommunityForPostActionDTO toCommunityForPostActionDTP(Community community);
+    CommunityForPostActionDTO toCommunityForPostAction(Community community);
 }
