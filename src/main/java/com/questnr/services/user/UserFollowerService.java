@@ -1,7 +1,7 @@
 package com.questnr.services.user;
 
 import com.questnr.exceptions.AlreadyExistsException;
-import com.questnr.exceptions.DoesNotExistsException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserFollower;
@@ -71,8 +71,8 @@ public class UserFollowerService {
         return null;
     }
 
-    public void undoFollowUser(Long userBeingFollowedId, Long userId) {
-        User user = userCommonService.getUser(userId);
+    public void undoFollowUser(Long userBeingFollowedId) {
+        User user = userCommonService.getUser();
         userRepository.findById(userBeingFollowedId).map(userBeingFollowed -> {
             if (this.existsUserFollower(userBeingFollowed, user)) {
                 Set<UserFollower> userFollowers = user.getThisFollowingUserSet();
@@ -85,7 +85,7 @@ public class UserFollowerService {
                 user.setThisFollowingUserSet(userFollowers);
                 return userRepository.save(user);
             }
-            throw new DoesNotExistsException("You are not following the user!");
+            throw new InvalidRequestException("You are not following the user!");
         }).orElseThrow(()->{
             throw new ResourceNotFoundException("User being followed does not exists");
         });

@@ -1,8 +1,11 @@
 package com.questnr.services.community;
 
+import com.questnr.exceptions.InvalidInputException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Avatar;
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.responses.AvatarStorageData;
@@ -41,6 +44,7 @@ public class CommunityAvatarService {
             communityRepository.save(community);
         } catch (Exception e) {
             LOGGER.error(CommunityAvatarService.class.getName() + " Exception Occurred");
+            throw new InvalidRequestException("Error occurred. Please, try again!");
         }
         return avatarStorageData.getUrl();
     }
@@ -70,6 +74,7 @@ public class CommunityAvatarService {
                 communityRepository.save(community);
             } catch (Exception e) {
                 LOGGER.error(User.class.getName() + " Exception Occurred");
+                throw new InvalidRequestException("Error occurred. Please, try again!");
             }
         }
     }

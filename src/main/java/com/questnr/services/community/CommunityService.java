@@ -1,7 +1,7 @@
 package com.questnr.services.community;
 
 import com.questnr.common.enums.PublishStatus;
-import com.questnr.exceptions.InvalidInputException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityUser;
@@ -77,10 +77,8 @@ public class CommunityService {
             } catch (Exception e) {
                 LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             }
-        } else {
-            throw new InvalidInputException(Community.class.getName(), null, null);
         }
-        return null;
+        throw new InvalidRequestException("Error occurred. Please, try again!");
     }
 
     public void deleteCommunity(long communityId) {
@@ -100,27 +98,25 @@ public class CommunityService {
     }
 
     public List<Community> findAllCommunityNames() {
-        List<Community> communities = null;
         try {
-            communities = communityRepository.findAllByStatus(PublishStatus.publish);
+            return communityRepository.findAllByStatus(PublishStatus.publish);
         } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
+            throw new InvalidRequestException("Error occurred. Please, try again!");
         }
-        return communities;
     }
 
     public List<User> getUsersOfCommunity(String communitySlug) {
         try {
-            List<User> users = communityCommonService.getCommunity(communitySlug).getUsers().stream().map(communityUser ->
-                    communityUser.getUser()
-            ).collect(Collectors.toList());
+            List<User> users = communityCommonService.getCommunity(communitySlug).getUsers().stream()
+                    .map(CommunityUser::getUser).collect(Collectors.toList());
             return users;
         } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
+            throw new InvalidRequestException("Error occurred. Please, try again!");
         }
-        return new ArrayList<>();
     }
 
     public List<Community> getCommunitiesFromLikeString(String communityString) {
@@ -129,8 +125,8 @@ public class CommunityService {
         } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
+            throw new InvalidRequestException("Error occurred. Please, try again!");
         }
-        return new ArrayList<>();
     }
 
     public List<User> searchUserInCommunityUsers(String communitySlug, String userString) {

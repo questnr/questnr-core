@@ -2,7 +2,7 @@ package com.questnr.services.community;
 
 import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.AlreadyExistsException;
-import com.questnr.exceptions.DoesNotExistsException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityInvitedUser;
@@ -136,7 +136,7 @@ public class CommunityJoinService {
             }else if(this.existsCommunityUser(community, user)){
                 throw new AlreadyExistsException("You have already been joined");
             }
-            throw new DoesNotExistsException("You don't have invitation from this community");
+            throw new InvalidRequestException("You don't have invitation from this community");
         }).orElseThrow(() -> {
             throw new ResourceNotFoundException("Error in accepting the invitation");
         });
@@ -164,7 +164,7 @@ public class CommunityJoinService {
                 community.setUsers(joinedUsers);
                 return communityRepository.save(community);
             }
-            throw new DoesNotExistsException("You are not member of this community");
+            throw new InvalidRequestException("You are not member of this community");
         }).orElseThrow(() -> {
             throw new ResourceNotFoundException("Error in accepting the invitation");
         });

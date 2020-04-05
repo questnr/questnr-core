@@ -116,7 +116,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
         .antMatchers(HttpMethod.GET, "/").permitAll().antMatchers(HttpMethod.POST, "/api/v1/signup").permitAll()
         .antMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
-        .antMatchers(HttpMethod.POST, "/api/v1/signup").permitAll()
+        .antMatchers(HttpMethod.POST, "/api/v1/sign-up").permitAll()
         .antMatchers(HttpMethod.GET, "/api/v1/courses").permitAll()
         .antMatchers(HttpMethod.GET, "/api/v1/search").permitAll()
         .antMatchers(HttpMethod.GET, "/api/v1/teachers").permitAll()

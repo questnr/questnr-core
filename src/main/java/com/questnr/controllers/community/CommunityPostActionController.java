@@ -6,7 +6,7 @@ import com.questnr.model.dto.PostActionForCommunityDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.dto.PostActionRequestDTO;
-import com.questnr.services.access.PostActionAccessService;
+import com.questnr.access.PostActionAccessService;
 import com.questnr.services.community.CommunityPostActionService;
 import com.questnr.services.PostActionService;
 import org.mapstruct.factory.Mappers;

@@ -1,4 +1,4 @@
-package com.questnr.services.access;
+package com.questnr.access;
 
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;

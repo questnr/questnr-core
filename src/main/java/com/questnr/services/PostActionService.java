@@ -1,7 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.common.enums.PostActionPrivacy;
-import com.questnr.exceptions.DoesNotExistsException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionSharableLinkDTO;
 import com.questnr.model.entities.HashTag;
@@ -22,7 +22,6 @@ import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class PostActionService {
@@ -90,7 +89,7 @@ public class PostActionService {
         } catch (Exception e) {
             LOGGER.error(PostAction.class.getName() + " Exception Occurred");
         }
-        return null;
+        throw new InvalidRequestException("Error occurred. Please, try again!");
     }
 
     public Set<HashTag> parsePostText(String postText) {

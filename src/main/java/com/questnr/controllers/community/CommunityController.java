@@ -4,10 +4,9 @@ import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.Community;
-import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
-import com.questnr.services.access.CommunityAvatarAccessService;
+import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityService;
 import org.mapstruct.factory.Mappers;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -64,7 +62,7 @@ public class CommunityController {
         return communityMapper.toDTO(communityCommonService.getCommunity(communityId));
     }
 
-    @RequestMapping(value = "/community/{communitySlug}", method = RequestMethod.GET)
+    @RequestMapping(value = "/community/slug/ {communitySlug}", method = RequestMethod.GET)
     CommunityDTO getCommunity(@PathVariable String communitySlug) {
         return communityMapper.toDTO(communityCommonService.getCommunity(communitySlug));
     }

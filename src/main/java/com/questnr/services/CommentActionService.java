@@ -1,6 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.exceptions.InvalidInputException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.PostAction;
@@ -66,11 +67,11 @@ public class CommentActionService {
                 }
             } catch (Exception e) {
                 LOGGER.error(CommentAction.class.getName() + " Exception Occurred");
+                throw new InvalidRequestException("Error occurred. Please, try again!");
             }
         } else {
-            throw new InvalidInputException(CommentAction.class.getName(), null, null);
+            throw new InvalidRequestException("Error occurred. Please, try again!");
         }
-        return null;
     }
 
     public void deleteCommentAction(Long postId, Long commentId) throws ResourceNotFoundException {

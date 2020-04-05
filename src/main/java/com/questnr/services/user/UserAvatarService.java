@@ -1,5 +1,6 @@
 package com.questnr.services.user;
 
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Avatar;
 import com.questnr.model.entities.User;
@@ -38,10 +39,11 @@ public class UserAvatarService {
             avatar.setAvatarKey(avatarStorageData.getKey());
             user.setAvatar(avatar);
             userRepository.save(user);
+            return avatarStorageData.getUrl();
         } catch (Exception e) {
             LOGGER.error(UserAvatarService.class.getName() + " Exception Occurred");
+            throw new InvalidRequestException("Error occurred. Please, try again!");
         }
-        return avatarStorageData.getUrl();
     }
 
     public String getUserAvatar(){
@@ -50,7 +52,7 @@ public class UserAvatarService {
             try {
                 return this.amazonS3Client.getS3BucketUrl(user.getAvatar().getAvatarKey());
             }catch (Exception e){
-                return null;
+                throw new InvalidRequestException("Error occurred. Please, try again!");
             }
         }
         return null;
@@ -69,6 +71,7 @@ public class UserAvatarService {
                 userRepository.save(user);
             } catch (Exception e) {
                 LOGGER.error(UserAvatarService.class.getName() + " Exception Occurred");
+                throw new InvalidRequestException("Error occurred. Please, try again!");
             }
         }
     }

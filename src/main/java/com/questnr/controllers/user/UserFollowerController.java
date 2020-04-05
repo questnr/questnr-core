@@ -36,7 +36,7 @@ public class UserFollowerController {
     // Undo follow user
     @RequestMapping(value = "/follow/user/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    void undoFollowUser(@PathVariable long userId, @RequestBody Long userActorId) {
-        userFollowerService.undoFollowUser(userId, userActorId);
+    void undoFollowUser(@PathVariable long userId) {
+        userFollowerService.undoFollowUser(userId);
     }
 }

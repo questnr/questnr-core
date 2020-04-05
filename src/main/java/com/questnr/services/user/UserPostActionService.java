@@ -1,7 +1,9 @@
 package com.questnr.services.user;
 
 import com.questnr.exceptions.InvalidInputException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
 import com.questnr.model.entities.User;
@@ -46,12 +48,11 @@ public class UserPostActionService {
     public Page<PostAction> getAllPostActionsByUserId(Pageable pageable) {
         User user = userCommonService.getUser();
         try {
-            Page<PostAction> postActions = postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
-            return postActions;
+            return postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
         } catch (Exception e) {
             LOGGER.error(PostAction.class.getName() + " Exception Occurred");
+            throw new InvalidInputException(LikeAction.class.getName(), null, null);
         }
-        return null;
     }
 
     public PostAction creatPostAction(PostAction postAction, List<MultipartFile> files) {
@@ -67,7 +68,7 @@ public class UserPostActionService {
             }).collect(Collectors.toList());
             return postActionService.creatPostAction(postAction, postMediaList);
         } else {
-            throw new InvalidInputException(PostAction.class.getName(), null, null);
+            throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
 

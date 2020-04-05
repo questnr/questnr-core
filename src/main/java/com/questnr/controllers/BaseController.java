@@ -23,7 +23,7 @@ public class BaseController {
     BaseService baseService;
 
     @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
-    SignUpResponse signupUser(@Valid @RequestBody User user) {
+    SignUpResponse signUpUser(@Valid @RequestBody User user) {
         return baseService.signUp(user);
     }
 
@@ -37,18 +37,5 @@ public class BaseController {
     @ResponseStatus(HttpStatus.OK)
     void checkUsername(@RequestParam String username) {
         baseService.checkUsernameIsTaken(username);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
     }
 }

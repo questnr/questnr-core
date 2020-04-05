@@ -1,6 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.exceptions.InvalidInputException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostVisit;
 import com.questnr.model.entities.User;
@@ -54,9 +55,7 @@ public class PostVisitService {
                     LOGGER.error(PostVisit.class.getName() + " Exception Occurred");
                 }
             }
-        } else {
-            throw new InvalidInputException(PostVisit.class.getName(), null, null);
         }
-        return null;
+        throw new InvalidRequestException("Error occurred. Please, try again!");
     }
 }

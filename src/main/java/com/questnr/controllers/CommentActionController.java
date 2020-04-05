@@ -6,7 +6,7 @@ import com.questnr.model.entities.CommentAction;
 import com.questnr.model.mapper.CommentActionMapper;
 import com.questnr.requests.CommentActionRequest;
 import com.questnr.services.CommentActionService;
-import com.questnr.services.access.CommentActionAccessService;
+import com.questnr.access.CommentActionAccessService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

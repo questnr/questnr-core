@@ -1,6 +1,6 @@
 package com.questnr.services.community;
 
-import com.questnr.exceptions.InvalidInputException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
@@ -42,8 +42,8 @@ public class CommunityPostActionService {
             return postActionRepository.findAllByCommunityOrderByCreatedAtDesc(communityCommonService.getCommunity(communityId), pageable);
         } catch (Exception e) {
             LOGGER.error(CommunityPostActionService.class.getName() + " Exception Occurred");
+            throw new InvalidRequestException("Error occurred. Please, try again!");
         }
-        return null;
     }
 
     public PostAction creatPostAction(PostAction postAction, List<MultipartFile> files, long communityId) {
@@ -58,7 +58,7 @@ public class CommunityPostActionService {
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
             return postActionService.creatPostAction(postAction, postMediaList);
         } else {
-            throw new InvalidInputException(PostAction.class.getName(), null, null);
+            throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
 

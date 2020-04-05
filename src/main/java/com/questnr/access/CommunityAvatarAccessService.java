@@ -1,4 +1,4 @@
-package com.questnr.services.access;
+package com.questnr.access;
 
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.repositories.PostActionRepository;

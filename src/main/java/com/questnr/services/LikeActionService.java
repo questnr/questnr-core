@@ -1,6 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.exceptions.InvalidInputException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostAction;
@@ -55,10 +56,8 @@ public class LikeActionService {
                     LOGGER.error(LikeAction.class.getName() + " Exception Occurred");
                 }
             }
-        } else {
-            throw new InvalidInputException(LikeAction.class.getName(), null, null);
         }
-        return null;
+        throw new InvalidRequestException("Error occurred. Please, try again!");
     }
 
     public void deleteLikeAction(Long postId) throws ResourceNotFoundException {

@@ -29,8 +29,8 @@ public class CommunityCommonService {
         }
     }
 
-    public Community getCommunity(String communityString) {
-        Community community = communityRepository.findFirstBySlug(communityString);
+    public Community getCommunity(String communitySlug) {
+        Community community = communityRepository.findFirstBySlug(communitySlug);
         if (community != null) {
             return community;
         } else {

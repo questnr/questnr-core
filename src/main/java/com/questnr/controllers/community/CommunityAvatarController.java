@@ -1,7 +1,7 @@
 package com.questnr.controllers.community;
 
 import com.questnr.exceptions.AccessException;
-import com.questnr.services.access.CommunityAvatarAccessService;
+import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.services.community.CommunityAvatarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;

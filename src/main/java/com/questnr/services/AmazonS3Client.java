@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.responses.AvatarStorageData;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
@@ -53,15 +54,22 @@ public class AmazonS3Client {
     }
 
     private File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
+        if(file.getOriginalFilename() != null) {
+            File convFile = new File(file.getOriginalFilename());
+            FileOutputStream fos = new FileOutputStream(convFile);
+            fos.write(file.getBytes());
+            fos.close();
+            return convFile;
+        }
+        throw new InvalidRequestException("File name is not valid!");
     }
 
     private String generateFileName(MultipartFile multiPart) {
-        return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+        try {
+            return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
+        }catch (Exception e){
+            return new Date().getTime() + "-" + multiPart.getOriginalFilename();
+        }
     }
 
     private void uploadFileToS3bucket(String pathToFile, File file) {
