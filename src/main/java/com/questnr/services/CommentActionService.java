@@ -5,7 +5,6 @@ import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
-import com.questnr.model.projections.CommentActionProjection;
 import com.questnr.model.repositories.CommentActionRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
@@ -39,8 +38,8 @@ public class CommentActionService {
     @Autowired
     CommonService commonService;
 
-    public Page<CommentActionProjection> getAllCommentActionByPostId(Long postId,
-                                                                     Pageable pageable) {
+    public Page<CommentAction> getAllCommentActionByPostId(Long postId,
+                                                           Pageable pageable) {
         return commentActionRepository.findAllByPostActionAndChildComment(postActionRepository.findByPostActionId(postId), false, pageable);
     }
 
@@ -61,7 +60,7 @@ public class CommentActionService {
                     commentActionSet.add(commentAction);
                     commentAction.setParentCommentAction(parentCommentAction);
                     return commentActionRepository.save(commentAction);
-                }else {
+                } else {
                     commentAction.setChildComment(false);
                     return commentActionRepository.save(commentAction);
                 }

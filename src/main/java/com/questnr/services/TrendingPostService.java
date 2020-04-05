@@ -48,7 +48,10 @@ public class TrendingPostService {
     private Page<TrendingPostDTO> getTrendingPostData(Date startingDate, Date endingDate, Pageable pageable) {
         Page<Object[]> page = postActionRepository.findAllByTrendingPost(startingDate, endingDate, pageable);
         List<TrendingPostDTO> trendingPostDTOList = new LinkedList<>();
-        for (Object[] object : page.getContent()) {
+        List<Object[]> trendingData = page.getContent();
+        System.out.println("======0======");
+        System.out.println(trendingData.size());
+        for (Object[] object : trendingData) {
             TrendingPostDTO trendingPostDTO = trendingPostMapper.toDTO(postActionRepository.findByPostActionId(Long.parseLong(object[0].toString())));
             trendingPostDTO.setTotalTrendingLikes(Integer.parseInt(object[1].toString()));
             trendingPostDTO.setTotalTrendingComments(Integer.parseInt(object[2].toString()));

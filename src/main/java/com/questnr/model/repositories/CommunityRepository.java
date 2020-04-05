@@ -2,7 +2,6 @@ package com.questnr.model.repositories;
 
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.Community;
-import com.questnr.responses.CommunityResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,7 +11,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     Community findByCommunityId(long communityId);
 
-    CommunityResponse findAllByCommunityName(String name);
+    Community findByCommunityName(String name);
 
     List<Community> findAllByStatus(PublishStatus status);
 

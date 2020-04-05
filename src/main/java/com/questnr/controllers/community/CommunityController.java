@@ -64,6 +64,11 @@ public class CommunityController {
         return communityMapper.toDTO(communityCommonService.getCommunity(communityId));
     }
 
+    @RequestMapping(value = "/community/{communityName}", method = RequestMethod.GET)
+    CommunityDTO getCommunity(@PathVariable String communityName) {
+        return communityMapper.toDTO(communityService.getCommunityByCommunityName(communityName));
+    }
+
     @RequestMapping(value = "/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deleteCommunity(@PathVariable long communityId) {

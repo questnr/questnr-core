@@ -33,6 +33,14 @@ public class UserService {
     @Autowired
     UserCommonService userCommonService;
 
+    public User getUserByUsername(String username){
+        User user = userRepository.findByUsername(username);
+        if(user != null){
+            return user;
+        }
+        throw new ResourceNotFoundException("User not found!");
+    }
+
 
     public void deleteUser(Long userId) {
         User user = userCommonService.getUser();

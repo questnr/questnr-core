@@ -2,13 +2,20 @@ package com.questnr.model.dto;
 
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
-import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostVisit;
+import com.questnr.model.mapper.CommentActionMapper;
+import com.questnr.services.CommentActionService;
+import com.rometools.rome.feed.atom.Person;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class PostActionDTO {
     private Long postActionId;
@@ -25,7 +32,7 @@ public class PostActionDTO {
     private CommunityForPostActionDTO communityDTO;
     private Set<HashTag> hashTags;
     private Set<LikeAction> likeActionSet;
-    private Set<CommentAction> commentActionSet;
+    private List<CommentActionDTO> commentActionDTOList;
     private Set<PostVisit> postVisitSet;
     private List<PostMediaDTO> postMediaDTOList;
     private int totalLikes;
@@ -146,21 +153,34 @@ public class PostActionDTO {
         }
     }
 
-    public void setCommentActionSet(Set<CommentAction> commentActionSet) {
-        this.commentActionSet = commentActionSet;
+    public void setCommentActionDTOList(List<CommentActionDTO> commentActionDTOList) {
+        this.commentActionDTOList = commentActionDTOList;
         try {
-            this.setTotalComments(commentActionSet.size());
+            this.setTotalComments(commentActionDTOList.size());
         } catch (Exception e) {
-            this.setTotalLikes(0);
+            this.setTotalComments(0);
         }
     }
+
+    public List<CommentActionDTO> getCommentActionDTOList() {
+        if(commentActionDTOList.size() > 0) {
+            Predicate<CommentActionDTO> commentActionDTOPredicate = commentActionDTO -> !commentActionDTO.isChildComment();
+            commentActionDTOList = commentActionDTOList.stream().filter(commentActionDTOPredicate).collect(Collectors.toList());
+            Comparator<CommentActionDTO> createdAtComparator
+                    = Comparator.comparing(CommentActionDTO::getCreatedAt);
+            commentActionDTOList.sort(createdAtComparator.reversed());
+            return commentActionDTOList.subList(0, commentActionDTOList.size() > 3 ? 3 : commentActionDTOList.size());
+        }
+        return new ArrayList<>();
+    }
+
 
     public void setPostVisitSet(Set<PostVisit> postVisitSet) {
         this.postVisitSet = postVisitSet;
         try {
             this.setTotalPostVisits(postVisitSet.size());
         } catch (Exception e) {
-            this.setTotalLikes(0);
+            this.setTotalPostVisits(0);
         }
     }
 

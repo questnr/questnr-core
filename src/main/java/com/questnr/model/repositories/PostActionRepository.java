@@ -64,4 +64,6 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             " or pa.userActor=user or pa.community=ca) " +
             " where user=:user order by pa.createdAt desc ")
     Page<PostAction> findByFollowingToUserActorAndJoinedWithCommunity(@Param("user") User user, Pageable pageable);
+
+    PostAction findFirstBySlug(String slug);
 }

@@ -2,6 +2,8 @@ package com.questnr.model.dto;
 
 import com.questnr.common.enums.PublishStatus;
 
+import java.util.Set;
+
 public class CommunityDTO {
 
     public Long communityId;
@@ -19,6 +21,8 @@ public class CommunityDTO {
     private PublishStatus status;
 
     private AvatarDTO avatarDTO;
+
+    private Set<UserDTO> communityUsers;
 
     public Long getCommunityId() {
         return communityId;
@@ -82,5 +86,13 @@ public class CommunityDTO {
 
     public void setAvatarDTO(AvatarDTO avatarDTO) {
         this.avatarDTO = avatarDTO;
+    }
+
+    public Set<UserDTO> getCommunityUsers() {
+        return communityUsers;
+    }
+
+    public void setCommunityUsers(Set<UserDTO> communityUsers) {
+        this.communityUsers = communityUsers;
     }
 }

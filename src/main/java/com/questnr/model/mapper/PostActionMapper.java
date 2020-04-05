@@ -4,21 +4,19 @@ import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionForCommunityDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.entities.PostAction;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Mapper(uses = {PostMediaMapper.class, CommunityMapper.class, UserMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
+@Mapper(uses = {PostMediaMapper.class, CommunityMapper.class, UserMapper.class, CommentActionMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public abstract class PostActionMapper {
 
     @Mappings({
             @Mapping(source = "postMediaList", target = "postMediaDTOList"),
             @Mapping(source = "community", target = "communityDTO"),
-            @Mapping(source = "userActor", target = "userDTO")
+            @Mapping(source = "userActor", target = "userDTO"),
+            @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     })
     abstract public PostActionDTO toDTO(final PostAction postAction);
 

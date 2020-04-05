@@ -42,6 +42,14 @@ public class CommunityService {
     @Autowired
     CommunityAvatarService communityAvatarService;
 
+    public Community getCommunityByCommunityName(String communityName){
+        Community community = communityRepository.findByCommunityName(communityName);
+        if(community != null){
+            return community;
+        }
+        throw new ResourceNotFoundException("Community not found!");
+    }
+
     public Community createCommunity(Community community, MultipartFile multipartFile) {
         if (community != null) {
             try {

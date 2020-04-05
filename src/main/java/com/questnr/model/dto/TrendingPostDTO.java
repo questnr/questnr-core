@@ -1,7 +1,9 @@
 package com.questnr.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(value = "valid")
 public class TrendingPostDTO extends PostActionDTO {
     private int totalTrendingLikes;
     private int totalTrendingComments;

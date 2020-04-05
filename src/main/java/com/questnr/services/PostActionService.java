@@ -1,6 +1,9 @@
 package com.questnr.services;
 
 import com.questnr.common.enums.PostActionPrivacy;
+import com.questnr.exceptions.DoesNotExistsException;
+import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.PostActionSharableLinkDTO;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
@@ -12,8 +15,10 @@ import com.questnr.util.SecureRandomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,20 +47,25 @@ public class PostActionService {
     @Autowired
     SecureRandomService secureRandomService;
 
+    @Value("${questNR.domain}")
+    String QUEST_NR_DOMAIN;
+
+    final private String POST_ACTION_PATH = "posts";
+
     private String getPostActionSlug(PostAction postAction) {
         Long timeStamp = new Date().getTime();
         List<String> titleChunks = Arrays.asList(postAction.getTitle().toLowerCase().split("\\s"));
         int maxTitleChunk = titleChunks.size();
-        if(maxTitleChunk > 9){
+        if (maxTitleChunk > 9) {
             maxTitleChunk = 9;
         }
         return postAction.getUserActor().getUsername() +
                 "_" +
                 String.join("-", (titleChunks.subList(0, maxTitleChunk))).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "") +
-                "-"+
-                secureRandomService.getSecureRandom().toString()+
-                "-"+
-                timeStamp.toString().substring(1,5);
+                "-" +
+                secureRandomService.getSecureRandom().toString() +
+                "-" +
+                timeStamp.toString().substring(1, 5);
     }
 
     private String getPostActionTitleTag(PostAction postAction) {
@@ -73,7 +83,7 @@ public class PostActionService {
             postAction.setPostMediaList(postMediaList);
             postAction.setSlug(this.getPostActionSlug(postAction));
             postAction.setTitleTag(this.getPostActionTitleTag(postAction));
-            if(postAction.getPostActionPrivacy()==null){
+            if (postAction.getPostActionPrivacy() == null) {
                 postAction.setPostActionPrivacy(PostActionPrivacy.public_post);
             }
             return postActionRepository.saveAndFlush(postAction);
@@ -108,5 +118,21 @@ public class PostActionService {
             }
         }
         return hashTags;
+    }
+
+    public PostAction getPostActionFromSlug(String postActionSlug) {
+        PostAction postAction = postActionRepository.findFirstBySlug(postActionSlug);
+        if (postAction != null) {
+            return postAction;
+        }
+        throw new ResourceNotFoundException("Post is deleted or link is not correct");
+    }
+
+    public PostActionSharableLinkDTO getPostActionSharableLink(Long postActionId) {
+        PostActionSharableLinkDTO postActionSharableLinkDTO = new PostActionSharableLinkDTO();
+        String postActionSlug = postActionRepository.findByPostActionId(postActionId).getSlug();
+        String sharableLink = QUEST_NR_DOMAIN+"/"+Paths.get(POST_ACTION_PATH, postActionSlug).toString();
+        postActionSharableLinkDTO.setPostActionLink(sharableLink);
+        return postActionSharableLinkDTO;
     }
 }

@@ -31,6 +31,11 @@ public class UserController {
         return userMapper.toOthersDTO(userCommonService.getUser());
     }
 
+    @RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
+    UserDTO getUserByUsername(@PathVariable String username){
+        return userMapper.toOthersDTO(userService.getUserByUsername(username));
+    }
+
     @RequestMapping(value = "search/user/{userString}", method = RequestMethod.GET)
     List<UserDTO> searchUserString(@PathVariable String userString){
         return userMapper.toOthersDTOsFromProjections(userCommonService.searchUserString(userString));

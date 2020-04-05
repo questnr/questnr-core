@@ -1,21 +1,15 @@
 package com.questnr.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
-
-import java.util.*;
-import javax.persistence.*;
-
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Index;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
+import org.hibernate.search.annotations.*;
 import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @Indexed
@@ -104,7 +98,7 @@ public class PostAction extends DomainObject {
     private Set<CommentAction> commentActionSet = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name="post_action_id", nullable=false)
+    @JoinColumn(name = "post_action_id", nullable = false)
     private List<PostMedia> postMediaList = new LinkedList<>();
 
     public Long getPostActionId() {

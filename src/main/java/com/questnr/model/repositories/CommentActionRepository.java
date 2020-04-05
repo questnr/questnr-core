@@ -3,7 +3,6 @@ package com.questnr.model.repositories;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
-import com.questnr.model.projections.CommentActionProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,7 +13,7 @@ public interface CommentActionRepository extends JpaRepository<CommentAction, Lo
 
     CommentAction findByCommentActionId(Long commentId);
 
-    Page<CommentActionProjection> findAllByPostActionAndChildComment(PostAction postAction, boolean isChildComment, Pageable pageable);
+    Page<CommentAction> findAllByPostActionAndChildComment(PostAction postAction, boolean isChildComment, Pageable pageable);
 
     CommentAction findByPostActionAndUserActorAndCommentActionId(PostAction postAction, User user, Long commentActionId);
 

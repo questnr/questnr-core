@@ -1,7 +1,7 @@
 package com.questnr.services;
 
+import com.questnr.model.entities.Community;
 import com.questnr.model.repositories.CommunityRepository;
-import com.questnr.responses.CommunityResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,12 +15,12 @@ public class AdminService {
 
         boolean flag = false;
         if (type.equalsIgnoreCase("community")) {
-            CommunityResponse community = communityRepository.findAllByCommunityName(slug);
+            Community community = communityRepository.findByCommunityName(slug);
             if (community != null) {
                 flag = true;
             }
         } else if (type.equalsIgnoreCase("post")) {
-            CommunityResponse community = communityRepository.findAllByCommunityName(slug);
+            Community community = communityRepository.findByCommunityName(slug);
             if (community != null) {
                 flag = true;
             }
