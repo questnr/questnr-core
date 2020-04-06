@@ -79,7 +79,7 @@ public class AmazonS3Client {
     public String getS3BucketUrl(String pathToFile) {
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 20;
+        expTimeMillis += 1000 * 40;
         expiration.setTime(expTimeMillis);
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, pathToFile)
