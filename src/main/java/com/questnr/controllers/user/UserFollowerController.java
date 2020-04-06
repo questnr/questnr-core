@@ -1,5 +1,7 @@
 package com.questnr.controllers.user;
 
+import com.questnr.access.UserFollowerAccessService;
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
@@ -22,6 +24,9 @@ public class UserFollowerController {
     @Autowired
     UserFollowerService userFollowerService;
 
+    @Autowired
+    UserFollowerAccessService userFollowerAccessService;
+
     UserFollowerController() {
         userMapper = Mappers.getMapper(UserMapper.class);
         communityMapper = Mappers.getMapper(CommunityMapper.class);
@@ -30,7 +35,11 @@ public class UserFollowerController {
     // Follow user
     @RequestMapping(value = "/follow/user/{userId}", method = RequestMethod.POST)
     UserDTO followUser(@PathVariable long userId) {
-        return userMapper.toOthersDTO(userFollowerService.followUser(userId));
+        if (userFollowerAccessService.followUser(userId)) {
+            return userMapper.toOthersDTO(userFollowerService.followUser(userId));
+        } else {
+            throw new AccessException();
+        }
     }
 
     // Undo follow user

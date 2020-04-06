@@ -10,8 +10,6 @@ import com.questnr.services.user.UserCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-
 @Service
 public class CommentActionAccessService {
 
@@ -28,21 +26,16 @@ public class CommentActionAccessService {
     UserCommonService userCommonService;
 
     @Autowired
-    private PostActionAccessService postActionAccessService;
+    private CommunityPostActionAccessService communityPostActionAccessService;
 
-    public boolean isUserOwnerOfComment(User user, CommentAction commentAction) {
-        if (Objects.equals(user.getUserId(), commentAction.getUserActor().getUserId())) {
-            return true;
-        }
-        return false;
+    private boolean isUserOwnerOfComment(User user, CommentAction commentAction) {
+        return user.equals(commentAction.getUserActor());
     }
 
     public boolean hasAccessToCommentCreation(Long postId) {
         PostAction postAction = postActionRepository.findByPostActionId(postId);
         Long communityId = commonService.getCommunityId(postAction);
-        if (communityId == null || postActionAccessService.hasAccessToPostBaseService(communityId))
-            return true;
-        return false;
+        return communityId == null || communityPostActionAccessService.hasAccessToPostBaseService(communityId);
     }
 
     public boolean hasAccessToCommentDeletion(Long postId, Long commentId) {
@@ -50,13 +43,13 @@ public class CommentActionAccessService {
         PostAction postAction = postActionRepository.findByPostActionId(postId);
 
         // If the user is the owner of the post
-        if(postActionAccessService.isUserOwnerOfPost(user, postAction))
+        if (communityPostActionAccessService.isUserOwnerOfPost(user, postAction))
             return true;
 
         CommentAction commentAction = commentActionRepository.findByCommentActionId(commentId);
 
         // If the user is the owner of the comment
-        if(this.isUserOwnerOfComment(user, commentAction))
+        if (this.isUserOwnerOfComment(user, commentAction))
             return true;
 
         return this.hasAccessToCommentCreation(postId);

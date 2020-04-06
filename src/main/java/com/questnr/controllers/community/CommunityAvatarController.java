@@ -17,8 +17,6 @@ import java.io.IOException;
 @RequestMapping(value = "/api/v1/community")
 public class CommunityAvatarController {
 
-    final String errorMessage = "You don't have access for the particular operation";
-
     @Autowired
     CommunityAvatarAccessService communityAvatarAccessService;
 
@@ -33,7 +31,7 @@ public class CommunityAvatarController {
         if (communityAvatarAccessService.hasAccessToCommunityAvatar(communityId)) {
             return this.communityAvatarService.uploadAvatar(communityId, file);
         }
-        throw new AccessException(errorMessage);
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/{communityId}/avatar", method = RequestMethod.GET)
@@ -50,7 +48,7 @@ public class CommunityAvatarController {
         if (communityAvatarAccessService.hasAccessToCommunityAvatar(communityId)) {
             this.communityAvatarService.deleteAvatar(communityId);
         }else{
-            throw new AccessException(errorMessage);
+            throw new AccessException();
         }
     }
 

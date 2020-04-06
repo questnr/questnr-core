@@ -27,7 +27,7 @@ public class CommunityController {
     final String errorMessage = "You don't have access for the particular operation";
 
     @Autowired
-    CommunityAvatarAccessService communityAvatarService;
+    CommunityAvatarAccessService communityAvatarAccessService;
 
     @Autowired
     CommunityService communityService;
@@ -51,10 +51,10 @@ public class CommunityController {
         /*
          * Community Creation Security Checking
          * */
-        if(communityAvatarService.hasAccessToCommunityCreation()) {
+        if(communityAvatarAccessService.hasAccessToCommunityCreation()) {
             return communityMapper.toDTO(communityService.createCommunity(requests, multipartFile));
         }
-        throw new AccessException(errorMessage);
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/community/{communityId}", method = RequestMethod.GET)
@@ -62,7 +62,7 @@ public class CommunityController {
         return communityMapper.toDTO(communityCommonService.getCommunity(communityId));
     }
 
-    @RequestMapping(value = "/community/slug/ {communitySlug}", method = RequestMethod.GET)
+    @RequestMapping(value = "/community/slug/{communitySlug}", method = RequestMethod.GET)
     CommunityDTO getCommunity(@PathVariable String communitySlug) {
         return communityMapper.toDTO(communityCommonService.getCommunity(communitySlug));
     }
@@ -73,10 +73,10 @@ public class CommunityController {
         /*
          * Community Deletion Security Checking
          * */
-        if(communityAvatarService.hasAccessToCommunityDeletion()) {
+        if(communityAvatarAccessService.hasAccessToCommunityDeletion()) {
             communityService.deleteCommunity(communityId);
         }else{
-            throw new AccessException(errorMessage);
+            throw new AccessException();
         }
     }
 
@@ -87,7 +87,13 @@ public class CommunityController {
 //        for(User user: communityService.getUsersFromCommunity(communityId)){
 //            userDTOS.add(userMapper.toOthersDTO(user));
 //        }
-        return userMapper.toOthersDTOs(communityService.getUsersOfCommunity(communitySlug));
+        /*
+         * Community Users Fetching Security Checking
+         * */
+        if(communityAvatarAccessService.hasAccessToGetCommunityUsers()) {
+            return userMapper.toOthersDTOs(communityService.getUsersOfCommunity(communitySlug));
+        }
+        throw new AccessException();
     }
 
     // Get community list from community name like string.

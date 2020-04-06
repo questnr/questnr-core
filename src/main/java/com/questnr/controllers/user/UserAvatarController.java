@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-
 @RestController
 @RequestMapping(value = "/api/v1/user")
 public class UserAvatarController {
@@ -31,11 +29,11 @@ public class UserAvatarController {
     @RequestMapping(value = "/avatar", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteFileUsingPathToFile() {
-         this.userAvatarService.deleteAvatar();
+        this.userAvatarService.deleteAvatar();
     }
 
     @RequestMapping(value = "/download-avatar", method = RequestMethod.GET)
-    public ResponseEntity<ByteArrayResource> getAvatar() throws IOException {
+    public ResponseEntity<ByteArrayResource> getAvatar() {
         byte[] data = this.userAvatarService.getAvatar();
         ByteArrayResource resource = new ByteArrayResource(data);
 

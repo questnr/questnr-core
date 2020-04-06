@@ -1,5 +1,7 @@
 package com.questnr.controllers.community;
 
+import com.questnr.access.CommunityJoinAccessService;
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.services.community.CommunityCommonService;
@@ -21,6 +23,9 @@ public class CommunityJoinController {
     @Autowired
     CommunityCommonService communityCommonService;
 
+    @Autowired
+    CommunityJoinAccessService communityJoinAccessService;
+
     CommunityJoinController() {
 
         communityMapper = Mappers.getMapper(CommunityMapper.class);
@@ -29,23 +34,33 @@ public class CommunityJoinController {
     // Join user to the community
     @RequestMapping(value = "/join/community/{communityId}", method = RequestMethod.POST)
     CommunityDTO joinCommunity(@PathVariable long communityId) {
-        return communityMapper.toDTO(communityJoinService.joinCommunity(communityId));
+        if (communityJoinAccessService.hasAccessToJoinCommunity(communityId)) {
+            return communityMapper.toDTO(communityJoinService.joinCommunity(communityId));
+        } else {
+            throw new AccessException();
+        }
     }
 
     // Ask user to join the community
     @RequestMapping(value = "/join/community/{communityId}/invite-user", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody Long userId) {
-        communityJoinService.inviteUserToJoinCommunity(communityId, userId);
+        if (communityJoinAccessService.hasAccessToInviteUser(communityId)) {
+            communityJoinService.inviteUserToJoinCommunity(communityId, userId);
+        } else {
+            throw new AccessException();
+        }
     }
 
     // Ask user to join the community using user email id
     @RequestMapping(value = "/join/community/{communityId}/invite-user/email", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody String userEmail) {
-        System.out.println("userEmail");
-        System.out.println(userEmail);
-        communityJoinService.inviteUserToJoinCommunity(communityId, userEmail);
+        if (communityJoinAccessService.hasAccessToInviteUser(communityId)) {
+            communityJoinService.inviteUserToJoinCommunity(communityId, userEmail);
+        } else {
+            throw new AccessException();
+        }
     }
 
     // Accept the invitation sent to the user
@@ -75,7 +90,6 @@ public class CommunityJoinController {
     void declineInvitationFromCommunity(@PathVariable long communityId, @RequestBody String userEmail) {
         communityJoinService.actionOnInvitationFromCommunity(communityId, userEmail, false);
     }
-
 
     // Revoke join operation
     @RequestMapping(value = "/join/community/{communityId}", method = RequestMethod.DELETE)

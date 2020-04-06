@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,13 +19,10 @@ public class CommunityAccessService {
     UserCommonService userCommonService;
 
     public boolean isUserOwnerOfCommunity(User user, Community community) {
-        if (Objects.equals(user.getUserId(), community.getOwnerUser().getUserId())) {
-            return true;
-        }
-        return false;
+        return user.equals(community.getOwnerUser());
     }
 
-    public boolean isUserMemberOfCommunity(User user, Community community){
+    public boolean isUserMemberOfCommunity(User user, Community community) {
         // If user is the owner of the community
         if (this.isUserOwnerOfCommunity(user, community)) {
             return true;
@@ -35,8 +31,6 @@ public class CommunityAccessService {
         List<Long> userIdList = community.getUsers().stream().map(communityUser ->
                 communityUser.getUser().getUserId()
         ).collect(Collectors.toList());
-        if (userIdList.contains(user.getUserId()))
-            return true;
-        return false;
+        return userIdList.contains(user.getUserId());
     }
 }

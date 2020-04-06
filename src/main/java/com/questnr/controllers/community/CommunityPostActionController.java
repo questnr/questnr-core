@@ -1,14 +1,14 @@
 package com.questnr.controllers.community;
 
+import com.questnr.access.CommunityPostActionAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionForCommunityDTO;
+import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
-import com.questnr.model.dto.PostActionRequestDTO;
-import com.questnr.access.PostActionAccessService;
-import com.questnr.services.community.CommunityPostActionService;
 import com.questnr.services.PostActionService;
+import com.questnr.services.community.CommunityPostActionService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,13 +27,11 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/api/v1")
 public class CommunityPostActionController {
 
-    final String errorMessage = "You don't have access for the particular operation";
-
     @Autowired
     CommunityPostActionService communityPostActionService;
 
     @Autowired
-    PostActionAccessService postActionAccessService;
+    CommunityPostActionAccessService communityPostActionAccessService;
 
     @Autowired
     final PostActionMapper postActionMapper;
@@ -49,10 +47,8 @@ public class CommunityPostActionController {
     @RequestMapping(value = "community/{communityId}/posts", method = RequestMethod.GET)
     Page<PostActionForCommunityDTO> getAllPostsByCommunityId(@PathVariable long communityId, Pageable pageable) {
         Page<PostAction> page = communityPostActionService.getAllPostActionsByCommunityId(communityId, pageable);
-        List<PostActionForCommunityDTO> postActionForCommunityDTOS = page.getContent().stream().map(postAction ->
-                postActionMapper.toPostActionForCommunityDTO(postAction)
-        ).collect(Collectors.toList());
-        return new PageImpl<PostActionForCommunityDTO>(postActionForCommunityDTOS, pageable, page.getTotalElements());
+        List<PostActionForCommunityDTO> postActionForCommunityDTOS = page.getContent().stream().map(postActionMapper::toPostActionForCommunityDTO).collect(Collectors.toList());
+        return new PageImpl<>(postActionForCommunityDTOS, pageable, page.getTotalElements());
     }
 
     @RequestMapping(value = "community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -60,9 +56,9 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (postActionAccessService.hasAccessToPostCreation(communityId))
+        if (communityPostActionAccessService.hasAccessToPostCreation(communityId))
             return postActionMapper.toDTO(communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), files, communityId));
-        throw new AccessException(errorMessage);
+        throw new AccessException();
     }
 
     @RequestMapping(value = "community/{communityId}/posts/{postId}", method = RequestMethod.PUT)
@@ -71,10 +67,10 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (postActionAccessService.hasAccessToPostModification(communityId))
+        if (communityPostActionAccessService.hasAccessToPostModification(communityId))
             communityPostActionService.updatePostAction(communityId, postId, postActionMapper.fromPostActionRequestDTO(postActionRequest));
-        else{
-            throw new AccessException(errorMessage);
+        else {
+            throw new AccessException();
         }
     }
 
@@ -84,10 +80,10 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (postActionAccessService.hasAccessToPostDeletion(communityId))
+        if (communityPostActionAccessService.hasAccessToPostDeletion(communityId))
             communityPostActionService.deletePostAction(communityId, postId);
-        else{
-            throw new AccessException(errorMessage);
+        else {
+            throw new AccessException();
         }
     }
 

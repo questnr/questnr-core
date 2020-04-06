@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class PostActionAccessService {
+public class CommunityPostActionAccessService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -34,10 +34,7 @@ public class PostActionAccessService {
     CommunityAccessService communityAccessService;
 
     public boolean isUserOwnerOfPost(User user, PostAction postAction) {
-        if (Objects.equals(user.getUserId(), postAction.getUserActor().getUserId())) {
-            return true;
-        }
-        return false;
+        return user.equals(postAction.getUserActor());
     }
 
     public boolean hasAccessToPostBaseService(Long communityId){

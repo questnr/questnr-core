@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 public class AccessException extends RuntimeException {
     public AccessException() {
-        super();
+        super("You don't have access for the particular operation");
     }
 
     public AccessException(String message) {
