@@ -38,7 +38,8 @@ public class PostActionController {
     // Get PostAction using post slug
     @RequestMapping(value = "/posts/{postSlug}", method = RequestMethod.GET)
     PostActionDTO getAllPostsByUserId(@PathVariable String postSlug) {
-        return postActionMapper.toDTO(postActionService.getPostActionFromSlug(postSlug));
+        PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
+        return postActionMapper.toDTO(postActionService.setPostActionMetaInformation(postAction));
     }
 
     // Get PostAction sharable link

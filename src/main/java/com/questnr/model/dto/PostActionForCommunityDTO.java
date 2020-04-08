@@ -6,8 +6,12 @@ import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostVisit;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class PostActionForCommunityDTO {
     private Long postActionId;
@@ -19,11 +23,14 @@ public class PostActionForCommunityDTO {
     private boolean featured;
     private boolean popular;
     private String tags;
-    private String titleTag;
     private Set<HashTag> hashTags;
     private Set<LikeAction> likeActionSet;
-    private Set<PostVisit> postViewSet;
+    private List<CommentActionDTO> commentActionDTOList;
+    private Set<PostVisit> postVisitSet;
     private List<PostMediaDTO> postMediaDTOList;
+    private int totalLikes;
+    private int totalComments;
+    private int totalPostVisits;
 
     public String getSlug() {
         return slug;
@@ -89,14 +96,6 @@ public class PostActionForCommunityDTO {
         this.tags = tags;
     }
 
-    public String getTitleTag() {
-        return titleTag;
-    }
-
-    public void setTitleTag(String titleTag) {
-        this.titleTag = titleTag;
-    }
-
     public Long getPostActionId() {
         return postActionId;
     }
@@ -119,14 +118,46 @@ public class PostActionForCommunityDTO {
 
     public void setLikeActionSet(Set<LikeAction> likeActionSet) {
         this.likeActionSet = likeActionSet;
+        try {
+            this.setTotalLikes(likeActionSet.size());
+        } catch (Exception e) {
+            this.setTotalLikes(0);
+        }
     }
 
-    public Set<PostVisit> getPostViewSet() {
-        return postViewSet;
+    public void setCommentActionDTOList(List<CommentActionDTO> commentActionDTOList) {
+        this.commentActionDTOList = commentActionDTOList;
+        try {
+            this.setTotalComments(commentActionDTOList.size());
+        } catch (Exception e) {
+            this.setTotalComments(0);
+        }
     }
 
-    public void setPostViewSet(Set<PostVisit> postViewSet) {
-        this.postViewSet = postViewSet;
+    public List<CommentActionDTO> getCommentActionDTOList() {
+        if (commentActionDTOList.size() > 0) {
+            Predicate<CommentActionDTO> commentActionDTOPredicate = commentActionDTO -> !commentActionDTO.isChildComment();
+            commentActionDTOList = commentActionDTOList.stream().filter(commentActionDTOPredicate).collect(Collectors.toList());
+            Comparator<CommentActionDTO> createdAtComparator
+                    = Comparator.comparing(CommentActionDTO::getCreatedAt);
+            commentActionDTOList.sort(createdAtComparator.reversed());
+            return commentActionDTOList.subList(0, commentActionDTOList.size() > 3 ? 3 : commentActionDTOList.size());
+        }
+        return new ArrayList<>();
+    }
+
+    public Set<PostVisit> getPostVisitSet() {
+        return postVisitSet;
+    }
+
+
+    public void setPostVisitSet(Set<PostVisit> postVisitSet) {
+        this.postVisitSet = postVisitSet;
+        try {
+            this.setTotalPostVisits(postVisitSet.size());
+        } catch (Exception e) {
+            this.setTotalPostVisits(0);
+        }
     }
 
     public List<PostMediaDTO> getPostMediaDTOList() {
@@ -136,4 +167,31 @@ public class PostActionForCommunityDTO {
     public void setPostMediaDTOList(List<PostMediaDTO> postMediaDTOList) {
         this.postMediaDTOList = postMediaDTOList;
     }
+
+
+    public int getTotalLikes() {
+        return totalLikes;
+    }
+
+    public void setTotalLikes(int totalLikes) {
+        this.totalLikes = totalLikes;
+    }
+
+    public int getTotalComments() {
+        return totalComments;
+    }
+
+    public void setTotalComments(int totalComments) {
+        this.totalComments = totalComments;
+    }
+
+    public int getTotalPostVisits() {
+        return totalPostVisits;
+    }
+
+
+    public void setTotalPostVisits(int totalPostVisits) {
+        this.totalPostVisits = totalPostVisits;
+    }
+
 }

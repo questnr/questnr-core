@@ -30,8 +30,6 @@ public interface PostActionProjection {
 
     String getTags();
 
-    String getTitleTag();
-
     Set<HashTagProjection> getHashTags();
 
     UserProjection getUserActor();

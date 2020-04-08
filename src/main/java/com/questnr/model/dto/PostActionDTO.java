@@ -4,11 +4,8 @@ import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.LikeAction;
+import com.questnr.model.entities.PostActionMetaInformation;
 import com.questnr.model.entities.PostVisit;
-import com.questnr.model.mapper.CommentActionMapper;
-import com.questnr.services.CommentActionService;
-import com.rometools.rome.feed.atom.Person;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -27,7 +24,6 @@ public class PostActionDTO {
     private boolean featured;
     private boolean popular;
     private String tags;
-    private String titleTag;
     private UserDTO userDTO;
     private CommunityForPostActionDTO communityDTO;
     private Set<HashTag> hashTags;
@@ -38,6 +34,7 @@ public class PostActionDTO {
     private int totalLikes;
     private int totalComments;
     private int totalPostVisits;
+    private List<PostActionMetaInformation> metaList;
 
     public String getSlug() {
         return slug;
@@ -103,14 +100,6 @@ public class PostActionDTO {
         this.tags = tags;
     }
 
-    public String getTitleTag() {
-        return titleTag;
-    }
-
-    public void setTitleTag(String titleTag) {
-        this.titleTag = titleTag;
-    }
-
     public UserDTO getUserDTO() {
         return userDTO;
     }
@@ -163,7 +152,7 @@ public class PostActionDTO {
     }
 
     public List<CommentActionDTO> getCommentActionDTOList() {
-        if(commentActionDTOList.size() > 0) {
+        if (commentActionDTOList.size() > 0) {
             Predicate<CommentActionDTO> commentActionDTOPredicate = commentActionDTO -> !commentActionDTO.isChildComment();
             commentActionDTOList = commentActionDTOList.stream().filter(commentActionDTOPredicate).collect(Collectors.toList());
             Comparator<CommentActionDTO> createdAtComparator
@@ -215,5 +204,13 @@ public class PostActionDTO {
 
     public void setTotalPostVisits(int totalPostVisits) {
         this.totalPostVisits = totalPostVisits;
+    }
+
+    public List<PostActionMetaInformation> getMetaList() {
+        return metaList;
+    }
+
+    public void setMetaList(List<PostActionMetaInformation> metaList) {
+        this.metaList = metaList;
     }
 }

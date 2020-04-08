@@ -3,11 +3,9 @@ package com.questnr.services;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionSharableLinkDTO;
-import com.questnr.model.entities.HashTag;
-import com.questnr.model.entities.PostAction;
-import com.questnr.model.entities.PostMedia;
-import com.questnr.model.entities.User;
+import com.questnr.model.entities.*;
 import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.user.UserCommonService;
@@ -53,7 +51,7 @@ public class PostActionService {
 
     private String createPostActionSlug(PostAction postAction) {
         Long timeStamp = new Date().getTime();
-        List<String> titleChunks = Arrays.asList(postAction.getTitle().toLowerCase().split("\\s"));
+        List<String> titleChunks = Arrays.asList(postAction.getText().toLowerCase().split("\\s"));
         int maxTitleChunk = titleChunks.size();
         if (maxTitleChunk > 9) {
             maxTitleChunk = 9;
@@ -68,9 +66,50 @@ public class PostActionService {
     }
 
     private String getPostActionTitleTag(PostAction postAction) {
-        List<String> titleChunks = Arrays.asList(postAction.getTitle().toLowerCase().split("\\s"));
+        List<String> titleChunks = Arrays.asList(postAction.getText().toLowerCase().split("\\s"));
         return String.join(" ", titleChunks.subList(0, titleChunks.size())).replaceAll("[ ](?=[ ])|[^A-Za-z0-9 ]+", "");
     }
+
+
+    private PostActionMetaInformation getPostActionDescMetaInformation(PostAction postAction) {
+        MetaInformation metaInfo = new MetaInformation();
+        metaInfo.setAttributeType("name");
+        metaInfo.setType("description");
+        metaInfo.setContent(postAction.getText());
+        PostActionMetaInformation postMeta = new PostActionMetaInformation();
+        postMeta.setMetaInformation(metaInfo);
+        return postMeta;
+    }
+
+    public PostAction setPostActionMetaInformation(PostAction postAction) {
+        if (postAction != null) {
+            List<PostActionMetaInformation> metaList = new LinkedList<PostActionMetaInformation>();
+            if (postAction.getMetaList() == null || postAction.getMetaList().size() == 0) {
+                metaList.add(this.getPostActionDescMetaInformation(postAction));
+            } else {
+                boolean foundDesc = false;
+                for (PostActionMetaInformation meta : postAction.getMetaList()) {
+                    if (meta != null && meta.getMetaInformation() != null) {
+                        if (meta.getMetaInformation().getType().equals("description")) {
+                            foundDesc = true;
+                            break;
+                        }
+                    }
+                }
+                if (!foundDesc) {
+                    metaList.add(this.getPostActionDescMetaInformation(postAction));
+                }
+            }
+            postAction.getMetaList().addAll(metaList);
+
+//            if (postAction.getTags() == null || postAction.getTags().isEmpty()) {
+//                postAction.setTags(this.getPostActionTitleTag(postAction));
+//            }
+
+        }
+        return postAction;
+    }
+
 
     public PostAction creatPostAction(PostAction postAction, List<PostMedia> postMediaList) {
         try {
@@ -81,7 +120,7 @@ public class PostActionService {
             postAction.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
             postAction.setPostMediaList(postMediaList);
             postAction.setSlug(this.createPostActionSlug(postAction));
-            postAction.setTitleTag(this.getPostActionTitleTag(postAction));
+            postAction.setTags(this.getPostActionTitleTag(postAction));
             if (postAction.getPostActionPrivacy() == null) {
                 postAction.setPostActionPrivacy(PostActionPrivacy.public_post);
             }
@@ -130,7 +169,7 @@ public class PostActionService {
     public PostActionSharableLinkDTO getPostActionSharableLink(Long postActionId) {
         PostActionSharableLinkDTO postActionSharableLinkDTO = new PostActionSharableLinkDTO();
         String postActionSlug = postActionRepository.findByPostActionId(postActionId).getSlug();
-        String sharableLink = QUEST_NR_DOMAIN+"/"+Paths.get(POST_ACTION_PATH, postActionSlug).toString();
+        String sharableLink = QUEST_NR_DOMAIN + "/" + Paths.get(POST_ACTION_PATH, postActionSlug).toString();
         postActionSharableLinkDTO.setPostActionLink(sharableLink);
         return postActionSharableLinkDTO;
     }

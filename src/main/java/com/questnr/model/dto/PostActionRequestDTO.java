@@ -15,7 +15,6 @@ public class PostActionRequestDTO {
     private boolean featured;
     private boolean popular;
     private String tags;
-    private String titleTag;
     private Community community;
 
     public long getPostId() {
@@ -82,14 +81,6 @@ public class PostActionRequestDTO {
         this.tags = tags;
     }
 
-    public String getTitleTag() {
-        return titleTag;
-    }
-
-    public void setTitleTag(String titleTag) {
-        this.titleTag = titleTag;
-    }
-
     public Community getCommunity() {
         return community;
     }
@@ -101,13 +92,11 @@ public class PostActionRequestDTO {
     public PostAction getPostAction(){
         PostAction postAction = new PostAction();
         postAction.setSlug(this.getSlug());
-        postAction.setTitle(this.getTitle());
         postAction.setText(this.getText());
         postAction.setStatus(this.getStatus());
         postAction.setFeatured(this.isFeatured());
         postAction.setPopular(this.isPopular());
         postAction.setTags(this.getTags());
-        postAction.setTitleTag(this.getTitleTag());
         postAction.setCommunity(this.getCommunity());
         return postAction;
     }

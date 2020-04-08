@@ -1,6 +1,7 @@
 package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
 import org.hibernate.search.annotations.Index;
@@ -27,10 +28,6 @@ public class PostAction extends DomainObject {
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "post_action_slug", length = 20000, unique = true)
     private String slug;
-
-    @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
-    @Column(name = "post_action_title", length = 10000)
-    private String title;
 
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "post_action_text", columnDefinition = "TEXT", length = 200000)
@@ -66,9 +63,6 @@ public class PostAction extends DomainObject {
     @Column(name = "post_action_tags")
     private String tags;
 
-    @Column(name = "title_tag", length = 200000)
-    private String titleTag;
-
     @ManyToOne
     @JoinColumn(name = "community_id")
     private Community community;
@@ -101,6 +95,11 @@ public class PostAction extends DomainObject {
     @JoinColumn(name = "post_action_id", nullable = false)
     private List<PostMedia> postMediaList = new LinkedList<>();
 
+    @JsonManagedReference(value = "meta-reference")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "postAction", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderColumn(name = "sequence", updatable = true)
+    private List<PostActionMetaInformation> metaList;
+
     public Long getPostActionId() {
         return postActionId;
     }
@@ -115,14 +114,6 @@ public class PostAction extends DomainObject {
 
     public void setSlug(String slug) {
         this.slug = slug;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getText() {
@@ -189,14 +180,6 @@ public class PostAction extends DomainObject {
         this.tags = tags;
     }
 
-    public String getTitleTag() {
-        return titleTag;
-    }
-
-    public void setTitleTag(String titleTag) {
-        this.titleTag = titleTag;
-    }
-
     public Community getCommunity() {
         return community;
     }
@@ -243,5 +226,13 @@ public class PostAction extends DomainObject {
 
     public void setPostMediaList(List<PostMedia> postMediaList) {
         this.postMediaList = postMediaList;
+    }
+
+    public List<PostActionMetaInformation> getMetaList() {
+        return metaList;
+    }
+
+    public void setMetaList(List<PostActionMetaInformation> metaList) {
+        this.metaList = metaList;
     }
 }
