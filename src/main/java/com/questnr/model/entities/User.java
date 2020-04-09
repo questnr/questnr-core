@@ -2,6 +2,8 @@ package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.questnr.common.enums.LoginType;
+import com.questnr.common.enums.SignUpSourceType;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -97,6 +99,14 @@ public class User extends DomainObject {
     @OneToMany(mappedBy = "userActor")
     private Set<PostAction> postActionSet;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "login_type")
+    private LoginType loginType;
+
+    @Column(name = "sign_up_source")
+    @Enumerated(EnumType.STRING)
+    SignUpSourceType signUpSource;
+
     public Long getUserId() {
         return userId;
     }
@@ -137,12 +147,12 @@ public class User extends DomainObject {
         this.lastName = lastName;
     }
 
-    public String getFullName() {
-        return fullName;
-    }
-
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getFullName() {
+        return this.fullName;
     }
 
     public String getEmailId() {
@@ -243,6 +253,22 @@ public class User extends DomainObject {
 
     public void setPostActionSet(Set<PostAction> postActionSet) {
         this.postActionSet = postActionSet;
+    }
+
+    public SignUpSourceType getSignUpSource() {
+        return signUpSource;
+    }
+
+    public void setSignUpSource(SignUpSourceType signUpSource) {
+        this.signUpSource = signUpSource;
+    }
+
+    public LoginType getLoginType() {
+        return loginType;
+    }
+
+    public void setLoginType(LoginType loginType) {
+        this.loginType = loginType;
     }
 
     @Override

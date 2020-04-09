@@ -1,4 +1,4 @@
-package com.questnr.common.enums;
+package com.questnr.common;
 
 public interface UserRankDependents {
     int PERCENT = 1;

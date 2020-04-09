@@ -1,9 +1,8 @@
 package com.questnr.model.specifications;
 
 
-import com.questnr.common.enums.SearchCriteria;
+import com.questnr.common.SearchCriteria;
 import com.questnr.model.entities.PostAction;
-import com.questnr.requests.Filter;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package com.questnr.services;
 
-import com.questnr.common.enums.UserRankDependents;
+import com.questnr.common.UserRankDependents;
 import com.questnr.model.dto.HashTagWithRankDTO;
 import com.questnr.model.dto.UserWithRankDTO;
 import com.questnr.model.entities.PostAction;

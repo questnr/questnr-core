@@ -7,21 +7,21 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "qr_post_action_meta_information")
+@Table(name = "qr_community_meta_information")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class PostActionMetaInformation {
+public class CommunityMetaInformation {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_action_meta_seq")
-    @SequenceGenerator(name = "post_action_meta_seq", sequenceName = "post_action_meta_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_meta_seq")
+    @SequenceGenerator(name = "community_meta_seq", sequenceName = "community_meta_seq", allocationSize = 1)
     private long id;
 
     @JsonBackReference(value = "meta-reference")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_action_id")
-    private PostAction postAction;
+    @JoinColumn(name = "community_id")
+    private Community community;
 
     @Embedded
     private MetaInformation metaInformation;
@@ -41,17 +41,17 @@ public class PostActionMetaInformation {
     }
 
     /**
-     * @return the post
+     * @return the community
      */
-    public PostAction getPostAction() {
-        return postAction;
+    public Community getCommunity() {
+        return community;
     }
 
     /**
-     * @param postAction the post to set
+     * @param community the community to set
      */
-    public void setPostAction(PostAction postAction) {
-        this.postAction = postAction;
+    public void setCommunity(Community community) {
+        this.community = community;
     }
 
     /**

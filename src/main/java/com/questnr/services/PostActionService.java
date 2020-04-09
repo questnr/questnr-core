@@ -3,7 +3,6 @@ package com.questnr.services;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionSharableLinkDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.HashTagRepository;
@@ -44,7 +43,7 @@ public class PostActionService {
     @Autowired
     SecureRandomService secureRandomService;
 
-    @Value("${questNR.domain}")
+    @Value("${questnr.domain}")
     String QUEST_NR_DOMAIN;
 
     final private String POST_ACTION_PATH = "posts";

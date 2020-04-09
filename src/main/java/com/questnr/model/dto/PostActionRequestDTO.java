@@ -3,7 +3,6 @@ package com.questnr.model.dto;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
-import org.springframework.web.multipart.MultipartFile;
 
 public class PostActionRequestDTO {
 

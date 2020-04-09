@@ -3,9 +3,7 @@ package com.questnr.services.community;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.entities.Community;
-import com.questnr.model.entities.CommunityUser;
-import com.questnr.model.entities.User;
+import com.questnr.model.entities.*;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
@@ -17,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,7 +45,7 @@ public class CommunityService {
     @Autowired
     SecureRandomService secureRandomService;
 
-    private String createPostActionSlug(Community community) {
+    private String createCommunitySlug(Community community) {
         List<String> titleChunks = Arrays.asList(community.getCommunityName().toLowerCase().split("\\s"));
         return String.join("-", titleChunks).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "") +
                 "-" +
@@ -62,12 +60,46 @@ public class CommunityService {
         throw new ResourceNotFoundException("Community not found!");
     }
 
+    private CommunityMetaInformation getCommunityDescMetaInformation(Community community) {
+        MetaInformation metaInfo = new MetaInformation();
+        metaInfo.setAttributeType("name");
+        metaInfo.setType("description");
+        metaInfo.setContent(community.getDescription());
+        CommunityMetaInformation communityMeta = new CommunityMetaInformation();
+        communityMeta.setMetaInformation(metaInfo);
+        return communityMeta;
+    }
+
+    public Community setCommunityMetaInformation(Community community) {
+        if (community != null) {
+            List<CommunityMetaInformation> metaList = new LinkedList<>();
+            if (community.getMetaList() == null || community.getMetaList().size() == 0) {
+                metaList.add(this.getCommunityDescMetaInformation(community));
+            } else {
+                boolean foundDesc = false;
+                for (CommunityMetaInformation meta : community.getMetaList()) {
+                    if (meta != null && meta.getMetaInformation() != null) {
+                        if (meta.getMetaInformation().getType().equals("description")) {
+                            foundDesc = true;
+                            break;
+                        }
+                    }
+                }
+                if (!foundDesc) {
+                    metaList.add(this.getCommunityDescMetaInformation(community));
+                }
+            }
+            community.getMetaList().addAll(metaList);
+        }
+        return community;
+    }
+
     public Community createCommunity(Community community, MultipartFile multipartFile) {
         if (community != null) {
             try {
                 community.setOwnerUser(userCommonService.getUser());
                 community.addMetadata();
-                community.setSlug(this.createPostActionSlug(community));
+                community.setSlug(this.createCommunitySlug(community));
                 Community communitySaved = communityRepository.saveAndFlush(community);
                 if (multipartFile != null) {
                     communityAvatarService.uploadAvatar(communitySaved.getCommunityId(), multipartFile);

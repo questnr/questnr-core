@@ -1,6 +1,7 @@
 package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.questnr.common.enums.PublishStatus;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -45,7 +47,7 @@ public class Community extends DomainObject {
     private PublishStatus status;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name="avatar_id")
+    @JoinColumn(name = "avatar_id")
     private Avatar avatar;
 
     @OneToMany(cascade = CascadeType.ALL,
@@ -62,6 +64,11 @@ public class Community extends DomainObject {
             fetch = FetchType.LAZY,
             mappedBy = "community", orphanRemoval = true)
     private Set<PostAction> postActionSet;
+
+    @JsonManagedReference(value = "meta-reference")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderColumn(name = "sequence")
+    private List<CommunityMetaInformation> metaList;
 
     public Long getCommunityId() {
         return communityId;
@@ -151,5 +158,13 @@ public class Community extends DomainObject {
 
     public void setPostActionSet(Set<PostAction> postActionSet) {
         this.postActionSet = postActionSet;
+    }
+
+    public List<CommunityMetaInformation> getMetaList() {
+        return metaList;
+    }
+
+    public void setMetaList(List<CommunityMetaInformation> metaList) {
+        this.metaList = metaList;
     }
 }

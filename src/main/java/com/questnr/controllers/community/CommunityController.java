@@ -47,11 +47,11 @@ public class CommunityController {
 
     // Community CRUD Operations
     @RequestMapping(value = "/community", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    CommunityDTO createCommunity(@Valid Community requests, @Nullable @RequestParam(value = "file") MultipartFile multipartFile ) {
+    CommunityDTO createCommunity(@Valid Community requests, @Nullable @RequestParam(value = "file") MultipartFile multipartFile) {
         /*
          * Community Creation Security Checking
          * */
-        if(communityAvatarAccessService.hasAccessToCommunityCreation()) {
+        if (communityAvatarAccessService.hasAccessToCommunityCreation()) {
             return communityMapper.toDTO(communityService.createCommunity(requests, multipartFile));
         }
         throw new AccessException();
@@ -64,7 +64,7 @@ public class CommunityController {
 
     @RequestMapping(value = "/community/slug/{communitySlug}", method = RequestMethod.GET)
     CommunityDTO getCommunity(@PathVariable String communitySlug) {
-        return communityMapper.toDTO(communityCommonService.getCommunity(communitySlug));
+        return communityMapper.toDTO(communityService.setCommunityMetaInformation(communityCommonService.getCommunity(communitySlug)));
     }
 
     @RequestMapping(value = "/community/{communityId}", method = RequestMethod.DELETE)
@@ -73,16 +73,16 @@ public class CommunityController {
         /*
          * Community Deletion Security Checking
          * */
-        if(communityAvatarAccessService.hasAccessToCommunityDeletion()) {
+        if (communityAvatarAccessService.hasAccessToCommunityDeletion()) {
             communityService.deleteCommunity(communityId);
-        }else{
+        } else {
             throw new AccessException();
         }
     }
 
     // Get users of a single community.
     @RequestMapping(value = "/community/{communitySlug}/users", method = RequestMethod.GET)
-    List<UserDTO> getUsersOfCommunity(@PathVariable String communitySlug){
+    List<UserDTO> getUsersOfCommunity(@PathVariable String communitySlug) {
 //        List<UserDTO> userDTOS = new ArrayList<>();
 //        for(User user: communityService.getUsersFromCommunity(communityId)){
 //            userDTOS.add(userMapper.toOthersDTO(user));
@@ -90,7 +90,7 @@ public class CommunityController {
         /*
          * Community Users Fetching Security Checking
          * */
-        if(communityAvatarAccessService.hasAccessToGetCommunityUsers()) {
+        if (communityAvatarAccessService.hasAccessToGetCommunityUsers()) {
             return userMapper.toOthersDTOs(communityService.getUsersOfCommunity(communitySlug));
         }
         throw new AccessException();
@@ -98,13 +98,13 @@ public class CommunityController {
 
     // Get community list from community name like string.
     @RequestMapping(value = "/search/community/{communityString}", method = RequestMethod.GET)
-    List<CommunityDTO> getCommunitiesFromLikeString(@PathVariable String communityString){
+    List<CommunityDTO> getCommunitiesFromLikeString(@PathVariable String communityString) {
         return communityMapper.toDTOs(communityService.getCommunitiesFromLikeString(communityString));
     }
 
     // Search user in community user list
     @RequestMapping(value = "/search/community/{communitySlug}/user/{userString}", method = RequestMethod.GET)
-    List<UserDTO> searchUserInCommunityUsers(@PathVariable String communitySlug, @PathVariable String userString){
+    List<UserDTO> searchUserInCommunityUsers(@PathVariable String communitySlug, @PathVariable String userString) {
         return userMapper.toOthersDTOs(communityService.searchUserInCommunityUsers(communitySlug, userString));
     }
 }

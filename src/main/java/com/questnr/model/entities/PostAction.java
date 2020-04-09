@@ -97,7 +97,7 @@ public class PostAction extends DomainObject {
 
     @JsonManagedReference(value = "meta-reference")
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "postAction", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderColumn(name = "sequence", updatable = true)
+    @OrderColumn(name = "sequence")
     private List<PostActionMetaInformation> metaList;
 
     public Long getPostActionId() {

@@ -1,6 +1,7 @@
 package com.questnr.model.dto;
 
 import com.questnr.common.enums.PublishStatus;
+import com.questnr.model.entities.CommunityMetaInformation;
 
 import java.util.List;
 
@@ -23,6 +24,8 @@ public class CommunityDTO {
     private AvatarDTO avatarDTO;
 
     private List<CommunityUserForCommunityDTO> communityUsers;
+
+    private List<CommunityMetaInformation> metaList;
 
     public Long getCommunityId() {
         return communityId;
@@ -94,5 +97,13 @@ public class CommunityDTO {
 
     public void setCommunityUsers(List<CommunityUserForCommunityDTO> communityUsers) {
         this.communityUsers = communityUsers;
+    }
+
+    public List<CommunityMetaInformation> getMetaList() {
+        return metaList;
+    }
+
+    public void setMetaList(List<CommunityMetaInformation> metaList) {
+        this.metaList = metaList;
     }
 }

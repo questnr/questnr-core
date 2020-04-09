@@ -1,4 +1,4 @@
-package com.questnr.common.enums;
+package com.questnr.common;
 
 public class SearchCriteria {
     private String key;
