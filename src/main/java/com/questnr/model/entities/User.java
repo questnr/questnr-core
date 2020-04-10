@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.LoginType;
 import com.questnr.common.enums.SignUpSourceType;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -51,6 +52,10 @@ public class User extends DomainObject {
 
     @Column(name = "mobile_number", length = 15)
     private String mobileNumber;
+
+    @Column(name = "is_email_verified")
+    @ColumnDefault(value = "false")
+    private Boolean isEmailVerified;
 
     @Column(name = "is_mobile_verified")
     private boolean isMobileNumberVerified;
@@ -169,6 +174,14 @@ public class User extends DomainObject {
 
     public void setMobileNumber(String mobileNumber) {
         this.mobileNumber = mobileNumber;
+    }
+
+    public boolean isEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public void setEmailVerified(boolean emailVerified) {
+        isEmailVerified = emailVerified;
     }
 
     public boolean isMobileNumberVerified() {

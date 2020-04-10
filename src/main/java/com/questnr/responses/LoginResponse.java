@@ -2,7 +2,7 @@ package com.questnr.responses;
 
 public class LoginResponse {
 
-  boolean loginSucces;
+  boolean loginSuccess;
   String accessToken;
   String userName;
   String errorMessage;
@@ -11,8 +11,8 @@ public class LoginResponse {
 
   }
 
-  public LoginResponse(boolean loginSucces) {
-    this.loginSucces = loginSucces;
+  public LoginResponse(boolean loginSuccess) {
+    this.loginSuccess = loginSuccess;
   }
 
   public String getUserName() {
@@ -23,12 +23,12 @@ public class LoginResponse {
     this.userName = userName;
   }
 
-  public boolean isLoginSucces() {
-    return loginSucces;
+  public boolean isLoginSuccess() {
+    return loginSuccess;
   }
 
-  public void setLoginSucces(boolean loginSucces) {
-    this.loginSucces = loginSucces;
+  public void setLoginSuccess(boolean loginSuccess) {
+    this.loginSuccess = loginSuccess;
   }
 
   public String getAccessToken() {
@@ -41,7 +41,7 @@ public class LoginResponse {
 
   @Override
   public String toString() {
-    return "LoginResponse [loginSucces=" + loginSucces + ",  accessToken=" + accessToken + "]";
+    return "LoginResponse [loginSuccess=" + loginSuccess + ",  accessToken=" + accessToken + "]";
   }
 
   /**

@@ -3,17 +3,12 @@ package com.questnr.controllers;
 import com.questnr.model.entities.User;
 import com.questnr.requests.LoginRequest;
 import com.questnr.responses.LoginResponse;
-import com.questnr.responses.SignUpResponse;
 import com.questnr.services.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.Map;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -24,10 +19,9 @@ public class BaseController {
     BaseService baseService;
 
     @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
-    SignUpResponse signUpUser(@Valid @RequestBody User user) {
+    LoginResponse signUpUser(@Valid @RequestBody User user) {
         return baseService.signUp(user);
     }
-
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     LoginResponse loginUser(@Valid @RequestBody LoginRequest request) {
@@ -37,6 +31,6 @@ public class BaseController {
     @RequestMapping(value = "/check-username", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void checkUsername(@RequestParam String username) {
-        baseService.checkUsernameIsTaken(username);
+        baseService.checkIfUsernameIsTaken(username);
     }
 }

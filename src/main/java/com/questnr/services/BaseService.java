@@ -1,6 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.common.enums.AuthorityName;
+import com.questnr.common.enums.SignUpSourceType;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.model.entities.Authority;
 import com.questnr.model.entities.User;
@@ -8,7 +9,6 @@ import com.questnr.model.repositories.AuthorityRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.requests.LoginRequest;
 import com.questnr.responses.LoginResponse;
-import com.questnr.responses.SignUpResponse;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUser;
 import com.questnr.util.EncryptionUtils;
@@ -38,28 +38,63 @@ public class BaseService {
     @Autowired
     AuthorityRepository authorityRepository;
 
-    public SignUpResponse signUp(User user) {
-        SignUpResponse response = new SignUpResponse();
-        String accessToken;
-        if (user != null && user.getEmailId() != null && user.getUsername() != null) {
-            try {
-                this.checkEmailIsTaken(user.getEmailId());
-                this.checkUsernameIsTaken(user.getUsername());
-            } catch (AlreadyExistsException e) {
-                response.setLoginSucces(false);
-                response.setErrorMessage(e.getMessage());
-                return response;
-            }
-
+    public User createUserFromSocialLogin(User user, String source) {
+        user.setAuthorities(this.createAuthoritySet());
+        user.setEnabled(true);
+        user.addMetadata();
+        try {
+            user.setSignUpSource(SignUpSourceType.valueOf(source));
+        } catch (Exception e) {
+            user.setSignUpSource(SignUpSourceType.ANDROID);
         }
-        Set<Authority> authoritySet = new HashSet<Authority>();
+        user.setSlug(user.getUsername());
+        User savedUser = userRepository.saveAndFlush(user);
+        return savedUser;
+    }
+
+    public LoginResponse createSuccessLoginResponse(User savedUser) {
+        LoginResponse response = new LoginResponse();
+        response.setUserName(savedUser.getUsername());
+        response.setLoginSuccess(true);
+        JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
+        response.setAccessToken(jwtTokenUtil.generateToken(userDetails));
+        return response;
+    }
+
+    public LoginResponse createErrorLoginResponse(){
+        return this.createErrorLoginResponse("Wrong credentials");
+    }
+
+    public LoginResponse createErrorLoginResponse(String errorMessage){
+        LoginResponse response = new LoginResponse();
+        response.setLoginSuccess(false);
+        response.setErrorMessage(errorMessage);
+        return response;
+    }
+
+    public Set<Authority> createAuthoritySet() {
+        Set<Authority> authoritySet = new HashSet<>();
         Authority authority = authorityRepository.findByName(AuthorityName.ROLE_USER);
         if (authority == null) {
             authority = new Authority();
             authority.setName(AuthorityName.ROLE_USER);
         }
         authoritySet.add(authority);
-        user.setAuthorities(authoritySet);
+        return authoritySet;
+    }
+
+    public LoginResponse signUp(User user) {
+        if (user != null && user.getEmailId() != null && user.getUsername() != null) {
+            try {
+                this.checkIfEmailIsTaken(user.getEmailId());
+                this.checkIfUsernameIsTaken(user.getUsername());
+            } catch (AlreadyExistsException e) {
+                return this.createErrorLoginResponse(e.getMessage());
+            }
+
+        }
+        user.setAuthorities(this.createAuthoritySet());
+        user.setEmailVerified(false);
         user.setEnabled(true);
         user.setFullName(user.getUsername());
 
@@ -71,39 +106,24 @@ public class BaseService {
         user.addMetadata();
         user.setSlug(user.getUsername());
         User savedUser = userRepository.saveAndFlush(user);
-        response.setUserName(savedUser.getUsername());
-        response.setLoginSucces(true);
-        JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
-        accessToken = jwtTokenUtil.generateToken(userDetails);
-        response.setAccessToken(accessToken);
-
-        return response;
+        return this.createSuccessLoginResponse(savedUser);
     }
 
     public LoginResponse login(LoginRequest request) {
-
-        LoginResponse response = new LoginResponse();
         if (request == null) {
-            response.setLoginSucces(false);
+            return this.createErrorLoginResponse();
         } else {
-            String accessToken;
-            User savedUser = userRepository.findByEmailId((String) request.getEmailId());
+            User savedUser = userRepository.findByEmailId(request.getEmailId());
             if (savedUser != null) {
                 if (checkValidLogin(savedUser, request.getPassword())) {
-                    response.setLoginSucces(true);
-                    JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
-                    accessToken = jwtTokenUtil.generateToken(userDetails);
-                    response.setUserName(savedUser.getUsername());
-                    response.setAccessToken(accessToken);
+                    return this.createSuccessLoginResponse(savedUser);
                 } else {
-                    response.setLoginSucces(false);
-                    response.setErrorMessage("Wrong credentials");
+                    return this.createErrorLoginResponse();
                 }
             } else {
-                response.setErrorMessage("User doesn't exist. Please sign up.");
+                return this.createErrorLoginResponse("User doesn't exist. Please sign up.");
             }
         }
-        return response;
     }
 
     private boolean checkValidLogin(User user, String password) {
@@ -123,13 +143,13 @@ public class BaseService {
         return false;
     }
 
-    public void checkUsernameIsTaken(String username) {
+    public void checkIfUsernameIsTaken(String username) {
         if (userRepository.existsByUsername(username)) {
             throw new AlreadyExistsException("Username is already taken");
         }
     }
 
-    public void checkEmailIsTaken(String email) {
+    public void checkIfEmailIsTaken(String email) {
         if (userRepository.existsByEmailId(email)) {
             throw new AlreadyExistsException("User already exists");
         }
