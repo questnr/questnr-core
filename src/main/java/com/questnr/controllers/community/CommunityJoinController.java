@@ -32,7 +32,7 @@ public class CommunityJoinController {
     }
 
     // Join user to the community
-    @RequestMapping(value = "/join/community/{communityId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.POST)
     CommunityDTO joinCommunity(@PathVariable long communityId) {
         if (communityJoinAccessService.hasAccessToJoinCommunity(communityId)) {
             return communityMapper.toDTO(communityJoinService.joinCommunity(communityId));
@@ -42,7 +42,7 @@ public class CommunityJoinController {
     }
 
     // Ask user to join the community
-    @RequestMapping(value = "/join/community/{communityId}/invite-user", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/join/community/{communityId}/invite", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody Long userId) {
         if (communityJoinAccessService.hasAccessToInviteUser(communityId)) {
@@ -53,7 +53,7 @@ public class CommunityJoinController {
     }
 
     // Ask user to join the community using user email id
-    @RequestMapping(value = "/join/community/{communityId}/invite-user/email", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/join/community/{communityId}/invite/email", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody String userEmail) {
         if (communityJoinAccessService.hasAccessToInviteUser(communityId)) {
@@ -64,35 +64,35 @@ public class CommunityJoinController {
     }
 
     // Accept the invitation sent to the user
-    @RequestMapping(value = "/join/community/{communityId}/accept-invitation", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/join/community/{communityId}/invitation", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     void acceptInvitationFromCommunity(@PathVariable long communityId) {
         communityJoinService.actionOnInvitationFromCommunity(communityId, true);
     }
 
     // Decline the invitation sent to the user
-    @RequestMapping(value = "/join/community/{communityId}/decline-invitation", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/join/community/{communityId}/invitation", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void declineInvitationFromCommunity(@PathVariable long communityId) {
         communityJoinService.actionOnInvitationFromCommunity(communityId, false);
     }
 
     // Accept the invitation sent to the user, using user email id
-    @RequestMapping(value = "/join/community/{communityId}/accept-invitation/user", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/join/community/{communityId}/invitation/email", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void acceptInvitationFromCommunity(@PathVariable long communityId, @RequestBody String userEmail) {
         communityJoinService.actionOnInvitationFromCommunity(communityId, userEmail, true);
     }
 
     // Decline the invitation sent to the user, using user email id
-    @RequestMapping(value = "/join/community/{communityId}/decline-invitation/user", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/join/community/{communityId}/invitation/email", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void declineInvitationFromCommunity(@PathVariable long communityId, @RequestBody String userEmail) {
         communityJoinService.actionOnInvitationFromCommunity(communityId, userEmail, false);
     }
 
     // Revoke join operation
-    @RequestMapping(value = "/join/community/{communityId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void revokeJoinFromUser(@PathVariable long communityId, @RequestBody Long userId) {
         communityJoinService.revokeJoinFromUser(communityId, userId);
