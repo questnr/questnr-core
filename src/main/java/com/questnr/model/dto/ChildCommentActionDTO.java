@@ -1,11 +1,17 @@
 package com.questnr.model.dto;
 
+import java.util.Date;
+
 public class ChildCommentActionDTO {
     private Long commentActionId;
 
     private String commentObject;
 
     private UserDTO userActorDTO;
+
+    private Date createdAt;
+
+    private MetaDataDTO metaData;
 
     public Long getCommentActionId() {
         return commentActionId;
@@ -29,5 +35,21 @@ public class ChildCommentActionDTO {
 
     public void setUserActorDTO(UserDTO userActorDTO) {
         this.userActorDTO = userActorDTO;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public MetaDataDTO getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(MetaDataDTO metaData) {
+        this.metaData = metaData;
     }
 }

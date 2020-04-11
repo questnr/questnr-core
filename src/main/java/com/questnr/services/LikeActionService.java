@@ -1,12 +1,10 @@
 package com.questnr.services;
 
-import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
-import com.questnr.model.projections.LikeActionProjection;
 import com.questnr.model.repositories.LikeActionRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
@@ -35,8 +33,8 @@ public class LikeActionService {
     @Autowired
     PostActionRepository postActionRepository;
 
-    public Page<LikeActionProjection> getAllLikeActionByPostId(Long postId,
-                                                               Pageable pageable) {
+    public Page<LikeAction> getAllLikeActionByPostId(Long postId,
+                                                     Pageable pageable) {
         return likeActionRepository.findByPostAction(postActionRepository.findByPostActionId(postId), pageable);
     }
 
@@ -62,7 +60,7 @@ public class LikeActionService {
 
     public void deleteLikeAction(Long postId) throws ResourceNotFoundException {
         Long userId = userCommonService.getUserId();
-       likeActionRepository.findByPostActionAndUserActor(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
+        likeActionRepository.findByPostActionAndUserActor(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
             likeActionRepository.delete(likeAction);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new ResourceNotFoundException("Like not found"));

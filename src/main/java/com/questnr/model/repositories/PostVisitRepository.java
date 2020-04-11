@@ -3,7 +3,6 @@ package com.questnr.model.repositories;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostVisit;
 import com.questnr.model.entities.User;
-import com.questnr.model.projections.LikeActionProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

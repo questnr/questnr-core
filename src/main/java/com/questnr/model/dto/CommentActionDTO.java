@@ -16,6 +16,8 @@ public class CommentActionDTO {
 
     private Date createdAt;
 
+    private MetaDataDTO metaData;
+
     public Long getCommentActionId() {
         return commentActionId;
     }
@@ -62,5 +64,13 @@ public class CommentActionDTO {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public MetaDataDTO getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(MetaDataDTO metaData) {
+        this.metaData = metaData;
     }
 }

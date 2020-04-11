@@ -22,14 +22,14 @@ public class PostActionController {
     }
 
     // Get PostAction using post slug
-    @RequestMapping(value = "/posts/{postSlug}", method = RequestMethod.GET)
+    @RequestMapping(value = "/post/{postSlug}", method = RequestMethod.GET)
     PostActionDTO getAllPostsByUserId(@PathVariable String postSlug) {
         return postActionMapper.toDTO(postActionService.setPostActionMetaInformation(postActionService.getPostActionFromSlug(postSlug)));
     }
 
     // Get PostAction sharable link
-    @RequestMapping(value = "/posts", method = RequestMethod.POST)
-    PostActionSharableLinkDTO getPostActionSharableLink(@RequestBody Long postActionId) {
-        return postActionService.getPostActionSharableLink(postActionId);
+    @RequestMapping(value = "/post/{postId}link", method = RequestMethod.POST)
+    PostActionSharableLinkDTO getPostActionSharableLink(@PathVariable Long postId) {
+        return postActionService.getPostActionSharableLink(postId);
     }
 }

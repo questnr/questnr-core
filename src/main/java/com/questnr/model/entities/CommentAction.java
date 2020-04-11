@@ -5,6 +5,7 @@ import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -38,6 +39,11 @@ public class CommentAction extends DomainObject {
 
     @Column(name = "is_child_comment")
     private boolean childComment;
+
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "commentAction", orphanRemoval = true)
+    private Set<LikeCommentAction> likeCommentActionSet = new HashSet<>();
 
     public Long getCommentActionId() {
         return commentActionId;
@@ -96,5 +102,13 @@ public class CommentAction extends DomainObject {
 
     public void setParentCommentAction(CommentAction parentCommentAction) {
         this.parentCommentAction = parentCommentAction;
+    }
+
+    public Set<LikeCommentAction> getLikeCommentActionSet() {
+        return likeCommentActionSet;
+    }
+
+    public void setLikeCommentActionSet(Set<LikeCommentAction> likeCommentActionSet) {
+        this.likeCommentActionSet = likeCommentActionSet;
     }
 }

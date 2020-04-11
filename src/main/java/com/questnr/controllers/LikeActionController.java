@@ -1,13 +1,15 @@
 package com.questnr.controllers;
 
+import com.questnr.model.dto.LikeActionDTO;
 import com.questnr.model.entities.LikeAction;
-import com.questnr.model.projections.LikeActionProjection;
+import com.questnr.model.mapper.LikeActionMapper;
 import com.questnr.services.LikeActionService;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,9 +19,17 @@ public class LikeActionController {
     @Autowired
     LikeActionService likeActionService;
 
+    @Autowired
+    LikeActionMapper likeActionMapper;
+
+    LikeActionController() {
+        likeActionMapper = Mappers.getMapper(LikeActionMapper.class);
+    }
+
     @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.GET)
-    Page<LikeActionProjection> getAllLikesByPostId(@PathVariable Long postId, Pageable pageable) {
-        return likeActionService.getAllLikeActionByPostId(postId, pageable);
+    Page<LikeActionDTO> getAllLikesByPostId(@PathVariable Long postId, Pageable pageable) {
+        Page<LikeAction> likeActionPage = likeActionService.getAllLikeActionByPostId(postId, pageable);
+        return new PageImpl<>(likeActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
     }
 
     @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.POST)

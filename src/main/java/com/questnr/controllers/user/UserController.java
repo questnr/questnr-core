@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -45,5 +46,14 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     void deleteUser(@PathVariable long userId) {
         userService.deleteUser(userId);
+    }
+
+    @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
+    @ResponseBody
+    ResetPasswordResponse createPasswordResetRequest(@Valid @RequestBody String emailId) {
+
+        // ResponseEntity<ResetPasswordResponse> res = null;
+        ResetPasswordResponse response = userManagementService.generatePasswordResetToken(emailId);
+        return response;
     }
 }
