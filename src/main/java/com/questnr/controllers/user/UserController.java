@@ -48,12 +48,5 @@ public class UserController {
         userService.deleteUser(userId);
     }
 
-    @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
-    @ResponseBody
-    ResetPasswordResponse createPasswordResetRequest(@Valid @RequestBody String emailId) {
 
-        // ResponseEntity<ResetPasswordResponse> res = null;
-        ResetPasswordResponse response = userManagementService.generatePasswordResetToken(emailId);
-        return response;
-    }
 }
