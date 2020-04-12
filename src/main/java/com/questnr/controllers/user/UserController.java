@@ -1,8 +1,10 @@
 package com.questnr.controllers.user;
 
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.mapper.UserMapper;
-import com.questnr.responses.ResetPasswordResponse;
+import com.questnr.requests.UpdatePasswordRequest;
+import com.questnr.responses.UpdatePasswordResponse;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.ses.AmazonAttachment;
 import com.questnr.services.ses.AmazonEmail;
@@ -35,22 +37,22 @@ public class UserController {
     @Autowired
     AmazonS3Client amazonS3Client;
 
-    UserController(){
+    UserController() {
         userMapper = Mappers.getMapper(UserMapper.class);
     }
 
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
-    UserDTO getUser(@PathVariable long userId){
+    UserDTO getUser(@PathVariable long userId) {
         return userMapper.toOthersDTO(userCommonService.getUser());
     }
 
     @RequestMapping(value = "/user/{username}", method = RequestMethod.GET)
-    UserDTO getUserByUsername(@PathVariable String username){
+    UserDTO getUserByUsername(@PathVariable String username) {
         return userMapper.toOthersDTO(userService.getUserByUsername(username));
     }
 
     @RequestMapping(value = "/search/user/{userString}", method = RequestMethod.GET)
-    List<UserDTO> searchUserString(@PathVariable String userString){
+    List<UserDTO> searchUserString(@PathVariable String userString) {
         return userMapper.toOthersDTOsFromProjections(userCommonService.searchUserString(userString));
     }
 
@@ -60,16 +62,21 @@ public class UserController {
         userService.deleteUser(userId);
     }
 
-    @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
+    @RequestMapping(value = "/update-password", method = RequestMethod.POST)
     @ResponseBody
-    ResetPasswordResponse createPasswordResetRequest(@Valid @RequestBody String emailId) {
+    UpdatePasswordResponse createPasswordResetRequest(
+            @Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
 
-        // ResponseEntity<ResetPasswordResponse> res = null;
-        ResetPasswordResponse response = userService.generatePasswordResetToken(emailId);
-        return response;
+        boolean validateToken =
+                userService.validatePasswordResetToken(updatePasswordRequest.getResetToken());
+        if (validateToken) {
+            return userService.updatePassword(updatePasswordRequest);
+        }
+        throw new InvalidRequestException("Invalid request!");
     }
 
-    @RequestMapping(value = "/testing-mail", method = RequestMethod.POST,  consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+
+    @RequestMapping(value = "/testing-mail", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public String sendMail(@RequestPart(value = "file") MultipartFile file) {
 
         AmazonEmail amazonEmail = new AmazonEmail(
@@ -78,13 +85,14 @@ public class UserController {
                 "Hey Brijesh",
                 "We have an offer for you :)");
 
-        try{
+        try {
             AmazonAttachment amazonAttachment = new AmazonAttachment();
-            amazonAttachment.setContent(file.getBytes());amazonEmail.setFiles();
+            amazonAttachment.setContent(file.getBytes());
+            amazonEmail.setFiles();
             amazonAttachment.setName("Profile pic");
             amazonAttachment.setContentType(file.getContentType());
             amazonEmail.setFiles(amazonAttachment);
-        }catch (IOException e){
+        } catch (IOException e) {
 
         }
         SESProcessor.getInstance().add(amazonEmail);

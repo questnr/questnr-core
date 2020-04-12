@@ -164,4 +164,25 @@ public class JwtTokenUtil {
     return loggedInUser.getEmail();
   }
 
+  public String getPasswordHashFromToken(String token) {
+    Claims allClaims = getAllClaimsFromToken(token);
+    String rv = allClaims.get(CLAIM_KEY_PASSWORDHASH, String.class);
+    return rv;
+  }
+
+
+  public boolean validateResetToken(String token, UserDetails userDetails) {
+    JwtUser user = (JwtUser) userDetails;
+    final String username = getUsernameFromToken(token);
+    final Date created = getIssuedAtDateFromToken(token);
+    String getPasswordHash = getPasswordHashFromToken(token);
+    String storedExpectedHash =
+            userDetails.getPassword() + "-" + ((JwtUser) userDetails).getLastPasswordResetDate();
+
+    // final Date expiration = getExpirationDateFromToken(token);
+    return (username.equals(user.getUsername()) && !isTokenExpired(token)
+            && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate())
+            && (getPasswordHash.equals(storedExpectedHash)));
+  }
+
 }

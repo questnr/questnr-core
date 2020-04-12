@@ -3,6 +3,7 @@ package com.questnr.controllers;
 import com.questnr.model.entities.User;
 import com.questnr.requests.LoginRequest;
 import com.questnr.responses.LoginResponse;
+import com.questnr.responses.ResetPasswordResponse;
 import com.questnr.services.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,5 +33,14 @@ public class BaseController {
     @ResponseStatus(HttpStatus.OK)
     void checkUsername(@RequestParam String username) {
         baseService.checkIfUsernameIsTaken(username);
+    }
+
+    @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
+    @ResponseBody
+    ResetPasswordResponse createPasswordResetRequest(@Valid @RequestBody String emailId) {
+
+        // ResponseEntity<ResetPasswordResponse> res = null;
+        ResetPasswordResponse response = baseService.generatePasswordResetToken(emailId);
+        return response;
     }
 }

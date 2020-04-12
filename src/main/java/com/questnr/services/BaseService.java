@@ -9,6 +9,7 @@ import com.questnr.model.repositories.AuthorityRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.requests.LoginRequest;
 import com.questnr.responses.LoginResponse;
+import com.questnr.responses.ResetPasswordResponse;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUser;
 import com.questnr.util.EncryptionUtils;
@@ -28,6 +29,9 @@ public class BaseService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    CommonService commonService;
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
@@ -64,11 +68,11 @@ public class BaseService {
         return response;
     }
 
-    public LoginResponse createErrorLoginResponse(){
+    public LoginResponse createErrorLoginResponse() {
         return this.createErrorLoginResponse("Wrong credentials");
     }
 
-    public LoginResponse createErrorLoginResponse(String errorMessage){
+    public LoginResponse createErrorLoginResponse(String errorMessage) {
         LoginResponse response = new LoginResponse();
         response.setLoginSuccess(false);
         response.setErrorMessage(errorMessage);
@@ -157,5 +161,30 @@ public class BaseService {
         if (userRepository.existsByEmailId(email)) {
             throw new AlreadyExistsException("User already exists");
         }
+    }
+
+
+    public ResetPasswordResponse generatePasswordResetToken(String emailID) {
+
+        ResetPasswordResponse response = new ResetPasswordResponse();
+        {
+            User savedUser = userRepository.findByEmailId(emailID);
+            if (savedUser != null) {
+                JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
+                String passwordResetToken = jwtTokenUtil.generatePasswordResetToken(userDetails);
+                if (passwordResetToken != null && !commonService.isNull(passwordResetToken)) {
+                    response.setSuccess(true);
+                    emailService.sendPasswordRequestEmail(emailID, passwordResetToken,
+                            savedUser.getFullName());
+                } else {
+                    response.setSuccess(true);
+                    response.setErrorMessage("Error occurred. Please try again");
+                }
+            } else {
+                response.setSuccess(false);
+                response.setErrorMessage("Email Id is not registered with us.");
+            }
+        }
+        return response;
     }
 }
