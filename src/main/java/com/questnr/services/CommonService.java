@@ -4,6 +4,9 @@ import com.questnr.model.entities.PostAction;
 import com.questnr.responses.TimeData;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Service
 public class CommonService {
     public boolean isNull(String string) {
@@ -15,6 +18,14 @@ public class CommonService {
             return postAction.getCommunity().getCommunityId();
         }
         return null;
+    }
+
+    /*
+     * Get current server date & time
+     */
+    public static String getTime() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SS");
+        return format.format(new Date());
     }
 
     public static TimeData calculateTimeFromSeconds(Long elapsed){

@@ -46,8 +46,8 @@ public class CommunityService {
     SecureRandomService secureRandomService;
 
     private String createCommunitySlug(Community community) {
-        List<String> titleChunks = Arrays.asList(community.getCommunityName().toLowerCase().split("\\s"));
-        return String.join("-", titleChunks).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "") +
+        List<String> communityNameChunks = Arrays.asList(community.getCommunityName().toLowerCase().split("\\s"));
+        return String.join("-", communityNameChunks).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "") +
                 "-" +
                 secureRandomService.getSecureRandom().toString();
     }

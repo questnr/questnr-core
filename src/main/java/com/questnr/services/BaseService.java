@@ -38,6 +38,9 @@ public class BaseService {
     @Autowired
     AuthorityRepository authorityRepository;
 
+    @Autowired
+    EmailService emailService;
+
     public User createUserFromSocialLogin(User user, String source) {
         user.setAuthorities(this.createAuthoritySet());
         user.setEnabled(true);
@@ -106,6 +109,7 @@ public class BaseService {
         user.addMetadata();
         user.setSlug(user.getUsername());
         User savedUser = userRepository.saveAndFlush(user);
+        this.emailService.sendEmailOnSignUp(user);
         return this.createSuccessLoginResponse(savedUser);
     }
 

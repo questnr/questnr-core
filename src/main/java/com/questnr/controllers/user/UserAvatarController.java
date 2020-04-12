@@ -26,6 +26,11 @@ public class UserAvatarController {
         return this.userAvatarService.getUserAvatar();
     }
 
+    @RequestMapping(value = "/{userSlug}/avatar", method = RequestMethod.GET)
+    public String getUserAvatar(@PathVariable String userSlug) {
+        return this.userAvatarService.getUserAvatar(userSlug);
+    }
+
     @RequestMapping(value = "/avatar", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteFileUsingPathToFile() {

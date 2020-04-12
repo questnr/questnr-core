@@ -49,8 +49,8 @@ public class CommunityAvatarService {
         return avatarStorageData.getUrl();
     }
 
-    public String getUserAvatar(long communityId) {
-        Community community = communityCommonService.getCommunity(communityId);
+    public String getAvatar(String communitySlug) {
+        Community community = communityCommonService.getCommunity(communitySlug);
         if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
             try {
                 return this.amazonS3Client.getS3BucketUrl(community.getAvatar().getAvatarKey());
@@ -79,8 +79,8 @@ public class CommunityAvatarService {
         }
     }
 
-    public byte[] getAvatar(long communityId) {
-        Community community = communityCommonService.getCommunity(communityId);
+    public byte[] getAvatarInBytes(String communitySlug) {
+        Community community = communityCommonService.getCommunity(communitySlug);
         if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
             return this.amazonS3Client.getFile(community.getAvatar().getAvatarKey());
         }

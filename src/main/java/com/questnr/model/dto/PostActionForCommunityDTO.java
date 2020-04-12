@@ -23,6 +23,7 @@ public class PostActionForCommunityDTO {
     private boolean featured;
     private boolean popular;
     private String tags;
+    private UserDTO userDTO;
     private Set<HashTag> hashTags;
     private Set<LikeAction> likeActionSet;
     private List<CommentActionDTO> commentActionDTOList;
@@ -31,6 +32,14 @@ public class PostActionForCommunityDTO {
     private int totalLikes;
     private int totalComments;
     private int totalPostVisits;
+
+    public Long getPostActionId() {
+        return postActionId;
+    }
+
+    public void setPostActionId(Long postActionId) {
+        this.postActionId = postActionId;
+    }
 
     public String getSlug() {
         return slug;
@@ -96,12 +105,12 @@ public class PostActionForCommunityDTO {
         this.tags = tags;
     }
 
-    public Long getPostActionId() {
-        return postActionId;
+    public UserDTO getUserDTO() {
+        return userDTO;
     }
 
-    public void setPostActionId(Long postActionId) {
-        this.postActionId = postActionId;
+    public void setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
     }
 
     public Set<HashTag> getHashTags() {

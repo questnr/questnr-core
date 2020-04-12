@@ -30,6 +30,10 @@ public abstract class PostActionMapper {
 
     abstract public PostAction fromPostActionRequestDTO(final PostActionRequestDTO postActionRequestDTO);
 
-    @Mapping(source = "postMediaList", target = "postMediaDTOList")
+    @Mappings({
+            @Mapping(source = "postMediaList", target = "postMediaDTOList"),
+            @Mapping(source = "userActor", target = "userDTO"),
+            @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+    })
     abstract public PostActionForCommunityDTO toPostActionForCommunityDTO(final PostAction postAction);
 }

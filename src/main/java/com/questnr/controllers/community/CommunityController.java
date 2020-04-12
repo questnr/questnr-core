@@ -103,7 +103,7 @@ public class CommunityController {
     }
 
     // Search user in community user list
-    @RequestMapping(value = "/search/community/{communitySlug}/user/{userString}", method = RequestMethod.GET)
+    @RequestMapping(value = "/community/{communitySlug}/search/user/{userString}", method = RequestMethod.GET)
     List<UserDTO> searchUserInCommunityUsers(@PathVariable String communitySlug, @PathVariable String userString) {
         return userMapper.toOthersDTOs(communityService.searchUserInCommunityUsers(communitySlug, userString));
     }

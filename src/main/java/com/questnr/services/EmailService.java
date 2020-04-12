@@ -1,39 +1,29 @@
 package com.questnr.services;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-import com.amazonaws.services.simpleemail.model.*;
 import com.questnr.common.EmailConstants;
 import com.questnr.model.entities.User;
 import com.questnr.security.JwtTokenUtil;
+import com.questnr.services.ses.AmazonAttachment;
+import com.questnr.services.ses.AmazonEmail;
+import com.questnr.services.ses.SESProcessor;
+import com.questnr.util.ReadFileFromResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSender;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
-import java.net.URL;
+import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
 
 @Component
 public class EmailService {
@@ -66,121 +56,48 @@ public class EmailService {
         this.templateEngine = templateEngine;
     }
 
-    public void sendSimpleMessage(String to, String subject, String text) {
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(to);
-        message.setFrom(senderEmail);
-        message.setSubject(subject);
-        message.setText(text);
-        mailSender.send(message);
-        System.out.println("Message Sent");
+    public void sendSimpleMessage(String to, String subject, String textBody) {
+        List<String> toAddressList = new ArrayList<>();
+        toAddressList.add(to);
+        AmazonEmail amazonEmail = new AmazonEmail(toAddressList, subject, textBody, false);
+        SESProcessor.getInstance().add(amazonEmail);
     }
 
-    public void sendHTMLMessage(String to, String subject, String htmlBody, String textBody)
-            throws MessagingException, UnsupportedEncodingException {
+    public void sendSimpleMessage(List<String> toAddressList, String subject, String textBody) {
+        AmazonEmail amazonEmail = new AmazonEmail(toAddressList, subject, textBody, false);
+        SESProcessor.getInstance().add(amazonEmail);
+    }
 
-        SendEmailRequest request =
-                new SendEmailRequest().withDestination(new Destination().withToAddresses(to))
-                        .withMessage(new Message()
-                                .withBody(new Body().withHtml(new Content().withCharset("UTF-8").withData(htmlBody))
-                                        .withText(new Content().withCharset("UTF-8").withData(textBody)))
-                                .withSubject(new Content().withCharset("UTF-8").withData(subject)))
-                        .withSource(senderEmail);
-        amazonSimpleEmailService.sendEmail(request);
+    public void sendHTMLMessage(String to, String subject, String htmlBody) {
+        AmazonEmail amazonEmail = new AmazonEmail(to, subject, htmlBody);
+        SESProcessor.getInstance().add(amazonEmail);
     }
 
 
-    public void sendHTMLMessageWithCC(String to, String subject, String htmlBody, String textBody,
-                                      String... cc) throws MessagingException, UnsupportedEncodingException {
+    public void sendHTMLMessageWithCC(String to, String subject, String htmlBody,
+                                      String... cc) {
 
-        SendEmailRequest request =
-                new SendEmailRequest().withDestination(new Destination().withToAddresses(to))
-                        .withMessage(new Message()
-                                .withBody(new Body().withHtml(new Content().withCharset("UTF-8").withData(htmlBody))
-                                        .withText(new Content().withCharset("UTF-8").withData(textBody)))
-                                .withSubject(new Content().withCharset("UTF-8").withData(subject)))
-                        .withSource(senderEmail);
-
-        if (cc != null) {
-            request.getDestination().withCcAddresses();
-        }
-        amazonSimpleEmailService.sendEmail(request);
+        List<String> ccAddresses = Arrays.asList(cc);
+        AmazonEmail amazonEmail = new AmazonEmail(to, subject, htmlBody, ccAddresses);
+        SESProcessor.getInstance().add(amazonEmail);
     }
 
-    public void sendHTMLMessageWithAttachments(String to, String subject, String htmlBody,
-                                               String textBody, String attachmentPath, String fileName) throws MessagingException {
+    public void sendHTMLMessageWithAttachment(String to, String subject, String htmlBody, String filePath) throws IOException {
+        File file = ReadFileFromResource.readFile(filePath);
+        if (file.isDirectory()) {
+            // @Todo: read files from directory
+        } else {
+            URLConnection connection = file.toURI().toURL().openConnection();
 
-        Session session = Session.getDefaultInstance(new Properties());
+            AmazonAttachment amazonAttachment = new AmazonAttachment();
+            amazonAttachment.setContent(ReadFileFromResource.convertToBytes(file));
+            amazonAttachment.setContentType(connection.getContentType());
+            amazonAttachment.setName(file.getName());
 
-        // Create a new MimeMessage object.
-        MimeMessage message = new MimeMessage(session);
-
-        // Add subject, from and to lines.
-        message.setSubject(subject, "UTF-8");
-        message.setFrom(new InternetAddress(senderEmail));
-        message.setRecipients(javax.mail.Message.RecipientType.TO, InternetAddress.parse(to));
-
-        // Create a multipart/alternative child container.
-        MimeMultipart msg_body = new MimeMultipart("alternative");
-
-        // Create a wrapper for the HTML and text parts.
-        MimeBodyPart wrap = new MimeBodyPart();
-
-        // Define the text part.
-        MimeBodyPart textPart = new MimeBodyPart();
-        textPart.setContent(textBody, "text/plain; charset=UTF-8");
-
-        // Define the HTML part.
-        MimeBodyPart htmlPart = new MimeBodyPart();
-        htmlPart.setContent(htmlBody, "text/html; charset=UTF-8");
-
-        // Add the text and HTML parts to the child container.
-        msg_body.addBodyPart(textPart);
-        msg_body.addBodyPart(htmlPart);
-
-        // Add the child container to the wrapper object.
-        wrap.setContent(msg_body);
-
-        // Create a multipart/mixed parent container.
-        MimeMultipart msg = new MimeMultipart("mixed");
-
-        // Add the parent container to the message.
-        message.setContent(msg);
-
-        // Add the multipart/alternative part to the message.
-        msg.addBodyPart(wrap);
-
-        // Define the attachment
-        MimeBodyPart att = new MimeBodyPart();
-        try {
-            URL url = new URL(attachmentPath);
-
-            ReadableByteChannel rbc = Channels.newChannel(url.openStream());
-            FileOutputStream fos = new FileOutputStream(url.getPath());
-            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-
-            DataSource fds = new FileDataSource(url.getFile());
-            att.setDataHandler(new DataHandler(fds));
-            att.setFileName(fileName);
-        } catch (Exception e) {
-            e.printStackTrace();
+            AmazonEmail amazonEmail = new AmazonEmail(to, subject, htmlBody);
+            amazonEmail.setFiles(amazonAttachment);
+            SESProcessor.getInstance().add(amazonEmail);
         }
-
-        // Add the attachment to the message.
-        msg.addBodyPart(att);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
-            message.writeTo(outputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        RawMessage rawMessage = new RawMessage(ByteBuffer.wrap(outputStream.toByteArray()));
-
-        SendRawEmailRequest rawEmailRequest = new SendRawEmailRequest(rawMessage);
-
-        amazonSimpleEmailService.sendRawEmail(rawEmailRequest);
-        // Display an error if something goes wrong.
     }
 
     public void sendEmailOnSignUp(User user) {
@@ -188,18 +105,11 @@ public class EmailService {
         final Context ctx = new Context(locale);
         ctx.setVariable("email", user.getUserId());
         ctx.setVariable("fullName", user.getFullName());
-        final String htmlContent = templateEngine.process("mail/signup.html", ctx);
-        final String htmlContent1 = templateEngine.process("mail/signupToAdmin.html", ctx);
-        System.out.println("Content is " + htmlContent);
-        try {
-            sendHTMLMessage(user.getEmailId(), "Welcome To Quesnr", htmlContent, " hello world");
-            sendHTMLMessage("admin@quesnr.com", "[Quesnr] New User Registration", htmlContent1,
-                    " hello world");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        final String htmlContent = templateEngine.process("mail/sign-up.html", ctx);
+        final String htmlContentForAdmin = templateEngine.process("mail/sign-up-admin.html", ctx);
+
+        this.sendHTMLMessage(user.getEmailId(), "Welcome To Quesnr", htmlContent);
+        this.sendHTMLMessage("admin@quesnr.com", "[Quesnr] New User Registration", htmlContentForAdmin);
     }
 
     public void sendPasswordRequestEmail(String to, String token, String fullName) {
@@ -211,18 +121,11 @@ public class EmailService {
         ctx.setVariable("fullName", fullName);
         ctx.setVariable("passwordResetUrl", resetURL);
         ctx.setVariable("passwordResetUrlText", "Click here to reset password");
-        final String htmlContent = templateEngine.process("mail/resetpasswordrequest.html", ctx);
-        final String htmlContent1 = templateEngine.process("mail/resetPasswordToAdmin.html", ctx);
-        System.out.println("Content is " + htmlContent);
-        try {
-            sendHTMLMessage(to, "Reset Password Request", htmlContent, " hello world");
-            sendHTMLMessage("admin@questnt.com", "[QuestNR] Password Lost/Changed", htmlContent1,
-                    "hello world");
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        final String htmlContent = templateEngine.process("mail/reset-password-request.html", ctx);
+        final String htmlContentForAdmin = templateEngine.process("mail/reset-password-admin.html", ctx);
+
+        this.sendHTMLMessage(to, "Reset Password Request", htmlContent);
+        this.sendHTMLMessage("admin@questnr.com", "[QuestNR] Password Lost/Changed", htmlContentForAdmin);
     }
 
     public void sendMessageNotification(String to, String message, String from, String topic,
@@ -241,16 +144,9 @@ public class EmailService {
             title = title + "From LMS Page";
         }
 
-        final String htmlContent = this.templateEngine.process("mail/testmail.html", ctx);
-        System.out.println("Content is " + htmlContent);
-        try {
-            sendHTMLMessage("info@questnr.com", title, htmlContent,
-                    " New Message Received from " + from);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        final String htmlContent = this.templateEngine.process("mail/test-mail.html", ctx);
+
+        this.sendHTMLMessage("info@questnr.com", title, htmlContent);
     }
 
     private String getHrefTag(String url, String text) {
@@ -259,7 +155,12 @@ public class EmailService {
     }
 
     public void sendErrorLogsToDevelopers(String message) {
-        String to = "dev@questnr.com";
+//        String to = "dev@questnr.com";
+
+        List<String> toAddressList = new ArrayList();
+        toAddressList.add("brijeshlakkad22@gmail.com");
+//        toAddressList.add("amanchoudharyys@gmail.com");
+//        toAddressList.add("satish.k.gaur2009@gmail.com");
         InetAddress ip;
         String hostname = "";
         try {
@@ -271,7 +172,7 @@ public class EmailService {
         }
 
         String subject = "Exception Logs from " + hostname;
-        sendSimpleMessage(to, subject, message);
+        this.sendSimpleMessage(toAddressList, subject, message);
     }
 
     public void sendNotificationToDevelopers(String message) {
@@ -287,7 +188,7 @@ public class EmailService {
         }
 
         String subject = "<<Subject>>";
-        sendSimpleMessage(to, subject, message);
+        this.sendSimpleMessage(to, subject, message);
     }
 
 }

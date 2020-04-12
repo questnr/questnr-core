@@ -48,7 +48,19 @@ public class UserAvatarService {
 
     public String getUserAvatar(){
         User user = userCommonService.getUser();
-        if (!commonService.isNull(user.getAvatar().getAvatarKey())) {
+        if (user.getAvatar() != null) {
+            try {
+                return this.amazonS3Client.getS3BucketUrl(user.getAvatar().getAvatarKey());
+            }catch (Exception e){
+                throw new InvalidRequestException("Error occurred. Please, try again!");
+            }
+        }
+        return null;
+    }
+
+    public String getUserAvatar(String userSlug){
+        User user = userRepository.findBySlug(userSlug);
+        if (user.getAvatar() != null) {
             try {
                 return this.amazonS3Client.getS3BucketUrl(user.getAvatar().getAvatarKey());
             }catch (Exception e){

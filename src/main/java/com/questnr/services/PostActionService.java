@@ -55,13 +55,13 @@ public class PostActionService {
         if (maxTitleChunk > 9) {
             maxTitleChunk = 9;
         }
-        return postAction.getUserActor().getUsername() +
+        return postAction.getUserActor().getUsername().toLowerCase() +
                 "_" +
                 String.join("-", (titleChunks.subList(0, maxTitleChunk))).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "") +
                 "-" +
                 secureRandomService.getSecureRandom().toString() +
                 "-" +
-                timeStamp.toString().substring(1, 5);
+                timeStamp.toString().substring(timeStamp.toString().length() - 6, timeStamp.toString().length() - 1);
     }
 
     private String getPostActionTitleTag(PostAction postAction) {

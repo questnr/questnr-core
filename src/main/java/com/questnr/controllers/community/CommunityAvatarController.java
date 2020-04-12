@@ -34,9 +34,9 @@ public class CommunityAvatarController {
         throw new AccessException();
     }
 
-    @RequestMapping(value = "/{communityId}/avatar", method = RequestMethod.GET)
-    public String getUserAvatar(@PathVariable long communityId) {
-        return this.communityAvatarService.getUserAvatar(communityId);
+    @RequestMapping(value = "/{communitySlug}/avatar", method = RequestMethod.GET)
+    public String getUserAvatar(@PathVariable String communitySlug) {
+        return this.communityAvatarService.getAvatar(communitySlug);
     }
 
     @RequestMapping(value = "/{communityId}/avatar", method = RequestMethod.DELETE)
@@ -52,9 +52,9 @@ public class CommunityAvatarController {
         }
     }
 
-    @RequestMapping(value = "/{communityId}/download-avatar", method = RequestMethod.GET)
-    public ResponseEntity<ByteArrayResource> getAvatar(@PathVariable long communityId) throws IOException {
-        byte[] data = this.communityAvatarService.getAvatar(communityId);
+    @RequestMapping(value = "/{communitySlug}/download-avatar", method = RequestMethod.GET)
+    public ResponseEntity<ByteArrayResource> getAvatar(@PathVariable String communitySlug) throws IOException {
+        byte[] data = this.communityAvatarService.getAvatarInBytes(communitySlug);
         ByteArrayResource resource = new ByteArrayResource(data);
 
         return ResponseEntity

@@ -63,6 +63,20 @@ public class JwtTokenUtil {
     }
     return doGenerateToken(claims, userDetails.getUsername());
   }
+
+  public String generatePasswordResetToken(UserDetails userDetails) {
+    Map<String, Object> claims = new HashMap<>();
+    JwtUser jwtUser = (JwtUser) userDetails;
+    if (jwtUser != null) {
+      claims.put(CLAIM_KEY_ID, jwtUser.getId());
+      claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+      claims.put(CLAIM_KEY_EMAIL_ID, jwtUser.getEmail());
+      claims.put(CLAIM_KEY_PASSWORDHASH,
+              userDetails.getPassword() + "-" + ((JwtUser) userDetails).getLastPasswordResetDate());
+    }
+    return doGenerateToken(claims, userDetails.getUsername());
+  }
+
   private String doGenerateToken(Map<String, Object> claims, String subject) {
     final Date createdDate = clock.now();
     final Date expirationDate = calculateExpirationDate(createdDate);
