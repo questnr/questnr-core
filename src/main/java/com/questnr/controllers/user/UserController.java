@@ -6,6 +6,7 @@ import com.questnr.model.mapper.UserMapper;
 import com.questnr.requests.UpdatePasswordRequest;
 import com.questnr.responses.UpdatePasswordResponse;
 import com.questnr.services.AmazonS3Client;
+import com.questnr.services.ScheduledTasks;
 import com.questnr.services.ses.AmazonAttachment;
 import com.questnr.services.ses.AmazonEmail;
 import com.questnr.services.ses.SESProcessor;
@@ -36,6 +37,9 @@ public class UserController {
 
     @Autowired
     AmazonS3Client amazonS3Client;
+
+    @Autowired
+    ScheduledTasks scheduledTasks;
 
     UserController() {
         userMapper = Mappers.getMapper(UserMapper.class);
@@ -98,5 +102,10 @@ public class UserController {
         SESProcessor.getInstance().add(amazonEmail);
 
         return "Emails Sent!";
+    }
+
+    @RequestMapping(value = "/testing-func", method = RequestMethod.GET)
+    public void testFunc(){
+        scheduledTasks.storeCommunityTrendData();
     }
 }

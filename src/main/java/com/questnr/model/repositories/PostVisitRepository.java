@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Date;
 import java.util.Optional;
 
 public interface PostVisitRepository extends JpaRepository<PostVisit, Long> {
@@ -15,4 +16,6 @@ public interface PostVisitRepository extends JpaRepository<PostVisit, Long> {
     Page<PostVisit> findByPostAction(PostAction postAction, Pageable pageable);
 
     Optional<PostVisit> findByPostActionAndUserActor(PostAction postAction, User user);
+
+    Long countAllByPostActionAndCreatedAtBetween(PostAction postAction, Date startingDate, Date endingDate);
 }

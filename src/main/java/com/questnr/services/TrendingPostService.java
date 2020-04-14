@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.common.StartingEndingDate;
 import com.questnr.model.dto.TrendingPostDTO;
 import com.questnr.model.mapper.TrendingPostMapper;
 import com.questnr.model.repositories.PostActionRepository;
@@ -60,29 +61,12 @@ public class TrendingPostService {
     }
 
     public Page<TrendingPostDTO> getTrendingPostsOfTheWeek(Pageable pageable) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 //        Date startingDate = dateFormat.parse("2020-03-30");
-        Date startingDate;
-        Date endingDate;
-        try {
-            endingDate = new Date();
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime nowMinus7 = now.minusDays(7);
-            Calendar cal = Calendar.getInstance();
-            cal.set(Calendar.YEAR, nowMinus7.getYear());
-            cal.set(Calendar.MONTH, nowMinus7.getMonthValue() - 1);
-            cal.set(Calendar.DAY_OF_MONTH, nowMinus7.getDayOfMonth());
-            startingDate = cal.getTime();
-            startingDate = dateFormat.parse(dateFormat.format(startingDate));
-            endingDate = dateFormat.parse(dateFormat.format(endingDate));
-        } catch (Exception e) {
-            startingDate = new Date();
-            Calendar c = Calendar.getInstance();
-            c.setTime(startingDate);
-            c.add(Calendar.DATE, 1);
-            endingDate = c.getTime();
-        }
 
-        return this.getTrendingPostData(startingDate, endingDate, pageable);
+        StartingEndingDate startingEndingDate = new StartingEndingDate();
+        startingEndingDate.setDaysBefore(7);
+        startingEndingDate.build();
+
+        return this.getTrendingPostData(startingEndingDate.getStartingDate(), startingEndingDate.getEndingDate(), pageable);
     }
 }

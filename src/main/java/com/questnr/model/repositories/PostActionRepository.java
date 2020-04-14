@@ -66,4 +66,6 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
     Page<PostAction> findByFollowingToUserActorAndJoinedWithCommunity(@Param("user") User user, Pageable pageable);
 
     PostAction findFirstBySlug(String slug);
+
+    List<PostAction> findAllByCommunityAndCreatedAtBetween(Community community, Date startingDate, Date endingDate);
 }

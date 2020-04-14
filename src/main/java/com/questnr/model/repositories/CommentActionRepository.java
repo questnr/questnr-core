@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Date;
+
 public interface CommentActionRepository extends JpaRepository<CommentAction, Long> {
 
     Long countByPostActionAndUserActor(PostAction postAction, User user);
@@ -18,4 +20,6 @@ public interface CommentActionRepository extends JpaRepository<CommentAction, Lo
     CommentAction findByPostActionAndUserActorAndCommentActionId(PostAction postAction, User user, Long commentActionId);
 
     Boolean existsByCommentActionId(Long commentId);
+
+    Long countAllByPostActionAndCreatedAtBetween(PostAction postAction, Date startingDate, Date endingDate);
 }
