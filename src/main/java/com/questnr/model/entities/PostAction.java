@@ -235,4 +235,17 @@ public class PostAction extends DomainObject {
     public void setMetaList(List<PostActionMetaInformation> metaList) {
         this.metaList = metaList;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PostAction that = (PostAction) o;
+        return postActionId.equals(that.postActionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(postActionId);
+    }
 }

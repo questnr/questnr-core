@@ -3,7 +3,6 @@ package com.questnr.common;
 
 import com.questnr.model.entities.Community;
 
-import java.util.List;
 import java.util.Objects;
 
 public class CommunitySuggestionData {

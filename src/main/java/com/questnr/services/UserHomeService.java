@@ -1,7 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.common.CommunitySuggestionData;
-import com.questnr.common.CommunityTrendLinearData;
+import com.questnr.model.entities.CommunityTrendLinearData;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserFollower;

@@ -103,4 +103,9 @@ public class UserController {
 
         return "Emails Sent!";
     }
+
+    @RequestMapping(value = "/testing-func", method = RequestMethod.GET)
+    public void testingFunc() {
+        scheduledTasks.storeTrendData();
+    }
 }

@@ -1,4 +1,4 @@
-package com.questnr.common;
+package com.questnr.model.entities;
 
 import com.questnr.model.entities.Community;
 import org.springframework.stereotype.Indexed;
@@ -23,13 +23,13 @@ public class CommunityTrendLinearData {
     private Community community;
 
     @Transient
-    List<Double> x = new ArrayList<>();
+    private List<Double> x = new ArrayList<>();
 
     @Transient
-    List<Double> y = new ArrayList<>();
+    private List<Double> y = new ArrayList<>();
 
     @Column(name = "slop")
-    double slop;
+    private double slop;
 
     public Long getCommunityTrendLinerDataId() {
         return communityTrendLinerDataId;
