@@ -11,9 +11,7 @@ import com.questnr.services.PostActionService;
 import com.questnr.services.community.CommunityPostActionService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -45,10 +43,11 @@ public class CommunityPostActionController {
 
     // Basic post operations for users.
     @RequestMapping(value = "community/{communityId}/posts", method = RequestMethod.GET)
-    Page<PostActionForCommunityDTO> getAllPostsByCommunityId(@PathVariable long communityId, Pageable pageable) {
-        Page<PostAction> page = communityPostActionService.getAllPostActionsByCommunityId(communityId, pageable);
-        List<PostActionForCommunityDTO> postActionForCommunityDTOS = page.getContent().stream().map(postActionMapper::toPostActionForCommunityDTO).collect(Collectors.toList());
-        return new PageImpl<>(postActionForCommunityDTOS, pageable, page.getTotalElements());
+    Page<PostActionForCommunityDTO> getAllPostsByCommunityId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable long communityId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<PostAction> postActionPage = communityPostActionService.getAllPostActionsByCommunityId(communityId, pageable);
+        List<PostActionForCommunityDTO> postActionForCommunityDTOS = postActionPage.getContent().stream().map(postActionMapper::toPostActionForCommunityDTO).collect(Collectors.toList());
+        return new PageImpl<>(postActionForCommunityDTOS, pageable, postActionPage.getTotalElements());
     }
 
     @RequestMapping(value = "community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})

@@ -3,21 +3,26 @@ package com.questnr.services.community;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.*;
+import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
+import com.questnr.services.CustomPageService;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.SecureRandomService;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,6 +49,9 @@ public class CommunityService {
 
     @Autowired
     SecureRandomService secureRandomService;
+
+    @Autowired
+    CustomPageService<User> customPageService;
 
     private String createCommunitySlug(Community community) {
         List<String> communityNameChunks = Arrays.asList(community.getCommunityName().toLowerCase().split("\\s"));
@@ -145,11 +153,17 @@ public class CommunityService {
         }
     }
 
-    public List<User> getUsersOfCommunity(String communitySlug) {
+    public Page<User> getUsersOfCommunity(String communitySlug, Pageable pageable) {
         try {
-            List<User> users = communityCommonService.getCommunity(communitySlug).getUsers().stream()
+            List<CommunityUser> communityUserList = new ArrayList<>(communityCommonService.getCommunity(communitySlug).getUsers());
+
+            Comparator<CommunityUser> communityUserComparator = Comparator.comparing(CommunityUser::getCreatedAt);
+            communityUserList.sort(communityUserComparator.reversed());
+
+            List<User> users = communityUserList.stream()
                     .map(CommunityUser::getUser).collect(Collectors.toList());
-            return users;
+
+            return customPageService.customPage(users, pageable);
         } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
@@ -157,9 +171,9 @@ public class CommunityService {
         }
     }
 
-    public List<Community> getCommunitiesFromLikeString(String communityString) {
+    public Page<Community> getCommunitiesFromLikeString(String communityString, Pageable pageable) {
         try {
-            return communityRepository.findByCommunityNameContaining(communityString);
+            return communityRepository.findByCommunityNameContaining(communityString, pageable);
         } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
@@ -167,11 +181,12 @@ public class CommunityService {
         }
     }
 
-    public List<User> searchUserInCommunityUsers(String communitySlug, String userString) {
+    public Page<User> searchUserInCommunityUsers(String communitySlug, String userString, Pageable pageable) {
         Community community = communityCommonService.getCommunity(communitySlug);
         List<CommunityUser> communityUsers = community.getUsers().stream().filter(communityUser ->
                 communityUser.getUser().getUsername().toLowerCase().matches("(.*)" + userString.toLowerCase() + "(.*)")
         ).collect(Collectors.toList());
-        return communityUsers.stream().map(CommunityUser::getUser).collect(Collectors.toList());
+        List<User> users = communityUsers.stream().map(CommunityUser::getUser).collect(Collectors.toList());
+        return customPageService.customPage(users, pageable);
     }
 }

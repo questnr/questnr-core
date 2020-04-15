@@ -8,6 +8,8 @@ import com.questnr.security.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
@@ -48,9 +50,9 @@ public class UserCommonService {
         return Paths.get(this.getS3BucketUserFolder() ,fileName).toString();
     }
 
-    public List<UserProjection> searchUserString(String userString){
+    public Page<UserProjection> searchUserString(String userString, Pageable pageable){
         try{
-            return userRepository.findByFullNameContaining(userString);
+            return userRepository.findByFullNameContaining(userString, pageable);
         }catch (Exception e){
             throw new ResourceNotFoundException("User not found!");
         }

@@ -4,11 +4,10 @@ import com.questnr.model.entities.PostVisit;
 import com.questnr.services.PostVisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Sort;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/user")
@@ -18,7 +17,8 @@ public class PostVisitController {
     PostVisitService postVisitService;
 
     @RequestMapping(value = "/posts/{postId}/post_visit", method = RequestMethod.GET)
-    Page<PostVisit> getAllPostVisitByPostId(@PathVariable Long postId, Pageable pageable) {
+    Page<PostVisit> getAllPostVisitByPostId(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return postVisitService.getAllPostVisitByPostId(postId, pageable);
     }
 
@@ -26,5 +26,4 @@ public class PostVisitController {
     PostVisit createPostVisit(@PathVariable Long postId) {
         return postVisitService.createPostVisit(postId);
     }
-
 }

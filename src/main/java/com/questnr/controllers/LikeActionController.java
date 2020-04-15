@@ -6,9 +6,7 @@ import com.questnr.model.mapper.LikeActionMapper;
 import com.questnr.services.LikeActionService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +25,8 @@ public class LikeActionController {
     }
 
     @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.GET)
-    Page<LikeActionDTO> getAllLikesByPostId(@PathVariable Long postId, Pageable pageable) {
+    Page<LikeActionDTO> getAllLikesByPostId(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<LikeAction> likeActionPage = likeActionService.getAllLikeActionByPostId(postId, pageable);
         return new PageImpl<>(likeActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
     }

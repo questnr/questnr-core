@@ -3,6 +3,7 @@ package com.questnr.controllers.user;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.mapper.UserMapper;
+import com.questnr.model.projections.UserProjection;
 import com.questnr.requests.UpdatePasswordRequest;
 import com.questnr.responses.UpdatePasswordResponse;
 import com.questnr.services.AmazonS3Client;
@@ -15,6 +16,10 @@ import com.questnr.services.user.UserCommonService;
 import com.questnr.services.user.UserService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +27,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -55,9 +59,11 @@ public class UserController {
         return userMapper.toOthersDTO(userService.getUserByUsername(username));
     }
 
-    @RequestMapping(value = "/search/user/{userString}", method = RequestMethod.GET)
-    List<UserDTO> searchUserString(@PathVariable String userString) {
-        return userMapper.toOthersDTOsFromProjections(userCommonService.searchUserString(userString));
+    @RequestMapping(value = "/user/search/{userString}", method = RequestMethod.GET)
+    Page<UserDTO> searchUserString(@PathVariable String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<UserProjection> userPage = userCommonService.searchUserString(userString, pageable);
+        return new PageImpl<>(userMapper.toOthersDTOsFromProjections(userPage.getContent()), pageable, userPage.getTotalElements());
     }
 
     @RequestMapping(value = "/user/delete/{userId}", method = RequestMethod.DELETE)
@@ -77,31 +83,6 @@ public class UserController {
             return userService.updatePassword(updatePasswordRequest);
         }
         throw new InvalidRequestException("Invalid request!");
-    }
-
-
-    @RequestMapping(value = "/testing-mail", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public String sendMail(@RequestPart(value = "file") MultipartFile file) {
-
-        AmazonEmail amazonEmail = new AmazonEmail(
-                "lakkadbrijesh@gmail.com",
-                SESFrom.BRIJESH,
-                "Hey Brijesh",
-                "We have an offer for you :)");
-
-        try {
-            AmazonAttachment amazonAttachment = new AmazonAttachment();
-            amazonAttachment.setContent(file.getBytes());
-            amazonEmail.setFiles();
-            amazonAttachment.setName("Profile pic");
-            amazonAttachment.setContentType(file.getContentType());
-            amazonEmail.setFiles(amazonAttachment);
-        } catch (IOException e) {
-
-        }
-        SESProcessor.getInstance().add(amazonEmail);
-
-        return "Emails Sent!";
     }
 
     @RequestMapping(value = "/testing-func", method = RequestMethod.GET)

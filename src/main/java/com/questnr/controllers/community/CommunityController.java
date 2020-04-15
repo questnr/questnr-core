@@ -1,16 +1,21 @@
 package com.questnr.controllers.community;
 
+import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
-import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.lang.Nullable;
@@ -18,7 +23,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -41,8 +45,10 @@ public class CommunityController {
     @Autowired
     UserMapper userMapper;
 
+
     CommunityController() {
         communityMapper = Mappers.getMapper(CommunityMapper.class);
+        userMapper = Mappers.getMapper(UserMapper.class);
     }
 
     // Community CRUD Operations
@@ -82,7 +88,7 @@ public class CommunityController {
 
     // Get users of a single community.
     @RequestMapping(value = "/community/{communitySlug}/users", method = RequestMethod.GET)
-    List<UserDTO> getUsersOfCommunity(@PathVariable String communitySlug) {
+    Page<UserDTO> getUsersOfCommunity(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
 //        List<UserDTO> userDTOS = new ArrayList<>();
 //        for(User user: communityService.getUsersFromCommunity(communityId)){
 //            userDTOS.add(userMapper.toOthersDTO(user));
@@ -91,20 +97,26 @@ public class CommunityController {
          * Community Users Fetching Security Checking
          * */
         if (communityAvatarAccessService.hasAccessToGetCommunityUsers()) {
-            return userMapper.toOthersDTOs(communityService.getUsersOfCommunity(communitySlug));
+            Pageable pageable = PageRequest.of(page, size);
+            Page<User> userPage = communityService.getUsersOfCommunity(communitySlug, pageable);
+            return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
         }
         throw new AccessException();
     }
 
     // Get community list from community name like string.
     @RequestMapping(value = "/search/community/{communityString}", method = RequestMethod.GET)
-    List<CommunityDTO> getCommunitiesFromLikeString(@PathVariable String communityString) {
-        return communityMapper.toDTOs(communityService.getCommunitiesFromLikeString(communityString));
+    Page<CommunityDTO> getCommunitiesFromLikeString(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communityString) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Community> communityPage = communityService.getCommunitiesFromLikeString(communityString, pageable);
+        return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
     }
 
     // Search user in community user list
     @RequestMapping(value = "/community/{communitySlug}/search/user/{userString}", method = RequestMethod.GET)
-    List<UserDTO> searchUserInCommunityUsers(@PathVariable String communitySlug, @PathVariable String userString) {
-        return userMapper.toOthersDTOs(communityService.searchUserInCommunityUsers(communitySlug, userString));
+    Page<UserDTO> searchUserInCommunityUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug, @PathVariable String userString) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
+        return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
     }
 }

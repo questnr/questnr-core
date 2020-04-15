@@ -7,9 +7,7 @@ import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.services.user.UserPostActionService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +18,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = "/api/v1/user")
 public class UserPostActionController {
     @Autowired
     UserPostActionService userPostActionService;
@@ -33,27 +31,29 @@ public class UserPostActionController {
     }
 
     // Basic post operations for users.
-    @RequestMapping(value = "user/posts", method = RequestMethod.GET)
-    Page<PostActionDTO> getAllPostsByUserId(Pageable pageable) {
-        Page<PostAction> page = userPostActionService.getAllPostActionsByUserId(pageable);
-        List<PostActionDTO> postActionDTOS = page.getContent().stream().map(postAction ->
-          postActionMapper.toDTO(postAction)
-        ).collect(Collectors.toList());
-        return new PageImpl<PostActionDTO>(postActionDTOS, pageable, page.getTotalElements());
+    @RequestMapping(value = "/posts", method = RequestMethod.GET)
+    Page<PostActionDTO> getAllPostsByUserId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<PostAction> postActionPage = userPostActionService.getAllPostActionsByUserId(pageable);
+        List<PostActionDTO> postActionDTOS = postActionPage.getContent().stream()
+                .map(postActionMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(postActionDTOS, pageable, postActionPage.getTotalElements());
     }
 
-    @RequestMapping(value = "user/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     PostActionDTO createPost(@Valid PostActionRequestDTO postActionRequestDTO, @RequestParam(value = "file") List<MultipartFile> files) {
         return postActionMapper.toDTO(userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), files));
     }
 
-    @RequestMapping(value = "user/posts/{postId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     void updatePost(@PathVariable Long postId, @Valid @RequestBody PostAction postActionRequest) {
         userPostActionService.updatePostAction(postId, postActionRequest);
     }
 
-    @RequestMapping(value = "user/posts/{postId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/posts/{postId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deletePost(@PathVariable Long postId) {
         userPostActionService.deletePostAction(postId);

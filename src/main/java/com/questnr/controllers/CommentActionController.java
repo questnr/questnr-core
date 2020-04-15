@@ -1,17 +1,15 @@
 package com.questnr.controllers;
 
+import com.questnr.access.CommentActionAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommentActionDTO;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.mapper.CommentActionMapper;
 import com.questnr.requests.CommentActionRequest;
 import com.questnr.services.CommentActionService;
-import com.questnr.access.CommentActionAccessService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +33,8 @@ public class CommentActionController {
     }
 
     @RequestMapping(value = "/posts/{postId}/comment", method = RequestMethod.GET)
-    Page<CommentActionDTO> getAllCommentsByPostId(@PathVariable Long postId, Pageable pageable) {
+    Page<CommentActionDTO> getAllCommentsByPostId(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<CommentAction> commentActionPage = commentActionService.getAllCommentActionByPostId(postId, pageable);
         return new PageImpl<>(commentActionMapper.toDTOs(commentActionPage.getContent()), pageable, commentActionPage.getTotalElements());
     }

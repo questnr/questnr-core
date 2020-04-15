@@ -6,9 +6,7 @@ import com.questnr.model.mapper.LikeCommentActionMapper;
 import com.questnr.services.LikeCommentActionService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +25,8 @@ public class LikeCommentActionController {
     }
 
     @RequestMapping(value = "/comment/{commentId}/like", method = RequestMethod.GET)
-    Page<LikeCommentActionDTO> getAllLikesOnCommentByCommentId(@PathVariable Long commentId, Pageable pageable) {
+    Page<LikeCommentActionDTO> getAllLikesOnCommentByCommentId(@PathVariable Long commentId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<LikeCommentAction> likeActionPage = likeCommentActionService.getAllLikeActionByCommentId(commentId, pageable);
         return new PageImpl<>(likeCommentActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
     }
