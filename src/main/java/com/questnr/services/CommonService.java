@@ -1,11 +1,16 @@
 package com.questnr.services;
 
+import com.questnr.model.entities.Community;
+import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.PostAction;
 import com.questnr.responses.TimeData;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CommonService {
@@ -18,6 +23,10 @@ public class CommonService {
             return postAction.getCommunity().getCommunityId();
         }
         return null;
+    }
+
+    public List<Community> getCommunityList(Set<CommunityUser> communityUserList){
+        return communityUserList.stream().map(CommunityUser::getCommunity).collect(Collectors.toList());
     }
 
     /*

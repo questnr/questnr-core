@@ -38,6 +38,9 @@ public class Community extends DomainObject {
     @Column(name = "slug", unique = true)
     public String slug;
 
+    @Column(name = "community_tags")
+    private String tags;
+
     @ManyToOne
     @JoinColumn(name = "owner_user_id")
     private User ownerUser;
@@ -109,6 +112,14 @@ public class Community extends DomainObject {
 
     public void setSlug(String slug) {
         this.slug = slug;
+    }
+
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     public User getOwnerUser() {

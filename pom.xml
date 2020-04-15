@@ -220,6 +220,13 @@
             <artifactId>opencsv</artifactId>
             <version>4.1</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/info.debatty/java-string-similarity -->
+        <dependency>
+            <groupId>info.debatty</groupId>
+            <artifactId>java-string-similarity</artifactId>
+            <version>1.2.1</version>
+        </dependency>
     </dependencies>
 
 

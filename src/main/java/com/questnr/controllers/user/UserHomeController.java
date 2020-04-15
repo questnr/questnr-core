@@ -52,6 +52,7 @@ public class UserHomeController {
 
     @RequestMapping(value = "/community/suggested-community-list", method = RequestMethod.GET)
     Page<CommunityDTO> getSuggestedCommunityList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        if(size > 20) size = 20;
         Pageable pageable = PageRequest.of(page, size);
         Page<Community> communityPage = userHomeService.getSuggestedCommunityList(pageable);
         return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());

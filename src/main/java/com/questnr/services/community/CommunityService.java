@@ -52,6 +52,11 @@ public class CommunityService {
                 secureRandomService.getSecureRandom().toString();
     }
 
+    private String getCommunityTags(Community community) {
+        List<String> descChunks = Arrays.asList(community.getDescription().toLowerCase().split("\\s"));
+        return String.join(" ", descChunks.subList(0, descChunks.size())).replaceAll("[ ](?=[ ])|[^A-Za-z0-9 ]+", "");
+    }
+
     public Community getCommunityByCommunityName(String communityName) {
         Community community = communityRepository.findByCommunityName(communityName);
         if (community != null) {
@@ -100,6 +105,7 @@ public class CommunityService {
                 community.setOwnerUser(userCommonService.getUser());
                 community.addMetadata();
                 community.setSlug(this.createCommunitySlug(community));
+                community.setTags(this.getCommunityTags(community));
                 Community communitySaved = communityRepository.saveAndFlush(community);
                 if (multipartFile != null) {
                     communityAvatarService.uploadAvatar(communitySaved.getCommunityId(), multipartFile);
