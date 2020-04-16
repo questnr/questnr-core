@@ -51,8 +51,8 @@ public class UserService {
     @Autowired
     UserCommonService userCommonService;
 
-    public User getUserByUsername(String username) {
-        User user = userRepository.findByUsername(username);
+    public User getUserByUserSlug(String userSlug) {
+        User user = userRepository.findBySlug(userSlug);
         if (user != null) {
             return user;
         }
