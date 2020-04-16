@@ -7,6 +7,7 @@ import com.questnr.model.dto.PostActionForCommunityDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
+import com.questnr.services.CommonService;
 import com.questnr.services.PostActionService;
 import com.questnr.services.community.CommunityPostActionService;
 import org.mapstruct.factory.Mappers;
@@ -37,6 +38,9 @@ public class CommunityPostActionController {
     @Autowired
     PostActionService postActionService;
 
+    @Autowired
+    CommonService commonService;
+
     CommunityPostActionController() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
@@ -51,12 +55,17 @@ public class CommunityPostActionController {
     }
 
     @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    PostActionDTO createPost(@PathVariable long communityId, @Valid PostActionRequestDTO postActionRequestDTO, @RequestParam(value = "file") List<MultipartFile> files) {
+    PostActionDTO createPost(@PathVariable long communityId, PostActionRequestDTO postActionRequestDTO) {
         /*
          * Community Post Security Checking
          * */
-        if (communityPostActionAccessService.hasAccessToPostCreation(communityId))
-            return postActionMapper.toDTO(communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), files, communityId));
+        if (communityPostActionAccessService.hasAccessToPostCreation(communityId)) {
+            if (postActionRequestDTO.getFiles() != null && postActionRequestDTO.getFiles().size() > 0) {
+                return postActionMapper.toDTO(communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), postActionRequestDTO.getFiles(), communityId));
+            } else {
+                return postActionMapper.toDTO(communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), communityId));
+            }
+        }
         throw new AccessException();
     }
 

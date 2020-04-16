@@ -43,8 +43,12 @@ public class UserPostActionController {
     }
 
     @RequestMapping(value = "/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    PostActionDTO createPost(@Valid PostActionRequestDTO postActionRequestDTO, @RequestParam(value = "file") List<MultipartFile> files) {
-        return postActionMapper.toDTO(userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), files));
+    PostActionDTO createPost(PostActionRequestDTO postActionRequestDTO) {
+        if(postActionRequestDTO.getFiles() != null && postActionRequestDTO.getFiles().size() > 0) {
+            return postActionMapper.toDTO(userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), postActionRequestDTO.getFiles()));
+        }else{
+            return postActionMapper.toDTO(userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO)));
+        }
     }
 
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)

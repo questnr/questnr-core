@@ -3,41 +3,23 @@ package com.questnr.model.dto;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public class PostActionRequestDTO {
 
-    private long postId;
-    private String slug;
-    private String title;
+    private Long postId;
     private String text;
+    List<MultipartFile> files;
     private PublishStatus status;
-    private boolean featured;
-    private boolean popular;
-    private String tags;
-    private Community community;
 
-    public long getPostId() {
+    public Long getPostId() {
         return postId;
     }
 
-    public void setPostId(long postId) {
+    public void setPostId(Long postId) {
         this.postId = postId;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getText() {
@@ -56,47 +38,11 @@ public class PostActionRequestDTO {
         this.status = status;
     }
 
-    public boolean isFeatured() {
-        return featured;
+    public List<MultipartFile> getFiles() {
+        return files;
     }
 
-    public void setFeatured(boolean featured) {
-        this.featured = featured;
-    }
-
-    public boolean isPopular() {
-        return popular;
-    }
-
-    public void setPopular(boolean popular) {
-        this.popular = popular;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
-
-    public Community getCommunity() {
-        return community;
-    }
-
-    public void setCommunity(Community community) {
-        this.community = community;
-    }
-
-    public PostAction getPostAction(){
-        PostAction postAction = new PostAction();
-        postAction.setSlug(this.getSlug());
-        postAction.setText(this.getText());
-        postAction.setStatus(this.getStatus());
-        postAction.setFeatured(this.isFeatured());
-        postAction.setPopular(this.isPopular());
-        postAction.setTags(this.getTags());
-        postAction.setCommunity(this.getCommunity());
-        return postAction;
+    public void setFiles(List<MultipartFile> files) {
+        this.files = files;
     }
 }

@@ -109,17 +109,17 @@ public class PostActionService {
         return postAction;
     }
 
-
-    public PostAction creatPostAction(PostAction postAction, List<PostMedia> postMediaList) {
+    public PostAction creatPostAction(PostAction postAction) {
         try {
             User user = userCommonService.getUser();
             postAction.addMetadata();
             postAction.setHashTags(this.parsePostText(postAction.getText()));
             postAction.setUserActor(user);
             postAction.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
-            postAction.setPostMediaList(postMediaList);
             postAction.setSlug(this.createPostActionSlug(postAction));
             postAction.setTags(this.getPostActionTitleTag(postAction));
+            postAction.setFeatured(false);
+            postAction.setPopular(false);
             if (postAction.getPostActionPrivacy() == null) {
                 postAction.setPostActionPrivacy(PostActionPrivacy.public_post);
             }

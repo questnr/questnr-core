@@ -66,7 +66,21 @@ public class UserPostActionService {
                 postMedia.setMediaKey(avatarStorageData.getKey());
                 return postMedia;
             }).collect(Collectors.toList());
-            return postActionService.creatPostAction(postAction, postMediaList);
+            postAction.setPostMediaList(postMediaList);
+            return postActionService.creatPostAction(postAction);
+        } else {
+            throw new InvalidRequestException("Error occurred. Please, try again!");
+        }
+    }
+
+    public PostAction creatPostAction(PostAction postAction) {
+        User user = userCommonService.getUser();
+        if (postAction != null) {
+            if (postAction.getText().length() == 0) {
+                throw new InvalidRequestException("Text can not be empty!");
+            }
+            postAction.setUserActor(user);
+            return postActionService.creatPostAction(postAction);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }

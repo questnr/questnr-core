@@ -158,7 +158,7 @@ public class EmailService {
 //        String to = "dev@questnr.com";
 
         List<String> toAddressList = new ArrayList();
-        toAddressList.add("brijeshlakkad22@gmail.com");
+        toAddressList.add("lakkadbrijesh@gmail.com");
 //        toAddressList.add("amanchoudharyys@gmail.com");
 //        toAddressList.add("satish.k.gaur2009@gmail.com");
         InetAddress ip;
