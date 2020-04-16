@@ -115,7 +115,7 @@ public class CommunityService {
                 community.setSlug(this.createCommunitySlug(community));
                 community.setTags(this.getCommunityTags(community));
                 Community communitySaved = communityRepository.saveAndFlush(community);
-                if (multipartFile != null) {
+                if (!multipartFile.isEmpty()) {
                     communityAvatarService.uploadAvatar(communitySaved.getCommunityId(), multipartFile);
                     return communityCommonService.getCommunity(communitySaved.getCommunityId());
                 }

@@ -2,12 +2,12 @@ package com.questnr.model.dto;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Nullable;
+
 public class CommunityRequestDTO {
     public String communityName;
 
     private String description;
-
-    private MultipartFile avatar;
 
     public String getCommunityName() {
         return communityName;
@@ -25,11 +25,4 @@ public class CommunityRequestDTO {
         this.description = description;
     }
 
-    public MultipartFile getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(MultipartFile avatar) {
-        this.avatar = avatar;
-    }
 }
