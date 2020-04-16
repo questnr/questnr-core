@@ -1,9 +1,13 @@
 package com.questnr.model.dto;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class CommunityRequestDTO {
     public String communityName;
 
     private String description;
+
+    private MultipartFile avatar;
 
     public String getCommunityName() {
         return communityName;
@@ -19,5 +23,13 @@ public class CommunityRequestDTO {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public MultipartFile getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(MultipartFile avatar) {
+        this.avatar = avatar;
     }
 }

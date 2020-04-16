@@ -127,6 +127,22 @@ public class CommunityService {
         throw new InvalidRequestException("Error occurred. Please, try again!");
     }
 
+    public Community createCommunity(Community community) {
+        if (community != null) {
+            try {
+                community.setOwnerUser(userCommonService.getUser());
+                community.addMetadata();
+                community.setSlug(this.createCommunitySlug(community));
+                community.setTags(this.getCommunityTags(community));
+                Community communitySaved = communityRepository.saveAndFlush(community);
+                return communitySaved;
+            } catch (Exception e) {
+                LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
+            }
+        }
+        throw new InvalidRequestException("Error occurred. Please, try again!");
+    }
+
     public void deleteCommunity(long communityId) {
         Community community = communityCommonService.getCommunity(communityId);
         try {

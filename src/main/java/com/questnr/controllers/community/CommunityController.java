@@ -54,12 +54,16 @@ public class CommunityController {
 
     // Community CRUD Operations
     @RequestMapping(value = "/user/community", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    CommunityDTO createCommunity(@Valid CommunityRequestDTO communityRequestDTO, @Nullable @RequestParam(value = "file") MultipartFile multipartFile) {
+    CommunityDTO createCommunity(@Valid CommunityRequestDTO communityRequestDTO) {
         /*
          * Community Creation Security Checking
          * */
         if (communityAvatarAccessService.hasAccessToCommunityCreation()) {
-            return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO), multipartFile));
+            if(communityRequestDTO.getAvatar() != null) {
+                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO)));
+            }else{
+                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO), communityRequestDTO.getAvatar()));
+            }
         }
         throw new AccessException();
     }
@@ -114,7 +118,7 @@ public class CommunityController {
     }
 
     // Search user in community user list
-    @RequestMapping(value = "/community/{communitySlug}/user/search/{userString}", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/community/{communitySlug}/users/search/{userString}", method = RequestMethod.GET)
     Page<UserDTO> searchUserInCommunityUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug, @PathVariable String userString) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
