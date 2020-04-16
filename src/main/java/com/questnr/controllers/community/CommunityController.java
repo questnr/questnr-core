@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = "/api/v1/user")
 public class CommunityController {
 
     final String errorMessage = "You don't have access for the particular operation";
@@ -54,7 +54,7 @@ public class CommunityController {
 
     // Community CRUD Operations
     @RequestMapping(value = "/community", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    CommunityDTO createCommunity(@Valid CommunityRequestDTO communityRequestDTO, @RequestParam(value = "file") MultipartFile multipartFile) {
+    CommunityDTO createCommunity(@Valid CommunityRequestDTO communityRequestDTO, @Nullable @RequestParam(value = "file") MultipartFile multipartFile) {
         /*
          * Community Creation Security Checking
          * */

@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = "/api/v1/user")
 public class CommunityPostActionController {
 
     @Autowired
@@ -42,7 +42,7 @@ public class CommunityPostActionController {
     }
 
     // Basic post operations for users.
-    @RequestMapping(value = "community/{communityId}/posts", method = RequestMethod.GET)
+    @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.GET)
     Page<PostActionForCommunityDTO> getAllPostsByCommunityId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable long communityId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<PostAction> postActionPage = communityPostActionService.getAllPostActionsByCommunityId(communityId, pageable);
@@ -50,7 +50,7 @@ public class CommunityPostActionController {
         return new PageImpl<>(postActionForCommunityDTOS, pageable, postActionPage.getTotalElements());
     }
 
-    @RequestMapping(value = "community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     PostActionDTO createPost(@PathVariable long communityId, @Valid PostActionRequestDTO postActionRequestDTO, @RequestParam(value = "file") List<MultipartFile> files) {
         /*
          * Community Post Security Checking
@@ -60,7 +60,7 @@ public class CommunityPostActionController {
         throw new AccessException();
     }
 
-    @RequestMapping(value = "community/{communityId}/posts/{postId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/community/{communityId}/posts/{postId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     void updatePost(@PathVariable long communityId, @PathVariable Long postId, @Valid @RequestBody PostActionRequestDTO postActionRequest) {
         /*
@@ -73,7 +73,7 @@ public class CommunityPostActionController {
         }
     }
 
-    @RequestMapping(value = "community/{communityId}/posts/{postId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/community/{communityId}/posts/{postId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deletePost(@PathVariable long communityId, @PathVariable Long postId) {
         /*

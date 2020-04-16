@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping(value = "/api/v1/community")
+@RequestMapping(value = "/api/v1/user/community")
 public class CommunityAvatarController {
 
     @Autowired
