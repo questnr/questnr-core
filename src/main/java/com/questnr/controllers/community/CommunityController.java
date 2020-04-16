@@ -3,6 +3,7 @@ package com.questnr.controllers.community;
 import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
+import com.questnr.model.dto.CommunityRequestDTO;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
@@ -53,12 +54,12 @@ public class CommunityController {
 
     // Community CRUD Operations
     @RequestMapping(value = "/community", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    CommunityDTO createCommunity(@Valid Community requests, @Nullable @RequestParam(value = "file") MultipartFile multipartFile) {
+    CommunityDTO createCommunity(@Valid CommunityRequestDTO communityRequestDTO, @Nullable @RequestParam(value = "file") MultipartFile multipartFile) {
         /*
          * Community Creation Security Checking
          * */
         if (communityAvatarAccessService.hasAccessToCommunityCreation()) {
-            return communityMapper.toDTO(communityService.createCommunity(requests, multipartFile));
+            return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO), multipartFile));
         }
         throw new AccessException();
     }
