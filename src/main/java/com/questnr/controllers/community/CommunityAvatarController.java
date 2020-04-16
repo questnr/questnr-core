@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping(value = "/api/v1/user/community")
+@RequestMapping(value = "/api/v1")
 public class CommunityAvatarController {
 
     @Autowired
@@ -23,7 +23,7 @@ public class CommunityAvatarController {
     @Autowired
     CommunityAvatarService communityAvatarService;
 
-    @RequestMapping(value = "/{communityId}/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/community/{communityId}/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public String uploadFile(@PathVariable long communityId, @RequestPart(value = "file") MultipartFile file) {
         /*
          * Community Avatar Security Checking
@@ -34,12 +34,12 @@ public class CommunityAvatarController {
         throw new AccessException();
     }
 
-    @RequestMapping(value = "/{communitySlug}/avatar", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/community/{communitySlug}/avatar", method = RequestMethod.GET)
     public String getUserAvatar(@PathVariable String communitySlug) {
         return this.communityAvatarService.getAvatar(communitySlug);
     }
 
-    @RequestMapping(value = "/{communityId}/avatar", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/community/{communityId}/avatar", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteFileUsingPathToFile(@PathVariable long communityId) {
         /*
@@ -52,7 +52,7 @@ public class CommunityAvatarController {
         }
     }
 
-    @RequestMapping(value = "/{communitySlug}/download-avatar", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/community/{communitySlug}/download-avatar", method = RequestMethod.GET)
     public ResponseEntity<ByteArrayResource> getAvatar(@PathVariable String communitySlug) throws IOException {
         byte[] data = this.communityAvatarService.getAvatarInBytes(communitySlug);
         ByteArrayResource resource = new ByteArrayResource(data);

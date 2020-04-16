@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = "/api/v1/user")
+@RequestMapping(value = "/api/v1")
 public class CommunityController {
 
     final String errorMessage = "You don't have access for the particular operation";
@@ -53,7 +53,7 @@ public class CommunityController {
     }
 
     // Community CRUD Operations
-    @RequestMapping(value = "/community", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/user/community", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     CommunityDTO createCommunity(@Valid CommunityRequestDTO communityRequestDTO, @Nullable @RequestParam(value = "file") MultipartFile multipartFile) {
         /*
          * Community Creation Security Checking
@@ -64,17 +64,17 @@ public class CommunityController {
         throw new AccessException();
     }
 
-    @RequestMapping(value = "/community/{communityId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/community/{communityId}", method = RequestMethod.GET)
     CommunityDTO getCommunity(@PathVariable long communityId) {
         return communityMapper.toDTO(communityCommonService.getCommunity(communityId));
     }
 
-    @RequestMapping(value = "/community/slug/{communitySlug}", method = RequestMethod.GET)
+    @RequestMapping(value = "/community/{communitySlug}", method = RequestMethod.GET)
     CommunityDTO getCommunity(@PathVariable String communitySlug) {
         return communityMapper.toDTO(communityService.setCommunityMetaInformation(communityCommonService.getCommunity(communitySlug)));
     }
 
-    @RequestMapping(value = "/community/{communityId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deleteCommunity(@PathVariable long communityId) {
         /*
@@ -88,7 +88,7 @@ public class CommunityController {
     }
 
     // Get users of a single community.
-    @RequestMapping(value = "/community/{communitySlug}/users", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/community/{communitySlug}/users", method = RequestMethod.GET)
     Page<UserDTO> getUsersOfCommunity(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
 //        List<UserDTO> userDTOS = new ArrayList<>();
 //        for(User user: communityService.getUsersFromCommunity(communityId)){
@@ -106,7 +106,7 @@ public class CommunityController {
     }
 
     // Get community list from community name like string.
-    @RequestMapping(value = "/search/community/{communityString}", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/community/search/{communityString}", method = RequestMethod.GET)
     Page<CommunityDTO> getCommunitiesFromLikeString(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communityString) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Community> communityPage = communityService.getCommunitiesFromLikeString(communityString, pageable);
@@ -114,7 +114,7 @@ public class CommunityController {
     }
 
     // Search user in community user list
-    @RequestMapping(value = "/community/{communitySlug}/search/user/{userString}", method = RequestMethod.GET)
+    @RequestMapping(value = "/community/{communitySlug}/user/search/{userString}", method = RequestMethod.GET)
     Page<UserDTO> searchUserInCommunityUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug, @PathVariable String userString) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
