@@ -54,15 +54,15 @@ public class CommunityController {
 
     // Community CRUD Operations
     @RequestMapping(value = "/user/community", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    CommunityDTO createCommunity(CommunityRequestDTO communityRequestDTO, @RequestParam(value ="avatar", required=false) MultipartFile avatar) {
+    CommunityDTO createCommunity(CommunityRequestDTO communityRequestDTO) {
         /*
          * Community Creation Security Checking
          * */
         if (communityAvatarAccessService.hasAccessToCommunityCreation()) {
-            if(avatar == null || avatar.isEmpty()) {
+            if (communityRequestDTO.getAvatar() == null || communityRequestDTO.getAvatar().isEmpty()) {
                 return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO)));
-            }else{
-                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO), avatar));
+            } else {
+                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO), communityRequestDTO.getAvatar()));
             }
         }
         throw new AccessException();

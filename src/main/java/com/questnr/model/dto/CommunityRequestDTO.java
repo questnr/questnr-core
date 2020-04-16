@@ -9,6 +9,9 @@ public class CommunityRequestDTO {
 
     private String description;
 
+    @Nullable
+    private MultipartFile avatar;
+
     public String getCommunityName() {
         return communityName;
     }
@@ -25,4 +28,11 @@ public class CommunityRequestDTO {
         this.description = description;
     }
 
+    public MultipartFile getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(MultipartFile avatar) {
+        this.avatar = avatar;
+    }
 }
