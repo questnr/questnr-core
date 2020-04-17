@@ -9,8 +9,7 @@ public class CommunityRequestDTO {
 
     private String description;
 
-    @Nullable
-    private MultipartFile avatar;
+    private MultipartFile[] avatarFile;
 
     public String getCommunityName() {
         return communityName;
@@ -28,11 +27,12 @@ public class CommunityRequestDTO {
         this.description = description;
     }
 
-    public MultipartFile getAvatar() {
-        return avatar;
+    @Nullable
+    public MultipartFile[] getAvatarFile() {
+        return avatarFile;
     }
 
-    public void setAvatar(MultipartFile avatar) {
-        this.avatar = avatar;
+    public void setAvatarFile(@Nullable MultipartFile[] avatarFile) {
+        this.avatarFile = avatarFile;
     }
 }

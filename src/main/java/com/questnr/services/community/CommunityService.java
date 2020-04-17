@@ -55,9 +55,10 @@ public class CommunityService {
 
     private String createCommunitySlug(Community community) {
         List<String> communityNameChunks = Arrays.asList(community.getCommunityName().toLowerCase().split("\\s"));
+        String randomString = secureRandomService.getSecureRandom().toString();
         return String.join("-", communityNameChunks).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "") +
                 "-" +
-                secureRandomService.getSecureRandom().toString();
+                randomString;
     }
 
     private String getCommunityTags(Community community) {

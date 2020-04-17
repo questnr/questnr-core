@@ -20,6 +20,7 @@ public interface CommunityMapper {
 
     List<CommunityDTO> toDTOs(final List<Community> communities);
 
+    @Mapping(target = "avatar", ignore = true)
     Community toDomain(CommunityRequestDTO communityRequestDTO);
 
     @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)

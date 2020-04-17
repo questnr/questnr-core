@@ -59,10 +59,10 @@ public class CommunityController {
          * Community Creation Security Checking
          * */
         if (communityAvatarAccessService.hasAccessToCommunityCreation()) {
-            if (communityRequestDTO.getAvatar() == null || communityRequestDTO.getAvatar().isEmpty()) {
+            if (communityRequestDTO.getAvatarFile() == null || communityRequestDTO.getAvatarFile().length == 0) {
                 return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO)));
             } else {
-                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO), communityRequestDTO.getAvatar()));
+                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO), communityRequestDTO.getAvatarFile()[0]));
             }
         }
         throw new AccessException();

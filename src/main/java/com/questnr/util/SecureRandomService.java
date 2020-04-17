@@ -10,9 +10,9 @@ public class SecureRandomService {
 
     public SecureRandomService(){
         try{
-            secureRandom = SecureRandom.getInstanceStrong();
+            secureRandom =  SecureRandom.getInstance("SHA1PRNG");
         }catch (NoSuchAlgorithmException e){
-            secureRandom = new SecureRandom();
+            secureRandom =  new SecureRandom();
         }
         byte[] seeds = secureRandom.generateSeed(51);
         secureRandom.setSeed(seeds);

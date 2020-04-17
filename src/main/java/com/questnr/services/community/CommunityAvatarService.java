@@ -34,8 +34,11 @@ public class CommunityAvatarService {
     CommunityRepository communityRepository;
 
     public String uploadAvatar(long communityId, MultipartFile file) {
+        System.out.println("14");
         AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(file, communityId);
+        System.out.println("15");
         try {
+            System.out.println("16");
             Community community = communityCommonService.getCommunity(communityId);
             Avatar avatar = new Avatar();
             avatar.addMetadata();
