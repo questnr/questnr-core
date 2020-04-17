@@ -27,7 +27,7 @@ public class Community extends DomainObject {
     public Long communityId;
 
     @Column(name = "community_name", length = 100, unique = true)
-    public String communityName;
+    private String communityName;
 
     @Column(name = "description")
     private String description;
@@ -36,7 +36,7 @@ public class Community extends DomainObject {
     private String rules;
 
     @Column(name = "slug", unique = true)
-    public String slug;
+    private String slug;
 
     @Column(name = "community_tags")
     private String tags;

@@ -30,6 +30,19 @@ public class ExceptionHandlerControllerAdvice {
     @Autowired
     EmailService emailService;
 
+    @ExceptionHandler(AlreadyExistsException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public @ResponseBody
+    ExceptionResponse handleAlreadyExistsException(final AlreadyExistsException exception,
+                                            final HttpServletRequest request) {
+
+        ExceptionResponse error = new ExceptionResponse();
+        error.setErrorMessage(exception.getMessage());
+        error.callerURL(request.getRequestURI());
+
+        return error;
+    }
+
     @ExceptionHandler(AccessException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public @ResponseBody
@@ -80,7 +93,7 @@ public class ExceptionHandlerControllerAdvice {
     @ExceptionHandler(NullPointerException.class)
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public @ResponseBody
-    ExceptionResponse handleResourceNotFound(final NullPointerException exception,
+    ExceptionResponse handleNullPointerException(final NullPointerException exception,
                                              final HttpServletRequest request) {
 
         ExceptionResponse error = new ExceptionResponse();

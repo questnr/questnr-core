@@ -13,6 +13,8 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     Community findByCommunityId(long communityId);
 
+    int countByCommunityName(String communityName);
+
     Community findByCommunityName(String name);
 
     List<Community> findAllByStatus(PublishStatus status);

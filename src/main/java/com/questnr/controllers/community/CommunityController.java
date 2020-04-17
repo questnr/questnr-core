@@ -2,6 +2,7 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.exceptions.AccessException;
+import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.CommunityRequestDTO;
 import com.questnr.model.dto.UserDTO;
@@ -66,6 +67,12 @@ public class CommunityController {
             }
         }
         throw new AccessException();
+    }
+
+    @RequestMapping(value = "/user/community/check-exists", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    void checkCommunityExists(@RequestBody String communityName) {
+        communityService.checkCommunityNameExists(communityName);
     }
 
     @RequestMapping(value = "/user/community/{communityId}", method = RequestMethod.GET)

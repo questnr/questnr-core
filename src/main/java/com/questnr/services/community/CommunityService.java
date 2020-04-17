@@ -1,6 +1,7 @@
 package com.questnr.services.community;
 
 import com.questnr.common.enums.PublishStatus;
+import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.UserDTO;
@@ -108,37 +109,39 @@ public class CommunityService {
         return community;
     }
 
-    public Community createCommunity(Community community, MultipartFile multipartFile) {
-        if (community != null) {
-            try {
-                community.setOwnerUser(userCommonService.getUser());
-                community.addMetadata();
-                community.setSlug(this.createCommunitySlug(community));
-                community.setTags(this.getCommunityTags(community));
-                Community communitySaved = communityRepository.saveAndFlush(community);
-                if (!multipartFile.isEmpty()) {
-                    communityAvatarService.uploadAvatar(communitySaved.getCommunityId(), multipartFile);
-                    return communityCommonService.getCommunity(communitySaved.getCommunityId());
-                }
-                return communitySaved;
-            } catch (Exception e) {
-                LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
-            }
+    public boolean checkCommunityNameExists(String communityName) throws AlreadyExistsException{
+        if(communityRepository.countByCommunityName(communityName) == 0){
+            return true;
         }
-        throw new InvalidRequestException("Error occurred. Please, try again!");
+        throw new AlreadyExistsException("Community already exists");
+    }
+
+    public Community createCommunity(Community community, MultipartFile multipartFile) {
+        Community communitySaved = this.createCommunity(community);
+        try {
+            if (!multipartFile.isEmpty()) {
+                communityAvatarService.uploadAvatar(communitySaved.getCommunityId(), multipartFile);
+                return communityCommonService.getCommunity(communitySaved.getCommunityId());
+            }
+            return communitySaved;
+        } catch (Exception e) {
+            LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
+        }
+        return null;
     }
 
     public Community createCommunity(Community community) {
         if (community != null) {
-            try {
-                community.setOwnerUser(userCommonService.getUser());
-                community.addMetadata();
-                community.setSlug(this.createCommunitySlug(community));
-                community.setTags(this.getCommunityTags(community));
-                Community communitySaved = communityRepository.saveAndFlush(community);
-                return communitySaved;
-            } catch (Exception e) {
-                LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
+            if (this.checkCommunityNameExists(community.getCommunityName())) {
+                try {
+                    community.setOwnerUser(userCommonService.getUser());
+                    community.addMetadata();
+                    community.setSlug(this.createCommunitySlug(community));
+                    community.setTags(this.getCommunityTags(community));
+                    return communityRepository.saveAndFlush(community);
+                } catch (Exception e) {
+                    LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
+                }
             }
         }
         throw new InvalidRequestException("Error occurred. Please, try again!");
