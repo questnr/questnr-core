@@ -14,7 +14,7 @@ public abstract class CommentActionMapper {
     @Mappings({
             @Mapping(source = "userActor", target = "userActorDTO"),
             @Mapping(source = "childCommentSet", target = "childCommentDTOSet", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
-            @Mapping(source = "createdAt", target = "metaData")
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(commentAction.getCreatedAt(), commentAction.getUpdatedAt()))")
     })
     abstract public CommentActionDTO toDTO(final CommentAction commentAction);
 
@@ -28,7 +28,7 @@ public abstract class CommentActionMapper {
 
     @Mappings({
             @Mapping(source = "userActor", target = "userActorDTO"),
-            @Mapping(source = "createdAt", target = "metaData")
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(commentAction.getCreatedAt(), commentAction.getUpdatedAt()))")
     })
     abstract public ChildCommentActionDTO toChildCommentActionDTO(final CommentAction commentAction);
 

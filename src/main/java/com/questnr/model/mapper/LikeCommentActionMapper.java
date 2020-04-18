@@ -14,7 +14,7 @@ public abstract class LikeCommentActionMapper {
 
     @Mappings({
             @Mapping(source = "userActor", target = "user"),
-            @Mapping(source = "createdAt", target = "metaData")
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(likeAction.getCreatedAt(), likeAction.getUpdatedAt()))")
     })
     public abstract LikeCommentActionDTO toDTO(final LikeCommentAction likeAction);
 

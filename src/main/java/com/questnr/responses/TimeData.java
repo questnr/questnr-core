@@ -1,14 +1,41 @@
 package com.questnr.responses;
 
 public class TimeData {
-    Integer hours;
-    Integer minutes;
-    Integer seconds;
+    private Integer weeks;
+    private Integer days;
+    private Integer hours;
+    private Integer minutes;
+    private Integer seconds;
 
-    public TimeData(Integer hours, Integer minutes, Integer seconds) {
+    private String wString = "w";
+    private String dString = "d";
+    private String hString = "h";
+    private String mString = "m";
+    private String sString = "s";
+
+
+    public TimeData(Integer weeks, Integer days, Integer hours, Integer minutes, Integer seconds) {
+        this.weeks = weeks;
+        this.days = days;
         this.hours = hours;
         this.minutes = minutes;
         this.seconds = seconds;
+    }
+
+    public Integer getWeeks() {
+        return weeks;
+    }
+
+    public void setWeeks(Integer weeks) {
+        this.weeks = weeks;
+    }
+
+    public Integer getDays() {
+        return days;
+    }
+
+    public void setDays(Integer days) {
+        this.days = days;
     }
 
     public Integer getHours() {
@@ -53,12 +80,16 @@ public class TimeData {
     }
 
     public String getMaxTimePart() {
-        if (hours > 0) {
-            return hours + "h";
+        if (weeks > 0) {
+            return weeks + this.wString;
+        } else if (days > 0) {
+            return days + this.dString;
+        } else if (hours > 0) {
+            return hours + this.hString;
         } else if (minutes > 0) {
-            return minutes + "m";
+            return minutes + this.mString;
         } else {
-            return seconds + "s";
+            return seconds + this.sString;
         }
     }
 }
