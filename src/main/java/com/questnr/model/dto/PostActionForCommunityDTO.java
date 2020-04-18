@@ -32,6 +32,7 @@ public class PostActionForCommunityDTO {
     private int totalLikes;
     private int totalComments;
     private int totalPostVisits;
+    private MetaDataDTO metaData;
 
     public Long getPostActionId() {
         return postActionId;
@@ -203,4 +204,11 @@ public class PostActionForCommunityDTO {
         this.totalPostVisits = totalPostVisits;
     }
 
+    public MetaDataDTO getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(MetaDataDTO metaData) {
+        this.metaData = metaData;
+    }
 }

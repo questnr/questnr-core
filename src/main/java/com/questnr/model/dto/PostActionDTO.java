@@ -35,6 +35,7 @@ public class PostActionDTO {
     private int totalComments;
     private int totalPostVisits;
     private List<PostActionMetaInformation> metaList;
+    private MetaDataDTO metaData;
 
     public String getSlug() {
         return slug;
@@ -212,5 +213,13 @@ public class PostActionDTO {
 
     public void setMetaList(List<PostActionMetaInformation> metaList) {
         this.metaList = metaList;
+    }
+
+    public MetaDataDTO getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(MetaDataDTO metaData) {
+        this.metaData = metaData;
     }
 }

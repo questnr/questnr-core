@@ -8,13 +8,14 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(uses = {UserMapper.class, AvatarMapper.class, CommunityUserMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
+@Mapper(uses = {UserMapper.class, AvatarMapper.class, CommunityUserMapper.class, MetaDataMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public interface CommunityMapper {
 
     @Mappings({
             @Mapping(source = "ownerUser", target = "ownerUserDTO"),
             @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
-            @Mapping(source = "users", target = "communityUsers")
+            @Mapping(source = "users", target = "communityUsers"),
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(community.getCreatedAt(), community.getUpdatedAt()))")
     })
     CommunityDTO toDTO(final Community community);
 

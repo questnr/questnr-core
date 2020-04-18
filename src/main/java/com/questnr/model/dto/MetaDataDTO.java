@@ -5,6 +5,8 @@ public class MetaDataDTO {
 
     String actionDate;
 
+    String actionDateForPost;
+
     boolean isEdited;
 
     public String getTimeString() {
@@ -21,6 +23,14 @@ public class MetaDataDTO {
 
     public void setActionDate(String actionDate) {
         this.actionDate = actionDate;
+    }
+
+    public String getActionDateForPost() {
+        return actionDateForPost;
+    }
+
+    public void setActionDateForPost(String actionDateForPost) {
+        this.actionDateForPost = actionDateForPost;
     }
 
     public boolean isEdited() {

@@ -10,20 +10,27 @@ import org.mapstruct.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mapper(uses = {PostMediaMapper.class, CommunityMapper.class, UserMapper.class, CommentActionMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
+@Mapper(uses = {
+        PostMediaMapper.class,
+        CommunityMapper.class,
+        UserMapper.class,
+        CommentActionMapper.class,
+        MetaDataMapper.class
+}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public abstract class PostActionMapper {
 
     @Mappings({
             @Mapping(source = "postMediaList", target = "postMediaDTOList"),
             @Mapping(source = "community", target = "communityDTO"),
             @Mapping(source = "userActor", target = "userDTO"),
-            @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+            @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))")
     })
     abstract public PostActionDTO toDTO(final PostAction postAction);
 
-    public List<PostActionDTO> toDTOs(final List<PostAction> postActionList){
+    public List<PostActionDTO> toDTOs(final List<PostAction> postActionList) {
         List<PostActionDTO> postActionDTOS = new ArrayList<>();
-        for(PostAction postAction: postActionList){
+        for (PostAction postAction : postActionList) {
             postActionDTOS.add(this.toDTO(postAction));
         }
         return postActionDTOS;
@@ -34,7 +41,8 @@ public abstract class PostActionMapper {
     @Mappings({
             @Mapping(source = "postMediaList", target = "postMediaDTOList"),
             @Mapping(source = "userActor", target = "userDTO"),
-            @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
+            @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))")
     })
     abstract public PostActionForCommunityDTO toPostActionForCommunityDTO(final PostAction postAction);
 

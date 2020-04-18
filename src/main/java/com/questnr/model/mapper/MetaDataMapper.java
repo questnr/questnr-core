@@ -25,9 +25,11 @@ public class MetaDataMapper {
 
         // @Todo: Can only be added if required. For Example, this can be useful for post, not comment or like.
         // can be done with adding getMetaDataMapper(Date createdAt, Date updatedAt, boolean shouldIncludeDate) or new overloading function.
-        if(CommonService.isElapsedGreaterThanMonth(elapsed)){
-            metaDataDTO.setTimeString(CommonService.getDateStringForPublicUse(updatedAt));
-        }
+        metaDataDTO.setActionDate(CommonService.getDateString(updatedAt));
+        metaDataDTO.setActionDateForPost(CommonService.getDateStringForPublicUse(updatedAt));
+//        if(CommonService.isElapsedGreaterThanMonth(elapsed)){
+//            metaDataDTO.setActionDate(CommonService.getDateStringForPublicUse(updatedAt));
+//        }
 
         metaDataDTO.setTimeString(timeData.getMaxTimePart());
         return metaDataDTO;

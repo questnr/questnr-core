@@ -67,6 +67,11 @@ public class CommonService {
         return months > 0;
     }
 
+    public static String getDateString(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("dd MMMM yyyy");
+        return format.format(date);
+    }
+
     public static String getDateStringForPublicUse(Date date) {
         SimpleDateFormat format = new SimpleDateFormat("dd MMMM");
         SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
