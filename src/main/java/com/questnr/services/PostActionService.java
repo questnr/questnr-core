@@ -172,4 +172,8 @@ public class PostActionService {
         postActionSharableLinkDTO.setPostActionLink(sharableLink);
         return postActionSharableLinkDTO;
     }
+
+    public PostAction getPostActionMediaList(Long postActionId) {
+        return postActionRepository.findByPostActionId(postActionId);
+    }
 }

@@ -23,7 +23,7 @@ public class CommunityAvatarController {
     @Autowired
     CommunityAvatarService communityAvatarService;
 
-    @RequestMapping(value = "/community/{communityId}/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @RequestMapping(value = "/user/community/{communityId}/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public String uploadFile(@PathVariable long communityId, @RequestPart(value = "file") MultipartFile file) {
         /*
          * Community Avatar Security Checking

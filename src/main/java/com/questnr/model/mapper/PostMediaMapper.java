@@ -42,7 +42,6 @@ public class PostMediaMapper {
 
     public PostMediaDTO toPostMediaDTO(PostMedia postMedia) {
         PostMediaDTO postMediaDTO = new PostMediaDTO();
-        postMediaDTO.setPostMediaId(postMedia.getPostMediaId());
         postMediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(postMedia.getMediaKey()));
         return postMediaDTO;
     }
@@ -50,7 +49,6 @@ public class PostMediaMapper {
     public List<PostMediaDTO> toPostMediaDTOList(List<PostMedia> postMediaList) {
         return postMediaList.stream().map(postMedia -> {
             PostMediaDTO postMediaDTO = new PostMediaDTO();
-            postMediaDTO.setPostMediaId(postMedia.getPostMediaId());
             postMediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(postMedia.getMediaKey()));
             return postMediaDTO;
         }).collect(Collectors.toList());

@@ -2,6 +2,7 @@ package com.questnr.model.mapper;
 
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionForCommunityDTO;
+import com.questnr.model.dto.PostActionForMediaDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.entities.PostAction;
 import org.mapstruct.*;
@@ -36,4 +37,11 @@ public abstract class PostActionMapper {
             @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL)
     })
     abstract public PostActionForCommunityDTO toPostActionForCommunityDTO(final PostAction postAction);
+
+    @Mappings({
+            @Mapping(source = "postMediaList", target = "postMediaDTOList"),
+            @Mapping(source = "community", target = "communityDTO"),
+            @Mapping(source = "userActor", target = "userDTO")
+    })
+    abstract public PostActionForMediaDTO toPostActionForMediaDTO(final PostAction postAction);
 }
