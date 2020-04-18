@@ -1,4 +1,4 @@
-package com.questnr.services;
+package com.questnr.services.analytics;
 
 import com.questnr.common.PostActionRankDependents;
 import com.questnr.common.StartingEndingDate;
@@ -7,6 +7,7 @@ import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostActionTrendData;
 import com.questnr.model.entities.PostActionTrendLinearData;
 import com.questnr.model.repositories.*;
+import com.questnr.services.analytics.regression.LinearRegressionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

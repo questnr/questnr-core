@@ -1,4 +1,4 @@
-package com.questnr.services.community;
+package com.questnr.services.analytics;
 
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
@@ -10,7 +10,7 @@ import com.questnr.common.StartingEndingDate;
 import com.questnr.model.dto.CommunityRankDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.*;
-import com.questnr.services.LinearRegressionService;
+import com.questnr.services.analytics.regression.LinearRegressionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

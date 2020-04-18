@@ -35,7 +35,10 @@ public class LikeActionService {
 
     public Page<LikeAction> getAllLikeActionByPostId(Long postId,
                                                      Pageable pageable) {
-        return likeActionRepository.findByPostAction(postActionRepository.findByPostActionId(postId), pageable);
+        PostAction postAction = postActionRepository.findByPostActionId(postId);
+        if (postAction != null)
+            return likeActionRepository.findByPostAction(postAction, pageable);
+        throw new ResourceNotFoundException("Post not found!");
     }
 
     public LikeAction createLikeAction(Long postId) {

@@ -1,6 +1,6 @@
-package com.questnr.services;
+package com.questnr.services.analytics.regression;
 
-import com.questnr.util.LinearRegression;
+import com.questnr.util.ml.LinearRegression;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.questnr.services;
 
-import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.InvalidRequestException;
+import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostVisit;
 import com.questnr.model.entities.User;
@@ -34,7 +34,10 @@ public class PostVisitService {
 
     public Page<PostVisit> getAllPostVisitByPostId(Long postId,
                                                    Pageable pageable) {
-        return postVisitRepository.findByPostAction(postActionRepository.findByPostActionId(postId), pageable);
+        PostAction postAction = postActionRepository.findByPostActionId(postId);
+        if (postAction != null)
+            return postVisitRepository.findByPostAction(postAction, pageable);
+        throw new ResourceNotFoundException("Post not found!");
     }
 
     public PostVisit createPostVisit(Long postId) {

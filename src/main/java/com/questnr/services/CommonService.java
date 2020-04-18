@@ -7,6 +7,8 @@ import com.questnr.responses.TimeData;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +27,7 @@ public class CommonService {
         return null;
     }
 
-    public List<Community> getCommunityList(Set<CommunityUser> communityUserList){
+    public List<Community> getCommunityList(Set<CommunityUser> communityUserList) {
         return communityUserList.stream().map(CommunityUser::getCommunity).collect(Collectors.toList());
     }
 
@@ -37,13 +39,39 @@ public class CommonService {
         return format.format(new Date());
     }
 
-    public static TimeData calculateTimeFromSeconds(Long elapsed){
-        Integer hours = (int) Math.floor(elapsed / 3600);
+    public static TimeData calculateTimeFromSeconds(Long elapsed) {
+//        int years = (int) Math.floor(elapsed / (3600 * 24 * 7 * 30 * 12));
+//
+//        int months = (int) Math.floor((elapsed - years * 12) / (3600 * 24 * 7 * 30));
 
-        Integer minutes = (int) Math.floor((elapsed - hours * 3600) / 60);
+        int months = 0;
 
-        Integer seconds = (int) Math.floor(elapsed - hours * 3600 - minutes * 60);
+        int weeks = (int) Math.floor((elapsed - months * 30) / (3600 * 24 * 7));
 
-        return new TimeData(hours, minutes, seconds);
+        int days = (int) Math.floor((elapsed - weeks * 7) / (3600 * 24));
+
+        int hours = (int) Math.floor((elapsed - days * 24) / 3600);
+
+        int minutes = (int) Math.floor((elapsed - hours * 3600) / 60);
+
+        int seconds = (int) Math.floor(elapsed - hours * 3600 - minutes * 60);
+
+        return new TimeData(weeks, days, hours, minutes, seconds);
+    }
+
+    public static boolean isElapsedGreaterThanMonth(Long elapsed) {
+        int years = (int) Math.floor(elapsed / (3600 * 24 * 7 * 30 * 12));
+
+        int months = (int) Math.floor((elapsed - years * 12) / (3600 * 24 * 7 * 30));
+
+        return months > 0;
+    }
+
+    public static String getDateStringForPublicUse(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat("dd MMMM");
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+        String year = yearFormat.format(date);
+        String currentYear = yearFormat.format(new Date());
+        return year.equals(currentYear) ? format.format(date) : format.format(date) + " " + year;
     }
 }

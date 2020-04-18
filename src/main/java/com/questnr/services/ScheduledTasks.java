@@ -1,6 +1,7 @@
 package com.questnr.services;
 
-import com.questnr.services.community.CommunityTrendService;
+import com.questnr.services.analytics.CommunityTrendService;
+import com.questnr.services.analytics.PostActionTrendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;

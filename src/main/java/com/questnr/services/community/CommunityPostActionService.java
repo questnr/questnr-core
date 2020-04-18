@@ -2,6 +2,7 @@ package com.questnr.services.community;
 
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
 import com.questnr.model.repositories.PostActionRepository;
@@ -38,12 +39,10 @@ public class CommunityPostActionService {
     PostActionRepository postActionRepository;
 
     public Page<PostAction> getAllPostActionsByCommunityId(long communityId, Pageable pageable) {
-        try {
-            return postActionRepository.findAllByCommunityOrderByCreatedAtDesc(communityCommonService.getCommunity(communityId), pageable);
-        } catch (Exception e) {
-            LOGGER.error(CommunityPostActionService.class.getName() + " Exception Occurred");
-            throw new InvalidRequestException("Error occurred. Please, try again!");
-        }
+        Community community = communityCommonService.getCommunity(communityId);
+        if (community != null)
+            return postActionRepository.findAllByCommunityOrderByCreatedAtDesc(community, pageable);
+        throw new ResourceNotFoundException("Community not found!");
     }
 
     public PostAction creatPostAction(PostAction postAction, List<MultipartFile> files, long communityId) {

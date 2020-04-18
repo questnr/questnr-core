@@ -36,7 +36,10 @@ public class LikeCommentActionService {
 
     public Page<LikeCommentAction> getAllLikeActionByCommentId(Long commentId,
                                                                Pageable pageable) {
-        return likeCommentActionRepository.findByCommentAction(commentActionRepository.findByCommentActionId(commentId), pageable);
+        CommentAction commentAction = commentActionRepository.findByCommentActionId(commentId);
+        if (commentAction != null)
+            return likeCommentActionRepository.findByCommentAction(commentAction, pageable);
+        throw new ResourceNotFoundException("Comment not found");
     }
 
     public LikeCommentAction createLikeAction(Long commentId) {

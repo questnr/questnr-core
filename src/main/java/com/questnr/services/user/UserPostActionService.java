@@ -51,7 +51,7 @@ public class UserPostActionService {
             return postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
         } catch (Exception e) {
             LOGGER.error(PostAction.class.getName() + " Exception Occurred");
-            throw new InvalidInputException(LikeAction.class.getName(), null, null);
+            throw new InvalidInputException(UserPostActionService.class.getName(), null, null);
         }
     }
 

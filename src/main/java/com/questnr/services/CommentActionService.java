@@ -41,7 +41,10 @@ public class CommentActionService {
 
     public Page<CommentAction> getAllCommentActionByPostId(Long postId,
                                                            Pageable pageable) {
-        return commentActionRepository.findAllByPostActionAndChildComment(postActionRepository.findByPostActionId(postId), false, pageable);
+        PostAction postAction = postActionRepository.findByPostActionId(postId);
+        if (postAction != null)
+            return commentActionRepository.findAllByPostActionAndChildComment(postAction, false, pageable);
+        throw new ResourceNotFoundException("Post not found!");
     }
 
     public CommentAction createCommentAction(CommentActionRequest commentActionRequest) {

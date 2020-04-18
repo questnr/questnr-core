@@ -1,4 +1,4 @@
-package com.questnr.util;
+package com.questnr.util.ml;
 /*************************************************************************
  *  Compilation:  javac LinearRegression.java
  *  Execution:    java  LinearRegression
