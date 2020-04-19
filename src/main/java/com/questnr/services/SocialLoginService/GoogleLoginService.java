@@ -17,6 +17,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -50,7 +52,8 @@ public class GoogleLoginService {
     @Autowired
     UserService userService;
 
-    private RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    private RestTemplate restTemplate;
 
     public LoginResponse googleLogin(String googleAccessCode, String source) {
 
@@ -77,6 +80,14 @@ public class GoogleLoginService {
 
         return saveLoginWithGoogle(googleUserDetails, source);
     }
+
+    public LoginResponse googleLoginWithIdToken(String idToken, String source) {
+
+        LOGGER.debug("Token appears to be valid, fetching user details from token");
+
+        return this.saveLoginWithGoogle(this.getUserDetailsFromAIDToken(idToken), source);
+    }
+
 
     public LoginResponse saveLoginWithGoogle(GoogleUserDetails googleUserDetails, String source) {
 
@@ -134,6 +145,11 @@ public class GoogleLoginService {
 
         Map<String, String> urlParams = new HashMap<>();
         urlParams.put("id_token", idToken);
+//        UriComponentsBuilder builder = UriComponentsBuilder
+//                .fromUriString("https://oauth2.googleapis.com/tokeninfo")
+//                .queryParam("id_token", idToken);
+        restTemplate.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
         GoogleUserDetails data = restTemplate.getForObject("https://www.googleapis.com/oauth2/v3/tokeninfo?id_token={id_token}",
                 GoogleUserDetails.class, urlParams);
         return data;

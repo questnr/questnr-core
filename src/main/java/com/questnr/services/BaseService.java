@@ -3,6 +3,7 @@ package com.questnr.services;
 import com.questnr.common.enums.AuthorityName;
 import com.questnr.common.enums.SignUpSourceType;
 import com.questnr.exceptions.AlreadyExistsException;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.Authority;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.AuthorityRepository;
@@ -52,11 +53,10 @@ public class BaseService {
         try {
             user.setSignUpSource(SignUpSourceType.valueOf(source));
         } catch (Exception e) {
-            user.setSignUpSource(SignUpSourceType.ANDROID);
+            user.setSignUpSource(SignUpSourceType.WEB);
         }
         user.setSlug(user.getUsername());
-        User savedUser = userRepository.saveAndFlush(user);
-        return savedUser;
+        return userRepository.saveAndFlush(user);
     }
 
     public LoginResponse createSuccessLoginResponse(User savedUser) {
@@ -94,11 +94,18 @@ public class BaseService {
         if (user != null && user.getEmailId() != null && user.getUsername() != null) {
             try {
                 this.checkIfEmailIsTaken(user.getEmailId());
-                this.checkIfUsernameIsTaken(user.getUsername());
+                this.checkIfUsernameIsTakenWithException(user.getUsername());
             } catch (AlreadyExistsException e) {
                 return this.createErrorLoginResponse(e.getMessage());
             }
 
+        }
+        try {
+            if (commonService.isNull(user.getPassword())) {
+                throw new InvalidRequestException("Password is mandatory.");
+            }
+        } catch (NullPointerException ex) {
+            throw new InvalidRequestException("Password is mandatory.");
         }
         user.setAuthorities(this.createAuthoritySet());
         user.setEmailVerified(false);
@@ -151,16 +158,25 @@ public class BaseService {
         return false;
     }
 
-    public void checkIfUsernameIsTaken(String username) {
-        if (userRepository.existsByUsername(username)) {
+    public boolean checkIfUsernameIsTakenWithException(String username) {
+        if (this.checkIfUsernameIsTaken(username)) {
             throw new AlreadyExistsException("Username is already taken");
         }
+        return false;
     }
 
-    public void checkIfEmailIsTaken(String email) {
+    public boolean checkIfUsernameIsTaken(String username) {
+        if (userRepository.existsByUsername(username)) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkIfEmailIsTaken(String email) {
         if (userRepository.existsByEmailId(email)) {
             throw new AlreadyExistsException("User already exists");
         }
+        return false;
     }
 
 

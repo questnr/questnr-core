@@ -3,8 +3,11 @@ package com.questnr.domain.google;
 public class GoogleUserDetails {
     private String email;
     private String name;
+    private String given_name;
+    private String family_name;
     private String picture;
     private String signUpSource;
+    private Boolean email_verified;
     public String getEmail() {
         return email;
     }
@@ -21,7 +24,31 @@ public class GoogleUserDetails {
         this.name = name;
     }
 
-  public String getPicture() {
+    public String getGiven_name() {
+        return given_name;
+    }
+
+    public void setGiven_name(String given_name) {
+        this.given_name = given_name;
+    }
+
+    public String getFamily_name() {
+        return family_name;
+    }
+
+    public void setFamily_name(String family_name) {
+        this.family_name = family_name;
+    }
+
+    public Boolean getEmail_verified() {
+        return email_verified;
+    }
+
+    public void setEmail_verified(Boolean email_verified) {
+        this.email_verified = email_verified;
+    }
+
+    public String getPicture() {
     return picture;
   }
 

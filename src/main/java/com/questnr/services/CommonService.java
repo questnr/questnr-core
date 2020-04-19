@@ -17,7 +17,11 @@ import java.util.stream.Collectors;
 @Service
 public class CommonService {
     public boolean isNull(String string) {
-        return string == null || string.trim().isEmpty();
+        try {
+            return string == null || string.trim().isEmpty();
+        }catch (Exception e){
+            return true;
+        }
     }
 
     public Long getCommunityId(PostAction postAction) {

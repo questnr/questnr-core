@@ -31,7 +31,7 @@ public class BaseController {
     @RequestMapping(value = "/check-username", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void checkUsername(@RequestParam String username) {
-        baseService.checkIfUsernameIsTaken(username);
+        baseService.checkIfUsernameIsTakenWithException(username);
     }
 
     @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)

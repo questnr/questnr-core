@@ -30,7 +30,6 @@ public class User extends DomainObject {
     @Column(name = "username", length = 50, unique = true)
     private String username;
 
-    @NotBlank(message = "Password is mandatory")
     @Column(name = "password", length = 100)
     @Size(min = 4, max = 100)
     private String password;

@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @RestController
+@RequestMapping(value = "/api/v1/oauth2")
 public class SocialLoginController {
 
     @Autowired
@@ -93,6 +94,16 @@ public class SocialLoginController {
 
         // @TODO validate csrf too
         LoginResponse loginResponse = googleLoginService.googleLogin(code, source);
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/google/login/token")
+    public ResponseEntity<?> googleLoginWithIdToken(@RequestParam("idToken") String idToken,  @RequestParam("source") String source) {
+        LOGGER.info("Entering login service");
+
+        // @TODO validate csrf too
+        LoginResponse loginResponse = googleLoginService.googleLoginWithIdToken(idToken, source);
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
