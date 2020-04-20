@@ -59,8 +59,8 @@ public class UserController {
         return userMapper.toOthersDTO(userService.getUserByUserSlug(userSlug));
     }
 
-    @RequestMapping(value = "/user/search/{userString}", method = RequestMethod.GET)
-    Page<UserDTO> searchUserString(@PathVariable String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+    @RequestMapping(value = "/user/search/users", method = RequestMethod.GET)
+    Page<UserDTO> searchUserString(@RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<UserProjection> userPage = userCommonService.searchUserString(userString, pageable);
         return new PageImpl<>(userMapper.toOthersDTOsFromProjections(userPage.getContent()), pageable, userPage.getTotalElements());

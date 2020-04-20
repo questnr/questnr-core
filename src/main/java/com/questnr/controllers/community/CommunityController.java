@@ -2,7 +2,6 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.CommunityRequestDTO;
 import com.questnr.model.dto.UserDTO;
@@ -20,11 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -117,16 +112,16 @@ public class CommunityController {
     }
 
     // Get community list from community name like string.
-    @RequestMapping(value = "/user/community/search/{communityString}", method = RequestMethod.GET)
-    Page<CommunityDTO> getCommunitiesFromLikeString(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communityString) {
+    @RequestMapping(value = "/user/search/communities", method = RequestMethod.GET)
+    Page<CommunityDTO> getCommunitiesFromLikeString(@RequestParam String communityString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Community> communityPage = communityService.getCommunitiesFromLikeString(communityString, pageable);
         return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
     }
 
     // Search user in community user list
-    @RequestMapping(value = "/user/community/{communitySlug}/users/search/{userString}", method = RequestMethod.GET)
-    Page<UserDTO> searchUserInCommunityUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug, @PathVariable String userString) {
+    @RequestMapping(value = "/user/community/{communitySlug}/search/users", method = RequestMethod.GET)
+    Page<UserDTO> searchUserInCommunityUsers(@RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
         return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
