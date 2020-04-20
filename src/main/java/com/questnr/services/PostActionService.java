@@ -57,7 +57,7 @@ public class PostActionService {
         }
         return postAction.getUserActor().getUsername().toLowerCase() +
                 "_" +
-                String.join("-", (titleChunks.subList(0, maxTitleChunk))).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "") +
+                CommonService.removeSpecialCharacters(String.join("-", (titleChunks.subList(0, maxTitleChunk)))) +
                 "-" +
                 secureRandomService.getSecureRandom().toString() +
                 "-" +
@@ -66,9 +66,8 @@ public class PostActionService {
 
     private String getPostActionTitleTag(PostAction postAction) {
         List<String> titleChunks = Arrays.asList(postAction.getText().toLowerCase().split("\\s"));
-        return String.join(" ", titleChunks.subList(0, titleChunks.size())).replaceAll("[ ](?=[ ])|[^A-Za-z0-9 ]+", "");
+        return CommonService.removeSpecialCharacters(String.join(" ", titleChunks.subList(0, titleChunks.size())));
     }
-
 
     private PostActionMetaInformation getPostActionDescMetaInformation(PostAction postAction) {
         MetaInformation metaInfo = new MetaInformation();

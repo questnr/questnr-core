@@ -68,4 +68,8 @@ public class LikeActionService {
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new ResourceNotFoundException("Like not found"));
     }
+
+    public Page<User> searchUserOnLikeListOfPost(Long postActionId, String userString, Pageable pageable) {
+        return likeActionRepository.findAllByUserActorContains(postActionId, userString, pageable);
+    }
 }

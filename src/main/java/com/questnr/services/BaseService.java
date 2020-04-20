@@ -107,6 +107,7 @@ public class BaseService {
         } catch (NullPointerException ex) {
             throw new InvalidRequestException("Password is mandatory.");
         }
+        user.setUsername(CommonService.removeSpecialCharactersWithWhiteSpace(user.getUsername().toLowerCase()));
         user.setAuthorities(this.createAuthoritySet());
         user.setEmailVerified(false);
         user.setEnabled(true);

@@ -57,14 +57,14 @@ public class CommunityService {
     private String createCommunitySlug(Community community) {
         List<String> communityNameChunks = Arrays.asList(community.getCommunityName().toLowerCase().split("\\s"));
         String randomString = secureRandomService.getSecureRandom().toString();
-        return String.join("-", communityNameChunks).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "") +
+        return CommonService.removeSpecialCharacters(String.join("-", communityNameChunks))+
                 "-" +
                 randomString;
     }
 
     private String getCommunityTags(Community community) {
         List<String> descChunks = Arrays.asList(community.getDescription().toLowerCase().split("\\s"));
-        return String.join(" ", descChunks.subList(0, descChunks.size())).replaceAll("[ ](?=[ ])|[^A-Za-z0-9 ]+", "");
+        return CommonService.removeSpecialCharacters(String.join(" ", descChunks.subList(0, descChunks.size())));
     }
 
     public Community getCommunityByCommunityName(String communityName) {

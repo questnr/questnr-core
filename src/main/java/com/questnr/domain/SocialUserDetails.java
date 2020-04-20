@@ -6,6 +6,7 @@ import com.questnr.domain.google.GoogleUserDetails;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.model.entities.User;
 import com.questnr.services.BaseService;
+import com.questnr.services.CommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Random;
@@ -16,7 +17,7 @@ public class SocialUserDetails {
     BaseService baseService;
 
     public String createUsername(String fullName){
-        String username = String.join(".", fullName).replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "");
+        String username = String.join(".", CommonService.removeSpecialCharacters(fullName));
         String makingUsername = username;
         Random generateRandom = new Random();
         while(!baseService.checkIfUsernameIsTaken(makingUsername)){

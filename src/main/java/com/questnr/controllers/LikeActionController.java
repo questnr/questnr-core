@@ -1,8 +1,11 @@
 package com.questnr.controllers;
 
 import com.questnr.model.dto.LikeActionDTO;
+import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.LikeAction;
+import com.questnr.model.entities.User;
 import com.questnr.model.mapper.LikeActionMapper;
+import com.questnr.model.mapper.UserMapper;
 import com.questnr.services.LikeActionService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +23,12 @@ public class LikeActionController {
     @Autowired
     LikeActionMapper likeActionMapper;
 
+    @Autowired
+    UserMapper userMapper;
+
     LikeActionController() {
         likeActionMapper = Mappers.getMapper(LikeActionMapper.class);
+        userMapper = Mappers.getMapper(UserMapper.class);
     }
 
     @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.GET)
@@ -40,5 +47,12 @@ public class LikeActionController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteLike(@PathVariable Long postId) {
         likeActionService.deleteLikeAction(postId);
+    }
+
+    @RequestMapping(value = "/posts/{postId}/like/search/user", method = RequestMethod.GET)
+    Page<UserDTO> searchUserOnLikeListOfPost(@PathVariable Long postId, @RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> userPage = likeActionService.searchUserOnLikeListOfPost(postId, userString, pageable);
+        return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
     }
 }

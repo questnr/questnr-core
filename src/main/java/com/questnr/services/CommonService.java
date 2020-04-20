@@ -83,4 +83,12 @@ public class CommonService {
         String currentYear = yearFormat.format(new Date());
         return year.equals(currentYear) ? format.format(date) : format.format(date) + " " + year;
     }
+
+    public static String removeSpecialCharacters(String username){
+        return username.replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "");
+    }
+
+    public static String removeSpecialCharactersWithWhiteSpace(String username){
+        return username.replaceAll("[^A-Za-z0-9]+", "");
+    }
 }
