@@ -11,10 +11,13 @@ import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
@@ -73,6 +76,19 @@ public class NotificationService {
         } catch (Exception e) {
             LOGGER.error("Exception occur while fetch Notification by User ", e);
             return null;
+        }
+    }
+
+    public Integer countUnreadNotifications(){
+        User user = userCommonService.getUser();
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+        try {
+            List<Notification> notifications = notificationRepository.findAllByUser(user, pageable);
+            List<Notification> filteredNotifications = notifications.stream().filter(notification -> !notification.isRead()).collect(Collectors.toList());
+            return filteredNotifications.size();
+        } catch (Exception e) {
+            LOGGER.error("Exception occur while fetch Notification by User ", e);
+            return 0;
         }
     }
 //

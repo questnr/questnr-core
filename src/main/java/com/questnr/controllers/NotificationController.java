@@ -19,10 +19,15 @@ public class NotificationController {
     @Autowired
     NotificationService notificationService;
 
-    @RequestMapping(value = "/user/notifications", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/notification", method = RequestMethod.GET)
     List<NotificationDTO> getNotificationsByUser() {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
         return notificationService.getNotificationsByUser(pageable);
+    }
+
+    @RequestMapping(value = "/user/unread-notification", method = RequestMethod.GET)
+    Integer countUnreadNotifications() {
+        return notificationService.countUnreadNotifications();
     }
 
 }
