@@ -55,7 +55,7 @@ public class NotificationMapper {
             notificationDTO.setMessage(NotificationTitles.INVITATION_ACTION);
             notificationDTO.setNotificationType(NotificationType.invitation);
             notificationDTO.setUserActor(userMapper.toOthersDTO(communityInvitedUser.getUserActor()));
-            notificationDTO.setCommunity(communityMapper.toDTO(communityInvitedUser.getCommunity()));
+            notificationDTO.setCommunity(communityMapper.toCommunityForPostAction(communityInvitedUser.getCommunity()));
         }
         notificationDTO.setOpened(notification.isRead());
         notificationDTO.setNotificationId(notification.getNotificationId());

@@ -15,7 +15,8 @@ public interface CommunityMapper {
             @Mapping(source = "ownerUser", target = "ownerUserDTO"),
             @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
             @Mapping(source = "users", target = "communityUsers"),
-            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(community.getCreatedAt(), community.getUpdatedAt()))")
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(community.getCreatedAt(), community.getUpdatedAt()))"),
+            @Mapping(target = "metaList", ignore = true)
     })
     CommunityDTO toDTO(final Community community);
 

@@ -7,7 +7,7 @@ public class NotificationDTO {
 
     private UserDTO userActor;
 
-    private CommunityDTO community;
+    private CommunityForPostActionDTO community;
 
     private PostMediaDTO postMedia;
 
@@ -33,11 +33,11 @@ public class NotificationDTO {
         this.userActor = userActor;
     }
 
-    public CommunityDTO getCommunity() {
+    public CommunityForPostActionDTO getCommunity() {
         return community;
     }
 
-    public void setCommunity(CommunityDTO community) {
+    public void setCommunity(CommunityForPostActionDTO community) {
         this.community = community;
     }
 

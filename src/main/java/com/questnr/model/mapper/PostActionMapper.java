@@ -24,7 +24,8 @@ public abstract class PostActionMapper {
             @Mapping(source = "community", target = "communityDTO"),
             @Mapping(source = "userActor", target = "userDTO"),
             @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
-            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))")
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
+            @Mapping(target = "metaList", ignore = true)
     })
     abstract public PostActionDTO toDTO(final PostAction postAction);
 

@@ -3,6 +3,7 @@ package com.questnr.services;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionSharableLinkDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.HashTagRepository;
@@ -69,24 +70,24 @@ public class PostActionService {
         return CommonService.removeSpecialCharacters(String.join(" ", titleChunks.subList(0, titleChunks.size())));
     }
 
-    private PostActionMetaInformation getPostActionDescMetaInformation(PostAction postAction) {
+    private PostActionMetaInformation getPostActionDescMetaInformation(PostActionDTO postActionDTO) {
         MetaInformation metaInfo = new MetaInformation();
         metaInfo.setAttributeType("name");
         metaInfo.setType("description");
-        metaInfo.setContent(postAction.getText());
+        metaInfo.setContent(postActionDTO.getText());
         PostActionMetaInformation postMeta = new PostActionMetaInformation();
         postMeta.setMetaInformation(metaInfo);
         return postMeta;
     }
 
-    public PostAction setPostActionMetaInformation(PostAction postAction) {
-        if (postAction != null) {
+    public PostActionDTO setPostActionMetaInformation(PostActionDTO postActionDTO) {
+        if (postActionDTO != null) {
             List<PostActionMetaInformation> metaList = new LinkedList<PostActionMetaInformation>();
-            if (postAction.getMetaList() == null || postAction.getMetaList().size() == 0) {
-                metaList.add(this.getPostActionDescMetaInformation(postAction));
+            if (postActionDTO.getMetaList() == null || postActionDTO.getMetaList().size() == 0) {
+                metaList.add(this.getPostActionDescMetaInformation(postActionDTO));
             } else {
                 boolean foundDesc = false;
-                for (PostActionMetaInformation meta : postAction.getMetaList()) {
+                for (PostActionMetaInformation meta : postActionDTO.getMetaList()) {
                     if (meta != null && meta.getMetaInformation() != null) {
                         if (meta.getMetaInformation().getType().equals("description")) {
                             foundDesc = true;
@@ -95,17 +96,17 @@ public class PostActionService {
                     }
                 }
                 if (!foundDesc) {
-                    metaList.add(this.getPostActionDescMetaInformation(postAction));
+                    metaList.add(this.getPostActionDescMetaInformation(postActionDTO));
                 }
             }
-            postAction.getMetaList().addAll(metaList);
+            postActionDTO.getMetaList().addAll(metaList);
 
 //            if (postAction.getTags() == null || postAction.getTags().isEmpty()) {
 //                postAction.setTags(this.getPostActionTitleTag(postAction));
 //            }
 
         }
-        return postAction;
+        return postActionDTO;
     }
 
     public PostAction creatPostAction(PostAction postAction) {

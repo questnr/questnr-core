@@ -4,6 +4,7 @@ import com.questnr.common.enums.PublishStatus;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.UserMapper;
@@ -75,24 +76,24 @@ public class CommunityService {
         throw new ResourceNotFoundException("Community not found!");
     }
 
-    private CommunityMetaInformation getCommunityDescMetaInformation(Community community) {
+    private CommunityMetaInformation getCommunityDescMetaInformation(CommunityDTO communityDTO) {
         MetaInformation metaInfo = new MetaInformation();
         metaInfo.setAttributeType("name");
         metaInfo.setType("description");
-        metaInfo.setContent(community.getDescription());
+        metaInfo.setContent(communityDTO.getDescription());
         CommunityMetaInformation communityMeta = new CommunityMetaInformation();
         communityMeta.setMetaInformation(metaInfo);
         return communityMeta;
     }
 
-    public Community setCommunityMetaInformation(Community community) {
-        if (community != null) {
+    public CommunityDTO setCommunityMetaInformation(CommunityDTO communityDTO) {
+        if (communityDTO != null) {
             List<CommunityMetaInformation> metaList = new LinkedList<>();
-            if (community.getMetaList() == null || community.getMetaList().size() == 0) {
-                metaList.add(this.getCommunityDescMetaInformation(community));
+            if (communityDTO.getMetaList() == null || communityDTO.getMetaList().size() == 0) {
+                metaList.add(this.getCommunityDescMetaInformation(communityDTO));
             } else {
                 boolean foundDesc = false;
-                for (CommunityMetaInformation meta : community.getMetaList()) {
+                for (CommunityMetaInformation meta : communityDTO.getMetaList()) {
                     if (meta != null && meta.getMetaInformation() != null) {
                         if (meta.getMetaInformation().getType().equals("description")) {
                             foundDesc = true;
@@ -101,12 +102,12 @@ public class CommunityService {
                     }
                 }
                 if (!foundDesc) {
-                    metaList.add(this.getCommunityDescMetaInformation(community));
+                    metaList.add(this.getCommunityDescMetaInformation(communityDTO));
                 }
             }
-            community.getMetaList().addAll(metaList);
+            communityDTO.getMetaList().addAll(metaList);
         }
-        return community;
+        return communityDTO;
     }
 
     public boolean checkCommunityNameExists(String communityName) throws AlreadyExistsException{

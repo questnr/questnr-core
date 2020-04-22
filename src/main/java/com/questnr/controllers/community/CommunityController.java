@@ -77,7 +77,7 @@ public class CommunityController {
 
     @RequestMapping(value = "/community/{communitySlug}", method = RequestMethod.GET)
     CommunityDTO getCommunity(@PathVariable String communitySlug) {
-        return communityMapper.toDTO(communityService.setCommunityMetaInformation(communityCommonService.getCommunity(communitySlug)));
+        return communityService.setCommunityMetaInformation(communityMapper.toDTO(communityCommonService.getCommunity(communitySlug)));
     }
 
     @RequestMapping(value = "/user/community/{communityId}", method = RequestMethod.DELETE)
