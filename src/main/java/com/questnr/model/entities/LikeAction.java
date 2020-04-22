@@ -15,7 +15,7 @@ public class LikeAction extends DomainObject implements NotificationBase {
     @SequenceGenerator(name = "like_action_seq", sequenceName = "like_action_seq", allocationSize = 1)
     private Long likeActionId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User userActor;
 

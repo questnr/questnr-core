@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "qr_community_users")
 @Indexed
-public class CommunityUser {
+public class CommunityUser implements NotificationBase{
     @Id
     @Column(name = "community_user_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_user_seq")

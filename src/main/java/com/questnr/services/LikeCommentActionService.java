@@ -9,6 +9,7 @@ import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommentActionRepository;
 import com.questnr.model.repositories.LikeCommentActionRepository;
 import com.questnr.model.repositories.UserRepository;
+import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,9 @@ public class LikeCommentActionService {
     @Autowired
     CommentActionRepository commentActionRepository;
 
+    @Autowired
+    NotificationJob notificationJob;
+
     public Page<LikeCommentAction> getAllLikeActionByCommentId(Long commentId,
                                                                Pageable pageable) {
         CommentAction commentAction = commentActionRepository.findByCommentActionId(commentId);
@@ -53,7 +57,11 @@ public class LikeCommentActionService {
                     likeCommentAction.addMetadata();
                     likeCommentAction.setUserActor(user);
                     likeCommentAction.setCommentAction(commentAction);
-                    return likeCommentActionRepository.saveAndFlush(likeCommentAction);
+                    LikeCommentAction savedLikeCommentAction = likeCommentActionRepository.saveAndFlush(likeCommentAction);
+
+                    // Notification job created and assigned to Notification Processor.
+                    notificationJob.createNotificationJob(savedLikeCommentAction);
+
                 } catch (Exception e) {
                     LOGGER.error(LikeAction.class.getName() + " Exception Occurred");
                 }
@@ -65,6 +73,10 @@ public class LikeCommentActionService {
     public void deleteLikeAction(Long postId) throws ResourceNotFoundException {
         Long userId = userCommonService.getUserId();
         likeCommentActionRepository.findByCommentActionAndUserActor(commentActionRepository.findByCommentActionId(postId), userRepository.findByUserId(userId)).map(likeCommentAction -> {
+
+            // Notification job created and assigned to Notification Processor.
+            notificationJob.createNotificationJob(likeCommentAction, false);
+
             likeCommentActionRepository.delete(likeCommentAction);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new ResourceNotFoundException("Like not found"));

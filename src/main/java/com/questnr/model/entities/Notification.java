@@ -31,7 +31,8 @@ public class Notification extends DomainObject {
                     @MetaValue(value = "L", targetEntity = LikeAction.class),
                     @MetaValue(value = "C", targetEntity = CommentAction.class),
                     @MetaValue(value = "LC", targetEntity = LikeCommentAction.class),
-                    @MetaValue(value = "I", targetEntity = CommunityInvitedUser.class)
+                    @MetaValue(value = "I", targetEntity = CommunityInvitedUser.class),
+                    @MetaValue(value = "FC", targetEntity = CommunityUser.class)
             }
     )
     @JoinColumn(name = "notification_base_id")
@@ -71,6 +72,20 @@ public class Notification extends DomainObject {
         this.user = communityInvitedUser.getUser();
         this.notificationBase = communityInvitedUser;
 //        this.notificationType = NotificationType.invitation;
+        this.isRead = false;
+        this.addMetadata();
+    }
+
+    public Notification(CommunityUser communityUser) {
+        this.user = communityUser.getCommunity().getOwnerUser();
+        this.notificationBase = communityUser;
+        this.isRead = false;
+        this.addMetadata();
+    }
+
+    public Notification(UserFollower userFollower) {
+        this.user = userFollower.getUser();
+        this.notificationBase = userFollower;
         this.isRead = false;
         this.addMetadata();
     }

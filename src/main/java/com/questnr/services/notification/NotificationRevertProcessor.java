@@ -9,15 +9,15 @@ import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class NotificationProcessor extends Thread {
+public class NotificationRevertProcessor extends Thread {
 
-    private static final Logger LOG = Logger.getLogger(NotificationProcessor.class.getName());
+    private static final Logger LOG = Logger.getLogger(NotificationRevertProcessor.class.getName());
 
     private boolean iCanContinue = true;
 
-    private static NotificationProcessor sInstance = null;
+    private static NotificationRevertProcessor sInstance = null;
 
-    private NotificationWorker[] workers;
+    private NotificationRevertWorker[] workers;
 
     private final Queue<Notification> queue = new LinkedList<>();
 
@@ -29,15 +29,15 @@ public class NotificationProcessor extends Thread {
 
     private NotificationRepository notificationRepository;
 
-    public NotificationProcessor(NotificationRepository notificationRepository) {
-        super("NotificationProcessor");
+    public NotificationRevertProcessor(NotificationRepository notificationRepository) {
+        super("NotificationRevertProcessor");
         setDaemon(true);
         this.notificationRepository = notificationRepository;
     }
 
     @Override
     public void run() {
-        LOG.log(Level.INFO, "Notification processor is up and running.");
+        LOG.log(Level.INFO, "NotificationRevert processor is up and running.");
         //initialize workers
         initializeWorkers();
         //start processing
@@ -46,7 +46,7 @@ public class NotificationProcessor extends Thread {
                 // Check for a new item from the queue
                 if (queue.isEmpty()) {
                     // Sleep for it, if there is nothing to do
-                    LOG.log(Level.INFO, "Waiting for Notification to send...{0}", CommonService.getTime());
+                    LOG.log(Level.INFO, "Waiting for NotificationRevertProcessor to send...{0}", CommonService.getTime());
                     try {
                         queue.wait(MAX_SLEEP_TIME);
                     } catch (InterruptedException e) {
@@ -62,25 +62,25 @@ public class NotificationProcessor extends Thread {
         }
     }
 
-    public static synchronized NotificationProcessor getInstance(NotificationRepository notificationRepository) {
+    public static synchronized NotificationRevertProcessor getInstance(NotificationRepository notificationRepository) {
         if (sInstance == null) {
-            sInstance = new NotificationProcessor(notificationRepository);
+            sInstance = new NotificationRevertProcessor(notificationRepository);
             sInstance.start();
         }
         return sInstance;
     }
 
     private void initializeWorkers() {
-        LOG.info("Notification workers are initializing ....");
-        workers = new NotificationWorker[MAX_WORKERS];
+        LOG.info("NotificationRevert workers are initializing ....");
+        workers = new NotificationRevertWorker[MAX_WORKERS];
         for (int i = 0; i < MAX_WORKERS; i++) {
-            workers[i] = new NotificationWorker(i + 1, this.notificationRepository);
+            workers[i] = new NotificationRevertWorker(i + 1, this.notificationRepository);
             workers[i].start();
         }
     }
 
     private void stopWorkers() {
-        LOG.info("Notification workers are stopping...");
+        LOG.info("NotificationRevert workers are stopping...");
         for (int i = 0; i < MAX_WORKERS; i++) {
             workers[i].stopWorker();
         }
@@ -90,7 +90,7 @@ public class NotificationProcessor extends Thread {
         synchronized (queue) {
             queue.add(item);
             queue.notify();
-            LOG.info("New Notification added into queue...");
+            LOG.info("New NotificationRevert added into queue...");
         }
     }
 
@@ -98,7 +98,7 @@ public class NotificationProcessor extends Thread {
         if (sInstance == null) {
             return;
         }
-        LOG.info("Stopping Notification processor...");
+        LOG.info("Stopping NotificationRevert processor...");
         try {
             //stop workers first
             sInstance.stopWorkers();
@@ -106,7 +106,7 @@ public class NotificationProcessor extends Thread {
             sInstance.interrupt();
             sInstance.join();
         } catch (InterruptedException | NullPointerException e) {
-            LOG.log(Level.SEVERE, "Exception while stop Notification processor...{0}",
+            LOG.log(Level.SEVERE, "Exception while stop NotificationRevert processor...{0}",
                     e.getMessage());
         }
     }

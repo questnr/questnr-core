@@ -4,6 +4,9 @@ public interface NotificationTitles {
     String POST_ACTION = "posted";
     String LIKE_ACTION = "liked your post";
     String COMMENT_ACTION = "commented on your post";
+    String COMMENT_REPLY_ACTION = "replied on your comment";
     String LIKE_COMMENT_ACTION = "liked your comment";
-    String INVITATION_ACTION = "invited you to join %s community";
+    String INVITATION_ACTION = "invited you to join '%s' community";
+    String FOLLOWED_COMMUNITY = "started following '%s' community";
+    String FOLLOWED_USER = "started following you";
 }

@@ -1,6 +1,5 @@
 package com.questnr.services;
 
-import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.CommentAction;
@@ -10,6 +9,7 @@ import com.questnr.model.repositories.CommentActionRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.requests.CommentActionRequest;
+import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +39,9 @@ public class CommentActionService {
     @Autowired
     CommonService commonService;
 
+    @Autowired
+    NotificationJob notificationJob;
+
     public Page<CommentAction> getAllCommentActionByPostId(Long postId,
                                                            Pageable pageable) {
         PostAction postAction = postActionRepository.findByPostActionId(postId);
@@ -57,17 +60,24 @@ public class CommentActionService {
                 commentAction.setCommentObject(commentActionRequest.getCommentObject());
                 commentAction.addMetadata();
                 commentAction.setUserActor(user);
+                CommentAction savedCommentAction;
                 if (commentActionRequest.getParentCommentId() != null && commentActionRepository.existsByCommentActionId(commentActionRequest.getParentCommentId())) {
                     CommentAction parentCommentAction = commentActionRepository.findByCommentActionId(commentActionRequest.getParentCommentId());
                     Set<CommentAction> commentActionSet = parentCommentAction.getChildCommentSet();
                     commentAction.setChildComment(true);
                     commentActionSet.add(commentAction);
                     commentAction.setParentCommentAction(parentCommentAction);
-                    return commentActionRepository.save(commentAction);
+                    savedCommentAction = commentActionRepository.save(commentAction);
                 } else {
                     commentAction.setChildComment(false);
-                    return commentActionRepository.save(commentAction);
+                    savedCommentAction = commentActionRepository.save(commentAction);
                 }
+
+                // Notification job created and assigned to Notification Processor.
+                notificationJob.createNotificationJob(savedCommentAction);
+
+                return savedCommentAction;
+
             } catch (Exception e) {
                 LOGGER.error(CommentAction.class.getName() + " Exception Occurred");
                 throw new InvalidRequestException("Error occurred. Please, try again!");
@@ -82,6 +92,10 @@ public class CommentActionService {
         PostAction postAction = postActionRepository.findByPostActionId(postId);
         CommentAction commentAction = this.getCommentActionUsingPostActionAndUserIdAndCommentId(postAction, userId, commentId);
         if (commentAction != null) {
+
+            // Notification job created and assigned to Notification Processor.
+            notificationJob.createNotificationJob(commentAction, false);
+
             commentActionRepository.delete(commentAction);
         } else {
             throw new ResourceNotFoundException("Comment not found!");

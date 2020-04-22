@@ -10,6 +10,7 @@ import com.questnr.model.repositories.CommunityUserRepository;
 import com.questnr.model.repositories.UserFollowerRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.services.community.CommunityCommonService;
+import com.questnr.services.notification.NotificationJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class UserFollowerService {
     @Autowired
     UserFollowerRepository userFollowerRepository;
 
+    @Autowired
+    NotificationJob notificationJob;
+
     private User addUserToUser(User userBeingFollowed, User user) {
         Set<UserFollower> userFollowers = user.getThisFollowingUserSet();
         UserFollower userFollower = new UserFollower();
@@ -60,9 +64,14 @@ public class UserFollowerService {
         userRepository.findById(userId).map(userBeingFollowed -> {
             User user = userCommonService.getUser();
             if (!Objects.equals(user.getUserId(), userBeingFollowed.getUserId())) {
-               if (this.existsUserFollower(userBeingFollowed, user))
+                if (this.existsUserFollower(userBeingFollowed, user))
                     throw new AlreadyExistsException("You are already following the user!");
-                return userRepository.save(this.addUserToUser(userBeingFollowed, user));
+                userRepository.save(this.addUserToUser(userBeingFollowed, user));
+
+                // Notification job created and assigned to Notification Processor.
+                notificationJob.createNotificationJob(userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user));
+
+                return userBeingFollowed;
             }
             return null;
         }).orElseThrow(() -> {
@@ -83,10 +92,14 @@ public class UserFollowerService {
                     }
                 }
                 user.setThisFollowingUserSet(userFollowers);
+
+                // Notification job created and assigned to Notification Processor.
+                notificationJob.createNotificationJob(userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user), false);
+
                 return userRepository.save(user);
             }
             throw new InvalidRequestException("You are not following the user!");
-        }).orElseThrow(()->{
+        }).orElseThrow(() -> {
             throw new ResourceNotFoundException("User being followed does not exists");
         });
     }

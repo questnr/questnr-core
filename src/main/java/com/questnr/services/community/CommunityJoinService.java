@@ -12,6 +12,7 @@ import com.questnr.model.repositories.CommunityInvitedUserRepository;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityUserRepository;
 import com.questnr.model.repositories.UserRepository;
+import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +43,9 @@ public class CommunityJoinService {
 
     @Autowired
     CommunityInvitedUserRepository communityInvitedUserRepository;
+
+    @Autowired
+    NotificationJob notificationJob;
 
     private Community addUserToCommunity(Community community, User user) {
         Set<CommunityUser> communityUsers = community.getUsers();
@@ -96,6 +100,10 @@ public class CommunityJoinService {
             if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
                 throw new AlreadyExistsException("You are already been joined!");
             communityRepository.save(this.addUserToCommunity(community, user));
+
+            // Notification job created and assigned to Notification Processor.
+            notificationJob.createNotificationJob(communityUserRepository.findByCommunityAndUser(community, user));
+
             return community;
         }).orElseThrow(() -> {
             throw new ResourceNotFoundException("Error in joining community");
@@ -110,9 +118,12 @@ public class CommunityJoinService {
             if (this.existsCommunityInvitation(community, user))
                 throw new AlreadyExistsException("User have already been invited!");
             if (this.hasCommunityInvitationAccess(userCommonService.getUserId(), community.getOwnerUser().getUserId())) {
-                return communityRepository.save(this.addInvitationFromCommunity(community, user));
+                communityRepository.save(this.addInvitationFromCommunity(community, user));
+
+                // Notification job created and assigned to Notification Processor.
+                notificationJob.createNotificationJob(communityInvitedUserRepository.findByCommunityAndUser(community, user));
             }
-            return null;
+            return community;
         }).orElseThrow(() -> {
             throw new ResourceNotFoundException("Error in inviting the user");
         });
@@ -135,7 +146,7 @@ public class CommunityJoinService {
                     community = this.addUserToCommunity(community, user);
                 }
                 return communityRepository.save(community);
-            }else if(this.existsCommunityUser(community, user)){
+            } else if (this.existsCommunityUser(community, user)) {
                 throw new AlreadyExistsException("You have already been joined");
             }
             throw new InvalidRequestException("You don't have invitation from this community");

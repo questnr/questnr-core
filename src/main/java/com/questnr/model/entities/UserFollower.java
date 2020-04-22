@@ -11,7 +11,7 @@ import java.util.Date;
 @Entity
 @Table(name = "qr_user_followers")
 @Indexed
-public class UserFollower {
+public class UserFollower implements NotificationBase {
     @Id
     @Column(name = "user_follower_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_follower_seq")

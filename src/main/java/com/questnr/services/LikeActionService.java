@@ -56,9 +56,6 @@ public class LikeActionService {
                     likeAction.addMetadata();
                     likeAction.setUserActor(user);
                     likeAction.setPostAction(postAction);
-
-
-
                     LikeAction savedLikeAction = likeActionRepository.saveAndFlush(likeAction);
 
                     // Notification job created and assigned to Notification Processor.
@@ -76,6 +73,11 @@ public class LikeActionService {
     public void deleteLikeAction(Long postId) throws ResourceNotFoundException {
         Long userId = userCommonService.getUserId();
         likeActionRepository.findByPostActionAndUserActor(postActionRepository.findByPostActionId(postId), userRepository.findByUserId(userId)).map(likeAction -> {
+
+
+            // Notification job created and assigned to Notification Processor.
+            notificationJob.createNotificationJob(likeAction, false);
+
             likeActionRepository.delete(likeAction);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new ResourceNotFoundException("Like not found"));

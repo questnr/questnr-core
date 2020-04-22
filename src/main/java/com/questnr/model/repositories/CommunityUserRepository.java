@@ -1,6 +1,7 @@
 package com.questnr.model.repositories;
 
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.CommunityInvitedUser;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +13,6 @@ public interface CommunityUserRepository  extends JpaRepository<CommunityUser, L
     boolean existsByCommunityAndUser(Community community, User user);
 
     List<CommunityUser> findAllByCommunityAndCreatedAtBetween(Community community, Date startingDate, Date endingDate);
+
+    CommunityUser findByCommunityAndUser(Community community, User user);
 }

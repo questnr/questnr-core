@@ -39,23 +39,38 @@ public class NotificationMapper {
             notificationDTO.setUserActor(userActor);
             notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(likeAction.getPostAction().getPostMediaList().get(0)));
         } else if (notificationBase instanceof CommentAction) {
-            CommentAction commentAction = new CommentAction();
+            CommentAction commentAction = (CommentAction) notificationBase;
             notificationDTO.setMessage(NotificationTitles.COMMENT_ACTION);
             notificationDTO.setNotificationType(NotificationType.comment);
             notificationDTO.setUserActor(userMapper.toOthersDTO(commentAction.getUserActor()));
             notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(commentAction.getPostAction().getPostMediaList().get(0)));
         } else if (notificationBase instanceof LikeCommentAction) {
-            LikeCommentAction likeCommentAction = new LikeCommentAction();
+            LikeCommentAction likeCommentAction = (LikeCommentAction) notificationBase;
             notificationDTO.setMessage(NotificationTitles.LIKE_COMMENT_ACTION);
             notificationDTO.setNotificationType(NotificationType.likeComment);
             notificationDTO.setUserActor(userMapper.toOthersDTO(likeCommentAction.getUserActor()));
             notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(likeCommentAction.getCommentAction().getPostAction().getPostMediaList().get(0)));
         } else if (notificationBase instanceof CommunityInvitedUser) {
-            CommunityInvitedUser communityInvitedUser = new CommunityInvitedUser();
-            notificationDTO.setMessage(NotificationTitles.INVITATION_ACTION);
+            CommunityInvitedUser communityInvitedUser = (CommunityInvitedUser) notificationBase;
+
+            // Need String.format to insert community name
+            notificationDTO.setMessage(String.format(NotificationTitles.INVITATION_ACTION, communityInvitedUser.getCommunity().getCommunityName()));
             notificationDTO.setNotificationType(NotificationType.invitation);
             notificationDTO.setUserActor(userMapper.toOthersDTO(communityInvitedUser.getUserActor()));
             notificationDTO.setCommunity(communityMapper.toCommunityForPostAction(communityInvitedUser.getCommunity()));
+        } else if (notificationBase instanceof CommunityUser) {
+            CommunityUser communityUser = (CommunityUser) notificationBase;
+            // Need String.format to insert community name
+            notificationDTO.setMessage(String.format(NotificationTitles.FOLLOWED_COMMUNITY, communityUser.getCommunity().getCommunityName()));
+            notificationDTO.setNotificationType(NotificationType.followedCommunity);
+            notificationDTO.setUserActor(userMapper.toOthersDTO(communityUser.getUser()));
+            notificationDTO.setCommunity(communityMapper.toCommunityForPostAction(communityUser.getCommunity()));
+        } else if (notificationBase instanceof UserFollower) {
+            UserFollower userFollower = (UserFollower) notificationBase;
+            // Need String.format to insert community name
+            notificationDTO.setMessage(NotificationTitles.FOLLOWED_USER);
+            notificationDTO.setNotificationType(NotificationType.followedUser);
+            notificationDTO.setUserActor(userMapper.toOthersDTO(userFollower.getFollowingUser()));
         }
         notificationDTO.setOpened(notification.isRead());
         notificationDTO.setNotificationId(notification.getNotificationId());
