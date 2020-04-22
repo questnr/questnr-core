@@ -18,7 +18,7 @@ public class Notification extends DomainObject {
     @Column(name = "user_notification_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_notification_seq")
     @SequenceGenerator(name = "user_notification_seq", sequenceName = "user_notification_seq", allocationSize = 1)
-    private Integer notificationId;
+    private Long notificationId;
 
     @ManyToOne
     User user;
@@ -75,11 +75,11 @@ public class Notification extends DomainObject {
         this.addMetadata();
     }
 
-    public Integer getNotificationId() {
+    public Long getNotificationId() {
         return notificationId;
     }
 
-    public void setNotificationId(Integer notificationId) {
+    public void setNotificationId(Long notificationId) {
         this.notificationId = notificationId;
     }
 

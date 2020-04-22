@@ -6,9 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -30,4 +29,16 @@ public class NotificationController {
         return notificationService.countUnreadNotifications();
     }
 
+
+    @RequestMapping(value = "/user/notification/{notificationId}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    void readNotification(@PathVariable Long notificationId) {
+        notificationService.readNotification(notificationId);
+    }
+
+    @RequestMapping(value = "/user/notification/{notificationId}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    void deleteNotification(@PathVariable Long notificationId) {
+        notificationService.deleteNotification(notificationId);
+    }
 }

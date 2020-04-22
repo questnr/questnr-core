@@ -3,7 +3,7 @@ package com.questnr.model.dto;
 import com.questnr.common.enums.NotificationType;
 
 public class NotificationDTO {
-    private Integer notificationId;
+    private Long notificationId;
 
     private UserDTO userActor;
 
@@ -17,11 +17,11 @@ public class NotificationDTO {
 
     private boolean isOpened;
 
-    public Integer getNotificationId() {
+    public Long getNotificationId() {
         return notificationId;
     }
 
-    public void setNotificationId(Integer notificationId) {
+    public void setNotificationId(Long notificationId) {
         this.notificationId = notificationId;
     }
 

@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface NotificationRepository extends JpaRepository<Notification, Integer> {
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
     Notification findByUser(User user);
 
     List<Notification> findAllByUser(User user, Pageable pageable);
 
-    Notification findByUserAndNotificationId(User user, Integer notificationId);
+    Notification findByUserAndNotificationId(User user, Long notificationId);
 
 }

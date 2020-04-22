@@ -1,6 +1,6 @@
 package com.questnr.services;
 
-import com.questnr.exceptions.InvalidRequestException;
+import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.NotificationDTO;
 import com.questnr.model.entities.Notification;
 import com.questnr.model.entities.User;
@@ -41,30 +41,34 @@ public class NotificationService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 
-    public void updateUserNotification(Notification notification, User user) {
-
-        notification = save(notification);
-        if (notification == null) {
-            throw new InvalidRequestException("Invalid notification");
+    public void readNotification(Long notificationId) {
+        User user = userCommonService.getUser();
+        Notification notification = notificationRepository.findByUserAndNotificationId(user, notificationId);
+        if (notification != null) {
+            try {
+                notification.setRead(true);
+                notificationRepository.save(notification);
+            } catch (Exception e) {
+                LOGGER.error("Exception occur while save Notification ", e);
+                throw new ResourceNotFoundException("Notification not found!");
+            }
+        } else {
+            throw new ResourceNotFoundException("Notification not found!");
         }
     }
 
-    public Notification save(Notification notification) {
-        try {
-            return notificationRepository.save(notification);
-        } catch (Exception e) {
-            LOGGER.error("Exception occur while save Notification ", e);
-            return null;
-        }
-    }
-
-
-    public Notification findByUser(User user) {
-        try {
-            return notificationRepository.findByUser(user);
-        } catch (Exception e) {
-            LOGGER.error("Exception occur while fetch Notification by User ", e);
-            return null;
+    public void deleteNotification(Long notificationId){
+        User user = userCommonService.getUser();
+        Notification notification = notificationRepository.findByUserAndNotificationId(user, notificationId);
+        if (notification != null) {
+            try {
+                notificationRepository.delete(notification);
+            } catch (Exception e) {
+                LOGGER.error("Exception occur while save Notification ", e);
+                throw new ResourceNotFoundException("Notification not found!");
+            }
+        } else {
+            throw new ResourceNotFoundException("Notification not found!");
         }
     }
 
@@ -79,7 +83,7 @@ public class NotificationService {
         }
     }
 
-    public Integer countUnreadNotifications(){
+    public Integer countUnreadNotifications() {
         User user = userCommonService.getUser();
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
         try {
@@ -89,19 +93,6 @@ public class NotificationService {
         } catch (Exception e) {
             LOGGER.error("Exception occur while fetch Notification by User ", e);
             return 0;
-        }
-    }
-//
-//    public Notification createNotificationObject(User user, NotificationType notificationType) {
-//        return new Notification(user, notificationType);
-//    }
-
-    public Notification findByUserAndNotificationId(User user, Integer notificationId) {
-        try {
-            return notificationRepository.findByUserAndNotificationId(user, notificationId);
-        } catch (Exception e) {
-            LOGGER.error("Exception occur while fetch Notification by User and Notification Id ", e);
-            return null;
         }
     }
 }
