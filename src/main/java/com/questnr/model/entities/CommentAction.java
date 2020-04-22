@@ -12,7 +12,7 @@ import java.util.Set;
 @Indexed
 @Table(name = "qr_comment_actions")
 @EntityListeners(AuditingEntityListener.class)
-public class CommentAction extends DomainObject {
+public class CommentAction extends DomainObject implements NotificationBase {
     @Id
     @Column(name = "comment_action_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_action_seq")

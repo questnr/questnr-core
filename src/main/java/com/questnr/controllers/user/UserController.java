@@ -37,6 +37,7 @@ public class UserController {
     @Autowired
     UserCommonService userCommonService;
 
+    @Autowired
     UserMapper userMapper;
 
     @Autowired

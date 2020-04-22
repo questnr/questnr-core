@@ -4,6 +4,8 @@ import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.PostAction;
 import com.questnr.responses.TimeData;
+import org.hibernate.Hibernate;
+import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -90,5 +92,19 @@ public class CommonService {
 
     public static String removeSpecialCharactersWithWhiteSpace(String username){
         return username.replaceAll("[^A-Za-z0-9]+", "");
+    }
+
+    public static <T> T initializeAndUnProxy(T entity) {
+        if (entity == null) {
+            throw new
+                    NullPointerException("Entity passed for initialization is null");
+        }
+
+        Hibernate.initialize(entity);
+        if (entity instanceof HibernateProxy) {
+            entity = (T) ((HibernateProxy) entity).getHibernateLazyInitializer()
+                    .getImplementation();
+        }
+        return entity;
     }
 }

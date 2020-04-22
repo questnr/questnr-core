@@ -8,6 +8,7 @@ import com.questnr.model.entities.User;
 import com.questnr.model.repositories.LikeActionRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
+import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,9 @@ public class LikeActionService {
     @Autowired
     PostActionRepository postActionRepository;
 
+    @Autowired
+    NotificationJob notificationJob;
+
     public Page<LikeAction> getAllLikeActionByPostId(Long postId,
                                                      Pageable pageable) {
         PostAction postAction = postActionRepository.findByPostActionId(postId);
@@ -52,7 +56,15 @@ public class LikeActionService {
                     likeAction.addMetadata();
                     likeAction.setUserActor(user);
                     likeAction.setPostAction(postAction);
-                    return likeActionRepository.saveAndFlush(likeAction);
+
+
+
+                    LikeAction savedLikeAction = likeActionRepository.saveAndFlush(likeAction);
+
+                    // Notification job created and assigned to Notification Processor.
+                    notificationJob.createNotificationJob(savedLikeAction);
+
+                    return savedLikeAction;
                 } catch (Exception e) {
                     LOGGER.error(LikeAction.class.getName() + " Exception Occurred");
                 }

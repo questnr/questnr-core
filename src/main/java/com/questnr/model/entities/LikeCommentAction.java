@@ -8,7 +8,7 @@ import javax.persistence.*;
 @Entity
 @Indexed
 @Table(name = "qr_like_comment_actions")
-public class LikeCommentAction extends DomainObject {
+public class LikeCommentAction extends DomainObject implements NotificationBase {
     @Id
     @Column(name = "like_comment_action_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "like_comment_action_seq")

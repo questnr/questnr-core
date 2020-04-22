@@ -91,7 +91,7 @@ public class PostAction extends DomainObject {
             mappedBy = "postAction", orphanRemoval = true)
     private Set<CommentAction> commentActionSet = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_action_id", nullable = false)
     private List<PostMedia> postMediaList = new LinkedList<>();
 

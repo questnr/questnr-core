@@ -1,6 +1,7 @@
 package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.mapping.ToOne;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -11,12 +12,16 @@ import java.util.Date;
 @Entity
 @Table(name = "qr_community_invitations")
 @Indexed
-public class CommunityInvitedUser {
+public class CommunityInvitedUser implements NotificationBase {
     @Id
     @Column(name = "community_invitation_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_invitation_seq")
     @SequenceGenerator(name = "community_invitation_seq", sequenceName = "community_invitation_seq", allocationSize = 1)
     public Long communityInvitationId;
+
+    @OneToOne
+    @JoinColumn(name = "user_actor_id")
+    private User userActor;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -37,6 +42,14 @@ public class CommunityInvitedUser {
 
     public void setCommunityInvitationId(Long communityInvitationId) {
         this.communityInvitationId = communityInvitationId;
+    }
+
+    public User getUserActor() {
+        return userActor;
+    }
+
+    public void setUserActor(User userActor) {
+        this.userActor = userActor;
     }
 
     public User getUser() {

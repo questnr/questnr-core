@@ -8,14 +8,14 @@ import javax.persistence.*;
 @Entity
 @Indexed
 @Table(name = "qr_like_actions")
-public class LikeAction extends DomainObject {
+public class LikeAction extends DomainObject implements NotificationBase {
     @Id
     @Column(name = "like_action_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "like_action_seq")
     @SequenceGenerator(name = "like_action_seq", sequenceName = "like_action_seq", allocationSize = 1)
     private Long likeActionId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     private User userActor;
 

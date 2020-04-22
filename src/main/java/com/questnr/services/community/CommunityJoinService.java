@@ -54,10 +54,12 @@ public class CommunityJoinService {
     }
 
     private Community addInvitationFromCommunity(Community community, User user) {
+        User userActor = userCommonService.getUser();
         Set<CommunityInvitedUser> invitedUsers = community.getInvitedUsers();
         CommunityInvitedUser communityInvitedUser = new CommunityInvitedUser();
         communityInvitedUser.setCommunity(community);
         communityInvitedUser.setUser(user);
+        communityInvitedUser.setUserActor(userActor);
         invitedUsers.add(communityInvitedUser);
         community.setInvitedUsers(invitedUsers);
         return community;
@@ -91,7 +93,7 @@ public class CommunityJoinService {
     public Community joinCommunity(Long communityId) {
         communityRepository.findById(communityId).map(community -> {
             User user = userCommonService.getUser();
-            if (this.existsCommunityUser(community, user))
+            if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
                 throw new AlreadyExistsException("You are already been joined!");
             communityRepository.save(this.addUserToCommunity(community, user));
             return community;
@@ -103,7 +105,7 @@ public class CommunityJoinService {
 
     private void inviteUserToJoinCommunity(Long communityId, User user) {
         communityRepository.findById(communityId).map(community -> {
-            if (this.existsCommunityUser(community, user))
+            if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
                 throw new AlreadyExistsException("User is already member!");
             if (this.existsCommunityInvitation(community, user))
                 throw new AlreadyExistsException("User have already been invited!");
