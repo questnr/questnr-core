@@ -3,7 +3,6 @@ package com.questnr.controllers.user;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.entities.Community;
-import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.PostActionMapper;
@@ -60,12 +59,5 @@ public class UserHomeController {
         Pageable pageable = PageRequest.of(page, size);
         Page<Community> communityPage = userHomeService.getSuggestedCommunityList(pageable);
         return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
-    }
-
-    @RequestMapping(value = "/community/trending-hash-tag-list", method = RequestMethod.GET)
-    Page<HashTag> getTrendingHashTagList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
-        if (size > 20) size = 20;
-        Pageable pageable = PageRequest.of(page, size);
-        return userHomeService.getTrendingHashTagList(pageable);
     }
 }

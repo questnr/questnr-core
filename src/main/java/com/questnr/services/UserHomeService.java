@@ -1,7 +1,10 @@
 package com.questnr.services;
 
 import com.questnr.common.CommunitySuggestionData;
-import com.questnr.model.entities.*;
+import com.questnr.model.entities.Community;
+import com.questnr.model.entities.CommunityTrendLinearData;
+import com.questnr.model.entities.User;
+import com.questnr.model.entities.UserFollower;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityTrendLinearDataRepository;
 import com.questnr.model.repositories.HashTagTrendLinearDataRepository;
@@ -121,17 +124,5 @@ public class UserHomeService {
                         pageable.getPageSize() :
                         returnCommunityList.size()
         ), pageable, returnCommunityList.size());
-    }
-
-    public Page<HashTag> getTrendingHashTagList(Pageable pageable) {
-        Page<HashTagTrendLinearData> hashTagTrendLinearDataPage = hashTagTrendLinearDataRepository.findAll(pageable);
-        // List sorted with descending order of regression slope
-        Comparator<HashTagTrendLinearData> hashTagTrendLinearDataComparator
-                = Comparator.comparing(HashTagTrendLinearData::getSlop);
-
-        List<HashTagTrendLinearData> hashTagTrendLinearDataList = new ArrayList<>(hashTagTrendLinearDataPage.getContent());
-        hashTagTrendLinearDataList.sort(hashTagTrendLinearDataComparator.reversed());
-
-        return new PageImpl<>(hashTagTrendLinearDataList.stream().map(HashTagTrendLinearData::getHashTag).collect(Collectors.toList()), pageable, hashTagTrendLinearDataPage.getTotalElements());
     }
 }

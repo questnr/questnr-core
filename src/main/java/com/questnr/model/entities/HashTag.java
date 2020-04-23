@@ -32,6 +32,7 @@ public class HashTag extends DomainObject {
 //            mappedBy = "tags")
 //    private Set<PostAction> posts = new HashSet<>();
 
+    @JsonIgnore
     public Long getHashTagId() {
         return hashTagId;
     }

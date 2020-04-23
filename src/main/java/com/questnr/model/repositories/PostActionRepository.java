@@ -71,4 +71,6 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
     List<PostAction> findAllByCommunityAndCreatedAtBetween(Community community, Date startingDate, Date endingDate);
 
     Long countAllByHashTagsAndCreatedAtBetween(HashTag hashTag, Date startingDate, Date endingDate);
+
+    Page<PostAction> findByHashTags(HashTag hashTag, Pageable pageable);
 }
