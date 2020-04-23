@@ -1,6 +1,7 @@
 package com.questnr.model.repositories;
 
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.projections.PostActionProjection;
@@ -68,4 +69,6 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
     PostAction findFirstBySlug(String slug);
 
     List<PostAction> findAllByCommunityAndCreatedAtBetween(Community community, Date startingDate, Date endingDate);
+
+    Long countAllByHashTagsAndCreatedAtBetween(HashTag hashTag, Date startingDate, Date endingDate);
 }
