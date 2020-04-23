@@ -5,6 +5,7 @@ import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionForCommunityDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
+import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.services.CommonService;
@@ -16,7 +17,6 @@ import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -71,13 +71,13 @@ public class CommunityPostActionController {
 
     @RequestMapping(value = "/community/{communityId}/posts/{postId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    void updatePost(@PathVariable long communityId, @PathVariable Long postId, @Valid @RequestBody PostActionRequestDTO postActionRequest) {
+    void updatePost(@PathVariable long communityId, @PathVariable Long postId, @Valid @RequestBody PostActionUpdateRequestDTO postActionRequest) {
         /*
          * Community Post Security Checking
          * */
-        if (communityPostActionAccessService.hasAccessToPostModification(communityId))
-            communityPostActionService.updatePostAction(communityId, postId, postActionMapper.fromPostActionRequestDTO(postActionRequest));
-        else {
+        if (communityPostActionAccessService.hasAccessToPostModification(communityId)) {
+            communityPostActionService.updatePostAction(communityId, postId, postActionRequest);
+        } else {
             throw new AccessException();
         }
     }

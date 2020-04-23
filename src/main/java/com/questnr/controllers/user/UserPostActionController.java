@@ -2,6 +2,7 @@ package com.questnr.controllers.user;
 
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
+import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.services.user.UserPostActionService;
@@ -53,7 +54,7 @@ public class UserPostActionController {
 
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    void updatePost(@PathVariable Long postId, @Valid @RequestBody PostAction postActionRequest) {
+    void updatePost(@PathVariable Long postId, @Valid @RequestBody PostActionUpdateRequestDTO postActionRequest) {
         userPostActionService.updatePostAction(postId, postActionRequest);
     }
 

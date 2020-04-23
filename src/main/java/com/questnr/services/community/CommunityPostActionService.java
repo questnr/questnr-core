@@ -2,6 +2,7 @@ package com.questnr.services.community;
 
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
@@ -74,11 +75,14 @@ public class CommunityPostActionService {
         }
     }
 
-    public void updatePostAction(Long communityId, Long postId, PostAction postActionRequest) {
+    public void updatePostAction(Long communityId, Long postId, PostActionUpdateRequestDTO postActionRequest) {
         PostAction post = postActionRepository.findByPostActionIdAndCommunity(postId, communityCommonService.getCommunity(communityId));
         if (post != null) {
-            postActionRequest.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-            postActionRepository.save(postActionRequest);
+            post.setText(postActionRequest.getText());
+            post.setHashTags(postActionService.parsePostText(postActionRequest.getText()));
+            post.setStatus(postActionRequest.getStatus());
+            post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            postActionRepository.save(post);
         } else {
             throw new ResourceNotFoundException("Post not found!");
         }

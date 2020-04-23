@@ -14,6 +14,7 @@ import th.co.geniustree.springdata.jpa.repository.JpaSpecificationExecutorWithPr
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface PostActionRepository extends JpaRepository<PostAction, Long>, JpaSpecificationExecutorWithProjection<PostAction> {
@@ -21,6 +22,8 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
     Set<PostActionProjection> findAllBySlugOrderByCreatedAtDesc(String slug);
 
     PostAction findByPostActionId(Long postId);
+
+    Optional<PostAction> findByPostActionIdAndUserActor(Long postActionId, User userActor);
 
     Page<PostAction> findAllByUserActorOrderByCreatedAtDesc(User user, Pageable pageable);
 

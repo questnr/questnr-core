@@ -3,7 +3,7 @@ package com.questnr.services.user;
 import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.entities.LikeAction;
+import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
 import com.questnr.model.entities.User;
@@ -86,12 +86,14 @@ public class UserPostActionService {
         }
     }
 
-    public void updatePostAction(Long postId, PostAction postActionRequest) {
+    public void updatePostAction(Long postId, PostActionUpdateRequestDTO postActionRequest) {
         User user = userCommonService.getUser();
-        postActionRepository.findById(postId).map(post -> {
-            postActionRequest.setUserActor(user);
-            postActionRequest.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-            return postActionRepository.save(postActionRequest);
+        postActionRepository.findByPostActionIdAndUserActor(postId, user).map(post -> {
+            post.setText(postActionRequest.getText());
+            post.setHashTags(postActionService.parsePostText(postActionRequest.getText()));
+            post.setStatus(postActionRequest.getStatus());
+            post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            return postActionRepository.save(post);
         }).orElseThrow(() -> new ResourceNotFoundException("Post not found!"));
     }
 
