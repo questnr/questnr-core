@@ -53,8 +53,8 @@ public class PostActionService {
         Long timeStamp = new Date().getTime();
         List<String> titleChunks = Arrays.asList(postAction.getText().toLowerCase().split("\\s"));
         int maxTitleChunk = titleChunks.size();
-        if (maxTitleChunk > 9) {
-            maxTitleChunk = 9;
+        if (maxTitleChunk > 5) {
+            maxTitleChunk = 5;
         }
         return postAction.getUserActor().getUsername().toLowerCase() +
                 "_" +
@@ -67,7 +67,11 @@ public class PostActionService {
 
     private String getPostActionTitleTag(PostAction postAction) {
         List<String> titleChunks = Arrays.asList(postAction.getText().toLowerCase().split("\\s"));
-        return CommonService.removeSpecialCharacters(String.join(" ", titleChunks.subList(0, titleChunks.size())));
+        int maxTitleChunk = titleChunks.size();
+        if (maxTitleChunk > 9) {
+            maxTitleChunk = 9;
+        }
+        return CommonService.removeSpecialCharacters(String.join(" ", titleChunks.subList(0, maxTitleChunk)));
     }
 
     private PostActionMetaInformation getPostActionDescMetaInformation(PostActionDTO postActionDTO) {

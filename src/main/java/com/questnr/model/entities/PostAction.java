@@ -26,11 +26,11 @@ public class PostAction extends DomainObject {
     private Long postActionId;
 
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
-    @Column(name = "post_action_slug", length = 20000, unique = true)
+    @Column(name = "post_action_slug", unique = true, columnDefinition = "TEXT")
     private String slug;
 
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
-    @Column(name = "post_action_text", columnDefinition = "TEXT", length = 200000)
+    @Column(name = "post_action_text", columnDefinition = "TEXT")
     private String text;
 
     @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
@@ -60,7 +60,7 @@ public class PostAction extends DomainObject {
     @JoinColumn(name = "user_id")
     private User userActor;
 
-    @Column(name = "post_action_tags")
+    @Column(name = "post_action_tags", columnDefinition = "TEXT")
     private String tags;
 
     @ManyToOne
