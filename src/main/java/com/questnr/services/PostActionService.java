@@ -78,7 +78,7 @@ public class PostActionService {
         MetaInformation metaInfo = new MetaInformation();
         metaInfo.setAttributeType("name");
         metaInfo.setType("description");
-        metaInfo.setContent(postActionDTO.getText());
+        metaInfo.setContent(CommonService.removeSpecialCharacters(postActionDTO.getText()));
         PostActionMetaInformation postMeta = new PostActionMetaInformation();
         postMeta.setMetaInformation(metaInfo);
         return postMeta;

@@ -34,7 +34,7 @@ public class PostActionDTO {
     private int totalLikes;
     private int totalComments;
     private int totalPostVisits;
-    private List<PostActionMetaInformation> metaList;
+    private List<PostActionMetaInformation> metaList = new ArrayList<>();
     private MetaDataDTO metaData;
 
     public String getSlug() {

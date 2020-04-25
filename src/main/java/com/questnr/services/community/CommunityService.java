@@ -76,7 +76,7 @@ public class CommunityService {
         MetaInformation metaInfo = new MetaInformation();
         metaInfo.setAttributeType("name");
         metaInfo.setType("description");
-        metaInfo.setContent(communityDTO.getDescription());
+        metaInfo.setContent(CommonService.removeSpecialCharacters(communityDTO.getDescription()));
         CommunityMetaInformation communityMeta = new CommunityMetaInformation();
         communityMeta.setMetaInformation(metaInfo);
         return communityMeta;

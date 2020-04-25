@@ -3,6 +3,7 @@ package com.questnr.model.dto;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.CommunityMetaInformation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CommunityDTO {
@@ -25,7 +26,7 @@ public class CommunityDTO {
 
     private List<CommunityUserForCommunityDTO> communityUsers;
 
-    private List<CommunityMetaInformation> metaList;
+    private List<CommunityMetaInformation> metaList = new ArrayList<>();
 
     private MetaDataDTO metaData;
 
