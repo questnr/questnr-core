@@ -1,10 +1,17 @@
 package com.questnr.services.notification;
 
+import com.questnr.model.dto.NotificationDTO;
 import com.questnr.model.entities.Notification;
+import com.questnr.model.entities.UserNotificationControl;
+import com.questnr.model.entities.notification.PushNotificationRequest;
+import com.questnr.model.mapper.NotificationMapper;
 import com.questnr.model.repositories.NotificationRepository;
+import com.questnr.model.repositories.UserNotificationControlRepository;
 import com.questnr.services.CommonService;
+import com.questnr.services.notification.firebase.FCMService;
 
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,13 +30,22 @@ public class NotificationWorker extends Thread {
 
     private NotificationRepository notificationRepository;
 
+    private UserNotificationControlRepository userNotificationControlRepository;
+
+    private FCMService fcmService;
+
+    private NotificationMapper notificationMapper;
+
     private final int id;
 
-    public NotificationWorker(int id, NotificationRepository notificationRepository) {
+    public NotificationWorker(int id, NotificationRepository notificationRepository, UserNotificationControlRepository userNotificationControlRepository, FCMService fcmService, NotificationMapper notificationMapper) {
         super("NotificationWorker-" + id);
         setDaemon(true);
         this.id = id;
         this.notificationRepository = notificationRepository;
+        this.userNotificationControlRepository = userNotificationControlRepository;
+        this.fcmService = fcmService;
+        this.notificationMapper = notificationMapper;
     }
 
     @Override
@@ -54,6 +70,20 @@ public class NotificationWorker extends Thread {
                 // Null if queue is empty
                 if (item == null) {
                     continue;
+                }
+                PushNotificationRequest pushNotificationRequest = new PushNotificationRequest();
+                try {
+                    NotificationDTO notificationDTO = this.notificationMapper.toNotificationDTO(item);
+                    pushNotificationRequest.setTitle(notificationDTO.getUserActor().getUsername());
+                    pushNotificationRequest.setMessage(notificationDTO.getMessage());
+                    List<UserNotificationControl> userNotificationControlList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
+                    for (UserNotificationControl userNotificationControl : userNotificationControlList) {
+                        pushNotificationRequest.setToken(userNotificationControl.getToken());
+                        this.fcmService.sendMessageToToken(pushNotificationRequest);
+                    }
+                } catch (Exception ex) {
+                    LOG.log(Level.SEVERE, "Exception while sending Notification via firebase ...{0}",
+                            ex.getMessage());
                 }
                 try {
                     this.notificationRepository.save(item);

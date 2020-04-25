@@ -1,6 +1,8 @@
 package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.questnr.common.NotificationTitles;
+import com.questnr.common.enums.NotificationType;
 import org.hibernate.mapping.ToOne;
 import org.springframework.stereotype.Indexed;
 
@@ -71,5 +73,15 @@ public class CommunityInvitedUser implements NotificationBase {
     @JsonIgnore
     public Date getCreatedAt() {
         return createdAt;
+    }
+
+    @JsonIgnore
+    public NotificationType getNotificationType() {
+        return NotificationType.invitation;
+    }
+
+    @JsonIgnore
+    public String getNotificationTitles() {
+        return NotificationTitles.INVITATION_ACTION;
     }
 }

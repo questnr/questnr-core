@@ -1,11 +1,14 @@
 package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.questnr.common.NotificationTitles;
+import com.questnr.common.enums.NotificationType;
 import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -20,7 +23,7 @@ public class CommentAction extends DomainObject implements NotificationBase {
     private Long commentActionId;
 
     @Column(name = "comment_object")
-    private  String commentObject;
+    private String commentObject;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -30,7 +33,7 @@ public class CommentAction extends DomainObject implements NotificationBase {
     @JoinColumn(name = "post_action_id", nullable = false)
     private PostAction postAction;
 
-    @OneToMany(mappedBy = "parentCommentAction",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parentCommentAction", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CommentAction> childCommentSet;
 
     @ManyToOne
@@ -110,5 +113,28 @@ public class CommentAction extends DomainObject implements NotificationBase {
 
     public void setLikeCommentActionSet(Set<LikeCommentAction> likeCommentActionSet) {
         this.likeCommentActionSet = likeCommentActionSet;
+    }
+
+    @JsonIgnore
+    public NotificationType getNotificationType() {
+        return NotificationType.comment;
+    }
+
+    @JsonIgnore
+    public String getNotificationTitles() {
+        return NotificationTitles.COMMENT_ACTION;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CommentAction that = (CommentAction) o;
+        return commentActionId.equals(that.commentActionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(commentActionId);
     }
 }

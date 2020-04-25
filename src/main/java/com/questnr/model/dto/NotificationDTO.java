@@ -1,11 +1,15 @@
 package com.questnr.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questnr.common.enums.NotificationType;
+import com.questnr.model.entities.User;
 
 public class NotificationDTO {
     private Long notificationId;
 
     private UserDTO userActor;
+
+    private User user;
 
     private CommunityForPostActionDTO community;
 
@@ -31,6 +35,15 @@ public class NotificationDTO {
 
     public void setUserActor(UserDTO userActor) {
         this.userActor = userActor;
+    }
+
+    @JsonIgnore
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public CommunityForPostActionDTO getCommunity() {

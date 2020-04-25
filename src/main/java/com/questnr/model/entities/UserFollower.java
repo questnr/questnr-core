@@ -1,6 +1,8 @@
 package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.questnr.common.NotificationTitles;
+import com.questnr.common.enums.NotificationType;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -58,5 +60,15 @@ public class UserFollower implements NotificationBase {
     @JsonIgnore
     public Date getCreatedAt() {
         return createdAt;
+    }
+
+    @JsonIgnore
+    public NotificationType getNotificationType() {
+        return NotificationType.followedUser;
+    }
+
+    @JsonIgnore
+    public String getNotificationTitles() {
+        return NotificationTitles.FOLLOWED_USER;
     }
 }

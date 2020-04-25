@@ -1,7 +1,9 @@
 package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.search.annotations.*;
+import com.questnr.common.NotificationTitles;
+import com.questnr.common.enums.NotificationType;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 
@@ -47,5 +49,15 @@ public class LikeAction extends DomainObject implements NotificationBase {
 
     public void setUserActor(User userActor) {
         this.userActor = userActor;
+    }
+
+    @JsonIgnore
+    public NotificationType getNotificationType() {
+        return NotificationType.like;
+    }
+
+    @JsonIgnore
+    public String getNotificationTitles() {
+        return NotificationTitles.LIKE_ACTION;
     }
 }

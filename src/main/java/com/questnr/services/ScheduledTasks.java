@@ -22,13 +22,13 @@ public class ScheduledTasks {
     @Scheduled(fixedRate = (3600 * 24 * 1000))
     public void storeTrendData() {
 
-        // Community Trend Service
-        communityTrendService.run();
-
-        // Post Trend Service
-        postActionTrendService.run();
-
-        // HashTag Trend Service
-        hashTagTrendService.run();
+//        // Community Trend Service
+//        communityTrendService.run();
+//
+//        // Post Trend Service
+//        postActionTrendService.run();
+//
+//        // HashTag Trend Service
+//        hashTagTrendService.run();
     }
 }

@@ -53,7 +53,12 @@ public class Notification extends DomainObject {
     }
 
     public Notification(CommentAction commentAction) {
-        this.user = commentAction.getPostAction().getUserActor();
+        if (commentAction.isChildComment()) {
+            CommentAction parentCommentAction = commentAction.getParentCommentAction();
+            this.user = parentCommentAction.getUserActor();
+        } else {
+            this.user = commentAction.getPostAction().getUserActor();
+        }
         this.notificationBase = commentAction;
 //        this.notificationType = NotificationType.comment;
         this.isRead = false;

@@ -28,8 +28,13 @@ public class NotificationMapper {
         communityMapper = Mappers.getMapper(CommunityMapper.class);
     }
 
+    private boolean checkIfPostMediaListIsNotEmpty(PostAction postAction){
+        return postAction.getPostMediaList() != null && postAction.getPostMediaList().size() > 0;
+    }
+
     public NotificationDTO toNotificationDTO(Notification notification) {
         NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setUser(notification.getUser());
         NotificationBase notificationBase = notification.getNotificationBase();
         if (notificationBase instanceof LikeAction) {
             LikeAction likeAction = (LikeAction) notificationBase;
@@ -37,19 +42,26 @@ public class NotificationMapper {
             notificationDTO.setMessage(NotificationTitles.LIKE_ACTION);
             notificationDTO.setNotificationType(NotificationType.like);
             notificationDTO.setUserActor(userActor);
-            notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(likeAction.getPostAction().getPostMediaList().get(0)));
+            if (this.checkIfPostMediaListIsNotEmpty(likeAction.getPostAction()))
+                notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(likeAction.getPostAction().getPostMediaList().get(0)));
         } else if (notificationBase instanceof CommentAction) {
             CommentAction commentAction = (CommentAction) notificationBase;
-            notificationDTO.setMessage(NotificationTitles.COMMENT_ACTION);
+            if (commentAction.isChildComment()) {
+                notificationDTO.setMessage(NotificationTitles.COMMENT_REPLY_ACTION);
+            } else {
+                notificationDTO.setMessage(NotificationTitles.COMMENT_ACTION);
+            }
             notificationDTO.setNotificationType(NotificationType.comment);
             notificationDTO.setUserActor(userMapper.toOthersDTO(commentAction.getUserActor()));
-            notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(commentAction.getPostAction().getPostMediaList().get(0)));
+            if (this.checkIfPostMediaListIsNotEmpty(commentAction.getPostAction()))
+                notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(commentAction.getPostAction().getPostMediaList().get(0)));
         } else if (notificationBase instanceof LikeCommentAction) {
             LikeCommentAction likeCommentAction = (LikeCommentAction) notificationBase;
             notificationDTO.setMessage(NotificationTitles.LIKE_COMMENT_ACTION);
             notificationDTO.setNotificationType(NotificationType.likeComment);
             notificationDTO.setUserActor(userMapper.toOthersDTO(likeCommentAction.getUserActor()));
-            notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(likeCommentAction.getCommentAction().getPostAction().getPostMediaList().get(0)));
+            if (this.checkIfPostMediaListIsNotEmpty(likeCommentAction.getCommentAction().getPostAction()))
+                notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(likeCommentAction.getCommentAction().getPostAction().getPostMediaList().get(0)));
         } else if (notificationBase instanceof CommunityInvitedUser) {
             CommunityInvitedUser communityInvitedUser = (CommunityInvitedUser) notificationBase;
 

@@ -1,8 +1,11 @@
 package com.questnr.services.notification;
 
 import com.questnr.model.entities.Notification;
+import com.questnr.model.mapper.NotificationMapper;
 import com.questnr.model.repositories.NotificationRepository;
+import com.questnr.model.repositories.UserNotificationControlRepository;
 import com.questnr.services.CommonService;
+import com.questnr.services.notification.firebase.FCMService;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -29,10 +32,19 @@ public class NotificationProcessor extends Thread {
 
     private NotificationRepository notificationRepository;
 
-    public NotificationProcessor(NotificationRepository notificationRepository) {
+    private UserNotificationControlRepository userNotificationControlRepository;
+
+    private FCMService fcmService;
+
+    private NotificationMapper notificationMapper;
+
+    public NotificationProcessor(NotificationRepository notificationRepository,UserNotificationControlRepository userNotificationControlRepository, FCMService fcmService, NotificationMapper notificationMapper) {
         super("NotificationProcessor");
         setDaemon(true);
         this.notificationRepository = notificationRepository;
+        this.userNotificationControlRepository = userNotificationControlRepository;
+        this.fcmService = fcmService;
+        this.notificationMapper = notificationMapper;
     }
 
     @Override
@@ -62,9 +74,9 @@ public class NotificationProcessor extends Thread {
         }
     }
 
-    public static synchronized NotificationProcessor getInstance(NotificationRepository notificationRepository) {
+    public static synchronized NotificationProcessor getInstance(NotificationRepository notificationRepository, UserNotificationControlRepository userNotificationControlRepository, FCMService fcmService, NotificationMapper notificationMapper) {
         if (sInstance == null) {
-            sInstance = new NotificationProcessor(notificationRepository);
+            sInstance = new NotificationProcessor(notificationRepository, userNotificationControlRepository, fcmService, notificationMapper);
             sInstance.start();
         }
         return sInstance;
@@ -74,7 +86,7 @@ public class NotificationProcessor extends Thread {
         LOG.info("Notification workers are initializing ....");
         workers = new NotificationWorker[MAX_WORKERS];
         for (int i = 0; i < MAX_WORKERS; i++) {
-            workers[i] = new NotificationWorker(i + 1, this.notificationRepository);
+            workers[i] = new NotificationWorker(i + 1, this.notificationRepository, this.userNotificationControlRepository, this.fcmService, this.notificationMapper);
             workers[i].start();
         }
     }
