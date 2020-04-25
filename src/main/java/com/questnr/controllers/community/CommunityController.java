@@ -64,6 +64,13 @@ public class CommunityController {
         throw new AccessException();
     }
 
+    @RequestMapping(value = "/user/community", method = RequestMethod.GET)
+    Page<CommunityDTO> getCommunityListByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Community> communityPage = communityService.getCommunityListByUser(pageable);
+        return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
+    }
+
     @RequestMapping(value = "/user/community/check-exists", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void checkCommunityExists(@RequestBody String communityName) {

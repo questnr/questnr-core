@@ -2,6 +2,7 @@ package com.questnr.model.repositories;
 
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,5 +24,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     @Query("Select c from Community c where c.communityName like %:communityString%")
     Page<Community> findByCommunityNameContaining(String communityString, Pageable pageable);
+
+    Page<Community> findByOwnerUser(User user, Pageable pageable);
 
 }

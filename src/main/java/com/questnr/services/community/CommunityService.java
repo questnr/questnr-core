@@ -5,21 +5,17 @@ import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.CommunityDTO;
-import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.*;
-import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.CustomPageService;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.SecureRandomService;
-import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,7 +54,7 @@ public class CommunityService {
     private String createCommunitySlug(Community community) {
         List<String> communityNameChunks = Arrays.asList(community.getCommunityName().toLowerCase().split("\\s"));
         String randomString = secureRandomService.getSecureRandom().toString();
-        return CommonService.removeSpecialCharacters(String.join("-", communityNameChunks))+
+        return CommonService.removeSpecialCharacters(String.join("-", communityNameChunks)) +
                 "-" +
                 randomString;
     }
@@ -110,8 +106,8 @@ public class CommunityService {
         return communityDTO;
     }
 
-    public boolean checkCommunityNameExists(String communityName) throws AlreadyExistsException{
-        if(communityRepository.countByCommunityName(communityName) == 0){
+    public boolean checkCommunityNameExists(String communityName) throws AlreadyExistsException {
+        if (communityRepository.countByCommunityName(communityName) == 0) {
             return true;
         }
         throw new AlreadyExistsException("Community already exists");
@@ -146,6 +142,10 @@ public class CommunityService {
             }
         }
         throw new InvalidRequestException("Error occurred. Please, try again!");
+    }
+
+    public Page<Community> getCommunityListByUser(Pageable pageable) {
+        return communityRepository.findByOwnerUser(userCommonService.getUser(), pageable);
     }
 
     public void deleteCommunity(long communityId) {
