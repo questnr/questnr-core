@@ -49,29 +49,40 @@ public class PostActionService {
 
     final private String POST_ACTION_PATH = "posts";
 
-    private String createPostActionSlug(PostAction postAction) {
-        Long timeStamp = new Date().getTime();
-        List<String> titleChunks = Arrays.asList(postAction.getText().toLowerCase().split("\\s"));
+    private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord){
+        List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));
         int maxTitleChunk = titleChunks.size();
-        if (maxTitleChunk > 5) {
-            maxTitleChunk = 5;
+        if (maxTitleChunk > maxChunk) {
+            maxTitleChunk = maxChunk;
         }
         titleChunks = titleChunks.subList(0, maxTitleChunk);
         List<String> finalChunks = new ArrayList<>();
-        if (titleChunks.get(0).length() > 35) {
-            finalChunks.add(titleChunks.get(0).substring(0, 35));
-        } else {
-            for (String chunk : titleChunks) {
-                if (chunk.length() > 35) {
-                    finalChunks.add(chunk.substring(0, 10));
-                } else {
-                    finalChunks.add(chunk);
-                }
+        for (String chunk : titleChunks) {
+            if (chunk.length() > maxLengthOfWord) {
+                finalChunks.add(chunk.substring(0, maxLengthOfWord));
+            } else {
+                finalChunks.add(chunk);
             }
         }
+//        if (titleChunks.get(0).length() > maxLengthOfSlug || avoidMaxLengthOfSlug) {
+//            finalChunks.add(titleChunks.get(0).substring(0, maxLengthOfSlug));
+//        } else {
+//            for (String chunk : titleChunks) {
+//                if (chunk.length() > maxLengthOfWord) {
+//                    finalChunks.add(chunk.substring(0, maxLengthOfWord));
+//                } else {
+//                    finalChunks.add(chunk);
+//                }
+//            }
+//        }
+        return finalChunks;
+    }
+
+    private String createPostActionSlug(PostAction postAction) {
+        Long timeStamp = new Date().getTime();
         return postAction.getUserActor().getUsername().toLowerCase() +
                 "_" +
-                CommonService.removeSpecialCharacters(String.join("-", finalChunks)) +
+                CommonService.removeSpecialCharacters(String.join("-", this.makeChunkFromText(postAction.getText(), 5, 10))) +
                 "-" +
                 secureRandomService.getSecureRandom().toString() +
                 "-" +
@@ -79,12 +90,7 @@ public class PostActionService {
     }
 
     private String getPostActionTitleTag(PostAction postAction) {
-        List<String> titleChunks = Arrays.asList(postAction.getText().toLowerCase().split("\\s"));
-        int maxTitleChunk = titleChunks.size();
-        if (maxTitleChunk > 9) {
-            maxTitleChunk = 9;
-        }
-        return CommonService.removeSpecialCharacters(String.join(" ", titleChunks.subList(0, maxTitleChunk)));
+        return CommonService.removeSpecialCharacters(String.join(" ", this.makeChunkFromText(postAction.getText(), 10, 10)));
     }
 
     private PostActionMetaInformation getPostActionDescMetaInformation(PostActionDTO postActionDTO) {
