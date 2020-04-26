@@ -56,9 +56,22 @@ public class PostActionService {
         if (maxTitleChunk > 5) {
             maxTitleChunk = 5;
         }
+        titleChunks = titleChunks.subList(0, maxTitleChunk);
+        List<String> finalChunks = new ArrayList<>();
+        if (titleChunks.get(0).length() > 35) {
+            finalChunks.add(titleChunks.get(0).substring(0, 35));
+        } else {
+            for (String chunk : titleChunks) {
+                if (chunk.length() > 35) {
+                    finalChunks.add(chunk.substring(0, 10));
+                } else {
+                    finalChunks.add(chunk);
+                }
+            }
+        }
         return postAction.getUserActor().getUsername().toLowerCase() +
                 "_" +
-                CommonService.removeSpecialCharacters(String.join("-", (titleChunks.subList(0, maxTitleChunk)))) +
+                CommonService.removeSpecialCharacters(String.join("-", finalChunks)) +
                 "-" +
                 secureRandomService.getSecureRandom().toString() +
                 "-" +

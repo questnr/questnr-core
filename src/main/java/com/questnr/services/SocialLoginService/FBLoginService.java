@@ -48,6 +48,9 @@ public class FBLoginService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    SocialUserDetails socialUserDetails;
+
     private RestTemplate restTemplate = new RestTemplate();
 
     public LoginResponse facebookLogin(String fbAccessCode, String source) {
@@ -89,7 +92,7 @@ public class FBLoginService {
             if (savedUser != null) {
                 return baseService.createSuccessLoginResponse(savedUser);
             }
-            savedUser = baseService.createUserFromSocialLogin(SocialUserDetails.getUser(fbUserDetails), source);
+            savedUser = baseService.createUserFromSocialLogin(socialUserDetails.getUser(fbUserDetails), source);
 
             emailService.sendEmailOnSignUp(savedUser);
             return baseService.createSuccessLoginResponse(savedUser);
