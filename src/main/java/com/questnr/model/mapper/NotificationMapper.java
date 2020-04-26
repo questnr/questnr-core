@@ -69,14 +69,14 @@ public class NotificationMapper {
             notificationDTO.setMessage(String.format(NotificationTitles.INVITATION_ACTION, communityInvitedUser.getCommunity().getCommunityName()));
             notificationDTO.setNotificationType(NotificationType.invitation);
             notificationDTO.setUserActor(userMapper.toOthersDTO(communityInvitedUser.getUserActor()));
-            notificationDTO.setCommunity(communityMapper.toCommunityForPostAction(communityInvitedUser.getCommunity()));
+            notificationDTO.setCommunity(communityMapper.toCommunityCard(communityInvitedUser.getCommunity()));
         } else if (notificationBase instanceof CommunityUser) {
             CommunityUser communityUser = (CommunityUser) notificationBase;
             // Need String.format to insert community name
             notificationDTO.setMessage(String.format(NotificationTitles.FOLLOWED_COMMUNITY, communityUser.getCommunity().getCommunityName()));
             notificationDTO.setNotificationType(NotificationType.followedCommunity);
             notificationDTO.setUserActor(userMapper.toOthersDTO(communityUser.getUser()));
-            notificationDTO.setCommunity(communityMapper.toCommunityForPostAction(communityUser.getCommunity()));
+            notificationDTO.setCommunity(communityMapper.toCommunityCard(communityUser.getCommunity()));
         } else if (notificationBase instanceof UserFollower) {
             UserFollower userFollower = (UserFollower) notificationBase;
             // Need String.format to insert community name

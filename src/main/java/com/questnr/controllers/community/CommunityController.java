@@ -2,6 +2,7 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.exceptions.AccessException;
+import com.questnr.model.dto.CommunityCardDTO;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.CommunityRequestDTO;
 import com.questnr.model.dto.UserDTO;
@@ -120,10 +121,10 @@ public class CommunityController {
 
     // Get community list from community name like string.
     @RequestMapping(value = "/user/search/communities", method = RequestMethod.GET)
-    Page<CommunityDTO> getCommunitiesFromLikeString(@RequestParam String communityString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    Page<CommunityCardDTO> getCommunitiesFromLikeString(@RequestParam String communityString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Community> communityPage = communityService.getCommunitiesFromLikeString(communityString, pageable);
-        return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
+        return new PageImpl<>(communityMapper.toCommunityCards(communityPage.getContent()), pageable, communityPage.getTotalElements());
     }
 
     // Search user in community user list

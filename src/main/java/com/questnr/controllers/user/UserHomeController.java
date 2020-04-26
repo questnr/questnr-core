@@ -1,6 +1,6 @@
 package com.questnr.controllers.user;
 
-import com.questnr.model.dto.CommunityDTO;
+import com.questnr.model.dto.CommunityCardDTO;
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
@@ -47,17 +47,17 @@ public class UserHomeController {
     }
 
     @RequestMapping(value = "/community/trending-community-list", method = RequestMethod.GET)
-    Page<CommunityDTO> getTrendingCommunityList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    Page<CommunityCardDTO> getTrendingCommunityList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Community> communityPage = userHomeService.getTrendingCommunityList(pageable);
-        return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
+        return new PageImpl<>(communityMapper.toCommunityCards(communityPage.getContent()), pageable, communityPage.getTotalElements());
     }
 
     @RequestMapping(value = "/community/suggested-community-list", method = RequestMethod.GET)
-    Page<CommunityDTO> getSuggestedCommunityList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    Page<CommunityCardDTO> getSuggestedCommunityList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         if (size > 20) size = 20;
         Pageable pageable = PageRequest.of(page, size);
         Page<Community> communityPage = userHomeService.getSuggestedCommunityList(pageable);
-        return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
+        return new PageImpl<>(communityMapper.toCommunityCards(communityPage.getContent()), pageable, communityPage.getTotalElements());
     }
 }

@@ -1,5 +1,6 @@
 package com.questnr.model.mapper;
 
+import com.questnr.model.dto.CommunityCardDTO;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.CommunityForPostActionDTO;
 import com.questnr.model.dto.CommunityRequestDTO;
@@ -27,4 +28,9 @@ public interface CommunityMapper {
 
     @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
     CommunityForPostActionDTO toCommunityForPostAction(Community community);
+
+    @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
+    CommunityCardDTO toCommunityCard(Community community);
+
+    List<CommunityCardDTO> toCommunityCards(List<Community> communityList);
 }

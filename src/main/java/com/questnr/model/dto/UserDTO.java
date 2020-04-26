@@ -10,7 +10,7 @@ public class UserDTO {
 
     private String lastName;
 
-    private String emailId;
+    private String slug;
 
     private AvatarDTO avatarDTO;
 
@@ -46,12 +46,12 @@ public class UserDTO {
         this.lastName = lastName;
     }
 
-    public String getEmailId() {
-        return emailId;
+    public String getSlug() {
+        return slug;
     }
 
-    public void setEmailId(String emailId) {
-        this.emailId = emailId;
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public AvatarDTO getAvatarDTO() {
