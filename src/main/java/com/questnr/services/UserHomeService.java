@@ -1,13 +1,11 @@
 package com.questnr.services;
 
 import com.questnr.common.CommunitySuggestionData;
-import com.questnr.model.entities.Community;
-import com.questnr.model.entities.CommunityTrendLinearData;
-import com.questnr.model.entities.User;
-import com.questnr.model.entities.UserFollower;
+import com.questnr.model.entities.*;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityTrendLinearDataRepository;
 import com.questnr.model.repositories.HashTagTrendLinearDataRepository;
+import com.questnr.model.repositories.PostActionTrendLinearDataRepository;
 import com.questnr.services.user.UserCommonService;
 import info.debatty.java.stringsimilarity.Cosine;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,9 @@ public class UserHomeService {
 
     @Autowired
     CommunityTrendLinearDataRepository communityTrendLinearDataRepository;
+
+    @Autowired
+    PostActionTrendLinearDataRepository postActionTrendLinearDataRepository;
 
     @Autowired
     HashTagTrendLinearDataRepository hashTagTrendLinearDataRepository;
@@ -124,5 +125,17 @@ public class UserHomeService {
                         pageable.getPageSize() :
                         returnCommunityList.size()
         ), pageable, returnCommunityList.size());
+    }
+
+    public Page<PostAction> getTrendingPostList(Pageable pageable) {
+        Page<PostActionTrendLinearData> postActionTrendLinearDataPage = postActionTrendLinearDataRepository.findAll(pageable);
+        // List sorted with descending order of regression slope
+        Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator
+                = Comparator.comparing(PostActionTrendLinearData::getSlop);
+
+        List<PostActionTrendLinearData> postActionTrendLinearDataList = new ArrayList<>(postActionTrendLinearDataPage.getContent());
+        postActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
+
+        return new PageImpl<>(postActionTrendLinearDataList.stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList()), pageable, postActionTrendLinearDataPage.getTotalElements());
     }
 }

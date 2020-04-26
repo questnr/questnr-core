@@ -24,8 +24,6 @@ public class CommunityDTO {
 
     private AvatarDTO avatarDTO;
 
-    private List<CommunityUserForCommunityDTO> communityUsers;
-
     private List<CommunityMetaInformation> metaList = new ArrayList<>();
 
     private MetaDataDTO metaData;
@@ -92,14 +90,6 @@ public class CommunityDTO {
 
     public void setAvatarDTO(AvatarDTO avatarDTO) {
         this.avatarDTO = avatarDTO;
-    }
-
-    public List<CommunityUserForCommunityDTO> getCommunityUsers() {
-        return communityUsers;
-    }
-
-    public void setCommunityUsers(List<CommunityUserForCommunityDTO> communityUsers) {
-        this.communityUsers = communityUsers;
     }
 
     public List<CommunityMetaInformation> getMetaList() {

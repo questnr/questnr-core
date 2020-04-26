@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class CommunityTrendService {
+public class CommunityTrendService implements Runnable{
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired

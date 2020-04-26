@@ -7,11 +7,6 @@ import com.questnr.model.projections.UserProjection;
 import com.questnr.requests.UpdatePasswordRequest;
 import com.questnr.responses.UpdatePasswordResponse;
 import com.questnr.services.AmazonS3Client;
-import com.questnr.services.ScheduledTasks;
-import com.questnr.services.ses.AmazonAttachment;
-import com.questnr.services.ses.AmazonEmail;
-import com.questnr.services.ses.SESProcessor;
-import com.questnr.services.ses.enums.SESFrom;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.services.user.UserService;
 import org.mapstruct.factory.Mappers;
@@ -21,12 +16,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -42,9 +34,6 @@ public class UserController {
 
     @Autowired
     AmazonS3Client amazonS3Client;
-
-    @Autowired
-    ScheduledTasks scheduledTasks;
 
     UserController() {
         userMapper = Mappers.getMapper(UserMapper.class);
@@ -84,10 +73,5 @@ public class UserController {
             return userService.updatePassword(updatePasswordRequest);
         }
         throw new InvalidRequestException("Invalid request!");
-    }
-
-    @RequestMapping(value = "/testing-func", method = RequestMethod.GET)
-    public void testingFunc() {
-        scheduledTasks.storeTrendData();
     }
 }

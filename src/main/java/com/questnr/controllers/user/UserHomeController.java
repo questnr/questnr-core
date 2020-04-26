@@ -60,4 +60,11 @@ public class UserHomeController {
         Page<Community> communityPage = userHomeService.getSuggestedCommunityList(pageable);
         return new PageImpl<>(communityMapper.toCommunityCards(communityPage.getContent()), pageable, communityPage.getTotalElements());
     }
+
+    @RequestMapping(value = "/user/explore", method = RequestMethod.GET)
+    Page<PostActionDTO> getTrendingPostsOfTheWeek(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PostAction> postActionPage = userHomeService.getTrendingPostList(pageable);
+        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
+    }
 }

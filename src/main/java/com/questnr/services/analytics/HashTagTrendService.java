@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class HashTagTrendService {
+public class HashTagTrendService implements Runnable {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -111,7 +111,7 @@ public class HashTagTrendService {
 
         // If this algorithm hasn't been run before for this day.
 //        if (hashTagTrendDataRepository.countByObservedDate(datePointer) == 0) {
-        while(datePointer.getTime() < startingEndingDate.getEndingDate().getTime()){
+        while (datePointer.getTime() < startingEndingDate.getEndingDate().getTime()) {
             LOGGER.info("HashTag Trending Algorithm Started!");
 
             // Get day + 1

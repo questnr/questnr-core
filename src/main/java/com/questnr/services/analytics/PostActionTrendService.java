@@ -20,7 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class PostActionTrendService {
+public class PostActionTrendService implements Runnable {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
