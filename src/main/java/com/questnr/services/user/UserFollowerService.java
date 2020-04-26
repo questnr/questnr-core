@@ -1,5 +1,6 @@
 package com.questnr.services.user;
 
+import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
@@ -102,5 +103,16 @@ public class UserFollowerService {
         }).orElseThrow(() -> {
             throw new ResourceNotFoundException("User being followed does not exists");
         });
+    }
+
+    public RelationShipType getUserRelationShipWithUser(Long userId) {
+        User user = userCommonService.getUser();
+        User anotherUser = userCommonService.getUser(userId);
+        if (userFollowerRepository.existsByUserAndFollowingUser(user, anotherUser))
+            return RelationShipType.followed;
+        else if (user.equals(anotherUser)) {
+            return RelationShipType.owned;
+        }
+        return RelationShipType.none;
     }
 }

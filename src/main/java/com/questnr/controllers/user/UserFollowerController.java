@@ -1,6 +1,7 @@
 package com.questnr.controllers.user;
 
 import com.questnr.access.UserFollowerAccessService;
+import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.mapper.CommunityMapper;
@@ -12,7 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/v1")
+@RequestMapping(value = "/api/v1/user")
 public class UserFollowerController {
 
     @Autowired
@@ -47,5 +48,11 @@ public class UserFollowerController {
     @ResponseStatus(HttpStatus.OK)
     void undoFollowUser(@PathVariable long userId) {
         userFollowerService.undoFollowUser(userId);
+    }
+
+    // Check user follows this user
+    @RequestMapping(value = "/follow/check/user/{userId}", method = RequestMethod.POST)
+    RelationShipType getUserRelationShipWithUser(@PathVariable long userId) {
+        return userFollowerService.getUserRelationShipWithUser(userId);
     }
 }

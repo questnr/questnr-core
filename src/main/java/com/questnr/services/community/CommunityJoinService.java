@@ -1,5 +1,6 @@
 package com.questnr.services.community;
 
+import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
@@ -181,5 +182,16 @@ public class CommunityJoinService {
         }).orElseThrow(() -> {
             throw new ResourceNotFoundException("Error in accepting the invitation");
         });
+    }
+
+    public RelationShipType getUserRelationShipWithCommunity(Long communityId) {
+        User user = userCommonService.getUser();
+        Community community = communityCommonService.getCommunity(communityId);
+        if (community.getOwnerUser().equals(user)) {
+            return RelationShipType.owned;
+        } else if (communityUserRepository.existsByCommunityAndUser(community, user)) {
+            return RelationShipType.followed;
+        }
+        return RelationShipType.none;
     }
 }

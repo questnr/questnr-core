@@ -69,7 +69,7 @@ public class CommunityController {
     @RequestMapping(value = "/user/community", method = RequestMethod.GET)
     Page<CommunityDTO> getCommunityListByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Community> communityPage = communityService.getCommunityListByUser(pageable);
+        Page<Community> communityPage = communityService.getCommunityListOfUser(pageable);
         return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
     }
 

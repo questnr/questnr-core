@@ -144,7 +144,7 @@ public class CommunityService {
         throw new InvalidRequestException("Error occurred. Please, try again!");
     }
 
-    public Page<Community> getCommunityListByUser(Pageable pageable) {
+    public Page<Community> getCommunityListOfUser(Pageable pageable) {
         return communityRepository.findByOwnerUser(userCommonService.getUser(), pageable);
     }
 

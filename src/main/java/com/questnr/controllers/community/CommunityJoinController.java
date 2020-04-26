@@ -1,6 +1,7 @@
 package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityJoinAccessService;
+import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.mapper.CommunityMapper;
@@ -100,4 +101,9 @@ public class CommunityJoinController {
         communityJoinService.revokeJoinFromUser(communityId, userIdRequest.getUserId());
     }
 
+    // Check user follows this community
+    @RequestMapping(value = "/follow/check/community/{communityId}", method = RequestMethod.POST)
+    RelationShipType getUserRelationShipWithCommunity(@PathVariable long communityId) {
+        return communityJoinService.getUserRelationShipWithCommunity(communityId);
+    }
 }
