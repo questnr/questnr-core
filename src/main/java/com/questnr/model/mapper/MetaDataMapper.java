@@ -27,6 +27,8 @@ public class MetaDataMapper {
         // can be done with adding getMetaDataMapper(Date createdAt, Date updatedAt, boolean shouldIncludeDate) or new overloading function.
         metaDataDTO.setActionDate(CommonService.getDateString(updatedAt));
         metaDataDTO.setActionDateForPost(CommonService.getDateStringForPublicUse(updatedAt));
+
+        metaDataDTO.setTimeInUTC(createdAt.toString());
 //        if(CommonService.isElapsedGreaterThanMonth(elapsed)){
 //            metaDataDTO.setActionDate(CommonService.getDateStringForPublicUse(updatedAt));
 //        }

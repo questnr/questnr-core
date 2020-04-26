@@ -1,13 +1,15 @@
 package com.questnr.model.dto;
 
 public class MetaDataDTO {
-    String timeString;
+    private String timeString;
 
-    String actionDate;
+    private String actionDate;
 
-    String actionDateForPost;
+    private String actionDateForPost;
 
-    boolean isEdited;
+    private String timeInUTC;
+
+    private boolean isEdited;
 
     public String getTimeString() {
         return timeString;
@@ -31,6 +33,14 @@ public class MetaDataDTO {
 
     public void setActionDateForPost(String actionDateForPost) {
         this.actionDateForPost = actionDateForPost;
+    }
+
+    public String getTimeInUTC() {
+        return timeInUTC;
+    }
+
+    public void setTimeInUTC(String timeInUTC) {
+        this.timeInUTC = timeInUTC;
     }
 
     public boolean isEdited() {
