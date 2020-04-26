@@ -2,6 +2,7 @@ package com.questnr.controllers;
 
 import com.questnr.model.entities.User;
 import com.questnr.requests.LoginRequest;
+import com.questnr.requests.UserEmailRequest;
 import com.questnr.responses.LoginResponse;
 import com.questnr.responses.ResetPasswordResponse;
 import com.questnr.services.BaseService;
@@ -36,10 +37,10 @@ public class BaseController {
 
     @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
     @ResponseBody
-    ResetPasswordResponse createPasswordResetRequest(@Valid @RequestBody String emailId) {
+    ResetPasswordResponse createPasswordResetRequest(@RequestBody UserEmailRequest userEmailRequest) {
 
         // ResponseEntity<ResetPasswordResponse> res = null;
-        ResetPasswordResponse response = baseService.generatePasswordResetToken(emailId);
+        ResetPasswordResponse response = baseService.generatePasswordResetToken(userEmailRequest.getUserEmail());
         return response;
     }
 }

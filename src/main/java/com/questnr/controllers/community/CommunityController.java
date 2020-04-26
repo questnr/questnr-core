@@ -10,6 +10,7 @@ import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
+import com.questnr.requests.CommunityNameRequest;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityService;
 import org.mapstruct.factory.Mappers;
@@ -74,8 +75,8 @@ public class CommunityController {
 
     @RequestMapping(value = "/user/community/check-exists", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    void checkCommunityExists(@RequestBody String communityName) {
-        communityService.checkCommunityNameExists(communityName);
+    void checkCommunityExists(@RequestBody CommunityNameRequest communityNameRequest) {
+        communityService.checkCommunityNameExists(communityNameRequest.getCommunityName());
     }
 
     @RequestMapping(value = "/user/community/{communityId}", method = RequestMethod.GET)

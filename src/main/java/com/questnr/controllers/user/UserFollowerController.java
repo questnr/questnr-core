@@ -48,6 +48,4 @@ public class UserFollowerController {
     void undoFollowUser(@PathVariable long userId) {
         userFollowerService.undoFollowUser(userId);
     }
-
-
 }

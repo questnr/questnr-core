@@ -4,6 +4,8 @@ import com.questnr.access.CommunityJoinAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.mapper.CommunityMapper;
+import com.questnr.requests.UserEmailRequest;
+import com.questnr.requests.UserIdRequest;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityJoinService;
 import org.mapstruct.factory.Mappers;
@@ -44,9 +46,9 @@ public class CommunityJoinController {
     // Ask user to join the community
     @RequestMapping(value = "/user/join/community/{communityId}/invite", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody Long userId) {
+    void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody UserIdRequest userIdRequest) {
         if (communityJoinAccessService.hasAccessToInviteUser(communityId)) {
-            communityJoinService.inviteUserToJoinCommunity(communityId, userId);
+            communityJoinService.inviteUserToJoinCommunity(communityId, userIdRequest.getUserId());
         } else {
             throw new AccessException();
         }
@@ -55,9 +57,9 @@ public class CommunityJoinController {
     // Ask user to join the community using user email id
     @RequestMapping(value = "/user/join/community/{communityId}/invite/email", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody String userEmail) {
+    void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody UserEmailRequest userEmailRequest) {
         if (communityJoinAccessService.hasAccessToInviteUser(communityId)) {
-            communityJoinService.inviteUserToJoinCommunity(communityId, userEmail);
+            communityJoinService.inviteUserToJoinCommunity(communityId, userEmailRequest.getUserEmail());
         } else {
             throw new AccessException();
         }
@@ -80,22 +82,22 @@ public class CommunityJoinController {
     // Accept the invitation sent to the user, using user email id
     @RequestMapping(value = "/user/join/community/{communityId}/invitation/email", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    void acceptInvitationFromCommunity(@PathVariable long communityId, @RequestBody String userEmail) {
-        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmail, true);
+    void acceptInvitationFromCommunity(@PathVariable long communityId, @RequestBody UserEmailRequest userEmailRequest) {
+        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest.getUserEmail(), true);
     }
 
     // Decline the invitation sent to the user, using user email id
     @RequestMapping(value = "/user/join/community/{communityId}/invitation/email", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    void declineInvitationFromCommunity(@PathVariable long communityId, @RequestBody String userEmail) {
-        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmail, false);
+    void declineInvitationFromCommunity(@PathVariable long communityId, @RequestBody UserEmailRequest userEmailRequest) {
+        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest.getUserEmail(), false);
     }
 
     // Revoke join operation
     @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    void revokeJoinFromUser(@PathVariable long communityId, @RequestBody Long userId) {
-        communityJoinService.revokeJoinFromUser(communityId, userId);
+    void revokeJoinFromUser(@PathVariable long communityId, @RequestBody UserIdRequest userIdRequest) {
+        communityJoinService.revokeJoinFromUser(communityId, userIdRequest.getUserId());
     }
 
 }
