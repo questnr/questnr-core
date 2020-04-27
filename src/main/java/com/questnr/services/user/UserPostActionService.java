@@ -3,19 +3,23 @@ package com.questnr.services.user;
 import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
 import com.questnr.model.entities.User;
+import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.responses.AvatarStorageData;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.PostActionService;
 import com.questnr.services.community.CommunityCommonService;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -45,17 +49,25 @@ public class UserPostActionService {
     @Autowired
     UserCommonService userCommonService;
 
-    public Page<PostAction> getAllPostActionsByUserId(Pageable pageable) {
+    @Autowired
+    final PostActionMapper postActionMapper;
+
+    UserPostActionService() {
+        postActionMapper = Mappers.getMapper(PostActionMapper.class);
+    }
+
+    public Page<PostActionDTO> getAllPostActionsByUserId(Pageable pageable) {
         User user = userCommonService.getUser();
         try {
-            return postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
+            Page<PostAction> postActionPage = postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
+           return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent(), user), pageable, postActionPage.getTotalElements());
         } catch (Exception e) {
             LOGGER.error(PostAction.class.getName() + " Exception Occurred");
             throw new InvalidInputException(UserPostActionService.class.getName(), null, null);
         }
     }
 
-    public PostAction creatPostAction(PostAction postAction, List<MultipartFile> files) {
+    public PostActionDTO creatPostAction(PostAction postAction, List<MultipartFile> files) {
         User user = userCommonService.getUser();
         if (postAction != null) {
             postAction.setUserActor(user);
@@ -67,20 +79,20 @@ public class UserPostActionService {
                 return postMedia;
             }).collect(Collectors.toList());
             postAction.setPostMediaList(postMediaList);
-            return postActionService.creatPostAction(postAction);
+            return postActionMapper.toDTO(postActionService.creatPostAction(postAction), user);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
 
-    public PostAction creatPostAction(PostAction postAction) {
+    public PostActionDTO creatPostAction(PostAction postAction) {
         User user = userCommonService.getUser();
         if (postAction != null) {
             if (postAction.getText().length() == 0) {
                 throw new InvalidRequestException("Text can not be empty!");
             }
             postAction.setUserActor(user);
-            return postActionService.creatPostAction(postAction);
+            return postActionMapper.toDTO(postActionService.creatPostAction(postAction), user);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }

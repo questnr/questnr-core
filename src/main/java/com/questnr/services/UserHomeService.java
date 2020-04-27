@@ -1,13 +1,16 @@
 package com.questnr.services;
 
 import com.questnr.common.CommunitySuggestionData;
+import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.entities.*;
+import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityTrendLinearDataRepository;
 import com.questnr.model.repositories.HashTagTrendLinearDataRepository;
 import com.questnr.model.repositories.PostActionTrendLinearDataRepository;
 import com.questnr.services.user.UserCommonService;
 import info.debatty.java.stringsimilarity.Cosine;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,10 +41,14 @@ public class UserHomeService {
     @Autowired
     HashTagTrendLinearDataRepository hashTagTrendLinearDataRepository;
 
-    Cosine cosine;
+    private Cosine cosine;
+
+    @Autowired
+    PostActionMapper postActionMapper;
 
     UserHomeService() {
         cosine = new Cosine();
+        postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
 
     public Page<Community> getTrendingCommunityList(Pageable pageable) {
@@ -127,7 +134,7 @@ public class UserHomeService {
         ), pageable, returnCommunityList.size());
     }
 
-    public Page<PostAction> getTrendingPostList(Pageable pageable) {
+    public Page<PostActionDTO> getTrendingPostList(Pageable pageable) {
         Page<PostActionTrendLinearData> postActionTrendLinearDataPage = postActionTrendLinearDataRepository.findAll(pageable);
         // List sorted with descending order of regression slope
         Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator
@@ -136,6 +143,7 @@ public class UserHomeService {
         List<PostActionTrendLinearData> postActionTrendLinearDataList = new ArrayList<>(postActionTrendLinearDataPage.getContent());
         postActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
 
-        return new PageImpl<>(postActionTrendLinearDataList.stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList()), pageable, postActionTrendLinearDataPage.getTotalElements());
+        return new PageImpl<>(postActionMapper.toDTOs(postActionTrendLinearDataList.stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList()), userCommonService.getUser()), pageable, postActionTrendLinearDataPage.getTotalElements());
+
     }
 }

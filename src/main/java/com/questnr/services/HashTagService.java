@@ -1,13 +1,17 @@
 package com.questnr.services;
 
+import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.HashTagTrendLinearData;
 import com.questnr.model.entities.PostAction;
+import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.projections.HashTagProjection;
 import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.HashTagTrendLinearDataRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
+import com.questnr.services.user.UserCommonService;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +42,16 @@ public class HashTagService {
     @Autowired
     PostActionRepository postActionRepository;
 
+    @Autowired
+    UserCommonService userCommonService;
+
+    @Autowired
+    PostActionMapper postActionMapper;
+
+    HashTagService() {
+        postActionMapper = Mappers.getMapper(PostActionMapper.class);
+    }
+
     public Set<HashTagProjection> searchHashTag(String hashTag) {
         return hashTagRepository.findByHashTagValueContaining(hashTag);
     }
@@ -54,7 +68,9 @@ public class HashTagService {
         return new PageImpl<>(hashTagTrendLinearDataList.stream().map(HashTagTrendLinearData::getHashTag).collect(Collectors.toList()), pageable, hashTagTrendLinearDataPage.getTotalElements());
     }
 
-    public Page<PostAction> getPostActionListUsingHashTag(String hashTagValue, Pageable pageable) {
-        return postActionRepository.findByHashTags(hashTagRepository.findByHashTagValue(hashTagValue), pageable);
+    public Page<PostActionDTO> getPostActionListUsingHashTag(String hashTagValue, Pageable pageable) {
+
+        Page<PostAction> postActionPage = postActionRepository.findByHashTags(hashTagRepository.findByHashTagValue(hashTagValue), pageable);
+        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent(), userCommonService.getUser()), pageable, postActionPage.getTotalElements());
     }
 }

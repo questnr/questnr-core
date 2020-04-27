@@ -2,14 +2,18 @@ package com.questnr.services.community;
 
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
+import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.responses.AvatarStorageData;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.PostActionService;
+import com.questnr.services.user.UserCommonService;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +43,16 @@ public class CommunityPostActionService {
     @Autowired
     PostActionRepository postActionRepository;
 
+    @Autowired
+    UserCommonService userCommonService;
+
+    @Autowired
+    final PostActionMapper postActionMapper;
+
+    CommunityPostActionService() {
+        postActionMapper = Mappers.getMapper(PostActionMapper.class);
+    }
+
     public Page<PostAction> getAllPostActionsByCommunityId(long communityId, Pageable pageable) {
         Community community = communityCommonService.getCommunity(communityId);
         if (community != null)
@@ -46,7 +60,7 @@ public class CommunityPostActionService {
         throw new ResourceNotFoundException("Community not found!");
     }
 
-    public PostAction creatPostAction(PostAction postAction, List<MultipartFile> files, long communityId) {
+    public PostActionDTO creatPostAction(PostAction postAction, List<MultipartFile> files, long communityId) {
         if (postAction != null) {
             List<PostMedia> postMediaList;
             postMediaList = files.stream().map(multipartFile -> {
@@ -57,19 +71,19 @@ public class CommunityPostActionService {
             }).collect(Collectors.toList());
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
             postAction.setPostMediaList(postMediaList);
-            return postActionService.creatPostAction(postAction);
+            return postActionMapper.toDTO(postActionService.creatPostAction(postAction), userCommonService.getUser());
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
 
-    public PostAction creatPostAction(PostAction postAction, long communityId) {
+    public PostActionDTO creatPostAction(PostAction postAction, long communityId) {
         if (postAction != null) {
             if (postAction.getText().length() == 0) {
                 throw new InvalidRequestException("Text can not be empty!");
             }
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
-            return postActionService.creatPostAction(postAction);
+            return postActionMapper.toDTO(postActionService.creatPostAction(postAction), userCommonService.getUser());
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }

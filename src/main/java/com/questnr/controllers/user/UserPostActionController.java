@@ -35,20 +35,15 @@ public class UserPostActionController {
     @RequestMapping(value = "/posts", method = RequestMethod.GET)
     Page<PostActionDTO> getAllPostsByUserId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<PostAction> postActionPage = userPostActionService.getAllPostActionsByUserId(pageable);
-        List<PostActionDTO> postActionDTOS = postActionPage.getContent().stream()
-                .map(postActionMapper::toDTO)
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(postActionDTOS, pageable, postActionPage.getTotalElements());
+        return userPostActionService.getAllPostActionsByUserId(pageable);
     }
 
     @RequestMapping(value = "/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     PostActionDTO createPost(PostActionRequestDTO postActionRequestDTO) {
         if(postActionRequestDTO.getFiles() != null && postActionRequestDTO.getFiles().size() > 0) {
-            return postActionMapper.toDTO(userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), postActionRequestDTO.getFiles()));
+            return userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), postActionRequestDTO.getFiles());
         }else{
-            return postActionMapper.toDTO(userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO)));
+            return userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO));
         }
     }
 

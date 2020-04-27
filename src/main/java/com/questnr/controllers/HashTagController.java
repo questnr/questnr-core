@@ -41,7 +41,6 @@ public class HashTagController {
     @RequestMapping(value = "/user/hash-tag/{hashTagValue}/posts", method = RequestMethod.GET)
     Page<PostActionDTO> getPostActionListUsingHashTag(@PathVariable String hashTagValue, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<PostAction> postActionPage = hashTagService.getPostActionListUsingHashTag(hashTagValue, pageable);
-        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
+        return hashTagService.getPostActionListUsingHashTag(hashTagValue, pageable);
     }
 }

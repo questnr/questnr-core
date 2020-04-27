@@ -61,9 +61,9 @@ public class CommunityPostActionController {
          * */
         if (communityPostActionAccessService.hasAccessToPostCreation(communityId)) {
             if (postActionRequestDTO.getFiles() != null && postActionRequestDTO.getFiles().size() > 0) {
-                return postActionMapper.toDTO(communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), postActionRequestDTO.getFiles(), communityId));
+                return communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), postActionRequestDTO.getFiles(), communityId);
             } else {
-                return postActionMapper.toDTO(communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), communityId));
+                return communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), communityId);
             }
         }
         throw new AccessException();

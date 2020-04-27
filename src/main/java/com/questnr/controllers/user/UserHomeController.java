@@ -42,8 +42,7 @@ public class UserHomeController {
     @RequestMapping(value = "/user/feed", method = RequestMethod.GET)
     Page<PostActionDTO> getUserFeed(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<PostAction> postActionDTOPage = userFeedService.getUserFeed(pageable);
-        return new PageImpl<>(postActionMapper.toDTOs(postActionDTOPage.getContent()), pageable, postActionDTOPage.getTotalElements());
+        return userFeedService.getUserFeed(pageable);
     }
 
     @RequestMapping(value = "/community/trending-community-list", method = RequestMethod.GET)
@@ -64,7 +63,6 @@ public class UserHomeController {
     @RequestMapping(value = "/user/explore", method = RequestMethod.GET)
     Page<PostActionDTO> getTrendingPostsOfTheWeek(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<PostAction> postActionPage = userHomeService.getTrendingPostList(pageable);
-        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
+        return userHomeService.getTrendingPostList(pageable);
     }
 }

@@ -14,7 +14,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class PostActionDTO {
+public class PostActionPublicDTO {
     private Long postActionId;
     private String slug;
     private String title;
@@ -36,7 +36,6 @@ public class PostActionDTO {
     private int totalPostVisits;
     private List<PostActionMetaInformation> metaList = new ArrayList<>();
     private MetaDataDTO metaData;
-    private PostActionMetaDTO postActionMeta;
 
     public String getSlug() {
         return slug;
@@ -222,13 +221,5 @@ public class PostActionDTO {
 
     public void setMetaData(MetaDataDTO metaData) {
         this.metaData = metaData;
-    }
-
-    public PostActionMetaDTO getPostActionMeta() {
-        return postActionMeta;
-    }
-
-    public void setPostActionMeta(PostActionMetaDTO postActionMeta) {
-        this.postActionMeta = postActionMeta;
     }
 }

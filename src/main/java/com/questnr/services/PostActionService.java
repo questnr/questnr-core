@@ -3,7 +3,7 @@ package com.questnr.services;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.dto.PostActionDTO;
+import com.questnr.model.dto.PostActionPublicDTO;
 import com.questnr.model.dto.PostActionSharableLinkDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.HashTagRepository;
@@ -49,7 +49,7 @@ public class PostActionService {
 
     final private String POST_ACTION_PATH = "posts";
 
-    private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord){
+    private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
         List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));
         int maxTitleChunk = titleChunks.size();
         if (maxTitleChunk > maxChunk) {
@@ -93,24 +93,24 @@ public class PostActionService {
         return CommonService.removeSpecialCharacters(String.join(" ", this.makeChunkFromText(postAction.getText(), 10, 10)));
     }
 
-    private PostActionMetaInformation getPostActionDescMetaInformation(PostActionDTO postActionDTO) {
+    private PostActionMetaInformation getPostActionDescMetaInformation(PostActionPublicDTO postActionPublicDTO) {
         MetaInformation metaInfo = new MetaInformation();
         metaInfo.setAttributeType("name");
         metaInfo.setType("description");
-        metaInfo.setContent(CommonService.removeSpecialCharacters(postActionDTO.getText()));
+        metaInfo.setContent(CommonService.removeSpecialCharacters(postActionPublicDTO.getText()));
         PostActionMetaInformation postMeta = new PostActionMetaInformation();
         postMeta.setMetaInformation(metaInfo);
         return postMeta;
     }
 
-    public PostActionDTO setPostActionMetaInformation(PostActionDTO postActionDTO) {
-        if (postActionDTO != null) {
+    public PostActionPublicDTO setPostActionMetaInformation(PostActionPublicDTO postActionPublicDTO) {
+        if (postActionPublicDTO != null) {
             List<PostActionMetaInformation> metaList = new LinkedList<PostActionMetaInformation>();
-            if (postActionDTO.getMetaList() == null || postActionDTO.getMetaList().size() == 0) {
-                metaList.add(this.getPostActionDescMetaInformation(postActionDTO));
+            if (postActionPublicDTO.getMetaList() == null || postActionPublicDTO.getMetaList().size() == 0) {
+                metaList.add(this.getPostActionDescMetaInformation(postActionPublicDTO));
             } else {
                 boolean foundDesc = false;
-                for (PostActionMetaInformation meta : postActionDTO.getMetaList()) {
+                for (PostActionMetaInformation meta : postActionPublicDTO.getMetaList()) {
                     if (meta != null && meta.getMetaInformation() != null) {
                         if (meta.getMetaInformation().getType().equals("description")) {
                             foundDesc = true;
@@ -119,17 +119,17 @@ public class PostActionService {
                     }
                 }
                 if (!foundDesc) {
-                    metaList.add(this.getPostActionDescMetaInformation(postActionDTO));
+                    metaList.add(this.getPostActionDescMetaInformation(postActionPublicDTO));
                 }
             }
-            postActionDTO.getMetaList().addAll(metaList);
+            postActionPublicDTO.getMetaList().addAll(metaList);
 
 //            if (postAction.getTags() == null || postAction.getTags().isEmpty()) {
 //                postAction.setTags(this.getPostActionTitleTag(postAction));
 //            }
 
         }
-        return postActionDTO;
+        return postActionPublicDTO;
     }
 
     public PostAction creatPostAction(PostAction postAction) {
