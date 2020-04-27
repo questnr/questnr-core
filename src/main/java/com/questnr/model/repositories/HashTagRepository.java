@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Set;
 
@@ -14,7 +15,7 @@ public interface HashTagRepository extends JpaRepository<HashTag, Long> {
     HashTag findByHashTagValue(String hashTag);
 
     @Query("Select h from HashTag h where h.hashTagValue like %:hashTag%")
-    Set<HashTagProjection> findByHashTagValueContaining(String hashTag);
+    Set<HashTagProjection> findByHashTagValueContaining(@Param("hashTag") String hashTag);
 
     @Query(value = "select h.hash_tag_value as hashTagValue, COUNT(postHashTag.hash_tag_id) as hashTagRank " +
             " from qr_post_hash_tags postHashTag " +
