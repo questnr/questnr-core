@@ -1,7 +1,8 @@
 package com.questnr.controllers.community;
 
-import com.questnr.exceptions.AccessException;
 import com.questnr.access.CommunityAvatarAccessService;
+import com.questnr.exceptions.AccessException;
+import com.questnr.responses.AvatarResponse;
 import com.questnr.services.community.CommunityAvatarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -24,19 +25,19 @@ public class CommunityAvatarController {
     CommunityAvatarService communityAvatarService;
 
     @RequestMapping(value = "/user/community/{communityId}/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public String uploadFile(@PathVariable long communityId, @RequestPart(value = "file") MultipartFile file) {
+    public AvatarResponse uploadFile(@PathVariable long communityId, @RequestPart(value = "file") MultipartFile file) {
         /*
          * Community Avatar Security Checking
          * */
         if (communityAvatarAccessService.hasAccessToCommunityAvatar(communityId)) {
-            return this.communityAvatarService.uploadAvatar(communityId, file);
+            return new AvatarResponse(this.communityAvatarService.uploadAvatar(communityId, file));
         }
         throw new AccessException();
     }
 
     @RequestMapping(value = "/user/community/{communitySlug}/avatar", method = RequestMethod.GET)
-    public String getUserAvatar(@PathVariable String communitySlug) {
-        return this.communityAvatarService.getAvatar(communitySlug);
+    public AvatarResponse getUserAvatar(@PathVariable String communitySlug) {
+        return new AvatarResponse(this.communityAvatarService.getAvatar(communitySlug));
     }
 
     @RequestMapping(value = "/user/community/{communityId}/avatar", method = RequestMethod.DELETE)
@@ -47,7 +48,7 @@ public class CommunityAvatarController {
          * */
         if (communityAvatarAccessService.hasAccessToCommunityAvatar(communityId)) {
             this.communityAvatarService.deleteAvatar(communityId);
-        }else{
+        } else {
             throw new AccessException();
         }
     }
