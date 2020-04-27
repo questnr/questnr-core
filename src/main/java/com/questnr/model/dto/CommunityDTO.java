@@ -30,6 +30,8 @@ public class CommunityDTO {
 
     private MetaDataDTO metaData;
 
+    private CommunityMetaDTO communityMeta;
+
     public Long getCommunityId() {
         return communityId;
     }
@@ -116,5 +118,13 @@ public class CommunityDTO {
 
     public void setMetaData(MetaDataDTO metaData) {
         this.metaData = metaData;
+    }
+
+    public CommunityMetaDTO getCommunityMeta() {
+        return communityMeta;
+    }
+
+    public void setCommunityMeta(CommunityMetaDTO communityMeta) {
+        this.communityMeta = communityMeta;
     }
 }

@@ -60,7 +60,7 @@ public class UserPostActionService {
         User user = userCommonService.getUser();
         try {
             Page<PostAction> postActionPage = postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
-           return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent(), user), pageable, postActionPage.getTotalElements());
+           return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
         } catch (Exception e) {
             LOGGER.error(PostAction.class.getName() + " Exception Occurred");
             throw new InvalidInputException(UserPostActionService.class.getName(), null, null);
@@ -79,7 +79,7 @@ public class UserPostActionService {
                 return postMedia;
             }).collect(Collectors.toList());
             postAction.setPostMediaList(postMediaList);
-            return postActionMapper.toDTO(postActionService.creatPostAction(postAction), user);
+            return postActionMapper.toDTO(postActionService.creatPostAction(postAction));
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
@@ -92,7 +92,7 @@ public class UserPostActionService {
                 throw new InvalidRequestException("Text can not be empty!");
             }
             postAction.setUserActor(user);
-            return postActionMapper.toDTO(postActionService.creatPostAction(postAction), user);
+            return postActionMapper.toDTO(postActionService.creatPostAction(postAction));
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }

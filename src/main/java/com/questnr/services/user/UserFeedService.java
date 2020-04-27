@@ -38,7 +38,7 @@ public class UserFeedService {
     public Page<PostActionDTO> getUserFeed(Pageable pageable) {
         User user = userCommonService.getUser();
         Page<PostAction> postActionPage = postActionRepository.findByFollowingToUserActorAndJoinedWithCommunity(user, pageable);
-        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent(), userCommonService.getUser()), pageable, postActionPage.getTotalElements());
+        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
 
     }
 }

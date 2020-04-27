@@ -143,7 +143,7 @@ public class UserHomeService {
         List<PostActionTrendLinearData> postActionTrendLinearDataList = new ArrayList<>(postActionTrendLinearDataPage.getContent());
         postActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
 
-        return new PageImpl<>(postActionMapper.toDTOs(postActionTrendLinearDataList.stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList()), userCommonService.getUser()), pageable, postActionTrendLinearDataPage.getTotalElements());
+        return new PageImpl<>(postActionMapper.toDTOs(postActionTrendLinearDataList.stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList())), pageable, postActionTrendLinearDataPage.getTotalElements());
 
     }
 }

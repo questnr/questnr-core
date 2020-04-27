@@ -3,7 +3,9 @@ package com.questnr.model.mapper;
 import com.questnr.model.dto.*;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
+import com.questnr.services.user.UserCommonService;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,44 +20,28 @@ import java.util.List;
 }, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public abstract class PostActionMapper {
 
-    @Mappings({
-            @Mapping(source = "postAction.slug", target = "slug"),
-            @Mapping(source = "postAction.postMediaList", target = "postMediaDTOList"),
-            @Mapping(source = "postAction.community", target = "communityDTO"),
-            @Mapping(source = "postAction.userActor", target = "userDTO"),
-            @Mapping(source = "postAction.commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
-            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
-            @Mapping(target = "metaList", ignore = true),
-            @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, user))")
-    })
-    abstract public PostActionDTO toDTO(final PostAction postAction, final User user);
-
-    public List<PostActionDTO> toDTOs(final List<PostAction> postActionList, final User user) {
-        List<PostActionDTO> postActionDTOS = new ArrayList<>();
-        for (PostAction postAction : postActionList) {
-            postActionDTOS.add(this.toDTO(postAction, user));
-        }
-        return postActionDTOS;
-    }
+    @Autowired
+    UserCommonService userCommonService;
 
     @Mappings({
+            @Mapping(source = "slug", target = "slug"),
             @Mapping(source = "postMediaList", target = "postMediaDTOList"),
             @Mapping(source = "community", target = "communityDTO"),
             @Mapping(source = "userActor", target = "userDTO"),
             @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
-            @Mapping(target = "metaList", ignore = true)
+            @Mapping(target = "metaList", ignore = true),
+            @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))")
     })
-    abstract public PostActionPublicDTO toPublicDTO(final PostAction postAction);
+    abstract public PostActionDTO toDTO(final PostAction postAction);
 
-    public List<PostActionPublicDTO> toPublicDTOs(final List<PostAction> postActionList) {
-        List<PostActionPublicDTO> postActionDTOS = new ArrayList<>();
+    public List<PostActionDTO> toDTOs(final List<PostAction> postActionList) {
+        List<PostActionDTO> postActionDTOS = new ArrayList<>();
         for (PostAction postAction : postActionList) {
-            postActionDTOS.add(this.toPublicDTO(postAction));
+            postActionDTOS.add(this.toDTO(postAction));
         }
         return postActionDTOS;
     }
-
 
     abstract public PostAction fromPostActionRequestDTO(final PostActionRequestDTO postActionRequestDTO);
 

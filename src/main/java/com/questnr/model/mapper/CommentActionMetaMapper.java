@@ -23,8 +23,6 @@ public class CommentActionMetaMapper {
             ).collect(Collectors.toList());
             if (likeCommentActionList.size() == 1) {
                 commentActionMetaDTO.setLiked(true);
-            } else {
-                commentActionMetaDTO.setLiked(false);
             }
             return commentActionMetaDTO;
         } catch (Exception e) {

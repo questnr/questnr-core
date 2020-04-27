@@ -10,7 +10,6 @@ import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.HashTagTrendLinearDataRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
-import com.questnr.services.user.UserCommonService;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +42,6 @@ public class HashTagService {
     PostActionRepository postActionRepository;
 
     @Autowired
-    UserCommonService userCommonService;
-
-    @Autowired
     PostActionMapper postActionMapper;
 
     HashTagService() {
@@ -71,6 +67,6 @@ public class HashTagService {
     public Page<PostActionDTO> getPostActionListUsingHashTag(String hashTagValue, Pageable pageable) {
 
         Page<PostAction> postActionPage = postActionRepository.findByHashTags(hashTagRepository.findByHashTagValue(hashTagValue), pageable);
-        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent(), userCommonService.getUser()), pageable, postActionPage.getTotalElements());
+        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
     }
 }

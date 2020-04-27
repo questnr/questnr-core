@@ -71,7 +71,7 @@ public class CommunityPostActionService {
             }).collect(Collectors.toList());
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
             postAction.setPostMediaList(postMediaList);
-            return postActionMapper.toDTO(postActionService.creatPostAction(postAction), userCommonService.getUser());
+            return postActionMapper.toDTO(postActionService.creatPostAction(postAction));
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
@@ -83,7 +83,7 @@ public class CommunityPostActionService {
                 throw new InvalidRequestException("Text can not be empty!");
             }
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
-            return postActionMapper.toDTO(postActionService.creatPostAction(postAction), userCommonService.getUser());
+            return postActionMapper.toDTO(postActionService.creatPostAction(postAction));
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
