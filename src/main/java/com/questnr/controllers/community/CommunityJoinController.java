@@ -102,7 +102,7 @@ public class CommunityJoinController {
     }
 
     // Check user follows this community
-    @RequestMapping(value = "/follow/check/community/{communityId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/join/check/community/{communityId}", method = RequestMethod.POST)
     RelationShipType getUserRelationShipWithCommunity(@PathVariable long communityId) {
         return communityJoinService.getUserRelationShipWithCommunity(communityId);
     }
