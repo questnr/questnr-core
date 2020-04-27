@@ -24,6 +24,8 @@ public class CommunityDTO {
 
     private AvatarDTO avatarDTO;
 
+    private int totalMembers;
+
     private List<CommunityMetaInformation> metaList = new ArrayList<>();
 
     private MetaDataDTO metaData;
@@ -90,6 +92,14 @@ public class CommunityDTO {
 
     public void setAvatarDTO(AvatarDTO avatarDTO) {
         this.avatarDTO = avatarDTO;
+    }
+
+    public int getTotalMembers() {
+        return totalMembers;
+    }
+
+    public void setTotalMembers(int totalMembers) {
+        this.totalMembers = totalMembers;
     }
 
     public List<CommunityMetaInformation> getMetaList() {

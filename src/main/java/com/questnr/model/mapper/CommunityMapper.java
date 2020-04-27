@@ -15,6 +15,7 @@ public interface CommunityMapper {
     @Mappings({
             @Mapping(source = "ownerUser", target = "ownerUserDTO"),
             @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
+            @Mapping(target = "totalMembers", expression = "java(community.getUsers().size())"),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(community.getCreatedAt(), community.getUpdatedAt()))"),
             @Mapping(target = "metaList", ignore = true)
     })
@@ -28,7 +29,10 @@ public interface CommunityMapper {
     @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
     CommunityForPostActionDTO toCommunityForPostAction(Community community);
 
-    @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
+    @Mappings({
+            @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
+            @Mapping(target = "totalMembers", expression = "java(community.getUsers().size())")
+    })
     CommunityCardDTO toCommunityCard(Community community);
 
     List<CommunityCardDTO> toCommunityCards(List<Community> communityList);

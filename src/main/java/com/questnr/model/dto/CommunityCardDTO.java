@@ -16,6 +16,8 @@ public class CommunityCardDTO {
 
     private AvatarDTO avatarDTO;
 
+    private int totalMembers;
+
     public Long getCommunityId() {
         return communityId;
     }
@@ -40,6 +42,14 @@ public class CommunityCardDTO {
         this.description = description;
     }
 
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
     public PublishStatus getStatus() {
         return status;
     }
@@ -54,5 +64,13 @@ public class CommunityCardDTO {
 
     public void setAvatarDTO(AvatarDTO avatarDTO) {
         this.avatarDTO = avatarDTO;
+    }
+
+    public int getTotalMembers() {
+        return totalMembers;
+    }
+
+    public void setTotalMembers(int totalMembers) {
+        this.totalMembers = totalMembers;
     }
 }

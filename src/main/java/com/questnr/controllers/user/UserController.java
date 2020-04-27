@@ -39,6 +39,7 @@ public class UserController {
         userMapper = Mappers.getMapper(UserMapper.class);
     }
 
+    // @Todo: {userId:^[1-9][0-9]*} can be used.
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
     UserDTO getUser(@PathVariable long userId) {
         return userMapper.toOthersDTO(userCommonService.getUser());
