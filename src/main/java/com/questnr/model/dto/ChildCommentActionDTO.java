@@ -13,6 +13,8 @@ public class ChildCommentActionDTO {
 
     private MetaDataDTO metaData;
 
+    private CommentActionMetaDTO commentActionMeta;
+
     public Long getCommentActionId() {
         return commentActionId;
     }
@@ -51,5 +53,13 @@ public class ChildCommentActionDTO {
 
     public void setMetaData(MetaDataDTO metaData) {
         this.metaData = metaData;
+    }
+
+    public CommentActionMetaDTO getCommentActionMeta() {
+        return commentActionMeta;
+    }
+
+    public void setCommentActionMeta(CommentActionMetaDTO commentActionMeta) {
+        this.commentActionMeta = commentActionMeta;
     }
 }
