@@ -62,6 +62,7 @@ public class LikeCommentActionService {
                     // Notification job created and assigned to Notification Processor.
                     notificationJob.createNotificationJob(savedLikeCommentAction);
 
+                    return savedLikeCommentAction;
                 } catch (Exception e) {
                     LOGGER.error(LikeAction.class.getName() + " Exception Occurred");
                 }

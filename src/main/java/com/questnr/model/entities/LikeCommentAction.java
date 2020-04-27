@@ -1,6 +1,7 @@
 package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.NotificationTitles;
 import com.questnr.common.enums.NotificationType;
 import org.hibernate.search.annotations.Indexed;
@@ -21,6 +22,7 @@ public class LikeCommentAction extends DomainObject implements NotificationBase 
     @JoinColumn(name = "user_id", nullable = false)
     private User userActor;
 
+    @JsonIgnoreProperties("likeCommentActionSet")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_action_id", nullable = false)
     private CommentAction commentAction;
@@ -33,6 +35,7 @@ public class LikeCommentAction extends DomainObject implements NotificationBase 
         this.likeCommentActionId = likeCommentActionId;
     }
 
+    @JsonIgnore
     public CommentAction getCommentAction() {
         return commentAction;
     }
