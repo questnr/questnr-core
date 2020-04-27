@@ -14,6 +14,8 @@ public class UserDTO {
 
     private AvatarDTO avatarDTO;
 
+    private UserMetaDTO userMeta;
+
     public long getUserId() {
         return userId;
     }
@@ -60,5 +62,13 @@ public class UserDTO {
 
     public void setAvatarDTO(AvatarDTO avatarDTO) {
         this.avatarDTO = avatarDTO;
+    }
+
+    public UserMetaDTO getUserMeta() {
+        return userMeta;
+    }
+
+    public void setUserMeta(UserMetaDTO userMeta) {
+        this.userMeta = userMeta;
     }
 }

@@ -10,16 +10,20 @@ import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityUserRepository;
 import com.questnr.model.repositories.UserFollowerRepository;
 import com.questnr.model.repositories.UserRepository;
+import com.questnr.services.CustomPageService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.notification.NotificationJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -45,6 +49,9 @@ public class UserFollowerService {
     UserFollowerRepository userFollowerRepository;
 
     @Autowired
+    CustomPageService<User> customPageService;
+
+    @Autowired
     NotificationJob notificationJob;
 
     private User addUserToUser(User userBeingFollowed, User user) {
@@ -63,18 +70,22 @@ public class UserFollowerService {
 
     public User followUser(Long userId) {
         userRepository.findById(userId).map(userBeingFollowed -> {
-            User user = userCommonService.getUser();
-            if (!Objects.equals(user.getUserId(), userBeingFollowed.getUserId())) {
-                if (this.existsUserFollower(userBeingFollowed, user))
-                    throw new AlreadyExistsException("You are already following the user!");
-                userRepository.save(this.addUserToUser(userBeingFollowed, user));
+            try{
+                User user = userCommonService.getUser();
+                if (!Objects.equals(user.getUserId(), userBeingFollowed.getUserId())) {
+                    if (this.existsUserFollower(userBeingFollowed, user))
+                        throw new AlreadyExistsException("You are already following the user!");
+                    userRepository.save(this.addUserToUser(userBeingFollowed, user));
 
-                // Notification job created and assigned to Notification Processor.
-                notificationJob.createNotificationJob(userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user));
+                    // Notification job created and assigned to Notification Processor.
+                    notificationJob.createNotificationJob(userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user));
 
-                return userBeingFollowed;
+                    return userBeingFollowed;
+                }
+                return null;
+            }catch (Exception e) {
+                return null;
             }
-            return null;
         }).orElseThrow(() -> {
             throw new ResourceNotFoundException("User being followed does not exists");
         });
@@ -114,5 +125,19 @@ public class UserFollowerService {
             return RelationShipType.owned;
         }
         return RelationShipType.none;
+    }
+
+    public Page<User> getFollowersOfUser(Pageable pageable) {
+        return customPageService.customPage(this.userCommonService.getUser().getThisBeingFollowedUserSet()
+                .stream()
+                .map(UserFollower::getFollowingUser)
+                .collect(Collectors.toList()), pageable);
+    }
+
+    public Page<User> getUserFollowingToOtherUsers(Pageable pageable) {
+        return customPageService.customPage(this.userCommonService.getUser().getThisFollowingUserSet()
+                .stream()
+                .map(UserFollower::getUser)
+                .collect(Collectors.toList()), pageable);
     }
 }
