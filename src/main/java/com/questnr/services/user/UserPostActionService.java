@@ -3,6 +3,7 @@ package com.questnr.services.user;
 import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.PostActionCardDTO;
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.PostAction;
@@ -56,11 +57,11 @@ public class UserPostActionService {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
 
-    public Page<PostActionDTO> getAllPostActionsByUserId(Pageable pageable) {
+    public Page<PostActionCardDTO> getAllPostActionsByUserId(Pageable pageable) {
         User user = userCommonService.getUser();
         try {
             Page<PostAction> postActionPage = postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
-            return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
+            return new PageImpl<>(postActionMapper.toCardDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
         } catch (Exception e) {
             LOGGER.error(PostAction.class.getName() + " Exception Occurred");
             throw new InvalidInputException(UserPostActionService.class.getName(), null, null);

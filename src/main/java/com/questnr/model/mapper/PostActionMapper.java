@@ -43,6 +43,24 @@ public abstract class PostActionMapper {
         return postActionDTOS;
     }
 
+    @Mappings({
+            @Mapping(source = "slug", target = "slug"),
+            @Mapping(source = "postMediaList", target = "postMediaList"),
+            @Mapping(source = "community", target = "communityDTO"),
+            @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
+            @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))")
+    })
+    abstract public PostActionCardDTO toCardDTO(final PostAction postAction);
+
+    public List<PostActionCardDTO> toCardDTOs(final List<PostAction> postActionList) {
+        List<PostActionCardDTO> postActionCardDTOS = new ArrayList<>();
+        for (PostAction postAction : postActionList) {
+            postActionCardDTOS.add(this.toCardDTO(postAction));
+        }
+        return postActionCardDTOS;
+    }
+
     abstract public PostAction fromPostActionRequestDTO(final PostActionRequestDTO postActionRequestDTO);
 
     @Mappings({
