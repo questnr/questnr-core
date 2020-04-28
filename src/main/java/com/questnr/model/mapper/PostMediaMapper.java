@@ -1,7 +1,6 @@
 package com.questnr.model.mapper;
 
 import com.questnr.model.dto.PostMediaDTO;
-import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.AmazonS3Client;
@@ -43,14 +42,11 @@ public class PostMediaMapper {
     public PostMediaDTO toPostMediaDTO(PostMedia postMedia) {
         PostMediaDTO postMediaDTO = new PostMediaDTO();
         postMediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(postMedia.getMediaKey()));
+        postMediaDTO.setMediaType(postMedia.getMediaType());
         return postMediaDTO;
     }
 
     public List<PostMediaDTO> toPostMediaDTOList(List<PostMedia> postMediaList) {
-        return postMediaList.stream().map(postMedia -> {
-            PostMediaDTO postMediaDTO = new PostMediaDTO();
-            postMediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(postMedia.getMediaKey()));
-            return postMediaDTO;
-        }).collect(Collectors.toList());
+        return postMediaList.stream().map(this::toPostMediaDTO).collect(Collectors.toList());
     }
 }

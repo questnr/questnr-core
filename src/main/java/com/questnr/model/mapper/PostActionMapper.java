@@ -25,7 +25,7 @@ public abstract class PostActionMapper {
 
     @Mappings({
             @Mapping(source = "slug", target = "slug"),
-            @Mapping(source = "postMediaList", target = "postMediaDTOList"),
+            @Mapping(source = "postMediaList", target = "postMediaList"),
             @Mapping(source = "community", target = "communityDTO"),
             @Mapping(source = "userActor", target = "userDTO"),
             @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
@@ -46,7 +46,7 @@ public abstract class PostActionMapper {
     abstract public PostAction fromPostActionRequestDTO(final PostActionRequestDTO postActionRequestDTO);
 
     @Mappings({
-            @Mapping(source = "postMediaList", target = "postMediaDTOList"),
+            @Mapping(source = "postMediaList", target = "postMediaList"),
             @Mapping(source = "userActor", target = "userDTO"),
             @Mapping(source = "commentActionSet", target = "commentActionDTOList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))")
@@ -54,7 +54,7 @@ public abstract class PostActionMapper {
     abstract public PostActionForCommunityDTO toPostActionForCommunityDTO(final PostAction postAction);
 
     @Mappings({
-            @Mapping(source = "postMediaList", target = "postMediaDTOList"),
+            @Mapping(source = "postMediaList", target = "postMediaList"),
             @Mapping(source = "community", target = "communityDTO"),
             @Mapping(source = "userActor", target = "userDTO")
     })

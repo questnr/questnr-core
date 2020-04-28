@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.questnr.common.enums.MediaType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.responses.AvatarStorageData;
 import com.questnr.services.community.CommunityCommonService;
@@ -32,6 +33,9 @@ public class AmazonS3Client {
 
     @Autowired
     CommunityCommonService communityCommonService;
+
+    @Autowired
+    CommonService commonService;
 
     private AmazonS3 s3Client;
 
@@ -106,10 +110,17 @@ public class AmazonS3Client {
             avatarStorageData.setKey(pathToFile);
             avatarStorageData.setUrl(this.getS3BucketUrl(pathToFile));
             File file = this.convertMultiPartToFile(multipartFile);
-            ImageCompression imageCompression = new ImageCompression(file);
-            File compressedFile = imageCompression.doCompression();
-            this.uploadFileToS3bucket(pathToFile, compressedFile);
-            file.delete();
+            if(commonService.checkIfFileIsImage(file)){
+                ImageCompression imageCompression = new ImageCompression(file);
+                File compressedFile = imageCompression.doCompression();
+                this.uploadFileToS3bucket(pathToFile, compressedFile);
+                avatarStorageData.setMediaType(MediaType.image);
+                file.delete();
+            }else{
+                this.uploadFileToS3bucket(pathToFile, file);
+                avatarStorageData.setMediaType(MediaType.video);
+                file.delete();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

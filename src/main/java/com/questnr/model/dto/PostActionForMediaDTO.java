@@ -6,7 +6,7 @@ public class PostActionForMediaDTO {
     private Long postActionId;
     private UserDTO userDTO;
     private CommunityForPostActionDTO communityDTO;
-    private List<PostMediaDTO> postMediaDTOList;
+    private List<PostMediaDTO> postMediaList;
 
     public UserDTO getUserDTO() {
         return userDTO;
@@ -32,11 +32,11 @@ public class PostActionForMediaDTO {
         this.postActionId = postActionId;
     }
 
-    public List<PostMediaDTO> getPostMediaDTOList() {
-        return postMediaDTOList;
+    public List<PostMediaDTO> getPostMediaList() {
+        return postMediaList;
     }
 
-    public void setPostMediaDTOList(List<PostMediaDTO> postMediaDTOList) {
-        this.postMediaDTOList = postMediaDTOList;
+    public void setPostMediaList(List<PostMediaDTO> postMediaList) {
+        this.postMediaList = postMediaList;
     }
 }

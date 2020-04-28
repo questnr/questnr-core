@@ -8,6 +8,8 @@ import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Service;
 
+import javax.activation.MimetypesFileTypeMap;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -106,5 +108,11 @@ public class CommonService {
                     .getImplementation();
         }
         return entity;
+    }
+
+    public boolean checkIfFileIsImage(File file){
+        String mimetype= new MimetypesFileTypeMap().getContentType(file);
+        String type = mimetype.split("/")[0];
+        return type.equals("image");
     }
 }

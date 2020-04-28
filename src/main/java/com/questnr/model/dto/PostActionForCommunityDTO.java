@@ -28,7 +28,7 @@ public class PostActionForCommunityDTO {
     private Set<LikeAction> likeActionSet;
     private List<CommentActionDTO> commentActionDTOList;
     private Set<PostVisit> postVisitSet;
-    private List<PostMediaDTO> postMediaDTOList;
+    private List<PostMediaDTO> postMediaList;
     private int totalLikes;
     private int totalComments;
     private int totalPostVisits;
@@ -170,14 +170,13 @@ public class PostActionForCommunityDTO {
         }
     }
 
-    public List<PostMediaDTO> getPostMediaDTOList() {
-        return postMediaDTOList;
+    public List<PostMediaDTO> getPostMediaList() {
+        return postMediaList;
     }
 
-    public void setPostMediaDTOList(List<PostMediaDTO> postMediaDTOList) {
-        this.postMediaDTOList = postMediaDTOList;
+    public void setPostMediaList(List<PostMediaDTO> postMediaList) {
+        this.postMediaList = postMediaList;
     }
-
 
     public int getTotalLikes() {
         return totalLikes;

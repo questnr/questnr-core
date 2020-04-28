@@ -1,10 +1,13 @@
 package com.questnr.responses;
 
+import com.questnr.common.enums.MediaType;
+
 public class AvatarStorageData {
     String url;
     String key;
+    MediaType mediaType;
 
-    public AvatarStorageData(){
+    public AvatarStorageData() {
 
     }
 
@@ -27,5 +30,13 @@ public class AvatarStorageData {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(MediaType mediaType) {
+        this.mediaType = mediaType;
     }
 }

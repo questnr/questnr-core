@@ -1,7 +1,11 @@
 package com.questnr.model.dto;
 
+import com.questnr.common.enums.MediaType;
+
 public class PostMediaDTO {
-    String postMediaLink;
+    private String postMediaLink;
+
+    private MediaType mediaType;
 
     public String getPostMediaLink() {
         return postMediaLink;
@@ -9,5 +13,13 @@ public class PostMediaDTO {
 
     public void setPostMediaLink(String postMediaLink) {
         this.postMediaLink = postMediaLink;
+    }
+
+    public MediaType getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(MediaType mediaType) {
+        this.mediaType = mediaType;
     }
 }
