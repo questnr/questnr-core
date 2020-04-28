@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
-
 @Entity
 @Table(name = "qr_users")
 @Indexed
@@ -109,7 +108,7 @@ public class User extends DomainObject {
 
     @Column(name = "sign_up_source")
     @Enumerated(EnumType.STRING)
-    SignUpSourceType signUpSource;
+    private SignUpSourceType signUpSource;
 
     public Long getUserId() {
         return userId;

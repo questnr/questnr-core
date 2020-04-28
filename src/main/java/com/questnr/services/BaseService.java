@@ -14,15 +14,14 @@ import com.questnr.responses.ResetPasswordResponse;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUser;
 import com.questnr.util.EncryptionUtils;
+import com.questnr.util.SecureRandomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import java.util.*;
 
 @Service
 public class BaseService {
@@ -45,6 +44,22 @@ public class BaseService {
 
     @Autowired
     EmailService emailService;
+
+    @Autowired
+    SecureRandomService secureRandomService;
+
+
+    public String createUsername(String fullName) {
+        List<String> chucks = Arrays.asList(fullName.toLowerCase().split("\\s"));
+        String username = CommonService.removeSpecialCharacters(String.join("-", chucks));
+        String makingUsername;
+        do {
+            Long timestamp = new Date().getTime();
+            String randString = timestamp.toString();
+            makingUsername = username + "-" + randString.substring(randString.length() > 10 ? randString.length() - 10 : randString.length());
+        } while (this.checkIfUsernameIsTaken(makingUsername));
+        return makingUsername;
+    }
 
     public User createUserFromSocialLogin(User user, String source) {
         user.setAuthorities(this.createAuthoritySet());
@@ -107,7 +122,11 @@ public class BaseService {
         } catch (NullPointerException ex) {
             throw new InvalidRequestException("Password is mandatory.");
         }
-        user.setUsername(CommonService.removeSpecialCharactersWithWhiteSpace(user.getUsername().toLowerCase()));
+        if (!(commonService.isNull(user.getFirstName()) || commonService.isNull(user.getLastName()))) {
+            user.setUsername(this.createUsername(user.getFirstName() + " " + user.getLastName()));
+        } else {
+            user.setUsername(this.createUsername(user.getUsername()));
+        }
         user.setAuthorities(this.createAuthoritySet());
         user.setEmailVerified(false);
         user.setEnabled(true);

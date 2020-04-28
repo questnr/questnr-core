@@ -8,18 +8,17 @@ import java.security.*;
 public class SecureRandomService {
     private SecureRandom secureRandom;
 
-    public SecureRandomService(){
-        try{
-            secureRandom =  SecureRandom.getInstance("SHA1PRNG");
-        }catch (NoSuchAlgorithmException e){
-            secureRandom =  new SecureRandom();
+    public SecureRandomService() {
+        try {
+            secureRandom = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            secureRandom = new SecureRandom();
         }
         byte[] seeds = secureRandom.generateSeed(51);
         secureRandom.setSeed(seeds);
     }
 
-    public Long getSecureRandom(){
-        Long random =  secureRandom.nextLong();
-        return random;
+    public Long getSecureRandom() {
+        return secureRandom.nextLong();
     }
 }
