@@ -21,8 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmailId(String emailId);
 
-    @Query("Select user from User user where user.fullName like %:userString%")
-    Page<UserProjection> findByFullNameContaining(String userString, Pageable pageable);
+    @Query("Select user from User user where user.username like %:userString% or user.firstName like %:userString% or user.lastName like %:userString%")
+    Page<UserProjection> findByUserContaining(String userString, Pageable pageable);
 
     //  @Query("select user.userId, " +
 //          " COUNT(DISTINCT pa.postActionId) as totalPosts, " +

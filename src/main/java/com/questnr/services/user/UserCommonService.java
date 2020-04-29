@@ -52,7 +52,7 @@ public class UserCommonService {
 
     public Page<UserProjection> searchUserString(String userString, Pageable pageable){
         try{
-            return userRepository.findByFullNameContaining(userString, pageable);
+            return userRepository.findByUserContaining(userString, pageable);
         }catch (Exception e){
             throw new ResourceNotFoundException("User not found!");
         }

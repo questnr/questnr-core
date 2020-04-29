@@ -17,7 +17,7 @@ public class SocialUserDetails {
     public User getUser(GoogleUserDetails googleUserDetails) {
         User user = new User();
         user.setEmailId(googleUserDetails.getEmail());
-        user.setFullName(googleUserDetails.getName());
+//        user.setFullName(googleUserDetails.getName());
         user.setUsername(baseService.createUsername(googleUserDetails.getName()));
         user.setFirstName(googleUserDetails.getGiven_name());
         user.setLastName(googleUserDetails.getFamily_name());
@@ -29,7 +29,7 @@ public class SocialUserDetails {
     public User getUser(FBUserDetails fbUserDetails) {
         User user = new User();
         user.setEmailId(fbUserDetails.getEmail());
-        user.setFullName(fbUserDetails.getName());
+//        user.setFullName(fbUserDetails.getName());
         user.setUsername(baseService.createUsername(fbUserDetails.getName()));
         user.setLoginType(LoginType.FACEBOOK);
         return user;

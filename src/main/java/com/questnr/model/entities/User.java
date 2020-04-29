@@ -39,10 +39,6 @@ public class User extends DomainObject {
     @Column(name = "last_name", length = 50)
     private String lastName;
 
-    @Column(name = "full_name", length = 50)
-    @Size(min = 4, max = 100)
-    private String fullName;
-
     @Column(name = "email_id", unique = true)
     @NotBlank(message = "Email is mandatory")
     @Size(min = 4)
@@ -108,7 +104,7 @@ public class User extends DomainObject {
 
     @Column(name = "sign_up_source")
     @Enumerated(EnumType.STRING)
-    private SignUpSourceType signUpSource;
+    private SignUpSourceType signUpSource = SignUpSourceType.WEB;
 
     public Long getUserId() {
         return userId;
@@ -148,14 +144,6 @@ public class User extends DomainObject {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getFullName() {
-        return this.fullName;
     }
 
     public String getEmailId() {
@@ -280,6 +268,10 @@ public class User extends DomainObject {
 
     public void setLoginType(LoginType loginType) {
         this.loginType = loginType;
+    }
+
+    public String getFullName() {
+        return this.getFirstName() + " " + this.getLastName();
     }
 
     @Override

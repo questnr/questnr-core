@@ -15,6 +15,7 @@ import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUser;
 import com.questnr.util.EncryptionUtils;
 import com.questnr.util.SecureRandomService;
+import org.apache.commons.text.WordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +63,8 @@ public class BaseService {
     }
 
     public User createUserFromSocialLogin(User user, String source) {
-        user.setAuthorities(this.createAuthoritySet());
-        user.setEnabled(true);
-        user.addMetadata();
+        this.processUserInformation(user);
+
         try {
             user.setSignUpSource(SignUpSourceType.valueOf(source));
         } catch (Exception e) {
@@ -105,6 +105,19 @@ public class BaseService {
         return authoritySet;
     }
 
+    private User processUserInformation(User user) {
+        user.setEmailVerified(false);
+
+        user.setEnabled(true);
+        user.setAuthorities(this.createAuthoritySet());
+        user.addMetadata();
+        final char[] delimiters = {' '};
+
+        user.setFirstName(WordUtils.capitalizeFully(user.getFirstName(), delimiters));
+        user.setLastName(WordUtils.capitalizeFully(user.getLastName(), delimiters));
+        return user;
+    }
+
     public LoginResponse signUp(User user) {
         if (user != null && user.getEmailId() != null && user.getUsername() != null) {
             try {
@@ -127,17 +140,17 @@ public class BaseService {
         } else {
             user.setSlug(this.createUsername(user.getUsername()));
         }
-        user.setAuthorities(this.createAuthoritySet());
-        user.setEmailVerified(false);
-        user.setEnabled(true);
-        user.setFullName(user.getUsername());
+
+        this.processUserInformation(user);
+
+        user.setSignUpSource(SignUpSourceType.WEB);
 
         // For encrypting the password
         String encPassword = EncryptionUtils.encryptPassword(user.getPassword());
         if (encPassword != null) {
             user.setPassword(encPassword);
         }
-        user.addMetadata();
+
         User savedUser = userRepository.saveAndFlush(user);
         this.emailService.sendEmailOnSignUp(user);
         return this.createSuccessLoginResponse(savedUser);
@@ -210,7 +223,7 @@ public class BaseService {
                 if (passwordResetToken != null && !commonService.isNull(passwordResetToken)) {
                     response.setSuccess(true);
                     emailService.sendPasswordRequestEmail(emailID, passwordResetToken,
-                            savedUser.getFullName());
+                            savedUser.getUsername());
                 } else {
                     response.setSuccess(true);
                     response.setErrorMessage("Error occurred. Please try again");
