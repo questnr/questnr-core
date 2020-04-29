@@ -19,17 +19,17 @@ build:
   script:
     - cp -r /var/tmp/tokens .
     - mvn clean install
-    - export WEBSITE_URL="https://sats.questnr.com/"
-    - export DATASOURCE_URL="jdbc:postgresql://database-1.cnuafajg7tg4.ap-south-1.rds.amazonaws.com:5432/psqlquestnr"
-    - export DATASOURCE_USERNAME="psqlquestnr"
-    - export DATASOURCE_PASSWORD="WpFZYf0w1Yhxn3wt3KOF"
-    - export WEBSITE_API_URL="https://sats.questnr.com/api/v1"
-    - export FACEBOOK_REDIRECTION_URL="https://sats.questnr.com/facebook-redirect"
-    - export GOOGLE_REDIRECTION_URL="https://sats.questnr.com/google-redirect"
+    - export WEBSITE_URL="https://beta.questnr.com/"
+    - export DATASOURCE_URL="jdbc:postgresql://database-1.ccf4atcslzrk.ap-southeast-1.rds.amazonaws.com/questnrprod"
+    - export DATASOURCE_USERNAME="postgres"
+    - export DATASOURCE_PASSWORD="yUKSu1IMtAGGnGNjnDS6"
+    - export WEBSITE_API_URL="https://beta.questnr.com/api/v1"
+    - export FACEBOOK_REDIRECTION_URL="https://beta.questnr.com/facebook-redirect"
+    - export GOOGLE_REDIRECTION_URL="https://beta.questnr.com/google-redirect"
     - export AMAZON_S3_ENDPOINT_URL="https://s3.us-east-2.amazonaws.com"
-    - export AMAZON_S3_ACCESS_KEY="AKIAQFONFFIYAZBD7B54"
-    - export AMAZON_S3_SECRET_KEY="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"
-    - export AMAZON_S3_BUCKET_NAME="questnr-user-files"
+    - export AMAZON_S3_ACCESS_KEY="AKIAWRAGJU6P5PXDJMBN"
+    - export AMAZON_S3_SECRET_KEY="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"
+    - export AMAZON_S3_BUCKET_NAME="questnr-user-assets"
     - export SSL_ENABLED=false
     - export SHOW_HIBERNATE_LOGS=false
     - export ALLOW_TRENDING_SERVICES=true
