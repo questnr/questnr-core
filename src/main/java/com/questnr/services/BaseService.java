@@ -123,9 +123,9 @@ public class BaseService {
             throw new InvalidRequestException("Password is mandatory.");
         }
         if (!(commonService.isNull(user.getFirstName()) || commonService.isNull(user.getLastName()))) {
-            user.setUsername(this.createUsername(user.getFirstName() + " " + user.getLastName()));
+            user.setSlug(this.createUsername(user.getFirstName() + " " + user.getLastName()));
         } else {
-            user.setUsername(this.createUsername(user.getUsername()));
+            user.setSlug(this.createUsername(user.getUsername()));
         }
         user.setAuthorities(this.createAuthoritySet());
         user.setEmailVerified(false);
@@ -138,7 +138,6 @@ public class BaseService {
             user.setPassword(encPassword);
         }
         user.addMetadata();
-        user.setSlug(user.getUsername());
         User savedUser = userRepository.saveAndFlush(user);
         this.emailService.sendEmailOnSignUp(user);
         return this.createSuccessLoginResponse(savedUser);
