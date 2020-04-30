@@ -61,7 +61,7 @@ public class BaseService {
             appendNum++;
             makingUsername = username + randString.substring(randString.length() - appendNum);
         } while (this.checkIfUsernameIsTaken(makingUsername));
-        return  makingUsername;
+        return makingUsername;
     }
 
     public String createSlug(String fullName) {
@@ -173,6 +173,9 @@ public class BaseService {
             return this.createErrorLoginResponse();
         } else {
             User savedUser = userRepository.findByEmailId(request.getEmailId());
+            if (savedUser == null) {
+                savedUser = userRepository.findByUsername(request.getEmailId());
+            }
             if (savedUser != null) {
                 if (checkValidLogin(savedUser, request.getPassword())) {
                     return this.createSuccessLoginResponse(savedUser);
