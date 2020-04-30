@@ -7,7 +7,13 @@ public class MetaDataDTO {
 
     private String actionDateForPost;
 
-    private String timeInUTC;
+    private String createdAtTimeInUTC;
+
+    private Long createdAtTimestamp;
+
+    private String updatedAtTimeInUTC;
+
+    private Long updatedAtTimestamp;
 
     private boolean isEdited;
 
@@ -35,12 +41,36 @@ public class MetaDataDTO {
         this.actionDateForPost = actionDateForPost;
     }
 
-    public String getTimeInUTC() {
-        return timeInUTC;
+    public String getCreatedAtTimeInUTC() {
+        return createdAtTimeInUTC;
     }
 
-    public void setTimeInUTC(String timeInUTC) {
-        this.timeInUTC = timeInUTC;
+    public void setCreatedAtTimeInUTC(String createdAtTimeInUTC) {
+        this.createdAtTimeInUTC = createdAtTimeInUTC;
+    }
+
+    public Long getCreatedAtTimestamp() {
+        return createdAtTimestamp;
+    }
+
+    public void setCreatedAtTimestamp(Long createdAtTimestamp) {
+        this.createdAtTimestamp = createdAtTimestamp;
+    }
+
+    public String getUpdatedAtTimeInUTC() {
+        return updatedAtTimeInUTC;
+    }
+
+    public void setUpdatedAtTimeInUTC(String updatedAtTimeInUTC) {
+        this.updatedAtTimeInUTC = updatedAtTimeInUTC;
+    }
+
+    public Long getUpdatedAtTimestamp() {
+        return updatedAtTimestamp;
+    }
+
+    public void setUpdatedAtTimestamp(Long updatedAtTimestamp) {
+        this.updatedAtTimestamp = updatedAtTimestamp;
     }
 
     public boolean isEdited() {

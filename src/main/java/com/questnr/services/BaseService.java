@@ -53,13 +53,23 @@ public class BaseService {
     public String createUsername(String fullName) {
         List<String> chucks = Arrays.asList(fullName.toLowerCase().split("\\s"));
         String username = CommonService.removeSpecialCharacters(String.join("-", chucks));
+        Long timestamp = new Date().getTime();
+        String randString = timestamp.toString();
         String makingUsername;
+        int appendNum = 0;
         do {
-            Long timestamp = new Date().getTime();
-            String randString = timestamp.toString();
-            makingUsername = username + "-" + randString.substring(randString.length() > 10 ? randString.length() - 10 : randString.length());
+            appendNum++;
+            makingUsername = username + randString.substring(randString.length() - appendNum);
         } while (this.checkIfUsernameIsTaken(makingUsername));
-        return makingUsername;
+        return  makingUsername;
+    }
+
+    public String createSlug(String fullName) {
+        List<String> chucks = Arrays.asList(fullName.toLowerCase().split("\\s"));
+        String slug = CommonService.removeSpecialCharacters(String.join("-", chucks));
+        Long timestamp = new Date().getTime();
+        String randString = timestamp.toString();
+        return slug + "-" + randString.substring(randString.length() > 10 ? randString.length() - 10 : randString.length());
     }
 
     public User createUserFromSocialLogin(User user, String source) {
@@ -106,6 +116,13 @@ public class BaseService {
     }
 
     private User processUserInformation(User user) {
+
+        if (!(commonService.isNull(user.getFirstName()) || commonService.isNull(user.getLastName()))) {
+            user.setSlug(this.createSlug(user.getFirstName() + " " + user.getLastName()));
+        } else {
+            user.setSlug(this.createSlug(user.getUsername()));
+        }
+
         user.setEmailVerified(false);
 
         user.setEnabled(true);
@@ -134,11 +151,6 @@ public class BaseService {
             }
         } catch (NullPointerException ex) {
             throw new InvalidRequestException("Password is mandatory.");
-        }
-        if (!(commonService.isNull(user.getFirstName()) || commonService.isNull(user.getLastName()))) {
-            user.setSlug(this.createUsername(user.getFirstName() + " " + user.getLastName()));
-        } else {
-            user.setSlug(this.createUsername(user.getUsername()));
         }
 
         this.processUserInformation(user);

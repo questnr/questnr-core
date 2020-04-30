@@ -30,7 +30,7 @@ public class SocialUserDetails {
         User user = new User();
         user.setEmailId(fbUserDetails.getEmail());
 //        user.setFullName(fbUserDetails.getName());
-        user.setUsername(baseService.createUsername(fbUserDetails.getName()));
+        user.setUsername(baseService.createSlug(fbUserDetails.getName()));
         user.setLoginType(LoginType.FACEBOOK);
         return user;
     }

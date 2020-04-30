@@ -89,7 +89,11 @@ public class TimeData {
         } else if (minutes > 0) {
             return minutes + this.mString;
         } else {
-            return seconds + this.sString;
+            if(seconds < 6){
+                return "now";
+            }else{
+                return seconds + this.sString;
+            }
         }
     }
 }
