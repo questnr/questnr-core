@@ -51,15 +51,14 @@ public class BaseService {
 
 
     public String createUsername(String fullName) {
-        List<String> chucks = Arrays.asList(fullName.toLowerCase().split("\\s"));
-        String username = CommonService.removeSpecialCharacters(String.join("-", chucks));
+        String username = CommonService.removeSpecialCharactersWithWhiteSpace(fullName.toLowerCase());
         Long timestamp = new Date().getTime();
         String randString = timestamp.toString();
         String makingUsername;
         int appendNum = 0;
         do {
-            appendNum++;
             makingUsername = username + randString.substring(randString.length() - appendNum);
+            appendNum++;
         } while (this.checkIfUsernameIsTaken(makingUsername));
         return makingUsername;
     }
@@ -80,7 +79,6 @@ public class BaseService {
         } catch (Exception e) {
             user.setSignUpSource(SignUpSourceType.WEB);
         }
-        user.setSlug(user.getUsername());
         return userRepository.saveAndFlush(user);
     }
 
