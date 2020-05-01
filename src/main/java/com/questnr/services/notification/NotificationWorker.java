@@ -75,27 +75,29 @@ public class NotificationWorker extends Thread {
                 if (item == null) {
                     continue;
                 }
-                try {
-                    NotificationDTO notificationDTO = this.notificationMapper.toNotificationDTO(item);
-                    if (this.userNotificationSettingsRepository.existsByUserAndReceivingNotification(notificationDTO.getUser(), true)) {
-                        PushNotificationRequest pushNotificationRequest = new PushNotificationRequest();
-                        pushNotificationRequest.setTitle(notificationDTO.getUserActor().getUsername());
-                        pushNotificationRequest.setMessage(notificationDTO.getMessage());
-                        List<UserNotificationControl> userNotificationControlList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
-                        for (UserNotificationControl userNotificationControl : userNotificationControlList) {
-                            pushNotificationRequest.setToken(userNotificationControl.getToken());
-                            this.fcmService.sendMessageToToken(pushNotificationRequest);
+                NotificationDTO notificationDTO = this.notificationMapper.toNotificationDTO(item);
+                if(!notificationDTO.getUserActor().getUserId().equals(notificationDTO.getUser().getUserId())) {
+                    try {
+                        if (this.userNotificationSettingsRepository.existsByUserAndReceivingNotification(notificationDTO.getUser(), true)) {
+                            PushNotificationRequest pushNotificationRequest = new PushNotificationRequest();
+                            pushNotificationRequest.setTitle(notificationDTO.getUserActor().getUsername());
+                            pushNotificationRequest.setMessage(notificationDTO.getMessage());
+                            List<UserNotificationControl> userNotificationControlList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
+                            for (UserNotificationControl userNotificationControl : userNotificationControlList) {
+                                pushNotificationRequest.setToken(userNotificationControl.getToken());
+                                this.fcmService.sendMessageToToken(pushNotificationRequest);
+                            }
                         }
+                    } catch (Exception ex) {
+                        LOG.log(Level.SEVERE, "Exception while sending Notification via firebase ...{0}",
+                                ex.getMessage());
                     }
-                } catch (Exception ex) {
-                    LOG.log(Level.SEVERE, "Exception while sending Notification via firebase ...{0}",
-                            ex.getMessage());
-                }
-                try {
-                    this.notificationRepository.save(item);
-                } catch (Exception ex) {
-                    LOG.log(Level.SEVERE, "Exception while sending Notification ...{0}",
-                            ex.getMessage());
+                    try {
+                        this.notificationRepository.save(item);
+                    } catch (Exception ex) {
+                        LOG.log(Level.SEVERE, "Exception while sending Notification ...{0}",
+                                ex.getMessage());
+                    }
                 }
             }
         }
