@@ -37,7 +37,6 @@ public class NotificationService {
     @Autowired
     private NotificationRepository notificationRepository;
 
-
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
 
@@ -57,7 +56,7 @@ public class NotificationService {
         }
     }
 
-    public void deleteNotification(Long notificationId){
+    public void deleteNotification(Long notificationId) {
         User user = userCommonService.getUser();
         Notification notification = notificationRepository.findByUserAndNotificationId(user, notificationId);
         if (notification != null) {

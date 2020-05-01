@@ -1,7 +1,10 @@
 package com.questnr.controllers;
 
 import com.questnr.model.dto.NotificationDTO;
+import com.questnr.model.dto.UserNotificationSettingsDTO;
+import com.questnr.model.mapper.UserNotificationSettingsMapper;
 import com.questnr.services.NotificationService;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
