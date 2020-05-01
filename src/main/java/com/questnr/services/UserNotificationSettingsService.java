@@ -29,7 +29,7 @@ public class UserNotificationSettingsService {
         } else {
             userNotificationSettings = new UserNotificationSettings();
             userNotificationSettings.setUser(user);
-            userNotificationSettings.setReceivingNotification(false);
+            userNotificationSettings.setReceivingNotification(true);
             return userNotificationSettingsRepository.save(userNotificationSettings);
         }
     }

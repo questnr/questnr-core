@@ -16,7 +16,7 @@ public class UserNotificationSettings {
     private User user;
 
     @Column(name = "is_receiving_notification")
-    private boolean receivingNotification = false;
+    private boolean receivingNotification = true;
 
     public Long getUserNotificationSettingsId() {
         return userNotificationSettingsId;
