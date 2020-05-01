@@ -105,12 +105,13 @@ public class CommunityPostActionService {
     public void deletePostAction(Long communityId, Long postId) {
         PostAction post = postActionRepository.findByPostActionIdAndCommunity(postId, communityCommonService.getCommunity(communityId));
         if (post != null) {
-            post.getPostMediaList().stream().map(postMedia ->
-                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(communityCommonService.joinPathToFile(postMedia.getMediaKey(), communityId))
-            );
-            postActionRepository.delete(post);
+//            post.getPostMediaList().stream().map(postMedia ->
+//                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(communityCommonService.joinPathToFile(postMedia.getMediaKey(), communityId))
+//            );
+            post.setDeleted(true);
+            postActionRepository.save(post);
         } else {
-            throw new ResourceNotFoundException("Post  not found!");
+            throw new ResourceNotFoundException("Post not found!");
         }
     }
 }

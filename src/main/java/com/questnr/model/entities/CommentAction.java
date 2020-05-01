@@ -3,6 +3,7 @@ package com.questnr.model.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questnr.common.NotificationTitles;
 import com.questnr.common.enums.NotificationType;
+import org.hibernate.annotations.Where;
 import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -15,12 +16,16 @@ import java.util.Set;
 @Indexed
 @Table(name = "qr_comment_actions")
 @EntityListeners(AuditingEntityListener.class)
+@Where(clause = "deleted = false")
 public class CommentAction extends DomainObject implements NotificationBase {
     @Id
     @Column(name = "comment_action_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_action_seq")
     @SequenceGenerator(name = "comment_action_seq", sequenceName = "comment_action_seq", allocationSize = 1)
     private Long commentActionId;
+
+    @Column(name = "deleted", nullable = false, columnDefinition = "bool default false")
+    private boolean deleted;
 
     @Column(name = "comment_object")
     private String commentObject;
@@ -54,6 +59,14 @@ public class CommentAction extends DomainObject implements NotificationBase {
 
     public void setCommentActionId(Long commentActionId) {
         this.commentActionId = commentActionId;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public String getCommentObject() {

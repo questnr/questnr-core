@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
+import org.hibernate.annotations.Where;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.*;
 import org.hibernate.search.bridge.builtin.EnumBridge;
@@ -17,6 +18,7 @@ import java.util.*;
 @Table(name = "qr_post_actions")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@Where(clause = "deleted = false")
 public class PostAction extends DomainObject {
 
     @Id
@@ -24,6 +26,9 @@ public class PostAction extends DomainObject {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_action_seq")
     @SequenceGenerator(name = "post_action_seq", sequenceName = "post_action_seq", allocationSize = 1)
     private Long postActionId;
+
+    @Column(name = "deleted", nullable = false, columnDefinition = "bool default false")
+    private boolean deleted;
 
     @Field(index = Index.YES, analyze = Analyze.YES, store = Store.YES)
     @Column(name = "post_action_slug", unique = true, columnDefinition = "TEXT")
@@ -106,6 +111,14 @@ public class PostAction extends DomainObject {
 
     public void setPostActionId(Long postActionId) {
         this.postActionId = postActionId;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     public String getSlug() {

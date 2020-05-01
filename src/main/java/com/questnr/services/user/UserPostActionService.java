@@ -113,11 +113,12 @@ public class UserPostActionService {
 
     public void deletePostAction(Long postId) {
         postActionRepository.findById(postId).map(post -> {
-            post.getPostMediaList().stream().map(postMedia ->
-                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(userCommonService.joinPathToFile(postMedia.getMediaKey()))
-            );
-            postActionRepository.delete(post);
+//            post.getPostMediaList().stream().map(postMedia ->
+//                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(userCommonService.joinPathToFile(postMedia.getMediaKey()))
+//            );
+            post.setDeleted(true);
+            postActionRepository.save(post);
             return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Post  not found!"));
+        }).orElseThrow(() -> new ResourceNotFoundException("Post not found!"));
     }
 }

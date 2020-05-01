@@ -95,8 +95,8 @@ public class CommentActionService {
 
             // Notification job created and assigned to Notification Processor.
             notificationJob.createNotificationJob(commentAction, false);
-
-            commentActionRepository.delete(commentAction);
+            commentAction.setDeleted(true);
+            commentActionRepository.save(commentAction);
         } else {
             throw new ResourceNotFoundException("Comment not found!");
         }
