@@ -31,14 +31,6 @@ public class PostMediaMapper {
     @Autowired
     PostActionRepository postActionRepository;
 
-//    public String getPostMediaLink(PostMedia postMedia){
-//        PostAction postActon = postActionRepository.findByPostMediaListContaining(postMedia.getPostMediaId());
-//        if (postActon.getCommunity() != null && commonService.isNull(postActon.getCommunity().getCommunityId().toString()))
-//           return this.amazonS3Client.getS3BucketUrl(communityCommonService.joinPathToFile(postMedia.getMediaKey(), postActon.getCommunity().getCommunityId()));
-//        else
-//            return this.amazonS3Client.getS3BucketUrl(userCommonService.joinPathToFile(postMedia.getMediaKey()));
-//    }
-
     public PostMediaDTO toPostMediaDTO(PostMedia postMedia) {
         PostMediaDTO postMediaDTO = new PostMediaDTO();
         postMediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(postMedia.getMediaKey()));

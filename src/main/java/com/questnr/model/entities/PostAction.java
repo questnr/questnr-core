@@ -36,7 +36,7 @@ public class PostAction extends DomainObject {
     @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
     @Column(name = "post_action_status")
     @Enumerated(EnumType.STRING)
-    private PublishStatus status;
+    private PublishStatus status = PublishStatus.publish;
 
     @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
     @Column(name = "post_action_privacy")

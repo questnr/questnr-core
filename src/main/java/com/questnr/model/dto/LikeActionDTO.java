@@ -5,7 +5,7 @@ public class LikeActionDTO {
 
     private UserDTO user;
 
-    private MetaDataDTO metaData;
+//    private MetaDataDTO metaData;
 
     public Long getLikeActionId() {
         return likeActionId;
@@ -23,11 +23,11 @@ public class LikeActionDTO {
         this.user = user;
     }
 
-    public MetaDataDTO getMetaData() {
-        return metaData;
-    }
-
-    public void setMetaData(MetaDataDTO metaData) {
-        this.metaData = metaData;
-    }
+//    public MetaDataDTO getMetaData() {
+//        return metaData;
+//    }
+//
+//    public void setMetaData(MetaDataDTO metaData) {
+//        this.metaData = metaData;
+//    }
 }

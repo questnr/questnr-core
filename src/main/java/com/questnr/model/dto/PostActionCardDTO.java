@@ -1,34 +1,23 @@
 package com.questnr.model.dto;
 
 import com.questnr.common.enums.PostActionPrivacy;
-import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.HashTag;
-import com.questnr.model.entities.LikeAction;
-import com.questnr.model.entities.PostActionMetaInformation;
-import com.questnr.model.entities.PostVisit;
 
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class PostActionCardDTO {
     private Long postActionId;
     private String slug;
-    private String title;
     private String text;
-    private PublishStatus status;
     private PostActionPrivacy postActionPrivacy;
     private boolean featured;
     private boolean popular;
     private String tags;
     private CommunityForPostActionDTO communityDTO;
     private Set<HashTag> hashTags;
-    private Set<LikeAction> likeActionSet;
-    private List<CommentActionDTO> commentActionDTOList;
-    private Set<PostVisit> postVisitSet;
+    private List<LikeActionDTO> likeActionList;
+    private List<CommentActionDTO> commentActionList;
     private List<PostMediaDTO> postMediaList;
     private int totalLikes;
     private int totalComments;
@@ -44,28 +33,12 @@ public class PostActionCardDTO {
         this.slug = slug;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getText() {
         return text;
     }
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public PublishStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PublishStatus status) {
-        this.status = status;
     }
 
     public PostActionPrivacy getPostActionPrivacy() {
@@ -124,45 +97,20 @@ public class PostActionCardDTO {
         this.hashTags = hashTags;
     }
 
-
-    public void setLikeActionSet(Set<LikeAction> likeActionSet) {
-        this.likeActionSet = likeActionSet;
-        try {
-            this.setTotalLikes(likeActionSet.size());
-        } catch (Exception e) {
-            this.setTotalLikes(0);
-        }
+    public List<LikeActionDTO> getLikeActionList() {
+        return likeActionList;
     }
 
-    public void setCommentActionDTOList(List<CommentActionDTO> commentActionDTOList) {
-        this.commentActionDTOList = commentActionDTOList;
-        try {
-            this.setTotalComments(commentActionDTOList.size());
-        } catch (Exception e) {
-            this.setTotalComments(0);
-        }
+    public void setLikeActionList(List<LikeActionDTO> likeActionList) {
+        this.likeActionList = likeActionList;
     }
 
-    public List<CommentActionDTO> getCommentActionDTOList() {
-        if (commentActionDTOList.size() > 0) {
-            Predicate<CommentActionDTO> commentActionDTOPredicate = commentActionDTO -> !commentActionDTO.isChildComment();
-            commentActionDTOList = commentActionDTOList.stream().filter(commentActionDTOPredicate).collect(Collectors.toList());
-            Comparator<CommentActionDTO> createdAtComparator
-                    = Comparator.comparing(CommentActionDTO::getCreatedAt);
-            commentActionDTOList.sort(createdAtComparator.reversed());
-            return commentActionDTOList.subList(0, commentActionDTOList.size() > 3 ? 3 : commentActionDTOList.size());
-        }
-        return new ArrayList<>();
+    public List<CommentActionDTO> getCommentActionList() {
+        return commentActionList;
     }
 
-
-    public void setPostVisitSet(Set<PostVisit> postVisitSet) {
-        this.postVisitSet = postVisitSet;
-        try {
-            this.setTotalPostVisits(postVisitSet.size());
-        } catch (Exception e) {
-            this.setTotalPostVisits(0);
-        }
+    public void setCommentActionList(List<CommentActionDTO> commentActionList) {
+        this.commentActionList = commentActionList;
     }
 
     public List<PostMediaDTO> getPostMediaList() {
