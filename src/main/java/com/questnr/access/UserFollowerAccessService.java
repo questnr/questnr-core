@@ -17,4 +17,13 @@ public class UserFollowerAccessService {
         return true;
     }
 
+    public boolean undoFollowUser(Long userId, Long userBeingFollowed) {
+        if (userCommonService.getUserId().equals(userId)) {
+            return true;
+        } else if (userCommonService.getUserId().equals(userBeingFollowed)) {
+            return true;
+        }
+        return false;
+    }
+
 }

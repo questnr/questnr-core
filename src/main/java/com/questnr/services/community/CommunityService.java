@@ -15,6 +15,7 @@ import com.questnr.util.SecureRandomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -50,6 +51,11 @@ public class CommunityService {
 
     @Autowired
     CustomPageService<User> customPageService;
+
+    @Value("${questnr.domain}")
+    String QUEST_NR_DOMAIN;
+
+    final private String COMMUNITY_PATH = "community";
 
     private String createCommunitySlug(Community community) {
         List<String> communityNameChunks = Arrays.asList(community.getCommunityName().toLowerCase().split("\\s"));

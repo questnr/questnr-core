@@ -81,10 +81,22 @@ public class AmazonS3Client {
     }
 
     public String getS3BucketUrl(String pathToFile) {
+       return this.getS3BucketUrl(pathToFile, false);
+    }
+
+    public String getS3BucketUrl(String pathToFile, boolean isPublic) {
+        int addTimeMillis = 1000 * 40;
+        if(isPublic){
+            addTimeMillis = 1000 * 1000;
+        }
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
-        expTimeMillis += 1000 * 40;
+        expTimeMillis += addTimeMillis;
         expiration.setTime(expTimeMillis);
+        return this.getS3BucketUrl(pathToFile, expiration);
+    }
+
+    private String getS3BucketUrl(String pathToFile, Date expiration){
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, pathToFile)
                         .withMethod(HttpMethod.GET)

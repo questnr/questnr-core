@@ -6,6 +6,8 @@ public class PushNotificationRequest {
     private String message;
     private String topic;
     private String token;
+    private String imgURL;
+    private String clickAction;
 
     public PushNotificationRequest() {
     }
@@ -46,5 +48,21 @@ public class PushNotificationRequest {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getImgURL() {
+        return imgURL;
+    }
+
+    public void setImgURL(String imgURL) {
+        this.imgURL = imgURL;
+    }
+
+    public String getClickAction() {
+        return clickAction;
+    }
+
+    public void setClickAction(String clickAction) {
+        this.clickAction = clickAction;
     }
 }

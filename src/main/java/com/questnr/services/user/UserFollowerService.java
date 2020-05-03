@@ -2,7 +2,6 @@ package com.questnr.services.user;
 
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AlreadyExistsException;
-import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserFollower;
@@ -69,51 +68,49 @@ public class UserFollowerService {
     }
 
     public User followUser(Long userId) {
-        userRepository.findById(userId).map(userBeingFollowed -> {
-            try{
-                User user = userCommonService.getUser();
-                if (!Objects.equals(user.getUserId(), userBeingFollowed.getUserId())) {
-                    if (this.existsUserFollower(userBeingFollowed, user))
-                        throw new AlreadyExistsException("You are already following the user!");
-                    userRepository.save(this.addUserToUser(userBeingFollowed, user));
-
-                    // Notification job created and assigned to Notification Processor.
-                    notificationJob.createNotificationJob(userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user));
-
-                    return userBeingFollowed;
-                }
-                return null;
-            }catch (Exception e) {
-                return null;
-            }
-        }).orElseThrow(() -> {
-            throw new ResourceNotFoundException("User being followed does not exists");
-        });
-        return null;
-    }
-
-    public void undoFollowUser(Long userBeingFollowedId) {
         User user = userCommonService.getUser();
-        userRepository.findById(userBeingFollowedId).map(userBeingFollowed -> {
-            if (this.existsUserFollower(userBeingFollowed, user)) {
-                Set<UserFollower> userFollowers = user.getThisFollowingUserSet();
-                for (UserFollower userFollower : userFollowers) {
-                    if (Objects.equals(userFollower.getFollowingUser().getUserId(), user.getUserId()) && Objects.equals(userFollower.getUser().getUserId(), userBeingFollowed.getUserId())) {
-                        userFollowers.remove(userFollower);
-                        break;
-                    }
-                }
-                user.setThisFollowingUserSet(userFollowers);
+        User userBeingFollowed = userRepository.findByUserId(userId);
+        if (!Objects.equals(user.getUserId(), userBeingFollowed.getUserId())) {
+            if (this.existsUserFollower(userBeingFollowed, user))
+                throw new AlreadyExistsException("You are already following the user!");
+            try {
+                userRepository.save(this.addUserToUser(userBeingFollowed, user));
 
                 // Notification job created and assigned to Notification Processor.
-                notificationJob.createNotificationJob(userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user), false);
+                notificationJob.createNotificationJob(userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user));
 
-                return userRepository.save(user);
+                return userBeingFollowed;
+            } catch (Exception e) {
+                return user;
             }
-            throw new InvalidRequestException("You are not following the user!");
-        }).orElseThrow(() -> {
+        } else {
             throw new ResourceNotFoundException("User being followed does not exists");
-        });
+        }
+    }
+
+    public void undoFollowUser(Long userId, Long userBeingFollowedId) {
+        User user = userCommonService.getUser(userId);
+        User userBeingFollowed = userRepository.findByUserId(userBeingFollowedId);
+        if (this.existsUserFollower(userBeingFollowed, user)) {
+            Set<UserFollower> userFollowers = user.getThisFollowingUserSet();
+            UserFollower thisUserFollower = new UserFollower();
+            for (UserFollower userFollower : userFollowers) {
+                if (Objects.equals(userFollower.getFollowingUser().getUserId(), user.getUserId()) && Objects.equals(userFollower.getUser().getUserId(), userBeingFollowed.getUserId())) {
+                    thisUserFollower = userFollower;
+                    userFollowers.remove(userFollower);
+                    break;
+                }
+            }
+            user.setThisFollowingUserSet(userFollowers);
+
+            // Notification job created and assigned to Notification Processor.
+            notificationJob.createNotificationJob(thisUserFollower, false);
+
+            User savedUser = userRepository.save(user);
+
+        } else {
+            throw new ResourceNotFoundException("You are not following the user");
+        }
     }
 
     public RelationShipType getUserRelationShipWithUser(Long userId) {

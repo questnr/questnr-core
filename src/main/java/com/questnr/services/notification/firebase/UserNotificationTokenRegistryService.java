@@ -2,14 +2,14 @@ package com.questnr.services.notification.firebase;
 
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.User;
-import com.questnr.model.entities.UserNotificationControl;
+import com.questnr.model.entities.UserNotificationTokenRegistry;
 import com.questnr.model.repositories.UserNotificationControlRepository;
 import com.questnr.services.user.UserCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserNotificationControlService {
+public class UserNotificationTokenRegistryService {
 
     @Autowired
     private UserNotificationControlRepository userNotificationControlRepository;
@@ -18,16 +18,16 @@ public class UserNotificationControlService {
     private UserCommonService userCommonService;
 
     public void registerUserForPushNotification(String token) {
-        UserNotificationControl userNotificationControl = new UserNotificationControl();
-        userNotificationControl.setToken(token);
+        UserNotificationTokenRegistry userNotificationTokenRegistry = new UserNotificationTokenRegistry();
+        userNotificationTokenRegistry.setToken(token);
         if (!userNotificationControlRepository.existsByToken(token))
-            userNotificationControlRepository.save(userNotificationControl);
+            userNotificationControlRepository.save(userNotificationTokenRegistry);
         else {
             try {
                 User user = userCommonService.getUser();
-                UserNotificationControl savedUserNotificationControl = userNotificationControlRepository.findByToken(token);
-                savedUserNotificationControl.setUserActor(user);
-                userNotificationControlRepository.save(savedUserNotificationControl);
+                UserNotificationTokenRegistry savedUserNotificationTokenRegistry = userNotificationControlRepository.findByToken(token);
+                savedUserNotificationTokenRegistry.setUserActor(user);
+                userNotificationControlRepository.save(savedUserNotificationTokenRegistry);
             } catch (ResourceNotFoundException ex) {
 
             }
@@ -35,9 +35,9 @@ public class UserNotificationControlService {
     }
 
     public void unRegisterUserForPushNotification(String token) {
-        UserNotificationControl userNotificationControl = userNotificationControlRepository.findByToken(token);
-        if(userNotificationControl != null) {
-            userNotificationControlRepository.delete(userNotificationControl);
+        UserNotificationTokenRegistry userNotificationTokenRegistry = userNotificationControlRepository.findByToken(token);
+        if(userNotificationTokenRegistry != null) {
+            userNotificationControlRepository.delete(userNotificationTokenRegistry);
         }
     }
 

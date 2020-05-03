@@ -32,7 +32,8 @@ public class Notification extends DomainObject {
                     @MetaValue(value = "C", targetEntity = CommentAction.class),
                     @MetaValue(value = "LC", targetEntity = LikeCommentAction.class),
                     @MetaValue(value = "I", targetEntity = CommunityInvitedUser.class),
-                    @MetaValue(value = "FC", targetEntity = CommunityUser.class)
+                    @MetaValue(value = "FC", targetEntity = CommunityUser.class),
+                    @MetaValue(value = "FU", targetEntity = UserFollower.class)
             }
     )
     @JoinColumn(name = "notification_base_id")

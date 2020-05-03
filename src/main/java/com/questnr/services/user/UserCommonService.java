@@ -20,7 +20,7 @@ public class UserCommonService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private final String dir = "users";
+    private final String dir = "u";
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;

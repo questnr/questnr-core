@@ -98,7 +98,9 @@ public class CommunityJoinController {
     @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void revokeJoinFromUser(@PathVariable long communityId, @RequestBody UserIdRequest userIdRequest) {
-        communityJoinService.revokeJoinFromUser(communityId, userIdRequest.getUserId());
+        if (communityJoinAccessService.revokeJoinFromUser(communityId, userIdRequest.getUserId())) {
+            communityJoinService.revokeJoinFromUser(communityId, userIdRequest.getUserId());
+        }
     }
 
     // Check user follows this community

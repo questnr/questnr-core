@@ -67,12 +67,15 @@ public class NotificationRevertWorker extends Thread {
                     } else if (item.getNotificationBase() instanceof LikeCommentAction) {
                         LikeCommentAction likeCommentAction = (LikeCommentAction) item.getNotificationBase();
                         notificationRepository.deleteByNotificationBaseAndType(likeCommentAction.getLikeCommentActionId(), NotificationType.likeComment.getJsonValue(), item.getUser().getUserId());
-                    } else if (item.getNotificationBase() instanceof CommunityUser) {
+                    } else if (item.getNotificationBase() instanceof CommunityInvitedUser) {
+                        CommunityInvitedUser communityInvitedUser = (CommunityInvitedUser) item.getNotificationBase();
+                        notificationRepository.deleteByNotificationBaseAndType(communityInvitedUser.getCommunityInvitationId(), NotificationType.invitation.getJsonValue(), item.getUser().getUserId());
+                    }  else if (item.getNotificationBase() instanceof CommunityUser) {
                         CommunityUser communityUser = (CommunityUser) item.getNotificationBase();
-                        notificationRepository.deleteByNotificationBaseAndType(communityUser.getCommunityUserId(), NotificationType.invitation.getJsonValue(), item.getUser().getUserId());
+                        notificationRepository.deleteByNotificationBaseAndType(communityUser.getCommunityUserId(), NotificationType.followedCommunity.getJsonValue(), item.getUser().getUserId());
                     } else if (item.getNotificationBase() instanceof UserFollower) {
                         UserFollower userFollower = (UserFollower) item.getNotificationBase();
-                        notificationRepository.deleteByNotificationBaseAndType(userFollower.getUserFollowerId(), NotificationType.invitation.getJsonValue(), item.getUser().getUserId());
+                        notificationRepository.deleteByNotificationBaseAndType(userFollower.getUserFollowerId(), NotificationType.followedUser.getJsonValue(), item.getUser().getUserId());
                     }
                 } catch (Exception ex) {
                     LOG.log(Level.SEVERE, "Exception while removing NotificationRevert ...{0}",

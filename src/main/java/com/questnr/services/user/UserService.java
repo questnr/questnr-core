@@ -14,7 +14,6 @@ import com.questnr.services.CommonService;
 import com.questnr.services.EmailService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.util.EncryptionUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +90,7 @@ public class UserService {
             userRepository.save(user);
             response.setUpdateSuccess(true);
             response.setUsername(userName);
-        }else{
+        } else {
             throw new InvalidRequestException("Invalid request!");
         }
         return response;
@@ -107,5 +106,4 @@ public class UserService {
         }
         return false;
     }
-
 }

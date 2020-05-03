@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 public class CommunityCommonService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    private final String DIR="communities";
+    private final String DIR="c";
 
     @Autowired
     CommunityRepository communityRepository;

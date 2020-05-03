@@ -2,7 +2,7 @@ package com.questnr.services.notification;
 
 import com.questnr.model.dto.NotificationDTO;
 import com.questnr.model.entities.Notification;
-import com.questnr.model.entities.UserNotificationControl;
+import com.questnr.model.entities.UserNotificationTokenRegistry;
 import com.questnr.model.entities.notification.PushNotificationRequest;
 import com.questnr.model.mapper.NotificationMapper;
 import com.questnr.model.repositories.NotificationRepository;
@@ -76,15 +76,21 @@ public class NotificationWorker extends Thread {
                     continue;
                 }
                 NotificationDTO notificationDTO = this.notificationMapper.toNotificationDTO(item);
-                if(!notificationDTO.getUserActor().getUserId().equals(notificationDTO.getUser().getUserId())) {
+                if (!notificationDTO.getUserActor().getUserId().equals(notificationDTO.getUser().getUserId())) {
                     try {
                         if (this.userNotificationSettingsRepository.existsByUserAndReceivingNotification(notificationDTO.getUser(), true)) {
                             PushNotificationRequest pushNotificationRequest = new PushNotificationRequest();
                             pushNotificationRequest.setTitle(notificationDTO.getUserActor().getUsername());
                             pushNotificationRequest.setMessage(notificationDTO.getMessage());
-                            List<UserNotificationControl> userNotificationControlList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
-                            for (UserNotificationControl userNotificationControl : userNotificationControlList) {
-                                pushNotificationRequest.setToken(userNotificationControl.getToken());
+                            List<UserNotificationTokenRegistry> userNotificationTokenRegistryList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
+                            for (UserNotificationTokenRegistry userNotificationTokenRegistry : userNotificationTokenRegistryList) {
+                                pushNotificationRequest.setToken(userNotificationTokenRegistry.getToken());
+                                if (notificationDTO.getCommunity() != null && !CommonService.isNull(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink())) {
+                                    pushNotificationRequest.setImgURL(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink());
+                                } else if (notificationDTO.getPostMedia() != null && !CommonService.isNull(notificationDTO.getPostMedia().getPostMediaLink())) {
+                                    pushNotificationRequest.setImgURL(notificationDTO.getPostMedia().getPostMediaLink());
+                                }
+                                pushNotificationRequest.setClickAction(notificationDTO.getClickAction());
                                 this.fcmService.sendMessageToToken(pushNotificationRequest);
                             }
                         }

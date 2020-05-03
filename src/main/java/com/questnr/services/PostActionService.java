@@ -4,7 +4,6 @@ import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionDTO;
-import com.questnr.model.dto.PostActionSharableLinkDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.PostActionRepository;
@@ -16,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -186,14 +184,6 @@ public class PostActionService {
             return postAction;
         }
         throw new ResourceNotFoundException("Post is deleted or link is not correct");
-    }
-
-    public PostActionSharableLinkDTO getPostActionSharableLink(Long postActionId) {
-        PostActionSharableLinkDTO postActionSharableLinkDTO = new PostActionSharableLinkDTO();
-        String postActionSlug = postActionRepository.findByPostActionId(postActionId).getSlug();
-        String sharableLink = QUEST_NR_DOMAIN + "/" + Paths.get(POST_ACTION_PATH, postActionSlug).toString();
-        postActionSharableLinkDTO.setPostActionLink(sharableLink);
-        return postActionSharableLinkDTO;
     }
 
     public PostAction getPostActionMediaList(Long postActionId) {

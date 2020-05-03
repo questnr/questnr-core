@@ -169,13 +169,19 @@ public class CommunityJoinService {
         communityRepository.findById(communityId).map(community -> {
             if (this.existsCommunityUser(community, user)) {
                 Set<CommunityUser> joinedUsers = community.getUsers();
+                CommunityUser thisCommunityUser = new CommunityUser();
                 for (CommunityUser communityUser : joinedUsers) {
                     if (Objects.equals(communityUser.getUser().getUserId(), user.getUserId())) {
+                        thisCommunityUser = communityUser;
                         joinedUsers.remove(communityUser);
                         break;
                     }
                 }
                 community.setUsers(joinedUsers);
+
+                // Notification job created and assigned to Notification Processor.
+                notificationJob.createNotificationJob(thisCommunityUser, false);
+
                 return communityRepository.save(community);
             }
             throw new InvalidRequestException("You are not member of this community");

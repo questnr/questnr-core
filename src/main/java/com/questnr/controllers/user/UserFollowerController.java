@@ -7,6 +7,7 @@ import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
+import com.questnr.requests.UserIdRequest;
 import com.questnr.services.user.UserFollowerService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +68,12 @@ public class UserFollowerController {
     // Undo follow user
     @RequestMapping(value = "/follow/user/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    void undoFollowUser(@PathVariable long userId) {
-        userFollowerService.undoFollowUser(userId);
+    void undoFollowUser(@PathVariable long userId, @RequestBody UserIdRequest userIdRequest) {
+        if (userFollowerAccessService.undoFollowUser(userIdRequest.getUserId(), userId)) {
+            userFollowerService.undoFollowUser(userIdRequest.getUserId(), userId);
+        } else {
+            throw new AccessException();
+        }
     }
 
     // Check user follows this user

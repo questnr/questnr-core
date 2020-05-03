@@ -19,6 +19,8 @@ public class NotificationDTO {
 
     private NotificationType notificationType;
 
+    private String clickAction;
+
     private boolean isOpened;
 
     public Long getNotificationId() {
@@ -76,6 +78,14 @@ public class NotificationDTO {
 
     public void setNotificationType(NotificationType notificationType) {
         this.notificationType = notificationType;
+    }
+
+    public String getClickAction() {
+        return clickAction;
+    }
+
+    public void setClickAction(String clickAction) {
+        this.clickAction = clickAction;
     }
 
     public boolean isOpened() {

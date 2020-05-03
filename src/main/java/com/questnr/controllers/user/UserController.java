@@ -1,12 +1,14 @@
 package com.questnr.controllers.user;
 
 import com.questnr.exceptions.InvalidRequestException;
+import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.projections.UserProjection;
 import com.questnr.requests.UpdatePasswordRequest;
 import com.questnr.responses.UpdatePasswordResponse;
 import com.questnr.services.AmazonS3Client;
+import com.questnr.services.SharableLinkService;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.services.user.UserService;
 import org.mapstruct.factory.Mappers;
@@ -34,6 +36,9 @@ public class UserController {
 
     @Autowired
     AmazonS3Client amazonS3Client;
+
+    @Autowired
+    SharableLinkService sharableLinkService;
 
     UserController() {
         userMapper = Mappers.getMapper(UserMapper.class);
@@ -74,5 +79,11 @@ public class UserController {
             return userService.updatePassword(updatePasswordRequest);
         }
         throw new InvalidRequestException("Invalid request!");
+    }
+
+    // Get sharable link of the community
+    @RequestMapping(value = "/user/{userId}/link", method = RequestMethod.GET)
+    SharableLinkDTO getUserSharableLink(@PathVariable Long userId) {
+        return sharableLinkService.getUserSharableLink(userId);
     }
 }

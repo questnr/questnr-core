@@ -2,9 +2,10 @@ package com.questnr.controllers;
 
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionForMediaDTO;
-import com.questnr.model.dto.PostActionSharableLinkDTO;
+import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.services.PostActionService;
+import com.questnr.services.SharableLinkService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +22,9 @@ public class PostActionController {
     @Autowired
     PostActionMapper postActionMapper;
 
+    @Autowired
+    SharableLinkService sharableLinkService;
+
     PostActionController() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
@@ -33,8 +37,8 @@ public class PostActionController {
 
     // Get PostAction sharable link
     @RequestMapping(value = "/post/{postId}/link", method = RequestMethod.POST)
-    PostActionSharableLinkDTO getPostActionSharableLink(@PathVariable Long postId) {
-        return postActionService.getPostActionSharableLink(postId);
+    SharableLinkDTO getPostActionSharableLink(@PathVariable Long postId) {
+        return sharableLinkService.getPostActionSharableLink(postId);
     }
 
     // Get post media links only

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -41,11 +42,11 @@ public class FCMService {
         return FirebaseMessaging.getInstance().sendAsync(message).get();
     }
 
-    private AndroidConfig getAndroidConfig(String topic) {
+    private AndroidConfig getAndroidConfig(String topic, String clickAction) {
         return AndroidConfig.builder()
                 .setTtl(Duration.ofMinutes(2).toMillis()).setCollapseKey(topic)
                 .setPriority(AndroidConfig.Priority.HIGH)
-                .setNotification(AndroidNotification.builder().setSound(FirebaseNotificationParameter.SOUND.getValue())
+                .setNotification(AndroidNotification.builder().setClickAction(clickAction).setSticky(true).setPriority(AndroidNotification.Priority.HIGH).setSound(FirebaseNotificationParameter.SOUND.getValue())
                         .setColor(FirebaseNotificationParameter.COLOR.getValue()).setTag(topic).build()).build();
     }
 
@@ -70,11 +71,19 @@ public class FCMService {
     }
 
     private Message.Builder getPreconfiguredMessageBuilder(PushNotificationRequest request) {
-        AndroidConfig androidConfig = getAndroidConfig(request.getTopic());
+        AndroidConfig androidConfig = getAndroidConfig(request.getTopic(), request.getClickAction());
         ApnsConfig apnsConfig = getApnsConfig(request.getTopic());
+        Map<String, String> data = new HashMap<>();
+        data.put("openLink", request.getClickAction());
         return Message.builder()
-                .setApnsConfig(apnsConfig).setAndroidConfig(androidConfig).setNotification(
-                        new Notification(request.getTitle(), request.getMessage()));
+                .setApnsConfig(apnsConfig).setAndroidConfig(androidConfig)
+                .setWebpushConfig(WebpushConfig.builder().putAllData(data).build())
+                .setNotification(
+                        Notification.builder()
+                                .setTitle(request.getTitle())
+                                .setBody(request.getMessage())
+                                .setImage(request.getImgURL())
+                                .build());
     }
 
 

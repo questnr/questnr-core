@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "qr_user_notification_control")
-public class UserNotificationControl {
+@Table(name = "qr_user_notification_token_registry")
+public class UserNotificationTokenRegistry {
 
     @Id
     @Column(name = "id")
@@ -48,7 +48,7 @@ public class UserNotificationControl {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        UserNotificationControl that = (UserNotificationControl) o;
+        UserNotificationTokenRegistry that = (UserNotificationTokenRegistry) o;
         return token.equals(that.token);
     }
 

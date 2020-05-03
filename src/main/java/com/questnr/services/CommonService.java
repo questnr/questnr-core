@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class CommonService {
-    public boolean isNull(String string) {
+    public static boolean isNull(String string) {
         try {
             return string == null || string.trim().isEmpty();
         }catch (Exception e){

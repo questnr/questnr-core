@@ -2,15 +2,13 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.model.dto.CommunityCardDTO;
-import com.questnr.model.dto.CommunityDTO;
-import com.questnr.model.dto.CommunityRequestDTO;
-import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.*;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.requests.CommunityNameRequest;
+import com.questnr.services.SharableLinkService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityService;
 import org.mapstruct.factory.Mappers;
@@ -44,6 +42,8 @@ public class CommunityController {
     @Autowired
     UserMapper userMapper;
 
+    @Autowired
+    SharableLinkService sharableLinkService;
 
     CommunityController() {
         communityMapper = Mappers.getMapper(CommunityMapper.class);
@@ -134,5 +134,11 @@ public class CommunityController {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
         return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
+    }
+
+    // Get sharable link of the community
+    @RequestMapping(value = "/user/community/{communityId}/link", method = RequestMethod.GET)
+    SharableLinkDTO getCommunitySharableLink(@PathVariable Long communityId) {
+        return sharableLinkService.getCommunitySharableLink(communityId);
     }
 }
