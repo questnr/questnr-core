@@ -5,7 +5,7 @@ import com.questnr.model.mapper.NotificationMapper;
 import com.questnr.model.repositories.NotificationRepository;
 import com.questnr.model.repositories.UserNotificationControlRepository;
 import com.questnr.model.repositories.UserNotificationSettingsRepository;
-import com.questnr.services.notification.firebase.FCMService;
+import com.questnr.services.notification.firebase.PushNotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class NotificationJob {
     NotificationRepository notificationRepository;
 
     @Autowired
-    FCMService fcmService;
+    PushNotificationService pushNotificationService;
 
     @Autowired
     NotificationMapper notificationMapper;
@@ -41,7 +41,7 @@ public class NotificationJob {
 
     public void createNotificationJob(Notification notification, boolean toCreate) {
         if (toCreate)
-            NotificationProcessor.getInstance(notificationRepository, userNotificationControlRepository, userNotificationSettingsRepository, fcmService, notificationMapper).add(notification);
+            NotificationProcessor.getInstance(notificationRepository, userNotificationControlRepository, userNotificationSettingsRepository, pushNotificationService, notificationMapper).add(notification);
         else NotificationRevertProcessor.getInstance(notificationRepository).add(notification);
     }
 

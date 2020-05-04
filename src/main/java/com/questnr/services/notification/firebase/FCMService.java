@@ -38,6 +38,13 @@ public class FCMService {
         LOGGER.info("Sent message to token. Device token: " + request.getToken() + ", " + response);
     }
 
+    public void sendMessageToTokenWithData(Map<String,String> data, PushNotificationRequest request)
+            throws InterruptedException, ExecutionException {
+        Message message = getPreconfiguredMessageToTokenWithData(data, request);
+        String response = sendAndGetResponse(message);
+        LOGGER.info("Sent message to token. Device token: " + request.getToken() + ", " + response);
+    }
+
     private String sendAndGetResponse(Message message) throws InterruptedException, ExecutionException {
         return FirebaseMessaging.getInstance().sendAsync(message).get();
     }
@@ -66,18 +73,32 @@ public class FCMService {
     }
 
     private Message getPreconfiguredMessageWithData(Map<String, String> data, PushNotificationRequest request) {
-        return getPreconfiguredMessageBuilder(request).putAllData(data).setTopic(request.getTopic())
+        return getPreconfiguredMessageBuilder(request).putAllData(data).build();
+    }
+
+    private Message getPreconfiguredMessageToTokenWithData(Map<String, String> data, PushNotificationRequest request) {
+        return getPreconfiguredMessageBuilder(request).putAllData(data).setToken(request.getToken())
+                .build();
+    }
+    private WebpushConfig getWebConfig(PushNotificationRequest pushNotificationRequest){
+        return WebpushConfig.builder().putHeader("ttl", "300")
+                .setFcmOptions(WebpushFcmOptions.builder().setLink(pushNotificationRequest.getClickAction()).build())
+                .setNotification(WebpushNotification.builder()
+//                        .setData(data)
+                        .setTitle(pushNotificationRequest.getTitle())
+                        .setBody(pushNotificationRequest.getMessage())
+                        .setImage(pushNotificationRequest.getImgURL()).build())
                 .build();
     }
 
     private Message.Builder getPreconfiguredMessageBuilder(PushNotificationRequest request) {
-        AndroidConfig androidConfig = getAndroidConfig(request.getTopic(), request.getClickAction());
+//        AndroidConfig androidConfig = getAndroidConfig(request.getTopic(), request.getClickAction());
         ApnsConfig apnsConfig = getApnsConfig(request.getTopic());
-        Map<String, String> data = new HashMap<>();
-        data.put("openLink", request.getClickAction());
+        WebpushConfig webpushConfig = getWebConfig( request);
         return Message.builder()
-                .setApnsConfig(apnsConfig).setAndroidConfig(androidConfig)
-                .setWebpushConfig(WebpushConfig.builder().putAllData(data).build())
+                .setApnsConfig(apnsConfig)
+//                .setAndroidConfig(androidConfig)
+                .setWebpushConfig(webpushConfig)
                 .setNotification(
                         Notification.builder()
                                 .setTitle(request.getTitle())

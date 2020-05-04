@@ -9,11 +9,9 @@ import com.questnr.model.repositories.NotificationRepository;
 import com.questnr.model.repositories.UserNotificationControlRepository;
 import com.questnr.model.repositories.UserNotificationSettingsRepository;
 import com.questnr.services.CommonService;
-import com.questnr.services.notification.firebase.FCMService;
+import com.questnr.services.notification.firebase.PushNotificationService;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -35,20 +33,20 @@ public class NotificationWorker extends Thread {
 
     private UserNotificationSettingsRepository userNotificationSettingsRepository;
 
-    private FCMService fcmService;
+    private PushNotificationService pushNotificationService;
 
     private NotificationMapper notificationMapper;
 
     private final int id;
 
-    public NotificationWorker(int id, NotificationRepository notificationRepository, UserNotificationControlRepository userNotificationControlRepository, UserNotificationSettingsRepository userNotificationSettingsRepository, FCMService fcmService, NotificationMapper notificationMapper) {
+    public NotificationWorker(int id, NotificationRepository notificationRepository, UserNotificationControlRepository userNotificationControlRepository, UserNotificationSettingsRepository userNotificationSettingsRepository, PushNotificationService pushNotificationService, NotificationMapper notificationMapper) {
         super("NotificationWorker-" + id);
         setDaemon(true);
         this.id = id;
         this.notificationRepository = notificationRepository;
         this.userNotificationControlRepository = userNotificationControlRepository;
         this.userNotificationSettingsRepository = userNotificationSettingsRepository;
-        this.fcmService = fcmService;
+        this.pushNotificationService = pushNotificationService;
         this.notificationMapper = notificationMapper;
     }
 
@@ -91,7 +89,9 @@ public class NotificationWorker extends Thread {
                                     pushNotificationRequest.setImgURL(notificationDTO.getPostMedia().getPostMediaLink());
                                 }
                                 pushNotificationRequest.setClickAction(notificationDTO.getClickAction());
-                                this.fcmService.sendMessageToToken(pushNotificationRequest);
+                                Map<String, String> data = new HashMap<>();
+                                data.put("openLink", notificationDTO.getClickAction());
+                                this.pushNotificationService.sendPushNotificationToTokenWithData(data, pushNotificationRequest);
                             }
                         }
                     } catch (Exception ex) {
