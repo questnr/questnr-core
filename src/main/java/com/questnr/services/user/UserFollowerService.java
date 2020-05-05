@@ -103,10 +103,10 @@ public class UserFollowerService {
             }
             user.setThisFollowingUserSet(userFollowers);
 
+            userRepository.save(user);
+
             // Notification job created and assigned to Notification Processor.
             notificationJob.createNotificationJob(thisUserFollower, false);
-
-            User savedUser = userRepository.save(user);
 
         } else {
             throw new ResourceNotFoundException("You are not following the user");
