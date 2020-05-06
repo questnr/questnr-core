@@ -1,5 +1,7 @@
 package com.questnr.model.entities.notification;
 
+import java.util.List;
+
 public class PushNotificationRequest {
 
     private String title;
@@ -8,6 +10,7 @@ public class PushNotificationRequest {
     private String token;
     private String imgURL;
     private String clickAction;
+    private List<String> tokenList;
 
     public PushNotificationRequest() {
     }
@@ -64,5 +67,13 @@ public class PushNotificationRequest {
 
     public void setClickAction(String clickAction) {
         this.clickAction = clickAction;
+    }
+
+    public List<String> getTokenList() {
+        return tokenList;
+    }
+
+    public void setTokenList(List<String> tokenList) {
+        this.tokenList = tokenList;
     }
 }

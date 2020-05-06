@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -38,16 +37,19 @@ public class FCMService {
         LOGGER.info("Sent message to token. Device token: " + request.getToken() + ", " + response);
     }
 
-    public void sendMessageToTokenWithData(Map<String,String> data, PushNotificationRequest request)
+    public void sendMessageToTokenWithData(Map<String, String> data, PushNotificationRequest request)
             throws InterruptedException, ExecutionException {
         Message message = getPreconfiguredMessageToTokenWithData(data, request);
         String response = sendAndGetResponse(message);
         LOGGER.info("Sent message to token. Device token: " + request.getToken() + ", " + response);
     }
 
+
     private String sendAndGetResponse(Message message) throws InterruptedException, ExecutionException {
         return FirebaseMessaging.getInstance().sendAsync(message).get();
     }
+
+
 
     private AndroidConfig getAndroidConfig(String topic, String clickAction) {
         return AndroidConfig.builder()
@@ -80,7 +82,13 @@ public class FCMService {
         return getPreconfiguredMessageBuilder(request).putAllData(data).setToken(request.getToken())
                 .build();
     }
-    private WebpushConfig getWebConfig(PushNotificationRequest pushNotificationRequest){
+
+    private MulticastMessage getPreconfiguredMessageToTokensWithData(Map<String, String> data, PushNotificationRequest request) {
+        return getPreconfiguredMulticastMessageBuilder(request).putAllData(data).addAllTokens(request.getTokenList())
+                .build();
+    }
+
+    private WebpushConfig getWebConfig(PushNotificationRequest pushNotificationRequest) {
         return WebpushConfig.builder().putHeader("ttl", "300")
                 .setFcmOptions(WebpushFcmOptions.builder().setLink(pushNotificationRequest.getClickAction()).build())
                 .setNotification(WebpushNotification.builder()
@@ -94,7 +102,7 @@ public class FCMService {
     private Message.Builder getPreconfiguredMessageBuilder(PushNotificationRequest request) {
 //        AndroidConfig androidConfig = getAndroidConfig(request.getTopic(), request.getClickAction());
         ApnsConfig apnsConfig = getApnsConfig(request.getTopic());
-        WebpushConfig webpushConfig = getWebConfig( request);
+        WebpushConfig webpushConfig = getWebConfig(request);
         return Message.builder()
                 .setApnsConfig(apnsConfig)
 //                .setAndroidConfig(androidConfig)
@@ -107,5 +115,31 @@ public class FCMService {
                                 .build());
     }
 
+    public void multicastMessageToTokensWithData(Map<String, String> data, PushNotificationRequest request) throws FirebaseMessagingException {
+        MulticastMessage message = getPreconfiguredMessageToTokensWithData(data, request);
+        int successCount = multicastAndGetResponse(message);
+        LOGGER.info("Sent message to token. Device token: " + request.getTokenList().get(0) + ", " + successCount);
+    }
 
+
+    private int multicastAndGetResponse(MulticastMessage multicastMessage) throws FirebaseMessagingException {
+        return FirebaseMessaging.getInstance().sendMulticast(multicastMessage).getSuccessCount();
+    }
+
+    private MulticastMessage.Builder getPreconfiguredMulticastMessageBuilder(PushNotificationRequest request) {
+//        AndroidConfig androidConfig = getAndroidConfig(request.getTopic(), request.getClickAction());
+        ApnsConfig apnsConfig = getApnsConfig(request.getTopic());
+        WebpushConfig webpushConfig = getWebConfig(request);
+        return MulticastMessage.builder()
+                .setApnsConfig(apnsConfig)
+//                .setAndroidConfig(androidConfig)
+                .setWebpushConfig(webpushConfig)
+                .setNotification(
+                        Notification.builder()
+                                .setTitle(request.getTitle())
+                                .setBody(request.getMessage())
+                                .setImage(request.getImgURL())
+                                .build());
+
+    }
 }

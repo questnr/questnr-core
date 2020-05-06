@@ -14,6 +14,7 @@ import com.questnr.services.notification.firebase.PushNotificationService;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class NotificationWorker extends Thread {
 
@@ -80,19 +81,19 @@ public class NotificationWorker extends Thread {
                             PushNotificationRequest pushNotificationRequest = new PushNotificationRequest();
                             pushNotificationRequest.setTitle(notificationDTO.getUserActor().getUsername());
                             pushNotificationRequest.setMessage(notificationDTO.getMessage());
-                            List<UserNotificationTokenRegistry> userNotificationTokenRegistryList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
-                            for (UserNotificationTokenRegistry userNotificationTokenRegistry : userNotificationTokenRegistryList) {
-                                pushNotificationRequest.setToken(userNotificationTokenRegistry.getToken());
-                                if (notificationDTO.getCommunity() != null && !CommonService.isNull(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink())) {
-                                    pushNotificationRequest.setImgURL(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink());
-                                } else if (notificationDTO.getPostMedia() != null && !CommonService.isNull(notificationDTO.getPostMedia().getPostMediaLink())) {
-                                    pushNotificationRequest.setImgURL(notificationDTO.getPostMedia().getPostMediaLink());
-                                }
-                                pushNotificationRequest.setClickAction(notificationDTO.getClickAction());
-                                Map<String, String> data = new HashMap<>();
-                                data.put("openLink", notificationDTO.getClickAction());
-                                this.pushNotificationService.sendPushNotificationToTokenWithData(data, pushNotificationRequest);
+                            if (notificationDTO.getCommunity() != null && !CommonService.isNull(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink())) {
+                                pushNotificationRequest.setImgURL(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink());
+                            } else if (notificationDTO.getPostMedia() != null && !CommonService.isNull(notificationDTO.getPostMedia().getPostMediaLink())) {
+                                pushNotificationRequest.setImgURL(notificationDTO.getPostMedia().getPostMediaLink());
                             }
+                            pushNotificationRequest.setClickAction(notificationDTO.getClickAction());
+
+                            List<UserNotificationTokenRegistry> userNotificationTokenRegistryList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
+                            List<String> tokenList = userNotificationTokenRegistryList.stream().map(UserNotificationTokenRegistry::getToken).collect(Collectors.toList());
+                            pushNotificationRequest.setTokenList(tokenList);
+                            Map<String, String> data = new HashMap<>();
+                            data.put("openLink", notificationDTO.getClickAction());
+                            this.pushNotificationService.multicastPushNotificationToTokenWithData(data, pushNotificationRequest);
                         }
                     } catch (Exception ex) {
                         LOG.log(Level.SEVERE, "Exception while sending Notification via firebase ...{0}",

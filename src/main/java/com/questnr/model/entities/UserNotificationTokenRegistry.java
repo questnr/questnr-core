@@ -5,7 +5,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "qr_user_notification_token_registry")
-public class UserNotificationTokenRegistry {
+public class UserNotificationTokenRegistry extends DomainObject{
 
     @Id
     @Column(name = "id")
@@ -13,11 +13,11 @@ public class UserNotificationTokenRegistry {
     @SequenceGenerator(name = "user_notification_control_seq", sequenceName = "user_notification_control_seq", allocationSize = 1)
     private Long userNotificationControlId;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     private User userActor;
 
-    @Column(name = "token", columnDefinition = "TEXT")
+    @Column(name = "token", columnDefinition = "TEXT", unique = true)
     private String token;
 
     public Long getUserNotificationControlId() {

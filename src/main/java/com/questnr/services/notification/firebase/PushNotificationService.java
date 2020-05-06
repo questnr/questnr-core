@@ -1,12 +1,11 @@
 package com.questnr.services.notification.firebase;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.questnr.model.entities.notification.PushNotificationRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -33,6 +32,14 @@ public class PushNotificationService {
         try {
             fcmService.sendMessageToTokenWithData(payloadData, request);
         } catch (InterruptedException | ExecutionException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    public void multicastPushNotificationToTokenWithData(Map<String, String> payloadData, PushNotificationRequest request) {
+        try {
+            fcmService.multicastMessageToTokensWithData(payloadData, request);
+        } catch (FirebaseMessagingException e) {
             logger.error(e.getMessage());
         }
     }
