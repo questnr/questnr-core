@@ -7,7 +7,7 @@ public class PushNotificationTokenRegistryRequest {
     private String token;
 
     public String getToken() {
-        return token;
+        return token.trim();
     }
 
     public void setToken(String token) {

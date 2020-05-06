@@ -22,12 +22,13 @@ public class UserNotificationTokenRegistryService {
     @Autowired
     private UserCommonService userCommonService;
 
-    private final int MAX_NUM_OF_USER_TOKEN = 10;
+    private final int MAX_NUM_OF_TOKEN_USER_CAN_HAVE = 10;
 
     public void registerTokenUserForPushNotification(PushNotificationTokenRegistryRequest pushNotificationTokenRegistryRequest) {
         User user = userCommonService.getUser();
-        UserNotificationTokenRegistry userNotificationTokenRegistry = userNotificationControlRepository.findByToken(pushNotificationTokenRegistryRequest.getToken());
-        if (userNotificationTokenRegistry != null) {
+        if (userNotificationControlRepository.existsByToken(pushNotificationTokenRegistryRequest.getToken())) {
+            UserNotificationTokenRegistry userNotificationTokenRegistry = userNotificationControlRepository.findByToken(pushNotificationTokenRegistryRequest.getToken());
+
             // last time used
             userNotificationTokenRegistry.updateMetadata();
             if (!userNotificationTokenRegistry.getUserActor().equals(user)) {
@@ -35,7 +36,7 @@ public class UserNotificationTokenRegistryService {
             }
             userNotificationControlRepository.save(userNotificationTokenRegistry);
         } else {
-            if (userNotificationControlRepository.countByUserActor(user) > MAX_NUM_OF_USER_TOKEN) {
+            if (userNotificationControlRepository.countByUserActor(user) > MAX_NUM_OF_TOKEN_USER_CAN_HAVE) {
                 this.deleteOldTokens(user);
             }
             UserNotificationTokenRegistry newUserNotificationTokenRegistry = new UserNotificationTokenRegistry();
