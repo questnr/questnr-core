@@ -124,15 +124,15 @@ public class UserFollowerService {
         return RelationShipType.none;
     }
 
-    public Page<User> getFollowersOfUser(Pageable pageable) {
-        return customPageService.customPage(this.userCommonService.getUser().getThisBeingFollowedUserSet()
+    public Page<User> getFollowersOfUser(Long userId, Pageable pageable) {
+        return customPageService.customPage(this.userCommonService.getUser(userId).getThisBeingFollowedUserSet()
                 .stream()
                 .map(UserFollower::getFollowingUser)
                 .collect(Collectors.toList()), pageable);
     }
 
-    public Page<User> getUserFollowingToOtherUsers(Pageable pageable) {
-        return customPageService.customPage(this.userCommonService.getUser().getThisFollowingUserSet()
+    public Page<User> getUserFollowingToOtherUsers(Long userId, Pageable pageable) {
+        return customPageService.customPage(this.userCommonService.getUser(userId).getThisFollowingUserSet()
                 .stream()
                 .map(UserFollower::getUser)
                 .collect(Collectors.toList()), pageable);

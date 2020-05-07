@@ -40,18 +40,18 @@ public class UserFollowerController {
     }
 
     // Get followers of the user
-    @RequestMapping(value = "/follow/following/user", method = RequestMethod.GET)
-    Page<UserDTO> getFollowersOfUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    @RequestMapping(value = "/follow/following/user/{userId}", method = RequestMethod.GET)
+    Page<UserDTO> getFollowersOfUser(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userFollowerService.getFollowersOfUser(pageable);
+        Page<User> userPage = userFollowerService.getFollowersOfUser(userId, pageable);
         return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
     }
 
     // Get list of the users being followed by this user
-    @RequestMapping(value = "/follow/user/following", method = RequestMethod.GET)
-    Page<UserDTO> getUserFollowingToOtherUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    @RequestMapping(value = "/follow/user/following/{userId}", method = RequestMethod.GET)
+    Page<UserDTO> getUserFollowingToOtherUsers(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = userFollowerService.getUserFollowingToOtherUsers(pageable);
+        Page<User> userPage = userFollowerService.getUserFollowingToOtherUsers(userId, pageable);
         return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
     }
 
