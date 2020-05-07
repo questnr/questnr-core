@@ -19,9 +19,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,14 +51,8 @@ public class HashTagService {
 
     public Page<HashTag> getTrendingHashTagList(Pageable pageable) {
         Page<HashTagTrendLinearData> hashTagTrendLinearDataPage = hashTagTrendLinearDataRepository.findAll(pageable);
-        // List sorted with descending order of regression slope
-        Comparator<HashTagTrendLinearData> hashTagTrendLinearDataComparator
-                = Comparator.comparing(HashTagTrendLinearData::getSlop);
 
-        List<HashTagTrendLinearData> hashTagTrendLinearDataList = new ArrayList<>(hashTagTrendLinearDataPage.getContent());
-        hashTagTrendLinearDataList.sort(hashTagTrendLinearDataComparator.reversed());
-
-        return new PageImpl<>(hashTagTrendLinearDataList.stream().map(HashTagTrendLinearData::getHashTag).collect(Collectors.toList()), pageable, hashTagTrendLinearDataPage.getTotalElements());
+        return new PageImpl<>(hashTagTrendLinearDataPage.getContent().stream().map(HashTagTrendLinearData::getHashTag).collect(Collectors.toList()), pageable, hashTagTrendLinearDataPage.getTotalElements());
     }
 
     public Page<PostActionDTO> getPostActionListUsingHashTag(String hashTagValue, Pageable pageable) {

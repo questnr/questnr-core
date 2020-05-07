@@ -17,4 +17,6 @@ public interface CommunityUserRepository  extends JpaRepository<CommunityUser, L
     CommunityUser findByCommunityAndUser(Community community, User user);
 
     int countByUser(User user);
+
+    int countByCommunity(Community community);
 }

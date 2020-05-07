@@ -1,4 +1,4 @@
-package com.questnr.services;
+package com.questnr.services.user;
 
 import com.questnr.common.CommunitySuggestionData;
 import com.questnr.model.dto.PostActionDTO;
@@ -8,7 +8,7 @@ import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityTrendLinearDataRepository;
 import com.questnr.model.repositories.HashTagTrendLinearDataRepository;
 import com.questnr.model.repositories.PostActionTrendLinearDataRepository;
-import com.questnr.services.user.UserCommonService;
+import com.questnr.services.CommonService;
 import info.debatty.java.stringsimilarity.Cosine;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,24 +53,16 @@ public class UserHomeService {
 
     public Page<Community> getTrendingCommunityList(Pageable pageable) {
         Page<CommunityTrendLinearData> communityTrendLinearDataPage = communityTrendLinearDataRepository.findAll(pageable);
-        // List sorted with descending order of regression slope
-        Comparator<CommunityTrendLinearData> communityTrendLinearDataComparator
-                = Comparator.comparing(CommunityTrendLinearData::getSlop);
 
-        List<CommunityTrendLinearData> communityTrendLinearDataList = new ArrayList<>(communityTrendLinearDataPage.getContent());
-        communityTrendLinearDataList.sort(communityTrendLinearDataComparator.reversed());
-
-        return new PageImpl<>(communityTrendLinearDataList.stream().map(CommunityTrendLinearData::getCommunity).collect(Collectors.toList()), pageable, communityTrendLinearDataPage.getTotalElements());
+//        Comparator<CommunityTrendLinearData> communityTrendLinearDataComparator
+//                = Comparator.comparing(CommunityTrendLinearData::getSlop);
+//
+//        List<CommunityTrendLinearData> communityTrendLinearDataList = new ArrayList<>(communityTrendLinearDataPage.getContent());
+//        communityTrendLinearDataList.sort(communityTrendLinearDataComparator.reversed());
+//
+//        return new PageImpl<>(communityTrendLinearDataList.stream().map(CommunityTrendLinearData::getCommunity).collect(Collectors.toList()), pageable, communityTrendLinearDataPage.getTotalElements());
+        return new PageImpl<>(communityTrendLinearDataPage.getContent().stream().map(CommunityTrendLinearData::getCommunity).collect(Collectors.toList()), pageable, communityTrendLinearDataPage.getTotalElements());
     }
-
-//    private List<Community> determineCommunitySuggestedList(List<CommunitySuggestionData> communitySuggestionDataList){
-//
-//
-//
-//
-//        return new ArrayList<>();
-//    }
-
 
     public Page<Community> getSuggestedCommunityList(Pageable pageable) {
         User user = userCommonService.getUser();
@@ -136,14 +128,22 @@ public class UserHomeService {
 
     public Page<PostActionDTO> getTrendingPostList(Pageable pageable) {
         Page<PostActionTrendLinearData> postActionTrendLinearDataPage = postActionTrendLinearDataRepository.findAll(pageable);
-        // List sorted with descending order of regression slope
-        Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator
-                = Comparator.comparing(PostActionTrendLinearData::getSlop);
 
-        List<PostActionTrendLinearData> postActionTrendLinearDataList = new ArrayList<>(postActionTrendLinearDataPage.getContent());
-        postActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
+//        Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator
+//                = Comparator.comparing(PostActionTrendLinearData::getSlop);
+//
+//        List<PostActionTrendLinearData> postActionTrendLinearDataList = new ArrayList<>(postActionTrendLinearDataPage.getContent());
+//        postActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
 
-        return new PageImpl<>(postActionMapper.toDTOs(postActionTrendLinearDataList.stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList())), pageable, postActionTrendLinearDataPage.getTotalElements());
-
+        return new PageImpl<>(postActionMapper.toDTOs(postActionTrendLinearDataPage.getContent().stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList())), pageable, postActionTrendLinearDataPage.getTotalElements());
     }
+
+//    public CommunityTrendRank getCommunityTrendRank(Community community){
+//        Pageable pageable = PageRequest.of(0,100, Sort.by("slop").descending());
+//        CommunityTrendRank communityTrendRank = new CommunityTrendRank();
+//        communityTrendRank.setInTrend(communityTrendLinearDataRepository.existsByCommunity(community, pageable));
+//        if(communityTrendRank.isInTrend()){
+//            communityTrendRank.setTrendRank();
+//        }
+//    }
 }

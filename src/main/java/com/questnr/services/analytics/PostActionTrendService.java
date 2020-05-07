@@ -11,13 +11,11 @@ import com.questnr.services.analytics.regression.LinearRegressionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class PostActionTrendService implements Runnable {
@@ -46,6 +44,9 @@ public class PostActionTrendService implements Runnable {
 
     @Autowired
     LinearRegressionService linearRegressionService;
+
+    @Value("${questnr.max-trending-posts}")
+    private int MAX_TRENDING_POSTS;
 
     private Double calculatePostActionRank(PostActionRankDTO postActionRankDTO) {
         return PostActionRankDependents.LIKE_ACTION * postActionRankDTO.getTotalLikes() +
@@ -94,9 +95,23 @@ public class PostActionTrendService implements Runnable {
 
         for (PostActionTrendLinearData postActionTrendLinearData : postActionTrendLinearDataList) {
             postActionTrendLinearData.setSlop(linearRegressionService.getSlopFromDataOverTime(postActionTrendLinearData.getX(), postActionTrendLinearData.getY()));
-
-            postActionTrendLinearDataRepository.save(postActionTrendLinearData);
         }
+
+        // List sorted with descending order of regression slope
+        Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator
+                = Comparator.comparing(PostActionTrendLinearData::getSlop);
+
+        postActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
+
+        List<PostActionTrendLinearData> subListPostActionTrendLinearDataList = postActionTrendLinearDataList
+                .subList(0, postActionTrendLinearDataList.size() > MAX_TRENDING_POSTS ? MAX_TRENDING_POSTS : postActionTrendLinearDataList.size());
+
+        int trendRank = 1;
+        for (PostActionTrendLinearData postActionTrendLinearData : subListPostActionTrendLinearDataList) {
+            postActionTrendLinearData.setTrendRank(trendRank++);
+        }
+
+        postActionTrendLinearDataRepository.saveAll(subListPostActionTrendLinearDataList);
     }
 
     public void run() {

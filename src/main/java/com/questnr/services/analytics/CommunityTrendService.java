@@ -14,6 +14,7 @@ import com.questnr.services.analytics.regression.LinearRegressionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
@@ -22,14 +23,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
-public class CommunityTrendService implements Runnable{
+public class CommunityTrendService implements Runnable {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -61,6 +59,9 @@ public class CommunityTrendService implements Runnable{
 
     @Autowired
     LinearRegressionService linearRegressionService;
+
+    @Value("${questnr.max-trending-communities}")
+    private int MAX_TRENDING_COMMUNITIES;
 
     private Double calculateCommunityRank(CommunityRankDTO communityRankDTO) {
         return CommunityRankDependents.USER_FOLLOWERS * communityRankDTO.getTotalFollowers() +
@@ -115,9 +116,23 @@ public class CommunityTrendService implements Runnable{
 
         for (CommunityTrendLinearData communityTrendLinearData : communityTrendLinearDataList) {
             communityTrendLinearData.setSlop(linearRegressionService.getSlopFromDataOverTime(communityTrendLinearData.getX(), communityTrendLinearData.getY()));
-
-            communityTrendLinearDataRepository.save(communityTrendLinearData);
         }
+
+        // List sorted with descending order of regression slope
+        Comparator<CommunityTrendLinearData> communityTrendLinearDataComparator
+                = Comparator.comparing(CommunityTrendLinearData::getSlop);
+
+        communityTrendLinearDataList.sort(communityTrendLinearDataComparator.reversed());
+
+        List<CommunityTrendLinearData> subListCommunityTrendLinearDataList = communityTrendLinearDataList
+                .subList(0, communityTrendLinearDataList.size() > MAX_TRENDING_COMMUNITIES ? MAX_TRENDING_COMMUNITIES : communityTrendLinearDataList.size());
+
+        int trendRank = 1;
+        for (CommunityTrendLinearData communityTrendLinearData : subListCommunityTrendLinearDataList) {
+            communityTrendLinearData.setTrendRank(trendRank++);
+        }
+
+        communityTrendLinearDataRepository.saveAll(subListCommunityTrendLinearDataList);
     }
 
     public void run() {

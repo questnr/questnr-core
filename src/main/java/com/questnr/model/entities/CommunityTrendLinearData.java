@@ -1,6 +1,5 @@
 package com.questnr.model.entities;
 
-import com.questnr.model.entities.Community;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -30,6 +29,9 @@ public class CommunityTrendLinearData {
 
     @Column(name = "slop")
     private double slop;
+
+    @Column(name = "trend_rank")
+    private Integer trendRank;
 
     public Long getCommunityTrendLinerDataId() {
         return communityTrendLinerDataId;
@@ -71,11 +73,19 @@ public class CommunityTrendLinearData {
         this.slop = slop;
     }
 
-    public void addX(Double xEle){
+    public Integer getTrendRank() {
+        return trendRank;
+    }
+
+    public void setTrendRank(Integer trendRank) {
+        this.trendRank = trendRank;
+    }
+
+    public void addX(Double xEle) {
         this.x.add(xEle);
     }
 
-    public void addY(Double yEle){
+    public void addY(Double yEle) {
         this.y.add(yEle);
     }
 }

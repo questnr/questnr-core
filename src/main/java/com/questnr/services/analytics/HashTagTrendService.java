@@ -11,13 +11,11 @@ import com.questnr.services.analytics.regression.LinearRegressionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class HashTagTrendService implements Runnable {
@@ -46,6 +44,9 @@ public class HashTagTrendService implements Runnable {
 
     @Autowired
     LinearRegressionService linearRegressionService;
+
+    @Value("${questnr.max-trending-hash-tags}")
+    private int MAX_TRENDING_HASH_TAGS;
 
     private Double calculateHashTagRank(HashTagRankDTO hashTagRankDTO) {
         return HashTagRankDependents.TIME_BEING_USED * hashTagRankDTO.getTotalTimeBeingUsed();
@@ -93,8 +94,24 @@ public class HashTagTrendService implements Runnable {
         for (HashTagTrendLinearData hashTagTrendLinearData : hashTagTrendLinearDataArrayList) {
             hashTagTrendLinearData.setSlop(linearRegressionService.getSlopFromDataOverTime(hashTagTrendLinearData.getX(), hashTagTrendLinearData.getY()));
 
-            hashTagTrendLinearDataRepository.save(hashTagTrendLinearData);
         }
+
+        // List sorted with descending order of regression slope
+        Comparator<HashTagTrendLinearData> hashTagTrendLinearDataComparator
+                = Comparator.comparing(HashTagTrendLinearData::getSlop);
+
+        hashTagTrendLinearDataArrayList.sort(hashTagTrendLinearDataComparator.reversed());
+
+
+        List<HashTagTrendLinearData> subListHashTagTrendLinearDataArrayList = hashTagTrendLinearDataArrayList
+                .subList(0, hashTagTrendLinearDataArrayList.size() > MAX_TRENDING_HASH_TAGS ? MAX_TRENDING_HASH_TAGS : hashTagTrendLinearDataArrayList.size());
+
+        int trendRank = 1;
+        for (HashTagTrendLinearData hashTagTrendLinearData : subListHashTagTrendLinearDataArrayList) {
+            hashTagTrendLinearData.setTrendRank(trendRank++);
+        }
+
+        hashTagTrendLinearDataRepository.saveAll(subListHashTagTrendLinearDataArrayList);
     }
 
     public void run() {

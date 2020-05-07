@@ -30,6 +30,9 @@ public class PostActionTrendLinearData {
     @Column(name = "slop")
     private double slop;
 
+    @Column(name = "trend_rank")
+    private Integer trendRank;
+
     public Long getPostActionTrendLinearDataId() {
         return postActionTrendLinearDataId;
     }
@@ -68,6 +71,14 @@ public class PostActionTrendLinearData {
 
     public void setSlop(double slop) {
         this.slop = slop;
+    }
+
+    public Integer getTrendRank() {
+        return trendRank;
+    }
+
+    public void setTrendRank(Integer trendRank) {
+        this.trendRank = trendRank;
     }
 
     public void addX(Double xEle) {

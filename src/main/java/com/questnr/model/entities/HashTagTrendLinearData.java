@@ -30,6 +30,9 @@ public class HashTagTrendLinearData {
     @Column(name = "slop")
     private double slop;
 
+    @Column(name = "trend_rank")
+    private Integer trendRank;
+
     public Long getHashTagTrendLinearDataId() {
         return hashTagTrendLinearDataId;
     }
@@ -68,6 +71,14 @@ public class HashTagTrendLinearData {
 
     public void setSlop(double slop) {
         this.slop = slop;
+    }
+
+    public Integer getTrendRank() {
+        return trendRank;
+    }
+
+    public void setTrendRank(Integer trendRank) {
+        this.trendRank = trendRank;
     }
 
     public void addX(Double xEle) {

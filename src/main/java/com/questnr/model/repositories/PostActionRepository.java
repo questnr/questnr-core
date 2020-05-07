@@ -80,4 +80,6 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
     int countByUserActorAndCommunity(User user, Community community);
 
     int countByUserActor(User user);
+
+    int countByCommunity(Community community);
 }
