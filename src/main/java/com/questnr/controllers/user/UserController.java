@@ -50,11 +50,6 @@ public class UserController {
         return userMapper.toOthersDTO(userCommonService.getUser());
     }
 
-    @RequestMapping(value = "/user/profile/{userSlug}", method = RequestMethod.GET)
-    UserDTO getUserByUsername(@PathVariable String userSlug) {
-        return userMapper.toOthersDTO(userService.getUserByUserSlug(userSlug));
-    }
-
     @RequestMapping(value = "/user/search/users", method = RequestMethod.GET)
     Page<UserDTO> searchUserString(@RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size);

@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
-import java.util.List;
 
 @Service
 public class UserCommonService {
@@ -74,5 +73,13 @@ public class UserCommonService {
         } else {
             throw new ResourceNotFoundException("User does not exists!");
         }
+    }
+
+    public User getUserByUserSlug(String userSlug) {
+        User user = userRepository.findBySlug(userSlug);
+        if (user != null) {
+            return user;
+        }
+        throw new ResourceNotFoundException("User not found!");
     }
 }
