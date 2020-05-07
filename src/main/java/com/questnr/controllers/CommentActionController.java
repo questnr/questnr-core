@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/v1/user")
+@RequestMapping(value = "/api/v1")
 public class CommentActionController {
 
     final String errorMessage = "You don't have access to particular operation";
@@ -32,14 +32,21 @@ public class CommentActionController {
         commentActionMapper = Mappers.getMapper(CommentActionMapper.class);
     }
 
-    @RequestMapping(value = "/posts/{postId}/comment", method = RequestMethod.GET)
+    @RequestMapping(value = "/post/{postSlug}/comment", method = RequestMethod.GET)
+    Page<CommentActionDTO> getPublicCommentsByPostId(@PathVariable String postSlug, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<CommentAction> commentActionPage = commentActionService.getPublicCommentsByPostId(postSlug, pageable);
+        return new PageImpl<>(commentActionMapper.toDTOs(commentActionPage.getContent()), pageable, commentActionPage.getTotalElements());
+    }
+
+    @RequestMapping(value = "/user/posts/{postId}/comment", method = RequestMethod.GET)
     Page<CommentActionDTO> getAllCommentsByPostId(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<CommentAction> commentActionPage = commentActionService.getAllCommentActionByPostId(postId, pageable);
         return new PageImpl<>(commentActionMapper.toDTOs(commentActionPage.getContent()), pageable, commentActionPage.getTotalElements());
     }
 
-    @RequestMapping(value = "/posts/{postId}/comment", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/posts/{postId}/comment", method = RequestMethod.POST)
     CommentAction createComment(@PathVariable Long postId, @RequestBody CommentActionRequest commentActionRequest) {
         /*
          * Post Comment Security Checking
@@ -51,7 +58,7 @@ public class CommentActionController {
         throw new AccessException(errorMessage);
     }
 
-    @RequestMapping(value = "/posts/{postId}/comment/{commentId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/posts/{postId}/comment/{commentId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
         /*

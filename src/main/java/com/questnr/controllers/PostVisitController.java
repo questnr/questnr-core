@@ -16,6 +16,8 @@ public class PostVisitController {
     @Autowired
     PostVisitService postVisitService;
 
+    // @Todo: add public view tracking number
+
     @RequestMapping(value = "/posts/{postId}/post_visit", method = RequestMethod.GET)
     Page<PostVisit> getAllPostVisitByPostId(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());

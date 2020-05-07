@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/v1/user")
+@RequestMapping(value = "/api/v1")
 public class LikeActionController {
 
     @Autowired
@@ -31,25 +31,32 @@ public class LikeActionController {
         userMapper = Mappers.getMapper(UserMapper.class);
     }
 
-    @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.GET)
+    @RequestMapping(value = "/post/{postSlug}/like", method = RequestMethod.GET)
+    Page<LikeActionDTO> getPublicLikesByPostId(@PathVariable String postSlug, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<LikeAction> likeActionPage = likeActionService.getPublicLikesByPostId(postSlug, pageable);
+        return new PageImpl<>(likeActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
+    }
+
+    @RequestMapping(value = "/user/posts/{postId}/like", method = RequestMethod.GET)
     Page<LikeActionDTO> getAllLikesByPostId(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<LikeAction> likeActionPage = likeActionService.getAllLikeActionByPostId(postId, pageable);
         return new PageImpl<>(likeActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
     }
 
-    @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/posts/{postId}/like", method = RequestMethod.POST)
     LikeAction createLike(@PathVariable Long postId) {
         return likeActionService.createLikeAction(postId);
     }
 
-    @RequestMapping(value = "/posts/{postId}/like", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/posts/{postId}/like", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteLike(@PathVariable Long postId) {
         likeActionService.deleteLikeAction(postId);
     }
 
-    @RequestMapping(value = "/posts/{postId}/like/search/user", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/posts/{postId}/like/search/user", method = RequestMethod.GET)
     Page<UserDTO> searchUserOnLikeListOfPost(@PathVariable Long postId, @RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = likeActionService.searchUserOnLikeListOfPost(postId, userString, pageable);

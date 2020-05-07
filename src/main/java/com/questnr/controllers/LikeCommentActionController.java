@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api/v1/user/posts")
+@RequestMapping(value = "/api/v1")
 public class LikeCommentActionController {
 
     @Autowired
@@ -24,19 +24,26 @@ public class LikeCommentActionController {
         likeCommentActionMapper = Mappers.getMapper(LikeCommentActionMapper.class);
     }
 
-    @RequestMapping(value = "/comment/{commentId}/like", method = RequestMethod.GET)
+    @RequestMapping(value = "/post/comment/{commentId}/like", method = RequestMethod.GET)
+    Page<LikeCommentActionDTO> getPublicLikesOnCommentByCommentId(@PathVariable Long commentId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<LikeCommentAction> likeActionPage = likeCommentActionService.getAllLikeActionByCommentId(commentId, pageable);
+        return new PageImpl<>(likeCommentActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
+    }
+
+    @RequestMapping(value = "/user/posts/comment/{commentId}/like", method = RequestMethod.GET)
     Page<LikeCommentActionDTO> getAllLikesOnCommentByCommentId(@PathVariable Long commentId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         Page<LikeCommentAction> likeActionPage = likeCommentActionService.getAllLikeActionByCommentId(commentId, pageable);
         return new PageImpl<>(likeCommentActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
     }
 
-    @RequestMapping(value = "/comment/{commentId}/like", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/posts/comment/{commentId}/like", method = RequestMethod.POST)
     LikeCommentAction createLikeOnComment(@PathVariable Long commentId) {
         return likeCommentActionService.createLikeAction(commentId);
     }
 
-    @RequestMapping(value = "/comment/{commentId}/like", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/posts/comment/{commentId}/like", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteLikeOnComment(@PathVariable Long commentId) {
         likeCommentActionService.deleteLikeAction(commentId);

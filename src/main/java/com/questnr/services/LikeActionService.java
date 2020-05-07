@@ -37,6 +37,13 @@ public class LikeActionService {
     @Autowired
     NotificationJob notificationJob;
 
+    public Page<LikeAction> getPublicLikesByPostId(String postSlug, Pageable pageable){
+        PostAction postAction = postActionRepository.findFirstBySlug(postSlug);
+        if (postAction != null)
+            return likeActionRepository.findByPostAction(postAction, pageable);
+        throw new ResourceNotFoundException("Post not found!");
+    }
+
     public Page<LikeAction> getAllLikeActionByPostId(Long postId,
                                                      Pageable pageable) {
         PostAction postAction = postActionRepository.findByPostActionId(postId);

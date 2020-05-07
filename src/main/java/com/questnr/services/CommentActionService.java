@@ -42,6 +42,13 @@ public class CommentActionService {
     @Autowired
     NotificationJob notificationJob;
 
+    public Page<CommentAction> getPublicCommentsByPostId(String postSlug, Pageable pageable) {
+        PostAction postAction = postActionRepository.findFirstBySlug(postSlug);
+        if (postAction != null)
+            return commentActionRepository.findAllByPostActionAndChildComment(postAction, false, pageable);
+        throw new ResourceNotFoundException("Post not found!");
+    }
+
     public Page<CommentAction> getAllCommentActionByPostId(Long postId,
                                                            Pageable pageable) {
         PostAction postAction = postActionRepository.findByPostActionId(postId);
