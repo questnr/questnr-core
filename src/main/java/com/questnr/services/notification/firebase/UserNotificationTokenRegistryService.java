@@ -25,25 +25,29 @@ public class UserNotificationTokenRegistryService {
     private final int MAX_NUM_OF_TOKEN_USER_CAN_HAVE = 10;
 
     public void registerTokenUserForPushNotification(PushNotificationTokenRegistryRequest pushNotificationTokenRegistryRequest) {
-        User user = userCommonService.getUser();
-        if (userNotificationControlRepository.existsByToken(pushNotificationTokenRegistryRequest.getToken())) {
-            UserNotificationTokenRegistry userNotificationTokenRegistry = userNotificationControlRepository.findByToken(pushNotificationTokenRegistryRequest.getToken());
+        try {
+            User user = userCommonService.getUser();
+            if (userNotificationControlRepository.existsByToken(pushNotificationTokenRegistryRequest.getToken())) {
+                UserNotificationTokenRegistry userNotificationTokenRegistry = userNotificationControlRepository.findByToken(pushNotificationTokenRegistryRequest.getToken());
 
-            // last time used
-            userNotificationTokenRegistry.updateMetadata();
-            if (!userNotificationTokenRegistry.getUserActor().equals(user)) {
-                userNotificationTokenRegistry.setUserActor(user);
+                // last time used
+                userNotificationTokenRegistry.updateMetadata();
+                if (!userNotificationTokenRegistry.getUserActor().equals(user)) {
+                    userNotificationTokenRegistry.setUserActor(user);
+                }
+                userNotificationControlRepository.save(userNotificationTokenRegistry);
+            } else {
+                if (userNotificationControlRepository.countByUserActor(user) > MAX_NUM_OF_TOKEN_USER_CAN_HAVE) {
+                    this.deleteOldTokens(user);
+                }
+                UserNotificationTokenRegistry newUserNotificationTokenRegistry = new UserNotificationTokenRegistry();
+                newUserNotificationTokenRegistry.addMetadata();
+                newUserNotificationTokenRegistry.setToken(pushNotificationTokenRegistryRequest.getToken());
+                newUserNotificationTokenRegistry.setUserActor(user);
+                userNotificationControlRepository.saveAndFlush(newUserNotificationTokenRegistry);
             }
-            userNotificationControlRepository.save(userNotificationTokenRegistry);
-        } else {
-            if (userNotificationControlRepository.countByUserActor(user) > MAX_NUM_OF_TOKEN_USER_CAN_HAVE) {
-                this.deleteOldTokens(user);
-            }
-            UserNotificationTokenRegistry newUserNotificationTokenRegistry = new UserNotificationTokenRegistry();
-            newUserNotificationTokenRegistry.addMetadata();
-            newUserNotificationTokenRegistry.setToken(pushNotificationTokenRegistryRequest.getToken());
-            newUserNotificationTokenRegistry.setUserActor(user);
-            userNotificationControlRepository.saveAndFlush(newUserNotificationTokenRegistry);
+        } catch (Exception ex) {
+
         }
     }
 
