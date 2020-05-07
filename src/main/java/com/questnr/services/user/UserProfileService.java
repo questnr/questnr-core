@@ -32,8 +32,8 @@ public class UserProfileService {
     @Autowired
     UserFollowerRepository userFollowerRepository;
 
-    public UserMetaProfileResponse getUserProfileDetails() {
-        User user = userCommonService.getUser();
+    public UserMetaProfileResponse getUserProfileDetails(Long userId) {
+        User user = userCommonService.getUser(userId);
         UserMetaProfileResponse userMetaProfileResponse = new UserMetaProfileResponse();
         userMetaProfileResponse.setFollowingTo(userFollowerRepository.countByFollowingUser(user));
         userMetaProfileResponse.setFollowers(userFollowerRepository.countByUser(user));
