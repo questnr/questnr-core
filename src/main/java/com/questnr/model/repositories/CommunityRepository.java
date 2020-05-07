@@ -27,4 +27,5 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     Page<Community> findByOwnerUser(User user, Pageable pageable);
 
+    int countByOwnerUser(User user);
 }

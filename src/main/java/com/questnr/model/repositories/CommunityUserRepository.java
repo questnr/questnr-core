@@ -15,4 +15,6 @@ public interface CommunityUserRepository  extends JpaRepository<CommunityUser, L
     List<CommunityUser> findAllByCommunityAndCreatedAtBetween(Community community, Date startingDate, Date endingDate);
 
     CommunityUser findByCommunityAndUser(Community community, User user);
+
+    int countByUser(User user);
 }

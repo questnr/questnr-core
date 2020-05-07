@@ -14,4 +14,8 @@ public interface UserFollowerRepository extends JpaRepository<UserFollower, Long
     List<UserFollower> findAllByFollowingUser(User followingUser);
 
     UserFollower findByUserAndFollowingUser(User user, User followingUser);
+
+    int countByUser(User user);
+
+    int countByFollowingUser(User user);
 }
