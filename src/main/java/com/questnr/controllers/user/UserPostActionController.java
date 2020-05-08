@@ -1,10 +1,13 @@
 package com.questnr.controllers.user;
 
+import com.questnr.access.UserPostActionAccessService;
 import com.questnr.model.dto.PostActionCardDTO;
 import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
+import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
+import com.questnr.services.PostActionService;
 import com.questnr.services.user.UserPostActionService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +24,15 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping(value = "/api/v1/user")
 public class UserPostActionController {
+
+    @Autowired
+    UserPostActionAccessService userPostActionAccessService;
+
     @Autowired
     UserPostActionService userPostActionService;
+
+    @Autowired
+    PostActionService postActionService;
 
     @Autowired
     final PostActionMapper postActionMapper;
@@ -50,13 +60,14 @@ public class UserPostActionController {
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     void updatePost(@PathVariable Long postId, @Valid @RequestBody PostActionUpdateRequestDTO postActionRequest) {
-        userPostActionService.updatePostAction(postId, postActionRequest);
+        PostAction postAction = userPostActionAccessService.hasAccessToPostModification(postId);
+        postActionService.updatePostAction(postAction, postActionRequest);
     }
 
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deletePost(@PathVariable Long postId) {
-        // @Todo: define access service in this and check the same service for community post
-        userPostActionService.deletePostAction(postId);
+        PostAction postAction = userPostActionAccessService.hasAccessToPostDeletion(postId);
+        postActionService.deletePostAction(postAction);
     }
 }

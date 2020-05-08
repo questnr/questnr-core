@@ -75,11 +75,8 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (communityPostActionAccessService.hasAccessToPostModification(communityId)) {
-            communityPostActionService.updatePostAction(communityId, postId, postActionRequest);
-        } else {
-            throw new AccessException();
-        }
+        PostAction postAction = communityPostActionAccessService.hasAccessToPostModification(communityId, postId);
+        postActionService.updatePostAction(postAction, postActionRequest);
     }
 
     @RequestMapping(value = "/community/{communityId}/posts/{postId}", method = RequestMethod.DELETE)
@@ -88,11 +85,8 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (communityPostActionAccessService.hasAccessToPostDeletion(communityId))
-            communityPostActionService.deletePostAction(communityId, postId);
-        else {
-            throw new AccessException();
-        }
+        PostAction postAction = communityPostActionAccessService.hasAccessToPostDeletion(communityId, postId);
+        postActionService.deletePostAction(postAction);
     }
 
 }

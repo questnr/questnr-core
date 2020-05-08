@@ -88,30 +88,4 @@ public class CommunityPostActionService {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
-
-    public void updatePostAction(Long communityId, Long postId, PostActionUpdateRequestDTO postActionRequest) {
-        PostAction post = postActionRepository.findByPostActionIdAndCommunity(postId, communityCommonService.getCommunity(communityId));
-        if (post != null) {
-            post.setText(postActionRequest.getText());
-            post.setHashTags(postActionService.parsePostText(postActionRequest.getText()));
-            post.setStatus(postActionRequest.getStatus());
-            post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-            postActionRepository.save(post);
-        } else {
-            throw new ResourceNotFoundException("Post not found!");
-        }
-    }
-
-    public void deletePostAction(Long communityId, Long postId) {
-        PostAction post = postActionRepository.findByPostActionIdAndCommunity(postId, communityCommonService.getCommunity(communityId));
-        if (post != null) {
-//            post.getPostMediaList().stream().map(postMedia ->
-//                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(communityCommonService.joinPathToFile(postMedia.getMediaKey(), communityId))
-//            );
-            post.setDeleted(true);
-            postActionRepository.save(post);
-        } else {
-            throw new ResourceNotFoundException("Post not found!");
-        }
-    }
 }

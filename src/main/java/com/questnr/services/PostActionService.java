@@ -4,6 +4,7 @@ import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionDTO;
+import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.PostActionRepository;
@@ -182,5 +183,26 @@ public class PostActionService {
 
     public PostAction getPostActionMediaList(Long postActionId) {
         return postActionRepository.findByPostActionId(postActionId);
+    }
+
+    public void updatePostAction(PostAction post, PostActionUpdateRequestDTO postActionRequest) {
+        try {
+            post.setText(postActionRequest.getText());
+            post.setHashTags(this.parsePostText(postActionRequest.getText()));
+            post.setStatus(postActionRequest.getStatus());
+            post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            postActionRepository.save(post);
+        } catch (Exception e) {
+            throw new InvalidRequestException("Error occurred. Please, try again!");
+        }
+    }
+
+    public void deletePostAction(PostAction postAction) {
+        try {
+            postAction.setDeleted(true);
+            postActionRepository.save(postAction);
+        } catch (Exception e) {
+            throw new InvalidRequestException("Error occurred. Please, try again!");
+        }
     }
 }

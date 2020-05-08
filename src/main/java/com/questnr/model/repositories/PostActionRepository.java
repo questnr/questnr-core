@@ -23,7 +23,7 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
 
     PostAction findByPostActionId(Long postId);
 
-    Optional<PostAction> findByPostActionIdAndUserActor(Long postActionId, User userActor);
+    PostAction findByPostActionIdAndUserActor(Long postActionId, User userActor);
 
     Page<PostAction> findAllByUserActorOrderByCreatedAtDesc(User user, Pageable pageable);
 

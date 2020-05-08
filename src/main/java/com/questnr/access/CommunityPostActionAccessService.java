@@ -1,5 +1,7 @@
 package com.questnr.access;
 
+import com.questnr.exceptions.AccessException;
+import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
@@ -33,25 +35,38 @@ public class CommunityPostActionAccessService {
     @Autowired
     CommunityAccessService communityAccessService;
 
+    @Autowired
+    PostActionAccessService postActionAccessService;
+
     public boolean isUserOwnerOfPost(User user, PostAction postAction) {
         return user.equals(postAction.getUserActor());
     }
 
-    public boolean hasAccessToPostBaseService(Long communityId){
+    public boolean hasAccessToPostBaseService(Long communityId) {
         User user = userCommonService.getUser();
         Community community = communityCommonService.getCommunity(communityId);
-       return communityAccessService.isUserMemberOfCommunity(user, community);
+        return communityAccessService.isUserMemberOfCommunity(user, community);
     }
 
-    public boolean hasAccessToPostCreation(Long communityId){
+    public boolean hasAccessToPostCreation(Long communityId) {
         return this.hasAccessToPostBaseService(communityId);
     }
 
-    public boolean hasAccessToPostModification(Long communityId){
-        return this.hasAccessToPostBaseService(communityId);
+    public PostAction hasAccessToPostModification(Long communityId, Long postId) {
+        // This rights only given to user actor of the post when user is the member of the community
+        PostAction postAction = postActionRepository.findByPostActionIdAndCommunity(postId, communityCommonService.getCommunity(communityId));
+        if (postAction != null) {
+            if (this.hasAccessToPostBaseService(communityId) && postActionAccessService.isUserOwnerOfPost(userCommonService.getUser(), postAction)) {
+                return postAction;
+            } else {
+                throw new AccessException();
+            }
+        } else {
+            throw new ResourceNotFoundException("Post not found!");
+        }
     }
 
-    public boolean hasAccessToPostDeletion(Long communityId){
-        return this.hasAccessToPostBaseService(communityId);
+    public PostAction hasAccessToPostDeletion(Long communityId, Long postId) {
+        return this.hasAccessToPostModification(communityId, postId);
     }
 }

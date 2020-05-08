@@ -99,26 +99,4 @@ public class UserPostActionService {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
-
-    public void updatePostAction(Long postId, PostActionUpdateRequestDTO postActionRequest) {
-        User user = userCommonService.getUser();
-        postActionRepository.findByPostActionIdAndUserActor(postId, user).map(post -> {
-            post.setText(postActionRequest.getText());
-            post.setHashTags(postActionService.parsePostText(postActionRequest.getText()));
-            post.setStatus(postActionRequest.getStatus());
-            post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-            return postActionRepository.save(post);
-        }).orElseThrow(() -> new ResourceNotFoundException("Post not found!"));
-    }
-
-    public void deletePostAction(Long postId) {
-        postActionRepository.findById(postId).map(post -> {
-//            post.getPostMediaList().stream().map(postMedia ->
-//                    this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(userCommonService.joinPathToFile(postMedia.getMediaKey()))
-//            );
-            post.setDeleted(true);
-            postActionRepository.save(post);
-            return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new ResourceNotFoundException("Post not found!"));
-    }
 }
