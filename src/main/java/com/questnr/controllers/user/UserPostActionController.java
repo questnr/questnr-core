@@ -56,6 +56,7 @@ public class UserPostActionController {
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deletePost(@PathVariable Long postId) {
+        // @Todo: define access service in this and check the same service for community post
         userPostActionService.deletePostAction(postId);
     }
 }

@@ -12,7 +12,6 @@ import com.questnr.util.SecureRandomService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -41,11 +40,6 @@ public class PostActionService {
 
     @Autowired
     SecureRandomService secureRandomService;
-
-    @Value("${questnr.domain}")
-    String QUEST_NR_DOMAIN;
-
-    final private String POST_ACTION_PATH = "posts";
 
     private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
         List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));

@@ -81,20 +81,29 @@ public class PostAction extends DomainObject {
             inverseJoinColumns = {@JoinColumn(name = "hash_tag_id")})
     private Set<HashTag> hashTags = new HashSet<>();
 
+    @JsonIgnoreProperties("postAction")
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             mappedBy = "postAction", orphanRemoval = true)
     private Set<LikeAction> likeActionSet = new HashSet<>();
 
+    @JsonIgnoreProperties("postAction")
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             mappedBy = "postAction", orphanRemoval = true)
     private Set<PostVisit> postVisitSet = new HashSet<>();
 
+    @JsonIgnoreProperties("postAction")
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
             mappedBy = "postAction", orphanRemoval = true)
     private Set<CommentAction> commentActionSet = new HashSet<>();
+
+    @JsonIgnoreProperties("postAction")
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "postAction", orphanRemoval = true)
+    private Set<SharedPostAction> sharedPostActionSet = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "post_action_id", nullable = false)
@@ -231,6 +240,14 @@ public class PostAction extends DomainObject {
 
     public void setHashTags(Set<HashTag> hashTags) {
         this.hashTags = hashTags;
+    }
+
+    public Set<SharedPostAction> getSharedPostActionSet() {
+        return sharedPostActionSet;
+    }
+
+    public void setSharedPostActionSet(Set<SharedPostAction> sharedPostActionSet) {
+        this.sharedPostActionSet = sharedPostActionSet;
     }
 
     public List<PostMedia> getPostMediaList() {
