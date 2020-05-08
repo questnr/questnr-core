@@ -5,6 +5,7 @@ import com.questnr.services.EmailService;
 import com.questnr.services.user.UserCommonService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -29,6 +30,9 @@ public class ExceptionHandlerControllerAdvice {
 
     @Autowired
     EmailService emailService;
+
+    @Value("${questnr.allow-exception-mail}")
+    private boolean allowExceptionMail;
 
     @ExceptionHandler(AlreadyExistsException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
@@ -132,7 +136,9 @@ public class ExceptionHandlerControllerAdvice {
         message = message + "\n" + ExceptionUtils.getStackTrace(exception);
 
 
-        emailService.sendErrorLogsToDevelopers(message);
+        if(allowExceptionMail) {
+            emailService.sendErrorLogsToDevelopers(message);
+        }
         List<String> details = new ArrayList<>();
         details.add(exception.getLocalizedMessage());
         exception.printStackTrace();

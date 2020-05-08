@@ -12,9 +12,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import th.co.geniustree.springdata.jpa.repository.JpaSpecificationExecutorWithProjection;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 public interface PostActionRepository extends JpaRepository<PostAction, Long>, JpaSpecificationExecutorWithProjection<PostAction> {
@@ -59,15 +59,27 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
 //          " where u.id=:userId", nativeQuery = true)
 
 
-    @Query("select DISTINCT pa from User user " +
-            " left outer join UserFollower uf on uf.followingUser=user " +
-            " left outer join CommunityUser cu on cu.user=user " +
-            " left outer join Community ca on ca=cu.community " +
-            " left outer join PostAction pa on " +
-            " ((pa.userActor=uf.user and (pa.community is null or pa.community=ca)) " +
-            " or pa.userActor=user or pa.community=ca) " +
-            " where user=:user order by pa.createdAt desc ")
-    Page<PostAction> findByFollowingToUserActorAndJoinedWithCommunity(@Param("user") User user, Pageable pageable);
+    //    @Query("select DISTINCT pa from User user " +
+//            " left outer join UserFollower uf on uf.followingUser=user " +
+//            " left outer join CommunityUser cu on cu.user=user " +
+//            " left outer join Community ca on ca=cu.community " +
+//            " left outer join PostAction pa on " +
+//            " ((pa.userActor=uf.user and (pa.community is null or pa.community=ca)) " +
+//            " or pa.userActor=user or pa.community=ca) " +
+//            " where user=:user order by pa.createdAt desc ")
+
+
+    @Query(value = "select pa.post_action_id from qr_users qrUser " +
+            " left outer join qr_user_followers uf on uf.following_user_id=qrUser.id " +
+            " left outer join qr_community_users cu on cu.user_id=qrUser.id " +
+            " left outer join qr_community co on co.community_id=cu.community_id "+
+            " left outer join qr_post_actions pa on " +
+            " ((pa.user_id=uf.user_id and (pa.community_id is null or pa.community_id=co.community_id))" +
+            " or (pa.community_id=co.community_id)" + // if someone posts on the communities followed by the user
+            " or pa.user_id=qrUser.id) " +
+            " where qrUser.id=:userId group by pa.post_action_id order by MIN(pa.created_at) desc "
+            ,nativeQuery = true)
+    Page<BigInteger> findByFollowingToUserActorAndJoinedWithCommunity(@Param("userId") Long userId, Pageable pageable);
 
     PostAction findFirstBySlug(String slug);
 

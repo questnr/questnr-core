@@ -33,6 +33,7 @@ public class SharePostActionService {
             SharedPostAction sharedPostAction = new SharedPostAction();
             sharedPostAction.setPostAction(postAction);
             sharedPostAction.setUserActor(user);
+            sharedPostAction.addMetadata();
             sharePostActionRepository.save(sharedPostAction);
         } else {
             throw new InvalidRequestException("Post not found!");
@@ -42,6 +43,7 @@ public class SharePostActionService {
     public void deleteSharedPost(SharedPostAction sharedPostAction) {
         try {
             sharedPostAction.setDeleted(true);
+            sharedPostAction.updateMetadata();
             sharePostActionRepository.save(sharedPostAction);
         } catch (Exception e) {
             throw new InvalidRequestException("Please, try again!");

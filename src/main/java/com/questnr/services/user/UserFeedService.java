@@ -15,6 +15,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+import java.util.stream.Collectors;
+
 @Service
 public class UserFeedService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
@@ -37,8 +40,13 @@ public class UserFeedService {
 
     public Page<PostActionDTO> getUserFeed(Pageable pageable) {
         User user = userCommonService.getUser();
-        Page<PostAction> postActionPage = postActionRepository.findByFollowingToUserActorAndJoinedWithCommunity(user, pageable);
-        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
+        Page<BigInteger> postActionPage = postActionRepository.findByFollowingToUserActorAndJoinedWithCommunity(user.getUserId(), pageable);
+
+        return new PageImpl<>(postActionMapper.toDTOs(
+                postActionPage.getContent().stream().map(postActionId ->
+                        postActionRepository.findByPostActionId(postActionId.longValue())
+                ).collect(Collectors.toList())
+        ), pageable, postActionPage.getTotalElements());
 
     }
 }
