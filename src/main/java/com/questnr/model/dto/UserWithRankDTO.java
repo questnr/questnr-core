@@ -11,7 +11,7 @@ public class UserWithRankDTO extends UserDTO{
 
     private int totalPostVisits;
 
-    private Long userRank;
+    private Double userRank;
 
     public int getTotalFollowers() {
         return totalFollowers;
@@ -53,11 +53,11 @@ public class UserWithRankDTO extends UserDTO{
         this.totalPostVisits = totalPostVisits;
     }
 
-    public Long getUserRank() {
+    public Double getUserRank() {
         return userRank;
     }
 
-    public void setUserRank(Long userRank) {
+    public void setUserRank(Double userRank) {
         this.userRank = userRank;
     }
 }

@@ -17,12 +17,12 @@ public class LandingPageController {
 
     @Autowired
     LandingPageService landingPageService;
-//
-//    @RequestMapping(value = "/users-with-highest-rank", method = RequestMethod.GET)
-//    Page<UserWithRankDTO> getUsersWithHighestRank(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        return this.landingPageService.getUsersWithHighestRank(pageable);
-//    }
+
+    @RequestMapping(value = "/users-with-highest-rank", method = RequestMethod.GET)
+    Page<UserWithRankDTO> getUsersWithHighestRank(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return this.landingPageService.getUsersWithHighestRank(pageable);
+    }
 
     @RequestMapping(value = "/hash-tag-with-highest-rank", method = RequestMethod.GET)
     Page<HashTagWithRankDTO> getHashtagsWithHighestRank(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {

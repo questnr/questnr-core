@@ -4,6 +4,7 @@ import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserFollower;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Date;
 import java.util.List;
 
 public interface UserFollowerRepository extends JpaRepository<UserFollower, Long> {
@@ -18,4 +19,6 @@ public interface UserFollowerRepository extends JpaRepository<UserFollower, Long
     int countByUser(User user);
 
     int countByFollowingUser(User user);
+
+    List<UserFollower> findAllByUserAndCreatedAtBetween(User user, Date startingDate, Date endingDate);
 }

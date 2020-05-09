@@ -3,6 +3,7 @@ package com.questnr.services;
 import com.questnr.services.analytics.CommunityTrendService;
 import com.questnr.services.analytics.HashTagTrendService;
 import com.questnr.services.analytics.PostActionTrendService;
+import com.questnr.services.analytics.UserTrendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,15 +24,21 @@ public class TrendingServices {
     @Autowired
     HashTagTrendService hashTagTrendService;
 
+    @Autowired
+    UserTrendService userTrendService;
+
     private Thread communityTrendServiceThread;
 
     private Thread postActionTrendServiceThread;
 
     private Thread hashTagTrendServiceThread;
 
+    private Thread userTrendServiceThread;
+
     private int communityTrendServiceThreadCount = 0;
     private int postActionTrendServiceThreadCount = 0;
     private int hashTagTrendServiceThreadCount = 0;
+    private int userTrendServiceThreadCount = 0;
 
 
     @Scheduled(fixedRate = (3600 * 24 * 1000))
@@ -48,6 +55,8 @@ public class TrendingServices {
         this.startPostActionTrendServiceThread();
         // HashTag Trend Service
         this.startHashTagTrendServiceThread();
+        // User Trend Service
+        this.startUserTrendServiceThread();
     }
 
     public void startCommunityTrendServiceThread() {
@@ -71,10 +80,18 @@ public class TrendingServices {
         }
     }
 
+    public void startUserTrendServiceThread() {
+        if (this.userTrendServiceThread == null || !this.userTrendServiceThread.isAlive()) {
+            this.userTrendServiceThread = new Thread(userTrendService, "userTrendService-" + this.userTrendServiceThreadCount++);
+            this.userTrendServiceThread.start();
+        }
+    }
+
     public void stopTrendingServices() {
         this.stopCommunityTrendServiceThread();
         this.stopPostActionTrendServiceThread();
         this.stopHashTagTrendServiceThread();
+        this.stopUserTrendServiceThread();
     }
 
     public void stopCommunityTrendServiceThread() {
@@ -90,5 +107,10 @@ public class TrendingServices {
     public void stopHashTagTrendServiceThread() {
         if (this.hashTagTrendServiceThread != null && this.hashTagTrendServiceThread.isAlive())
             this.hashTagTrendServiceThread.interrupt();
+    }
+
+    public void stopUserTrendServiceThread() {
+        if (this.userTrendServiceThread != null && this.userTrendServiceThread.isAlive())
+            this.userTrendServiceThread.interrupt();
     }
 }

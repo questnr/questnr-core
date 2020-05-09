@@ -33,6 +33,11 @@ public class TrendingServiceController {
         trendingServices.startHashTagTrendServiceThread();
     }
 
+    @RequestMapping(value = "/trending-services/user", method = RequestMethod.POST)
+    public void startUserTrendServiceThread() {
+        trendingServices.startUserTrendServiceThread();
+    }
+
     @RequestMapping(value = "/trending-services", method = RequestMethod.DELETE)
     public void stopTrendingServices() {
         trendingServices.stopTrendingServices();
@@ -51,5 +56,10 @@ public class TrendingServiceController {
     @RequestMapping(value = "/trending-services/hash-tag", method = RequestMethod.DELETE)
     public void stopHashTagTrendServiceThread() {
         trendingServices.stopHashTagTrendServiceThread();
+    }
+
+    @RequestMapping(value = "/trending-services/user", method = RequestMethod.DELETE)
+    public void stopUserTrendServiceThread() {
+        trendingServices.stopUserTrendServiceThread();
     }
 }

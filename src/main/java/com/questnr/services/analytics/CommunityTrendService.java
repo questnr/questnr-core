@@ -118,14 +118,18 @@ public class CommunityTrendService implements Runnable {
             communityTrendLinearData.setSlop(linearRegressionService.getSlopFromDataOverTime(communityTrendLinearData.getX(), communityTrendLinearData.getY()));
         }
 
+        List<CommunityTrendLinearData> pass1CommunityTrendLinearDataList = communityTrendLinearDataList.stream()
+                .filter(communityTrendLinearData ->
+                        !Double.isNaN(communityTrendLinearData.getSlop())).collect(Collectors.toList());
+
         // List sorted with descending order of regression slope
         Comparator<CommunityTrendLinearData> communityTrendLinearDataComparator
                 = Comparator.comparing(CommunityTrendLinearData::getSlop);
 
-        communityTrendLinearDataList.sort(communityTrendLinearDataComparator.reversed());
+        pass1CommunityTrendLinearDataList.sort(communityTrendLinearDataComparator.reversed());
 
-        List<CommunityTrendLinearData> subListCommunityTrendLinearDataList = communityTrendLinearDataList
-                .subList(0, communityTrendLinearDataList.size() > MAX_TRENDING_COMMUNITIES ? MAX_TRENDING_COMMUNITIES : communityTrendLinearDataList.size());
+        List<CommunityTrendLinearData> subListCommunityTrendLinearDataList = pass1CommunityTrendLinearDataList
+                .subList(0, pass1CommunityTrendLinearDataList.size() > MAX_TRENDING_COMMUNITIES ? MAX_TRENDING_COMMUNITIES : pass1CommunityTrendLinearDataList.size());
 
         int trendRank = 1;
         for (CommunityTrendLinearData communityTrendLinearData : subListCommunityTrendLinearDataList) {
@@ -161,11 +165,8 @@ public class CommunityTrendService implements Runnable {
             for (Community community : communityList) {
 
                 List<CommunityUser> communityUserList = communityUserRepository.findAllByCommunityAndCreatedAtBetween(community, datePointer, nextDatePointer);
-                List<User> userList = communityUserList.stream().map(communityUser ->
-                        communityUser.getUser()
-                ).collect(Collectors.toList());
 
-                int totalFollowers = userList.size();
+                int totalFollowers = communityUserList.size();
                 List<PostAction> postActionList = postActionRepository.findAllByCommunityAndCreatedAtBetween(community, datePointer, nextDatePointer);
 
                 int totalPosts = postActionList.size();

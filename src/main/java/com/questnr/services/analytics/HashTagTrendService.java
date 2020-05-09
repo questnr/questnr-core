@@ -16,6 +16,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class HashTagTrendService implements Runnable {
@@ -96,15 +97,19 @@ public class HashTagTrendService implements Runnable {
 
         }
 
+        List<HashTagTrendLinearData> pass1HashTagTrendLinearDataArrayList = hashTagTrendLinearDataArrayList.stream()
+                .filter(hashTagTrendLinearData ->
+                        !Double.isNaN(hashTagTrendLinearData.getSlop())).collect(Collectors.toList());
+
         // List sorted with descending order of regression slope
         Comparator<HashTagTrendLinearData> hashTagTrendLinearDataComparator
                 = Comparator.comparing(HashTagTrendLinearData::getSlop);
 
-        hashTagTrendLinearDataArrayList.sort(hashTagTrendLinearDataComparator.reversed());
+        pass1HashTagTrendLinearDataArrayList.sort(hashTagTrendLinearDataComparator.reversed());
 
 
-        List<HashTagTrendLinearData> subListHashTagTrendLinearDataArrayList = hashTagTrendLinearDataArrayList
-                .subList(0, hashTagTrendLinearDataArrayList.size() > MAX_TRENDING_HASH_TAGS ? MAX_TRENDING_HASH_TAGS : hashTagTrendLinearDataArrayList.size());
+        List<HashTagTrendLinearData> subListHashTagTrendLinearDataArrayList = pass1HashTagTrendLinearDataArrayList
+                .subList(0, pass1HashTagTrendLinearDataArrayList.size() > MAX_TRENDING_HASH_TAGS ? MAX_TRENDING_HASH_TAGS : pass1HashTagTrendLinearDataArrayList.size());
 
         int trendRank = 1;
         for (HashTagTrendLinearData hashTagTrendLinearData : subListHashTagTrendLinearDataArrayList) {

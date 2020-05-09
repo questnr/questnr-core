@@ -16,6 +16,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PostActionTrendService implements Runnable {
@@ -97,14 +98,18 @@ public class PostActionTrendService implements Runnable {
             postActionTrendLinearData.setSlop(linearRegressionService.getSlopFromDataOverTime(postActionTrendLinearData.getX(), postActionTrendLinearData.getY()));
         }
 
+        List<PostActionTrendLinearData> pass1PostActionTrendLinearDataList = postActionTrendLinearDataList.stream()
+                .filter(postActionTrendLinearData ->
+                        !Double.isNaN(postActionTrendLinearData.getSlop())).collect(Collectors.toList());
+
         // List sorted with descending order of regression slope
         Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator
                 = Comparator.comparing(PostActionTrendLinearData::getSlop);
 
-        postActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
+        pass1PostActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
 
-        List<PostActionTrendLinearData> subListPostActionTrendLinearDataList = postActionTrendLinearDataList
-                .subList(0, postActionTrendLinearDataList.size() > MAX_TRENDING_POSTS ? MAX_TRENDING_POSTS : postActionTrendLinearDataList.size());
+        List<PostActionTrendLinearData> subListPostActionTrendLinearDataList = pass1PostActionTrendLinearDataList
+                .subList(0, pass1PostActionTrendLinearDataList.size() > MAX_TRENDING_POSTS ? MAX_TRENDING_POSTS : pass1PostActionTrendLinearDataList.size());
 
         int trendRank = 1;
         for (PostActionTrendLinearData postActionTrendLinearData : subListPostActionTrendLinearDataList) {
