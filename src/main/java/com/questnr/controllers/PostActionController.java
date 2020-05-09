@@ -1,7 +1,7 @@
 package com.questnr.controllers;
 
-import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionForMediaDTO;
+import com.questnr.model.dto.PostActionPublicDTO;
 import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.services.PostActionService;
@@ -31,8 +31,8 @@ public class PostActionController {
 
     // Get PostAction using post slug
     @RequestMapping(value = "/post/{postSlug}", method = RequestMethod.GET)
-    PostActionDTO getPostActionFromSlug(@PathVariable String postSlug) {
-        return postActionService.setPostActionMetaInformation(postActionMapper.toDTO(postActionService.getPostActionFromSlug(postSlug)));
+    PostActionPublicDTO getPostActionFromSlug(@PathVariable String postSlug) {
+        return postActionService.setPostActionMetaInformation(postActionMapper.toPublicDTO(postActionService.getPostActionFromSlug(postSlug)));
     }
 
     // Get PostAction sharable link

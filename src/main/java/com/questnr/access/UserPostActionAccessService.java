@@ -1,8 +1,6 @@
 package com.questnr.access;
 
-import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.PostActionRepository;
@@ -35,6 +33,14 @@ public class UserPostActionAccessService {
 
     @Autowired
     PostActionAccessService postActionAccessService;
+
+    public User getAllPostsByUserSlug(String userSlug) {
+        User user = userCommonService.getUserByUserSlug(userSlug);
+        if (user.equals(userCommonService.getUser()) || user.isPublic()) {
+            return user;
+        }
+        return null;
+    }
 
     public PostAction hasAccessToPostModification(Long postId) {
         User user = userCommonService.getUser();

@@ -1,7 +1,7 @@
 package com.questnr.services.user;
 
-import com.questnr.model.dto.PostActionDTO;
-import com.questnr.model.entities.PostAction;
+import com.questnr.common.enums.PostActionType;
+import com.questnr.model.dto.PostActionFeedDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.PostActionRepository;
@@ -15,8 +15,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigInteger;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserFeedService {
@@ -38,15 +38,28 @@ public class UserFeedService {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
 
-    public Page<PostActionDTO> getUserFeed(Pageable pageable) {
+    public Page<PostActionFeedDTO> getUserFeed(Pageable pageable) {
         User user = userCommonService.getUser();
-        Page<BigInteger> postActionPage = postActionRepository.findByFollowingToUserActorAndJoinedWithCommunity(user.getUserId(), pageable);
+        List<Object[]> postActionList = postActionRepository.getUserFeed(user.getUserId(), pageable.getPageSize() * pageable.getPageNumber(), pageable.getPageSize());
 
-        return new PageImpl<>(postActionMapper.toDTOs(
-                postActionPage.getContent().stream().map(postActionId ->
-                        postActionRepository.findByPostActionId(postActionId.longValue())
-                ).collect(Collectors.toList())
-        ), pageable, postActionPage.getTotalElements());
+        List<PostActionFeedDTO> postActionFeedDTOList = new ArrayList<>();
+        for (Object[] object : postActionList) {
+            if (Integer.parseInt(object[1].toString()) == 1) {
+                postActionFeedDTOList.add(postActionMapper.toFeedDTO(
+                        postActionRepository.findByPostActionId(Long.parseLong(object[0].toString())),
+                        PostActionType.shared,
+                        userCommonService.getUser(Long.parseLong(object[2].toString()))
+                ));
+            } else {
+                postActionFeedDTOList.add(postActionMapper.toFeedDTO(
+                        postActionRepository.findByPostActionId(Long.parseLong(object[0].toString())),
+                        PostActionType.normal,
+                        null
+                ));
+            }
+        }
+
+        return new PageImpl<>(postActionFeedDTOList, pageable, postActionFeedDTOList.size());
 
     }
 }

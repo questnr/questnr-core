@@ -1,12 +1,13 @@
 package com.questnr.controllers.user;
 
 import com.questnr.model.dto.CommunityCardDTO;
-import com.questnr.model.dto.PostActionDTO;
+import com.questnr.model.dto.PostActionFeedDTO;
+import com.questnr.model.dto.PostActionPublicDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.PostActionMapper;
-import com.questnr.services.user.UserHomeService;
 import com.questnr.services.user.UserFeedService;
+import com.questnr.services.user.UserHomeService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,7 +40,7 @@ public class UserHomeController {
     }
 
     @RequestMapping(value = "/user/feed", method = RequestMethod.GET)
-    Page<PostActionDTO> getUserFeed(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+    Page<PostActionFeedDTO> getUserFeed(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return userFeedService.getUserFeed(pageable);
     }
@@ -60,7 +61,7 @@ public class UserHomeController {
     }
 
     @RequestMapping(value = "/user/explore", method = RequestMethod.GET)
-    Page<PostActionDTO> getTrendingPostsOfTheWeek(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    Page<PostActionPublicDTO> getTrendingPostsOfTheWeek(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return userHomeService.getTrendingPostList(pageable);
     }

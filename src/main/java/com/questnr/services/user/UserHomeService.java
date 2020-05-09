@@ -1,7 +1,7 @@
 package com.questnr.services.user;
 
 import com.questnr.common.CommunitySuggestionData;
-import com.questnr.model.dto.PostActionDTO;
+import com.questnr.model.dto.PostActionPublicDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.CommunityRepository;
@@ -126,7 +126,7 @@ public class UserHomeService {
         ), pageable, returnCommunityList.size());
     }
 
-    public Page<PostActionDTO> getTrendingPostList(Pageable pageable) {
+    public Page<PostActionPublicDTO> getTrendingPostList(Pageable pageable) {
         Page<PostActionTrendLinearData> postActionTrendLinearDataPage = postActionTrendLinearDataRepository.findAll(pageable);
 
 //        Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator
@@ -135,7 +135,7 @@ public class UserHomeService {
 //        List<PostActionTrendLinearData> postActionTrendLinearDataList = new ArrayList<>(postActionTrendLinearDataPage.getContent());
 //        postActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
 
-        return new PageImpl<>(postActionMapper.toDTOs(postActionTrendLinearDataPage.getContent().stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList())), pageable, postActionTrendLinearDataPage.getTotalElements());
+        return new PageImpl<>(postActionMapper.toPublicDTOs(postActionTrendLinearDataPage.getContent().stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList())), pageable, postActionTrendLinearDataPage.getTotalElements());
     }
 
 //    public CommunityTrendRank getCommunityTrendRank(Community community){

@@ -1,6 +1,6 @@
 package com.questnr.services;
 
-import com.questnr.model.dto.PostActionDTO;
+import com.questnr.model.dto.PostActionPublicDTO;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.HashTagTrendLinearData;
 import com.questnr.model.entities.PostAction;
@@ -55,9 +55,9 @@ public class HashTagService {
         return new PageImpl<>(hashTagTrendLinearDataPage.getContent().stream().map(HashTagTrendLinearData::getHashTag).collect(Collectors.toList()), pageable, hashTagTrendLinearDataPage.getTotalElements());
     }
 
-    public Page<PostActionDTO> getPostActionListUsingHashTag(String hashTagValue, Pageable pageable) {
+    public Page<PostActionPublicDTO> getPostActionListUsingHashTag(String hashTagValue, Pageable pageable) {
 
         Page<PostAction> postActionPage = postActionRepository.findByHashTags(hashTagRepository.findByHashTagValue(hashTagValue), pageable);
-        return new PageImpl<>(postActionMapper.toDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
+        return new PageImpl<>(postActionMapper.toPublicDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
     }
 }

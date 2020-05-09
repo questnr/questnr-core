@@ -1,15 +1,13 @@
 package com.questnr.model.dto;
 
 import com.questnr.common.enums.PostActionType;
-import org.jboss.logging.annotations.Pos;
 
-import java.util.List;
-
-public class PostActionCardDTO extends PostActionDTO {
+public class PostActionFeedDTO extends PostActionDTO {
 
     private CommunityForPostActionDTO communityDTO;
     private PostActionType postActionType;
-    private UserDTO sharedPostOwner;
+    private UserDTO userDTO;
+    private UserDTO userWhoShared;
 
     public CommunityForPostActionDTO getCommunityDTO() {
         return communityDTO;
@@ -27,11 +25,19 @@ public class PostActionCardDTO extends PostActionDTO {
         this.postActionType = postActionType;
     }
 
-    public UserDTO getSharedPostOwner() {
-        return sharedPostOwner;
+    public UserDTO getUserDTO() {
+        return userDTO;
     }
 
-    public void setSharedPostOwner(UserDTO sharedPostOwner) {
-        this.sharedPostOwner = sharedPostOwner;
+    public void setUserDTO(UserDTO userDTO) {
+        this.userDTO = userDTO;
+    }
+
+    public UserDTO getUserWhoShared() {
+        return userWhoShared;
+    }
+
+    public void setUserWhoShared(UserDTO userWhoShared) {
+        this.userWhoShared = userWhoShared;
     }
 }

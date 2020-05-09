@@ -2,9 +2,7 @@ package com.questnr.model.dto;
 
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.model.entities.HashTag;
-import com.questnr.model.entities.PostActionMetaInformation;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -16,8 +14,6 @@ public class PostActionDTO {
     private boolean featured;
     private boolean popular;
     private String tags;
-    private UserDTO userDTO;
-    private CommunityForPostActionDTO communityDTO;
     private Set<HashTag> hashTags;
     private List<LikeActionDTO> likeActionList;
     private List<CommentActionDTO> commentActionList;
@@ -25,9 +21,16 @@ public class PostActionDTO {
     private int totalLikes;
     private int totalComments;
     private int totalPostVisits;
-    private List<PostActionMetaInformation> metaList = new ArrayList<>();
     private MetaDataDTO metaData;
     private PostActionMetaDTO postActionMeta;
+
+    public Long getPostActionId() {
+        return postActionId;
+    }
+
+    public void setPostActionId(Long postActionId) {
+        this.postActionId = postActionId;
+    }
 
     public String getSlug() {
         return slug;
@@ -75,30 +78,6 @@ public class PostActionDTO {
 
     public void setTags(String tags) {
         this.tags = tags;
-    }
-
-    public UserDTO getUserDTO() {
-        return userDTO;
-    }
-
-    public void setUserDTO(UserDTO userDTO) {
-        this.userDTO = userDTO;
-    }
-
-    public CommunityForPostActionDTO getCommunityDTO() {
-        return communityDTO;
-    }
-
-    public void setCommunityDTO(CommunityForPostActionDTO communityDTO) {
-        this.communityDTO = communityDTO;
-    }
-
-    public Long getPostActionId() {
-        return postActionId;
-    }
-
-    public void setPostActionId(Long postActionId) {
-        this.postActionId = postActionId;
     }
 
     public Set<HashTag> getHashTags() {
@@ -155,14 +134,6 @@ public class PostActionDTO {
 
     public void setTotalPostVisits(int totalPostVisits) {
         this.totalPostVisits = totalPostVisits;
-    }
-
-    public List<PostActionMetaInformation> getMetaList() {
-        return metaList;
-    }
-
-    public void setMetaList(List<PostActionMetaInformation> metaList) {
-        this.metaList = metaList;
     }
 
     public MetaDataDTO getMetaData() {

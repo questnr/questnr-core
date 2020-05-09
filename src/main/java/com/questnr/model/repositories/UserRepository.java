@@ -40,7 +40,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //          " totalLikes DESC nulls last, " +
 //          " totalComments DESC nulls last, " +
 //          " totalVisits DESC nulls last")
-
-    @Query("select user.userId, SIZE(userFollowers) as numberOfFollowers from User user left join user.thisBeingFollowedUserSet userFollowers group by user.userId order by numberOfFollowers desc nulls last")
-    Page<Object[]> findAllByUserFollower(Pageable pageable);
+//
+//    @Query("select user.userId, SIZE(userFollowers) as numberOfFollowers from User user left join user.thisBeingFollowedUserSet userFollowers group by user.userId order by numberOfFollowers desc nulls last")
+//    Page<Object[]> findAllByUserFollowerContaining(Pageable pageable);
 }

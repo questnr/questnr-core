@@ -106,6 +106,9 @@ public class User extends DomainObject {
     @Enumerated(EnumType.STRING)
     private SignUpSourceType signUpSource = SignUpSourceType.WEB;
 
+    @Column(name = "is_public", columnDefinition = "bool default true")
+    private boolean isPublic;
+
     public Long getUserId() {
         return userId;
     }
@@ -268,6 +271,14 @@ public class User extends DomainObject {
 
     public void setLoginType(LoginType loginType) {
         this.loginType = loginType;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public String getFullName() {

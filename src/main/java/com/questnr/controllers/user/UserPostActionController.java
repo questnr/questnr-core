@@ -1,11 +1,12 @@
 package com.questnr.controllers.user;
 
 import com.questnr.access.UserPostActionAccessService;
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.PostActionCardDTO;
-import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.PostAction;
+import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.services.PostActionService;
 import com.questnr.services.user.UserPostActionService;
@@ -42,14 +43,18 @@ public class UserPostActionController {
     }
 
     // Basic post operations for users.
-    @RequestMapping(value = "/posts", method = RequestMethod.GET)
-    Page<PostActionCardDTO> getAllPostsByUserId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return userPostActionService.getAllPostActionsByUserId(pageable);
+    @RequestMapping(value = "/{userSlug}/posts", method = RequestMethod.GET)
+    Page<PostActionCardDTO> getAllPostsByUserSlug(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable String userSlug) {
+        User user = userPostActionAccessService.getAllPostsByUserSlug(userSlug);
+        if (user != null) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            return userPostActionService.getAllPostsByUserSlug(user, pageable);
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    PostActionDTO createPost(PostActionRequestDTO postActionRequestDTO) {
+    PostActionCardDTO createPost(PostActionRequestDTO postActionRequestDTO) {
         if (postActionRequestDTO.getFiles() != null && postActionRequestDTO.getFiles().size() > 0) {
             return userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), postActionRequestDTO.getFiles());
         } else {

@@ -1,11 +1,9 @@
 package com.questnr.services.user;
 
+import com.questnr.common.enums.PostActionType;
 import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.InvalidRequestException;
-import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionCardDTO;
-import com.questnr.model.dto.PostActionDTO;
-import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
 import com.questnr.model.entities.User;
@@ -22,12 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,18 +53,28 @@ public class UserPostActionService {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
 
-    public Page<PostActionCardDTO> getAllPostActionsByUserId(Pageable pageable) {
-        User user = userCommonService.getUser();
-        try {
-            Page<PostAction> postActionPage = postActionRepository.findAllByUserActorOrderByCreatedAtDesc(user, pageable);
-            return new PageImpl<>(postActionMapper.toCardDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
-        } catch (Exception e) {
-            LOGGER.error(PostAction.class.getName() + " Exception Occurred");
-            throw new InvalidInputException(UserPostActionService.class.getName(), null, null);
+    public Page<PostActionCardDTO> getAllPostsByUserSlug(User user, Pageable pageable) {
+        List<Object[]> postActionList = postActionRepository.getUserPosts(user.getUserId(), pageable.getPageSize() * pageable.getPageNumber(), pageable.getPageSize());
+
+        List<PostActionCardDTO> postActionCardDTOS = new ArrayList<>();
+        for (Object[] object : postActionList) {
+            if (Integer.parseInt(object[1].toString()) == 1) {
+                postActionCardDTOS.add(postActionMapper.toCardDTO(
+                        postActionRepository.findByPostActionId(Long.parseLong(object[0].toString())),
+                        PostActionType.shared,
+                        userCommonService.getUser(Long.parseLong(object[2].toString()))));
+            } else {
+                postActionCardDTOS.add(postActionMapper.toCardDTO(
+                        postActionRepository.findByPostActionId(Long.parseLong(object[0].toString())),
+                        PostActionType.normal,
+                        null));
+            }
         }
+
+        return new PageImpl<>(postActionCardDTOS, pageable, postActionCardDTOS.size());
     }
 
-    public PostActionDTO creatPostAction(PostAction postAction, List<MultipartFile> files) {
+    public PostActionCardDTO creatPostAction(PostAction postAction, List<MultipartFile> files) {
         User user = userCommonService.getUser();
         if (postAction != null) {
             postAction.setUserActor(user);
@@ -81,20 +87,20 @@ public class UserPostActionService {
                 return postMedia;
             }).collect(Collectors.toList());
             postAction.setPostMediaList(postMediaList);
-            return postActionMapper.toDTO(postActionService.creatPostAction(postAction));
+            return postActionMapper.toCardDTO(postActionService.creatPostAction(postAction), PostActionType.normal, null);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
 
-    public PostActionDTO creatPostAction(PostAction postAction) {
+    public PostActionCardDTO creatPostAction(PostAction postAction) {
         User user = userCommonService.getUser();
         if (postAction != null) {
             if (postAction.getText().length() == 0) {
                 throw new InvalidRequestException("Text can not be empty!");
             }
             postAction.setUserActor(user);
-            return postActionMapper.toDTO(postActionService.creatPostAction(postAction));
+            return postActionMapper.toCardDTO(postActionService.creatPostAction(postAction), PostActionType.normal, null);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }

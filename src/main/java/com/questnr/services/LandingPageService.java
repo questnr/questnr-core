@@ -66,21 +66,21 @@ public class LandingPageService {
         return userWithRankDTO;
     }
 
-    public Page<UserWithRankDTO> getUsersWithHighestRank(Pageable pageable) {
-        Page<Object[]> objects = userRepository.findAllByUserFollower(pageable);
-        List<UserWithRankDTO> userWithRankDTOS = new ArrayList<>();
-        for (Object[] object : objects.getContent()) {
-            User user = userRepository.findByUserId(Long.parseLong(object[0].toString()));
-            UserWithRankDTO userWithRankDTO = userWithRankMapper.toUserWithRankDTO(user);
-            userWithRankDTO.setTotalFollowers(Integer.parseInt(object[1].toString()));
-            userWithRankDTOS.add(this.calculateUserRank(userWithRankDTO, user));
-        }
-        // List sorted with descending order of user rank
-        Comparator<UserWithRankDTO> userRankComparator
-                = Comparator.comparing(UserWithRankDTO::getUserRank);
-        userWithRankDTOS.sort(userRankComparator.reversed());
-        return new PageImpl<>(userWithRankDTOS, pageable, objects.getTotalElements());
-    }
+//    public Page<UserWithRankDTO> getUsersWithHighestRank(Pageable pageable) {
+//        Page<Object[]> objects = userRepository.findAllByUserFollowerContaining(pageable);
+//        List<UserWithRankDTO> userWithRankDTOS = new ArrayList<>();
+//        for (Object[] object : objects.getContent()) {
+//            User user = userRepository.findByUserId(Long.parseLong(object[0].toString()));
+//            UserWithRankDTO userWithRankDTO = userWithRankMapper.toUserWithRankDTO(user);
+//            userWithRankDTO.setTotalFollowers(Integer.parseInt(object[1].toString()));
+//            userWithRankDTOS.add(this.calculateUserRank(userWithRankDTO, user));
+//        }
+//        // List sorted with descending order of user rank
+//        Comparator<UserWithRankDTO> userRankComparator
+//                = Comparator.comparing(UserWithRankDTO::getUserRank);
+//        userWithRankDTOS.sort(userRankComparator.reversed());
+//        return new PageImpl<>(userWithRankDTOS, pageable, objects.getTotalElements());
+//    }
 
     public Page<HashTagWithRankDTO> getHashTagsWithHighestRank(Pageable pageable) {
         Page<Object[]> objects = hashTagRepository.findAllByHashTagForRank(pageable);

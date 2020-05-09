@@ -126,6 +126,7 @@ public class BaseService {
         user.setEnabled(true);
         user.setAuthorities(this.createAuthoritySet());
         user.addMetadata();
+        user.setPublic(true);
         final char[] delimiters = {' '};
 
         user.setFirstName(WordUtils.capitalizeFully(user.getFirstName(), delimiters));

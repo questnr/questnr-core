@@ -2,7 +2,6 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityPostActionAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.model.dto.PostActionDTO;
 import com.questnr.model.dto.PostActionForCommunityDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
@@ -55,7 +54,7 @@ public class CommunityPostActionController {
     }
 
     @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    PostActionDTO createPost(@PathVariable long communityId, PostActionRequestDTO postActionRequestDTO) {
+    PostActionForCommunityDTO createPost(@PathVariable long communityId, PostActionRequestDTO postActionRequestDTO) {
         /*
          * Community Post Security Checking
          * */

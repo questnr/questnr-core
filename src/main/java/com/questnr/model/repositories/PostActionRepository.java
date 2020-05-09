@@ -12,7 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import th.co.geniustree.springdata.jpa.repository.JpaSpecificationExecutorWithProjection;
 
-import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +24,22 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
 
     PostAction findByPostActionIdAndUserActor(Long postActionId, User userActor);
 
-    Page<PostAction> findAllByUserActorOrderByCreatedAtDesc(User user, Pageable pageable);
+    @Query(value = " select pa.post_action_id as postActionId, 0 as postType, null as userWhoShared, pa.created_at as createdAt " +
+            " from qr_users qrUser " +
+            " left outer join qr_post_actions pa on " +
+            " pa.user_id=qrUser.id " +
+            " where qrUser.id=:userId group by pa.post_action_id" +
+            " union " +
+            " select spa.post_action_id as postActionId, 1 as postType, pa.user_id as userWhoShared, spa.created_at as createdAt" +
+            " from qr_users qrUser " +
+            " inner join qr_shared_post_actions spa " +
+            " on spa.user_actor_id=qrUser.id " + // The posts this user shared
+            " inner join qr_post_actions pa " +
+            " on spa.post_action_id=pa.post_action_id " +
+            " where qrUser.id=:userId " +
+            " order by 4 desc offset :offset limit :limit"
+            , nativeQuery = true)
+    List<Object[]> getUserPosts(@Param("userId") Long userId, @Param("offset") int offset, @Param("limit") int limit);
 
     @Query("select pa.postActionId, " +
             " COUNT(DISTINCT la.likeActionId) as totalLikes, " +
@@ -69,17 +83,26 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
 //            " where user=:user order by pa.createdAt desc ")
 
 
-    @Query(value = "select pa.post_action_id from qr_users qrUser " +
+    @Query(value = " select pa.post_action_id as postActionId, 0 as postType, null as userWhoShared, pa.created_at as createdAt " +
+            " from qr_users qrUser " +
             " left outer join qr_user_followers uf on uf.following_user_id=qrUser.id " +
             " left outer join qr_community_users cu on cu.user_id=qrUser.id " +
-            " left outer join qr_community co on co.community_id=cu.community_id "+
+            " left outer join qr_community co on co.community_id=cu.community_id " +
             " left outer join qr_post_actions pa on " +
-            " ((pa.user_id=uf.user_id and (pa.community_id is null or pa.community_id=co.community_id))" +
-            " or (pa.community_id=co.community_id)" + // if someone posts on the communities followed by the user
+            " ((pa.user_id=uf.user_id and (pa.community_id is null or pa.community_id=co.community_id)) " +
+            " or (pa.community_id=co.community_id) " + // Anyone who posted on the communities followed by the user
             " or pa.user_id=qrUser.id) " +
-            " where qrUser.id=:userId group by pa.post_action_id order by MIN(pa.created_at) desc "
-            ,nativeQuery = true)
-    Page<BigInteger> findByFollowingToUserActorAndJoinedWithCommunity(@Param("userId") Long userId, Pageable pageable);
+            " where qrUser.id=:userId group by pa.post_action_id" +
+            " union " +
+            " select spa.post_action_id as postActionId, 1 as postType, spa.user_actor_id as userWhoShared, spa.created_at as createdAt" +
+            " from qr_users qrUser " +
+            " inner join qr_user_followers uf on uf.following_user_id=qrUser.id " +
+            " inner join qr_shared_post_actions spa " +
+            " on spa.user_actor_id=uf.user_id " +
+            " where qrUser.id=:userId " +
+            " order by 4 desc offset :offset limit :limit"
+            , nativeQuery = true)
+    List<Object[]> getUserFeed(@Param("userId") Long userId, @Param("offset") int offset, @Param("limit") int limit);
 
     PostAction findFirstBySlug(String slug);
 
