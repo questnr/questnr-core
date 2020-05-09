@@ -11,6 +11,7 @@ public interface UserRankDependents {
     Double LIKE_ACTION = ((double) 30) / PERCENT;
     Double COMMENT_ACTION = ((double) 30) / PERCENT;
     Double POST_VISIT = ((double) 30) / PERCENT;
+    Double POST_SHARED = ((double) 30) / PERCENT;
     Double PROFILE_VISIT = ((double) 30) / PERCENT;
 
     int USER_FOLLOWER_COUNT_THRESHOLD = 1;
@@ -18,5 +19,6 @@ public interface UserRankDependents {
     int LIKE_COUNT_THRESHOLD = 1;
     int COMMENT_COUNT_THRESHOLD = 1;
     int POST_VISIT_COUNT_THRESHOLD = 1;
+    int POST_SHARED_COUNT_THRESHOLD = 1;
     int VISIT_COUNT_THRESHOLD = 0;
 }

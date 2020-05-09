@@ -9,8 +9,10 @@ public interface PostActionRankDependents {
     Double LIKE_ACTION = ((double)30)/PERCENT;
     Double COMMENT_ACTION =  ((double)30)/PERCENT;
     Double POST_VISIT = ((double)30)/PERCENT;
+    Double POST_SHARED = ((double)30)/PERCENT;
 
     int LIKE_COUNT_THRESHOLD = 1;
     int COMMENT_COUNT_THRESHOLD = 1;
     int POST_VISIT_COUNT_THRESHOLD = 1;
+    int POST_SHARED_COUNT_THRESHOLD = 1;
 }

@@ -35,6 +35,9 @@ public class PostActionTrendService implements Runnable {
     PostVisitRepository postVisitRepository;
 
     @Autowired
+    SharePostActionRepository sharePostActionRepository;
+
+    @Autowired
     PostActionTrendDataRepository postActionTrendDataRepository;
 
     @Autowired
@@ -52,7 +55,8 @@ public class PostActionTrendService implements Runnable {
     private Double calculatePostActionRank(PostActionRankDTO postActionRankDTO) {
         return PostActionRankDependents.LIKE_ACTION * postActionRankDTO.getTotalLikes() +
                 PostActionRankDependents.COMMENT_ACTION * postActionRankDTO.getTotalComments() +
-                PostActionRankDependents.POST_VISIT * postActionRankDTO.getTotalPostVisits();
+                PostActionRankDependents.POST_VISIT * postActionRankDTO.getTotalPostVisits() +
+                PostActionRankDependents.POST_SHARED * postActionRankDTO.getTotalPostShared();
     }
 
     private List<PostActionTrendLinearData> addPostActionTrendLinearData(List<PostActionTrendLinearData> postActionTrendLinearDataList, PostActionTrendData postActionTrendData) {
@@ -146,6 +150,7 @@ public class PostActionTrendService implements Runnable {
             Long totalLikes;
             Long totalComments;
             Long totalPostVisits;
+            Long totalPostShared;
 
             for (PostAction postAction : postActionList) {
 
@@ -155,16 +160,20 @@ public class PostActionTrendService implements Runnable {
 
                 totalPostVisits = postVisitRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
 
+                totalPostShared = sharePostActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
+
                 if (totalLikes <= PostActionRankDependents.LIKE_COUNT_THRESHOLD
                         && totalComments <= PostActionRankDependents.COMMENT_COUNT_THRESHOLD
-                        && totalPostVisits <= PostActionRankDependents.POST_VISIT_COUNT_THRESHOLD)
+                        && totalPostVisits <= PostActionRankDependents.POST_VISIT_COUNT_THRESHOLD
+                        && totalPostShared <= PostActionRankDependents.POST_SHARED_COUNT_THRESHOLD)
                     continue;
 
                 PostActionRankDTO postActionRankDTO = new PostActionRankDTO();
                 postActionRankDTO.setTotalPosts(Long.valueOf(postActionList.size()));
-                postActionRankDTO.setTotalLikes(Long.valueOf(totalLikes));
-                postActionRankDTO.setTotalComments(Long.valueOf(totalComments));
-                postActionRankDTO.setTotalPostVisits(Long.valueOf(totalPostVisits));
+                postActionRankDTO.setTotalLikes(totalLikes);
+                postActionRankDTO.setTotalComments(totalComments);
+                postActionRankDTO.setTotalPostVisits(totalPostVisits);
+                postActionRankDTO.setTotalPostShared(totalPostShared);
                 postActionRankDTO.setRank(this.calculatePostActionRank(postActionRankDTO));
                 postActionRankDTO.setDate(datePointer);
 

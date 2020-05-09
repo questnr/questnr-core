@@ -49,6 +49,9 @@ public class CommunityTrendService implements Runnable {
     PostVisitRepository postVisitRepository;
 
     @Autowired
+    SharePostActionRepository sharePostActionRepository;
+
+    @Autowired
     CommunityTrendDataRepository communityTrendDataRepository;
 
     @Autowired
@@ -69,6 +72,7 @@ public class CommunityTrendService implements Runnable {
                 CommunityRankDependents.LIKE_ACTION * communityRankDTO.getTotalLikes() +
                 CommunityRankDependents.COMMENT_ACTION * communityRankDTO.getTotalComments() +
                 CommunityRankDependents.POST_VISIT * communityRankDTO.getTotalPostVisits() +
+                CommunityRankDependents.POST_SHARED * communityRankDTO.getTotalPostShared() +
                 CommunityRankDependents.PROFILE_VISIT * communityRankDTO.getTotalVisits();
     }
 
@@ -186,6 +190,11 @@ public class CommunityTrendService implements Runnable {
                     totalPostVisits += postVisitRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
                 }
 
+                Long totalPostShared = Long.valueOf(0);
+                for (PostAction postAction : postActionList) {
+                    totalPostShared += sharePostActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
+                }
+
                 int totalVisits = 0;
 
                 if (totalFollowers <= CommunityRankDependents.USER_FOLLOWER_COUNT_THRESHOLD
@@ -193,15 +202,17 @@ public class CommunityTrendService implements Runnable {
                         && totalLikes <= CommunityRankDependents.LIKE_COUNT_THRESHOLD
                         && totalComments <= CommunityRankDependents.COMMENT_COUNT_THRESHOLD
                         && totalPostVisits <= CommunityRankDependents.POST_VISIT_COUNT_THRESHOLD
+                        && totalPostShared <= CommunityRankDependents.POST_SHARED_COUNT_THRESHOLD
                         && totalVisits <= CommunityRankDependents.VISIT_COUNT_THRESHOLD)
                     continue;
 
                 CommunityRankDTO communityRankDTO = new CommunityRankDTO();
                 communityRankDTO.setTotalFollowers(Long.valueOf(totalFollowers));
                 communityRankDTO.setTotalPosts(Long.valueOf(totalPosts));
-                communityRankDTO.setTotalLikes(Long.valueOf(totalLikes));
-                communityRankDTO.setTotalComments(Long.valueOf(totalComments));
-                communityRankDTO.setTotalPostVisits(Long.valueOf(totalPostVisits));
+                communityRankDTO.setTotalLikes(totalLikes);
+                communityRankDTO.setTotalComments(totalComments);
+                communityRankDTO.setTotalPostVisits(totalPostVisits);
+                communityRankDTO.setTotalPostShared(totalPostShared);
                 communityRankDTO.setTotalVisits(Long.valueOf(0));
                 communityRankDTO.setRank(this.calculateCommunityRank(communityRankDTO));
                 communityRankDTO.setDate(datePointer);

@@ -38,6 +38,9 @@ public class UserTrendService implements Runnable {
     PostVisitRepository postVisitRepository;
 
     @Autowired
+    SharePostActionRepository sharePostActionRepository;
+
+    @Autowired
     UserTrendDataRepository userTrendDataRepository;
 
     @Autowired
@@ -55,6 +58,7 @@ public class UserTrendService implements Runnable {
                 UserRankDependents.LIKE_ACTION * userRankDTO.getTotalLikes() +
                 UserRankDependents.COMMENT_ACTION * userRankDTO.getTotalComments() +
                 UserRankDependents.POST_VISIT * userRankDTO.getTotalPostVisits() +
+                UserRankDependents.POST_SHARED * userRankDTO.getTotalPostShared() +
                 UserRankDependents.PROFILE_VISIT * userRankDTO.getTotalVisits();
     }
 
@@ -173,6 +177,11 @@ public class UserTrendService implements Runnable {
                     totalPostVisits += postVisitRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
                 }
 
+                Long totalPostShared = Long.valueOf(0);
+                for (PostAction postAction : postActionList) {
+                    totalPostShared += sharePostActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
+                }
+
                 int totalVisits = 0;
 
                 if (totalFollowers <= UserRankDependents.USER_FOLLOWER_COUNT_THRESHOLD
@@ -180,15 +189,17 @@ public class UserTrendService implements Runnable {
                         && totalLikes <= UserRankDependents.LIKE_COUNT_THRESHOLD
                         && totalComments <= UserRankDependents.COMMENT_COUNT_THRESHOLD
                         && totalPostVisits <= UserRankDependents.POST_VISIT_COUNT_THRESHOLD
+                        && totalPostShared <= UserRankDependents.POST_SHARED_COUNT_THRESHOLD
                         && totalVisits <= UserRankDependents.VISIT_COUNT_THRESHOLD)
                     continue;
 
                 UserRankDTO userRankDTO = new UserRankDTO();
                 userRankDTO.setTotalFollowers(Long.valueOf(totalFollowers));
                 userRankDTO.setTotalPosts(Long.valueOf(totalPosts));
-                userRankDTO.setTotalLikes(Long.valueOf(totalLikes));
-                userRankDTO.setTotalComments(Long.valueOf(totalComments));
-                userRankDTO.setTotalPostVisits(Long.valueOf(totalPostVisits));
+                userRankDTO.setTotalLikes(totalLikes);
+                userRankDTO.setTotalComments(totalComments);
+                userRankDTO.setTotalPostVisits(totalPostVisits);
+                userRankDTO.setTotalPostShared(totalPostVisits);
                 userRankDTO.setTotalVisits(Long.valueOf(0));
                 userRankDTO.setRank(this.calculateUserRank(userRankDTO));
                 userRankDTO.setDate(datePointer);
