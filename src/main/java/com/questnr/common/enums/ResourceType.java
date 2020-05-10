@@ -1,12 +1,12 @@
 package com.questnr.common.enums;
 
-public enum MediaType {
+public enum ResourceType {
     image("image"),
     video("video");
 
     public String jsonValue;
 
-    private MediaType(String json) {
+    private ResourceType(String json) {
         this.jsonValue = json;
     }
 

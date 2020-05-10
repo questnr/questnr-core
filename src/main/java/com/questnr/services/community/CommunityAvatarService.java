@@ -1,14 +1,12 @@
 package com.questnr.services.community;
 
-import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Avatar;
 import com.questnr.model.entities.Community;
-import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommunityRepository;
-import com.questnr.responses.AvatarStorageData;
+import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import org.slf4j.Logger;
@@ -16,6 +14,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 
 @Service
 public class CommunityAvatarService {
@@ -33,23 +34,29 @@ public class CommunityAvatarService {
     @Autowired
     CommunityRepository communityRepository;
 
-    public String uploadAvatar(long communityId, MultipartFile file) {
-        System.out.println("14");
-        AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(file, communityId);
-        System.out.println("15");
+    public String uploadAvatar(long communityId, MultipartFile multipartFile) {
         try {
-            System.out.println("16");
-            Community community = communityCommonService.getCommunity(communityId);
-            Avatar avatar = new Avatar();
-            avatar.addMetadata();
-            avatar.setAvatarKey(avatarStorageData.getKey());
-            community.setAvatar(avatar);
-            communityRepository.save(community);
-        } catch (Exception e) {
-            LOGGER.error(CommunityAvatarService.class.getName() + " Exception Occurred");
+            File file = commonService.convertMultiPartToFile(multipartFile);
+            if (commonService.checkIfFileIsImage(file)) {
+                ResourceStorageData resourceStorageData = this.amazonS3Client.uploadFile(file, communityId);
+                try {
+                    Community community = communityCommonService.getCommunity(communityId);
+                    Avatar avatar = new Avatar();
+                    avatar.addMetadata();
+                    avatar.setAvatarKey(resourceStorageData.getKey());
+                    community.setAvatar(avatar);
+                    communityRepository.save(community);
+                } catch (Exception e) {
+                    LOGGER.error(CommunityAvatarService.class.getName() + " Exception Occurred");
+                    throw new InvalidRequestException("Error occurred. Please, try again!");
+                }
+                return resourceStorageData.getUrl();
+            }else{
+                throw new InvalidRequestException("Avatar can not be of video format");
+            }
+        } catch (IOException ex) {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
-        return avatarStorageData.getUrl();
     }
 
     public String getAvatar(String communitySlug) {

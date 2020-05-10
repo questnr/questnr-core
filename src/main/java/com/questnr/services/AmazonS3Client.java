@@ -8,20 +8,17 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
-import com.questnr.common.enums.MediaType;
-import com.questnr.exceptions.InvalidRequestException;
-import com.questnr.responses.AvatarStorageData;
+import com.questnr.common.enums.ResourceType;
+import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.ImageCompression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -57,22 +54,11 @@ public class AmazonS3Client {
         this.s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(Regions.AP_SOUTHEAST_1).build();
     }
 
-    public File convertMultiPartToFile(MultipartFile file) throws IOException {
-        if(file.getOriginalFilename() != null) {
-            File convFile = new File(file.getOriginalFilename());
-            FileOutputStream fos = new FileOutputStream(convFile);
-            fos.write(file.getBytes());
-            fos.close();
-            return convFile;
-        }
-        throw new InvalidRequestException("File name is not valid!");
-    }
-
-    private String generateFileName(MultipartFile multiPart) {
+    private String generateFileName(File file) {
         try {
-            return new Date().getTime() + "-" + multiPart.getOriginalFilename().replace(" ", "_");
-        }catch (Exception e){
-            return new Date().getTime() + "-" + multiPart.getOriginalFilename();
+            return new Date().getTime() + "-" + file.getName().replace(" ", "_");
+        } catch (Exception e) {
+            return new Date().getTime() + "-" + file.getName();
         }
     }
 
@@ -81,12 +67,12 @@ public class AmazonS3Client {
     }
 
     public String getS3BucketUrl(String pathToFile) {
-       return this.getS3BucketUrl(pathToFile, false);
+        return this.getS3BucketUrl(pathToFile, false);
     }
 
     public String getS3BucketUrl(String pathToFile, boolean isPublic) {
         int addTimeMillis = 1000 * 40;
-        if(isPublic){
+        if (isPublic) {
             addTimeMillis = 1000 * 1000;
         }
         Date expiration = new Date();
@@ -96,7 +82,7 @@ public class AmazonS3Client {
         return this.getS3BucketUrl(pathToFile, expiration);
     }
 
-    private String getS3BucketUrl(String pathToFile, Date expiration){
+    private String getS3BucketUrl(String pathToFile, Date expiration) {
         GeneratePresignedUrlRequest generatePresignedUrlRequest =
                 new GeneratePresignedUrlRequest(bucketName, pathToFile)
                         .withMethod(HttpMethod.GET)
@@ -104,39 +90,32 @@ public class AmazonS3Client {
         return s3Client.generatePresignedUrl(generatePresignedUrlRequest).toExternalForm();
     }
 
-    public AvatarStorageData uploadFile(MultipartFile multipartFile) {
-        String fileName = this.generateFileName(multipartFile);
+    public ResourceStorageData uploadFile(File file) {
+        String fileName = this.generateFileName(file);
         String pathToFile = userCommonService.joinPathToFile(fileName);
-        return this.uploadFile(multipartFile, pathToFile);
+        return this.uploadFile(file, pathToFile);
     }
 
-    public AvatarStorageData uploadFile(MultipartFile multipartFile, long communityId) {
-        String fileName = this.generateFileName(multipartFile);
+    public ResourceStorageData uploadFile(File file, long communityId) {
+        String fileName = this.generateFileName(file);
         String pathToFile = communityCommonService.joinPathToFile(fileName, communityId);
-        return this.uploadFile(multipartFile, pathToFile);
+        return this.uploadFile(file, pathToFile);
     }
 
-    private AvatarStorageData uploadFile(MultipartFile multipartFile, String pathToFile) {
-        AvatarStorageData avatarStorageData = new AvatarStorageData();
+    private ResourceStorageData uploadFile(File file, String pathToFile) {
+        ResourceStorageData resourceStorageData = new ResourceStorageData();
         try {
-            avatarStorageData.setKey(pathToFile);
-            avatarStorageData.setUrl(this.getS3BucketUrl(pathToFile));
-            File file = this.convertMultiPartToFile(multipartFile);
-            if(commonService.checkIfFileIsImage(file)){
-                ImageCompression imageCompression = new ImageCompression(file);
-                File compressedFile = imageCompression.doCompression();
-                this.uploadFileToS3bucket(pathToFile, compressedFile);
-                avatarStorageData.setMediaType(MediaType.image);
-                file.delete();
-            }else{
-                this.uploadFileToS3bucket(pathToFile, file);
-                avatarStorageData.setMediaType(MediaType.video);
-                file.delete();
-            }
+            resourceStorageData.setKey(pathToFile);
+            resourceStorageData.setUrl(this.getS3BucketUrl(pathToFile));
+            ImageCompression imageCompression = new ImageCompression(file);
+            File compressedFile = imageCompression.doCompression();
+            this.uploadFileToS3bucket(pathToFile, compressedFile);
+            resourceStorageData.setResourceType(ResourceType.image);
+            file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return avatarStorageData;
+        return resourceStorageData;
     }
 
     public byte[] getFile(String pathToFile) {

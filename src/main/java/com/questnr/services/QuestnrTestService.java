@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.cloudinary.CloudinaryVideoService;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.VideoCompression;
@@ -20,20 +21,19 @@ public class QuestnrTestService {
     CloudinaryVideoService cloudinaryVideoService;
 
     @Autowired
-    private AmazonS3Client amazonS3Client;
+    private CommonService commonService;
 
-    public String uploadVideo(MultipartFile multipartFile) throws IOException {
-        File source = amazonS3Client.convertMultiPartToFile(multipartFile);
-        cloudinaryVideoService.uploadVideoFile(source, userCommonService.getS3BucketUserFolder() + "/xyz");
-        return "Successful";
+    public ResourceStorageData uploadVideo(MultipartFile multipartFile) throws IOException {
+        File source = commonService.convertMultiPartToFile(multipartFile);
+        return cloudinaryVideoService.uploadFile(source, "video");
     }
 
-    public String transformVideo() {
-        return cloudinaryVideoService.getVideoTag(userCommonService.getS3BucketUserFolder() + "/xyz");
+    public String transformVideo(String fileName, String format) throws Exception {
+        return cloudinaryVideoService.getPreSignedURL(fileName, format);
     }
 
     public String manipulateVideo(MultipartFile multipartFile) throws IOException, InterruptedException {
-        File source = amazonS3Client.convertMultiPartToFile(multipartFile);
+        File source = commonService.convertMultiPartToFile(multipartFile);
         File target = new File("xyz-out.mp4");
         Thread videoCompressionThread = new Thread(new VideoCompression(source, target), "VideoCompression-1");
         videoCompressionThread.run();

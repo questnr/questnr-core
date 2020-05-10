@@ -8,8 +8,9 @@ import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostMedia;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.PostActionRepository;
-import com.questnr.responses.AvatarStorageData;
+import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.AmazonS3Client;
+import com.questnr.services.CommonService;
 import com.questnr.services.PostActionService;
 import com.questnr.services.user.UserCommonService;
 import org.mapstruct.factory.Mappers;
@@ -21,6 +22,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +49,9 @@ public class CommunityPostActionService {
     @Autowired
     final PostActionMapper postActionMapper;
 
+    @Autowired
+    CommonService commonService;
+
     CommunityPostActionService() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
@@ -61,10 +67,21 @@ public class CommunityPostActionService {
         if (postAction != null) {
             List<PostMedia> postMediaList;
             postMediaList = files.stream().map(multipartFile -> {
-                AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(multipartFile, communityId);
-                PostMedia postMedia = new PostMedia();
-                postMedia.setMediaKey(avatarStorageData.getKey());
-                return postMedia;
+                try{
+                    File file = commonService.convertMultiPartToFile(multipartFile);
+                    if (commonService.checkIfFileIsImage(file)) {
+                        ResourceStorageData resourceStorageData = this.amazonS3Client.uploadFile(file, communityId);
+                        PostMedia postMedia = new PostMedia();
+                        postMedia.setMediaKey(resourceStorageData.getKey());
+                        postMedia.setResourceType(resourceStorageData.getResourceType());
+                        return postMedia;
+                    } else {
+
+                    }
+                }catch (IOException ex){
+
+                }
+                return null;
             }).collect(Collectors.toList());
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
             postAction.setPostMediaList(postMediaList);

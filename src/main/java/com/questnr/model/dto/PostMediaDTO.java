@@ -1,11 +1,11 @@
 package com.questnr.model.dto;
 
-import com.questnr.common.enums.MediaType;
+import com.questnr.common.enums.ResourceType;
 
 public class PostMediaDTO {
     private String postMediaLink;
 
-    private MediaType mediaType;
+    private ResourceType resourceType;
 
     public String getPostMediaLink() {
         return postMediaLink;
@@ -15,11 +15,11 @@ public class PostMediaDTO {
         this.postMediaLink = postMediaLink;
     }
 
-    public MediaType getMediaType() {
-        return mediaType;
+    public ResourceType getResourceType() {
+        return resourceType;
     }
 
-    public void setMediaType(MediaType mediaType) {
-        this.mediaType = mediaType;
+    public void setResourceType(ResourceType resourceType) {
+        this.resourceType = resourceType;
     }
 }

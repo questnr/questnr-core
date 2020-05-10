@@ -1,7 +1,6 @@
 package com.questnr.services.user;
 
 import com.questnr.common.enums.PostActionType;
-import com.questnr.exceptions.InvalidInputException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.PostActionCardDTO;
 import com.questnr.model.entities.PostAction;
@@ -9,8 +8,9 @@ import com.questnr.model.entities.PostMedia;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.PostActionRepository;
-import com.questnr.responses.AvatarStorageData;
+import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.AmazonS3Client;
+import com.questnr.services.CommonService;
 import com.questnr.services.PostActionService;
 import com.questnr.services.community.CommunityCommonService;
 import org.mapstruct.factory.Mappers;
@@ -23,6 +23,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +50,9 @@ public class UserPostActionService {
 
     @Autowired
     final PostActionMapper postActionMapper;
+
+    @Autowired
+    CommonService commonService;
 
     UserPostActionService() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
@@ -80,11 +85,21 @@ public class UserPostActionService {
             postAction.setUserActor(user);
             List<PostMedia> postMediaList;
             postMediaList = files.stream().map(multipartFile -> {
-                AvatarStorageData avatarStorageData = this.amazonS3Client.uploadFile(multipartFile);
-                PostMedia postMedia = new PostMedia();
-                postMedia.setMediaKey(avatarStorageData.getKey());
-                postMedia.setMediaType(avatarStorageData.getMediaType());
-                return postMedia;
+                try {
+                    File file = commonService.convertMultiPartToFile(multipartFile);
+                    if (commonService.checkIfFileIsImage(file)) {
+                        ResourceStorageData resourceStorageData = this.amazonS3Client.uploadFile(file);
+                        PostMedia postMedia = new PostMedia();
+                        postMedia.setMediaKey(resourceStorageData.getKey());
+                        postMedia.setResourceType(resourceStorageData.getResourceType());
+                        return postMedia;
+                    } else {
+
+                    }
+                } catch (IOException ex) {
+
+                }
+                return null;
             }).collect(Collectors.toList());
             postAction.setPostMediaList(postMediaList);
             return postActionMapper.toCardDTO(postActionService.creatPostAction(postAction), PostActionType.normal, null);

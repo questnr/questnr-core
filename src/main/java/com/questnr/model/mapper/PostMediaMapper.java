@@ -34,7 +34,7 @@ public class PostMediaMapper {
     public PostMediaDTO toPostMediaDTO(PostMedia postMedia) {
         PostMediaDTO postMediaDTO = new PostMediaDTO();
         postMediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(postMedia.getMediaKey()));
-        postMediaDTO.setMediaType(postMedia.getMediaType());
+        postMediaDTO.setResourceType(postMedia.getResourceType());
         return postMediaDTO;
     }
 

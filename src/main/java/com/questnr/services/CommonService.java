@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.PostAction;
@@ -7,9 +8,12 @@ import com.questnr.responses.TimeData;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -114,5 +118,16 @@ public class CommonService {
         String mimetype= new MimetypesFileTypeMap().getContentType(file);
         String type = mimetype.split("/")[0];
         return type.equals("image");
+    }
+
+    public File convertMultiPartToFile(MultipartFile file) throws IOException {
+        if(file.getOriginalFilename() != null) {
+            File convFile = new File(file.getOriginalFilename());
+            FileOutputStream fos = new FileOutputStream(convFile);
+            fos.write(file.getBytes());
+            fos.close();
+            return convFile;
+        }
+        throw new InvalidRequestException("File name is not valid!");
     }
 }
