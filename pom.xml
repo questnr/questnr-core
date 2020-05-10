@@ -211,6 +211,52 @@
             <artifactId>firebase-admin</artifactId>
             <version>6.12.1</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.cloudinary/cloudinary-core -->
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-core</artifactId>
+            <version>1.26.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.cloudinary/cloudinary-http44 -->
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http44</artifactId>
+            <version>1.26.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.cloudinary/cloudinary-taglib -->
+        <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-taglib</artifactId>
+            <version>1.26.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-core</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+
+<!--        MAC OS 64 Bit based-->
+        <dependency>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-nativebin-osx64</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+
+<!--        Linux 64 Bit based-->
+<!--        <dependency>-->
+<!--            <groupId>ws.schild</groupId>-->
+<!--            <artifactId>jave-nativebin-linux64</artifactId>-->
+<!--            <version>2.7.1</version>-->
+<!--        </dependency>-->
+
+<!--        Windows 64 Bit Based-->
+<!--        <dependency>-->
+<!--            <groupId>ws.schild</groupId>-->
+<!--            <artifactId>jave-nativebin-win64</artifactId>-->
+<!--            <version>2.7.1</version>-->
+<!--        </dependency>-->
     </dependencies>
 
 

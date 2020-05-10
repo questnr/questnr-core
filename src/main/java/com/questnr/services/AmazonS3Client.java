@@ -57,7 +57,7 @@ public class AmazonS3Client {
         this.s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(Regions.AP_SOUTHEAST_1).build();
     }
 
-    private File convertMultiPartToFile(MultipartFile file) throws IOException {
+    public File convertMultiPartToFile(MultipartFile file) throws IOException {
         if(file.getOriginalFilename() != null) {
             File convFile = new File(file.getOriginalFilename());
             FileOutputStream fos = new FileOutputStream(convFile);
