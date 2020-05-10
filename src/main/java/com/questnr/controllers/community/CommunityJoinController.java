@@ -4,6 +4,7 @@ import com.questnr.access.CommunityJoinAccessService;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
+import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.requests.UserEmailRequest;
 import com.questnr.requests.UserIdRequest;
@@ -11,6 +12,9 @@ import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityJoinService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +36,29 @@ public class CommunityJoinController {
     CommunityJoinController() {
 
         communityMapper = Mappers.getMapper(CommunityMapper.class);
+    }
+
+    // Communities joined by the user
+    @RequestMapping(value = "/user/{userId}/join/community", method = RequestMethod.GET)
+    Page<CommunityDTO> joinCommunity(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        User user = communityJoinAccessService.getJoinedCommunityList(userId);
+        if (user != null) {
+            Pageable pageable = PageRequest.of(page, size);
+            return communityJoinService.getJoinedCommunityList(user, pageable);
+        }
+        throw new AccessException();
+    }
+
+    // Decline the invitation sent to the user
+    @RequestMapping(value = "/user/{userId}/community/invitations", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    Page<CommunityDTO> getCommunityInvitationList(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        User user = communityJoinAccessService.getCommunityInvitationList(userId);
+        if (user != null) {
+            Pageable pageable = PageRequest.of(page, size);
+            return communityJoinService.getCommunityInvitationList(user, pageable);
+        }
+        throw new AccessException();
     }
 
     // Join user to the community

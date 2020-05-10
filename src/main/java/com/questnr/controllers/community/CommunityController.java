@@ -66,11 +66,15 @@ public class CommunityController {
         throw new AccessException();
     }
 
-    @RequestMapping(value = "/user/community", method = RequestMethod.GET)
-    Page<CommunityDTO> getCommunityListByUser(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    @RequestMapping(value = "/user/{userId}/community", method = RequestMethod.GET)
+    Page<CommunityDTO> getCommunityListByUser(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Community> communityPage = communityService.getCommunityListOfUser(pageable);
-        return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
+        User user = communityAvatarAccessService.getCommunityListOfUser(userId);
+        if (user != null) {
+            Page<Community> communityPage = communityService.getCommunityListOfUser(user, pageable);
+            return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/user/community/check-exists", method = RequestMethod.POST)
