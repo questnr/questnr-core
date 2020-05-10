@@ -79,7 +79,8 @@ public abstract class PostActionMapper {
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "totalLikes", expression = "java(postAction.getLikeActionSet().size())"),
             @Mapping(target = "totalComments", expression = "java(postAction.getCommentActionSet().size())"),
-            @Mapping(target = "totalPostVisits", expression = "java(postAction.getPostVisitSet().size())")
+            @Mapping(target = "totalPostVisits", expression = "java(postAction.getPostVisitSet().size())"),
+            @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
     })
     abstract public PostActionForCommunityDTO toPostActionForCommunityDTO(final PostAction postAction);
 

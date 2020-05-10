@@ -23,6 +23,7 @@ public class PostActionForCommunityDTO {
     private int totalComments;
     private int totalPostVisits;
     private MetaDataDTO metaData;
+    private PostActionMetaDTO postActionMeta;
 
     public Long getPostActionId() {
         return postActionId;
@@ -151,5 +152,13 @@ public class PostActionForCommunityDTO {
 
     public void setMetaData(MetaDataDTO metaData) {
         this.metaData = metaData;
+    }
+
+    public PostActionMetaDTO getPostActionMeta() {
+        return postActionMeta;
+    }
+
+    public void setPostActionMeta(PostActionMetaDTO postActionMeta) {
+        this.postActionMeta = postActionMeta;
     }
 }
