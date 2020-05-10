@@ -39,7 +39,7 @@ public class CommunityJoinController {
     }
 
     // Communities joined by the user
-    @RequestMapping(value = "/user/{userId}/join/community", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/{userId}/join/community", method = RequestMethod.GET)
     Page<CommunityDTO> joinCommunity(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         User user = communityJoinAccessService.getJoinedCommunityList(userId);
         if (user != null) {
@@ -49,6 +49,17 @@ public class CommunityJoinController {
         throw new AccessException();
     }
 
+    // Decline the invitation sent to the user
+    @RequestMapping(value = "/user/{userId}/community/invitations", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    Page<CommunityDTO> getCommunityInvitationList(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        User user = communityJoinAccessService.getCommunityInvitationList(userId);
+        if (user != null) {
+            Pageable pageable = PageRequest.of(page, size);
+            return communityJoinService.getCommunityInvitationList(user, pageable);
+        }
+        throw new AccessException();
+    }
 
     // Join user to the community
     @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.POST)

@@ -3,8 +3,10 @@ package com.questnr.services.user;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserFollower;
+import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityUserRepository;
 import com.questnr.model.repositories.UserFollowerRepository;
@@ -12,14 +14,17 @@ import com.questnr.model.repositories.UserRepository;
 import com.questnr.services.CustomPageService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.notification.NotificationJob;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -52,6 +57,13 @@ public class UserFollowerService {
 
     @Autowired
     NotificationJob notificationJob;
+
+    @Autowired
+    UserMapper userMapper;
+
+    UserFollowerService() {
+        userMapper = Mappers.getMapper(UserMapper.class);
+    }
 
     private User addUserToUser(User userBeingFollowed, User user) {
         Set<UserFollower> userFollowers = user.getThisFollowingUserSet();
@@ -124,17 +136,15 @@ public class UserFollowerService {
         return RelationShipType.none;
     }
 
-    public Page<User> getFollowersOfUser(User user, Pageable pageable) {
-        return customPageService.customPage(user.getThisBeingFollowedUserSet()
-                .stream()
-                .map(UserFollower::getFollowingUser)
-                .collect(Collectors.toList()), pageable);
+    public Page<UserDTO> getFollowersOfUser(User user, Pageable pageable) {
+        Page<UserFollower> userPage = userFollowerRepository.findAllByUserOrderByCreatedAtDesc(user, pageable);
+        List<User> followers = userPage.getContent().stream().map(UserFollower::getFollowingUser).collect(Collectors.toList());
+        return new PageImpl<>(userMapper.toOthersDTOs(followers), pageable, userPage.getTotalElements());
     }
 
-    public Page<User> getUserFollowingToOtherUsers(User user, Pageable pageable) {
-        return customPageService.customPage(user.getThisFollowingUserSet()
-                .stream()
-                .map(UserFollower::getUser)
-                .collect(Collectors.toList()), pageable);
+    public Page<UserDTO> getUserFollowingToOtherUsers(User user, Pageable pageable) {
+        Page<UserFollower> userPage = userFollowerRepository.findAllByFollowingUserOrderByCreatedAtDesc(user, pageable);
+        List<User> followingTo = userPage.getContent().stream().map(UserFollower::getUser).collect(Collectors.toList());
+        return new PageImpl<>(userMapper.toOthersDTOs(followingTo), pageable, userPage.getTotalElements());
     }
 }

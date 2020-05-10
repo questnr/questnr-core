@@ -12,7 +12,6 @@ import com.questnr.services.user.UserFollowerService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -45,8 +44,7 @@ public class UserFollowerController {
         User user = userFollowerAccessService.getFollowersOfUser(userId);
         if (user != null) {
             Pageable pageable = PageRequest.of(page, size);
-            Page<User> userPage = userFollowerService.getFollowersOfUser(user, pageable);
-            return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
+            return userFollowerService.getFollowersOfUser(user, pageable);
         }
         throw new AccessException();
     }
@@ -57,8 +55,7 @@ public class UserFollowerController {
         User user = userFollowerAccessService.getUserFollowingToOtherUsers(userId);
         if (user != null) {
             Pageable pageable = PageRequest.of(page, size);
-            Page<User> userPage = userFollowerService.getUserFollowingToOtherUsers(user, pageable);
-            return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
+            return userFollowerService.getUserFollowingToOtherUsers(user, pageable);
         }
         throw new AccessException();
     }

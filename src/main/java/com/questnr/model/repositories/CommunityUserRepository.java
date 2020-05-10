@@ -13,7 +13,7 @@ import java.util.List;
 public interface CommunityUserRepository extends JpaRepository<CommunityUser, Long> {
     boolean existsByCommunityAndUser(Community community, User user);
 
-    Page<CommunityUser> findAllByUser(User user, Pageable pageable);
+    Page<CommunityUser> findAllByUserOrderByCreatedAtDesc(User user, Pageable pageable);
 
     List<CommunityUser> findAllByCommunityAndCreatedAtBetween(Community community, Date startingDate, Date endingDate);
 

@@ -33,7 +33,12 @@ public class CommunityJoinAccessService {
         return false;
     }
 
-    public User getJoinedCommunityList(Long userId){
+    public User getJoinedCommunityList(Long userId) {
+        // @Todo: isPublic
+        return userCommonService.getUser(userId);
+    }
+
+    public User getCommunityInvitationList(Long userId) {
         // @Todo: isPublic
         return userCommonService.getUser(userId);
     }

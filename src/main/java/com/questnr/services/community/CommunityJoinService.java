@@ -64,9 +64,15 @@ public class CommunityJoinService {
     }
 
     public Page<CommunityDTO> getJoinedCommunityList(User user, Pageable pageable) {
-        Page<CommunityUser> communityUserPage = communityUserRepository.findAllByUser(user, pageable);
+        Page<CommunityUser> communityUserPage = communityUserRepository.findAllByUserOrderByCreatedAtDesc(user, pageable);
         List<Community> joinedCommunityList = communityUserPage.getContent().stream().map(CommunityUser::getCommunity).collect(Collectors.toList());
         return new PageImpl<>(communityMapper.toDTOs(joinedCommunityList), pageable, communityUserPage.getTotalElements());
+    }
+
+    public Page<CommunityDTO> getCommunityInvitationList(User user, Pageable pageable) {
+        Page<CommunityInvitedUser> communityInvitedUserPage = communityInvitedUserRepository.findAllByUserOrderByCreatedAtDesc(user, pageable);
+        List<Community> invitedCommunityList = communityInvitedUserPage.getContent().stream().map(CommunityInvitedUser::getCommunity).collect(Collectors.toList());
+        return new PageImpl<>(communityMapper.toDTOs(invitedCommunityList), pageable, communityInvitedUserPage.getTotalElements());
     }
 
     private Community addUserToCommunity(Community community, User user) {
