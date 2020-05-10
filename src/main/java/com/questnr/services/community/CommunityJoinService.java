@@ -5,23 +5,31 @@ import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityInvitedUser;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
+import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.repositories.CommunityInvitedUserRepository;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityUserRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CommunityJoinService {
@@ -47,6 +55,19 @@ public class CommunityJoinService {
 
     @Autowired
     NotificationJob notificationJob;
+
+    @Autowired
+    CommunityMapper communityMapper;
+
+    CommunityJoinService() {
+        communityMapper = Mappers.getMapper(CommunityMapper.class);
+    }
+
+    public Page<CommunityDTO> getJoinedCommunityList(User user, Pageable pageable) {
+        Page<CommunityUser> communityUserPage = communityUserRepository.findAllByUser(user, pageable);
+        List<Community> joinedCommunityList = communityUserPage.getContent().stream().map(CommunityUser::getCommunity).collect(Collectors.toList());
+        return new PageImpl<>(communityMapper.toDTOs(joinedCommunityList), pageable, communityUserPage.getTotalElements());
+    }
 
     private Community addUserToCommunity(Community community, User user) {
         Set<CommunityUser> communityUsers = community.getUsers();

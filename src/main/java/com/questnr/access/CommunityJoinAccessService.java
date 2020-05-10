@@ -1,6 +1,7 @@
 package com.questnr.access;
 
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.User;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +31,10 @@ public class CommunityJoinAccessService {
             return true;
         }
         return false;
+    }
+
+    public User getJoinedCommunityList(Long userId){
+        // @Todo: isPublic
+        return userCommonService.getUser(userId);
     }
 }
