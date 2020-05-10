@@ -1,5 +1,6 @@
 package com.questnr.access;
 
+import com.questnr.model.entities.User;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,4 +27,11 @@ public class UserFollowerAccessService {
         return false;
     }
 
+    public User getFollowersOfUser(Long userId){
+        return userCommonService.getUser(userId);
+    }
+
+    public User getUserFollowingToOtherUsers(Long userId){
+        return userCommonService.getUser(userId);
+    }
 }

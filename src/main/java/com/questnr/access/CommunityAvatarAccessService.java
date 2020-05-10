@@ -1,5 +1,6 @@
 package com.questnr.access;
 
+import com.questnr.model.entities.User;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.CommonService;
 import com.questnr.services.community.CommunityCommonService;
@@ -32,6 +33,13 @@ public class CommunityAvatarAccessService {
 
     public boolean hasAccessToCommunityCreation() {
         return true;
+    }
+
+    public User getCommunityListOfUser(Long userId) {
+        return userCommonService.getUser(userId);
+//        if(userId.equals(userCommonService.getUserId())) {
+//
+//        }
     }
 
     public boolean hasAccessToCommunityDeletion() {
