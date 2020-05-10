@@ -47,13 +47,13 @@ public class CommentActionController {
     }
 
     @RequestMapping(value = "/user/posts/{postId}/comment", method = RequestMethod.POST)
-    CommentAction createComment(@PathVariable Long postId, @RequestBody CommentActionRequest commentActionRequest) {
+    CommentActionDTO createComment(@PathVariable Long postId, @RequestBody CommentActionRequest commentActionRequest) {
         /*
          * Post Comment Security Checking
          * */
         if (commentActionAccessService.hasAccessToCommentCreation(postId)) {
             commentActionRequest.setPostId(postId);
-            return commentActionService.createCommentAction(commentActionRequest);
+            return commentActionMapper.toDTO(commentActionService.createCommentAction(commentActionRequest));
         }
         throw new AccessException(errorMessage);
     }

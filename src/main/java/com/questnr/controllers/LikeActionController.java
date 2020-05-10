@@ -46,8 +46,8 @@ public class LikeActionController {
     }
 
     @RequestMapping(value = "/user/posts/{postId}/like", method = RequestMethod.POST)
-    LikeAction createLike(@PathVariable Long postId) {
-        return likeActionService.createLikeAction(postId);
+    LikeActionDTO createLike(@PathVariable Long postId) {
+        return likeActionMapper.toDTO(likeActionService.createLikeAction(postId));
     }
 
     @RequestMapping(value = "/user/posts/{postId}/like", method = RequestMethod.DELETE)
