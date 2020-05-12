@@ -100,7 +100,6 @@ public class AmazonS3Client {
             resourceStorageData.setKey(pathToFile);
             resourceStorageData.setUrl(this.getS3BucketUrl(pathToFile));
             this.uploadFileToS3bucket(pathToFile, file);
-            resourceStorageData.setResourceType(ResourceType.image);
         } catch (Exception e) {
             e.printStackTrace();
         }

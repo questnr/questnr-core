@@ -1,6 +1,7 @@
 package com.questnr.services.user;
 
 import com.questnr.common.enums.PostActionType;
+import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.PostActionCardDTO;
 import com.questnr.model.entities.PostAction;
@@ -92,10 +93,15 @@ public class UserPostActionService {
                     File file = commonService.convertMultiPartToFile(multipartFile);
                     if (commonService.checkIfFileIsImage(file)) {
                         try {
-                            ImageCompression imageCompression = new ImageCompression(file);
-                            File compressedFile = imageCompression.doCompression();
-                            resourceStorageData = this.amazonS3Client.uploadFile(compressedFile);
-
+                            if(commonService.getFileExtension(file).equals("png")){
+                                resourceStorageData = this.amazonS3Client.uploadFile(file);
+                                resourceStorageData.setResourceType(ResourceType.image);
+                            }else{
+                                ImageCompression imageCompression = new ImageCompression(file);
+                                File compressedFile = imageCompression.doCompression();
+                                resourceStorageData = this.amazonS3Client.uploadFile(compressedFile);
+                                resourceStorageData.setResourceType(ResourceType.image);
+                            }
                         } catch (Exception e) {
 
                         } finally {
@@ -110,10 +116,10 @@ public class UserPostActionService {
                             videoCompressionThread.start();
                             videoCompressionThread.join();
                             resourceStorageData = this.amazonS3Client.uploadFile(target);
+                            resourceStorageData.setResourceType(ResourceType.video);
                         } catch (InterruptedException e) {
 
-                        }
-                        finally {
+                        } finally {
                             file.delete();
                             target.delete();
                         }

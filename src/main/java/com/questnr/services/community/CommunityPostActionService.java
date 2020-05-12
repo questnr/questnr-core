@@ -1,5 +1,6 @@
 package com.questnr.services.community;
 
+import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionForCommunityDTO;
@@ -74,6 +75,7 @@ public class CommunityPostActionService {
                     if (commonService.checkIfFileIsImage(file)) {
                         try {
                             resourceStorageData = this.amazonS3Client.uploadFile(file, communityId);
+                            resourceStorageData.setResourceType(ResourceType.image);
                         } catch (Exception e) {
 
                         } finally {
@@ -88,6 +90,7 @@ public class CommunityPostActionService {
                             videoCompressionThread.start();
                             videoCompressionThread.join();
                             resourceStorageData = this.amazonS3Client.uploadFile(target, communityId);
+                            resourceStorageData.setResourceType(ResourceType.video);
                         } catch (InterruptedException e) {
 
                         } finally {

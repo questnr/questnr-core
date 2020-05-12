@@ -15,8 +15,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +25,7 @@ public class CommonService {
     public static boolean isNull(String string) {
         try {
             return string == null || string.trim().isEmpty();
-        }catch (Exception e){
+        } catch (Exception e) {
             return true;
         }
     }
@@ -92,11 +90,11 @@ public class CommonService {
         return year.equals(currentYear) ? format.format(date) : format.format(date) + " " + year;
     }
 
-    public static String removeSpecialCharacters(String text){
+    public static String removeSpecialCharacters(String text) {
         return text.replaceAll("[ ](?=[ ])|[^-_A-Za-z0-9 ]+", "");
     }
 
-    public static String removeSpecialCharactersWithWhiteSpace(String text){
+    public static String removeSpecialCharactersWithWhiteSpace(String text) {
         return text.replaceAll("[^A-Za-z0-9]+", "");
     }
 
@@ -114,10 +112,15 @@ public class CommonService {
         return entity;
     }
 
-    public boolean checkIfFileIsImage(File file){
-        String mimetype= new MimetypesFileTypeMap().getContentType(file);
+    public boolean checkIfFileIsImage(File file) {
+        String mimetype = new MimetypesFileTypeMap().getContentType(file);
         String type = mimetype.split("/")[0];
         return type.equals("image");
+    }
+
+    public String getFileExtension(File file) {
+        String mimetype = new MimetypesFileTypeMap().getContentType(file);
+        return mimetype.split("/")[1];
     }
 
     public String generateFileName(File file) {
@@ -129,7 +132,7 @@ public class CommonService {
     }
 
     public File convertMultiPartToFile(MultipartFile file) throws IOException {
-        if(file.getOriginalFilename() != null) {
+        if (file.getOriginalFilename() != null) {
             File convFile = new File(file.getOriginalFilename());
             FileOutputStream fos = new FileOutputStream(convFile);
             fos.write(file.getBytes());
