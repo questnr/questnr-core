@@ -60,7 +60,7 @@ public class UserPostActionService {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
 
-    public Page<PostActionCardDTO> getAllPostsByUserSlug(User user, Pageable pageable) {
+    public Page<PostActionCardDTO> getAllPostsByUserId(User user, Pageable pageable) {
         List<Object[]> postActionList = postActionRepository.getUserPosts(user.getUserId(), pageable.getPageSize() * pageable.getPageNumber(), pageable.getPageSize());
 
         List<PostActionCardDTO> postActionCardDTOS = new ArrayList<>();

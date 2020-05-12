@@ -50,7 +50,7 @@ public class CommunityJoinController {
     }
 
     // Decline the invitation sent to the user
-    @RequestMapping(value = "/user/{userId}/community/invitations", method = RequestMethod.GET)
+    @RequestMapping(value = "/user/{userId}/invitations/community/", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     Page<CommunityDTO> getCommunityInvitationList(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         User user = communityJoinAccessService.getCommunityInvitationList(userId);

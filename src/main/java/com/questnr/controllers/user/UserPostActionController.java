@@ -43,12 +43,12 @@ public class UserPostActionController {
     }
 
     // Basic post operations for users.
-    @RequestMapping(value = "/{userSlug}/posts", method = RequestMethod.GET)
-    Page<PostActionCardDTO> getAllPostsByUserSlug(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable String userSlug) {
-        User user = userPostActionAccessService.getAllPostsByUserSlug(userSlug);
+    @RequestMapping(value = "/{userId}/posts", method = RequestMethod.GET)
+    Page<PostActionCardDTO> getAllPostsByUserId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable Long userId) {
+        User user = userPostActionAccessService.getAllPostsByUserId(userId);
         if (user != null) {
             Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-            return userPostActionService.getAllPostsByUserSlug(user, pageable);
+            return userPostActionService.getAllPostsByUserId(user, pageable);
         }
         throw new AccessException();
     }

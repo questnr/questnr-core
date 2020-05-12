@@ -34,8 +34,8 @@ public class UserPostActionAccessService {
     @Autowired
     PostActionAccessService postActionAccessService;
 
-    public User getAllPostsByUserSlug(String userSlug) {
-        User user = userCommonService.getUserByUserSlug(userSlug);
+    public User getAllPostsByUserId(Long userId) {
+        User user = userCommonService.getUser(userId);
         if (user.equals(userCommonService.getUser()) || user.getPublic()) {
             return user;
         }
