@@ -54,14 +54,6 @@ public class AmazonS3Client {
         this.s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(Regions.AP_SOUTHEAST_1).build();
     }
 
-    private String generateFileName(File file) {
-        try {
-            return new Date().getTime() + "-" + file.getName().replace(" ", "_");
-        } catch (Exception e) {
-            return new Date().getTime() + "-" + file.getName();
-        }
-    }
-
     private void uploadFileToS3bucket(String pathToFile, File file) {
         this.s3Client.putObject(new PutObjectRequest(bucketName, pathToFile, file).withCannedAcl(CannedAccessControlList.PublicRead));
     }
@@ -91,13 +83,13 @@ public class AmazonS3Client {
     }
 
     public ResourceStorageData uploadFile(File file) {
-        String fileName = this.generateFileName(file);
+        String fileName = commonService.generateFileName(file);
         String pathToFile = userCommonService.joinPathToFile(fileName);
         return this.uploadFile(file, pathToFile);
     }
 
     public ResourceStorageData uploadFile(File file, long communityId) {
-        String fileName = this.generateFileName(file);
+        String fileName = commonService.generateFileName(file);
         String pathToFile = communityCommonService.joinPathToFile(fileName, communityId);
         return this.uploadFile(file, pathToFile);
     }
@@ -107,11 +99,8 @@ public class AmazonS3Client {
         try {
             resourceStorageData.setKey(pathToFile);
             resourceStorageData.setUrl(this.getS3BucketUrl(pathToFile));
-            ImageCompression imageCompression = new ImageCompression(file);
-            File compressedFile = imageCompression.doCompression();
-            this.uploadFileToS3bucket(pathToFile, compressedFile);
+            this.uploadFileToS3bucket(pathToFile, file);
             resourceStorageData.setResourceType(ResourceType.image);
-            file.delete();
         } catch (Exception e) {
             e.printStackTrace();
         }

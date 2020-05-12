@@ -107,7 +107,7 @@ public class User extends DomainObject {
     private SignUpSourceType signUpSource = SignUpSourceType.WEB;
 
     @Column(name = "is_public", columnDefinition = "bool default true")
-    private boolean isPublic;
+    private Boolean isPublic;
 
     public Long getUserId() {
         return userId;
@@ -273,11 +273,11 @@ public class User extends DomainObject {
         this.loginType = loginType;
     }
 
-    public boolean isPublic() {
+    public Boolean getPublic() {
         return isPublic;
     }
 
-    public void setPublic(boolean aPublic) {
+    public void setPublic(Boolean aPublic) {
         isPublic = aPublic;
     }
 

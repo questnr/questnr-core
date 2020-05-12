@@ -13,6 +13,7 @@ import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.PostActionService;
 import com.questnr.services.user.UserCommonService;
+import com.questnr.util.VideoCompression;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,18 +68,40 @@ public class CommunityPostActionService {
         if (postAction != null) {
             List<PostMedia> postMediaList;
             postMediaList = files.stream().map(multipartFile -> {
-                try{
+                ResourceStorageData resourceStorageData = new ResourceStorageData();
+                try {
                     File file = commonService.convertMultiPartToFile(multipartFile);
                     if (commonService.checkIfFileIsImage(file)) {
-                        ResourceStorageData resourceStorageData = this.amazonS3Client.uploadFile(file, communityId);
+                        try {
+                            resourceStorageData = this.amazonS3Client.uploadFile(file, communityId);
+                        } catch (Exception e) {
+
+                        } finally {
+                            file.delete();
+                        }
+                    } else {
+                        String fileName = "out_" + commonService.generateFileName(file);
+                        File target = new File(fileName);
+                        try {
+                            VideoCompression videoCompression = new VideoCompression(file, target);
+                            Thread videoCompressionThread = new Thread(videoCompression, fileName);
+                            videoCompressionThread.start();
+                            videoCompressionThread.join();
+                            resourceStorageData = this.amazonS3Client.uploadFile(target, communityId);
+                        } catch (InterruptedException e) {
+
+                        } finally {
+                            file.delete();
+                            target.delete();
+                        }
+                    }
+                    if (resourceStorageData.getKey() != null && !CommonService.isNull(resourceStorageData.getKey())) {
                         PostMedia postMedia = new PostMedia();
                         postMedia.setMediaKey(resourceStorageData.getKey());
                         postMedia.setResourceType(resourceStorageData.getResourceType());
                         return postMedia;
-                    } else {
-
                     }
-                }catch (IOException ex){
+                } catch (IOException ex) {
 
                 }
                 return null;

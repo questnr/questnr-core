@@ -36,7 +36,7 @@ public class UserPostActionAccessService {
 
     public User getAllPostsByUserSlug(String userSlug) {
         User user = userCommonService.getUserByUserSlug(userSlug);
-        if (user.equals(userCommonService.getUser()) || user.isPublic()) {
+        if (user.equals(userCommonService.getUser()) || user.getPublic()) {
             return user;
         }
         return null;

@@ -120,6 +120,14 @@ public class CommonService {
         return type.equals("image");
     }
 
+    public String generateFileName(File file) {
+        try {
+            return new Date().getTime() + "-" + file.getName().replace(" ", "_");
+        } catch (Exception e) {
+            return new Date().getTime() + "-" + file.getName();
+        }
+    }
+
     public File convertMultiPartToFile(MultipartFile file) throws IOException {
         if(file.getOriginalFilename() != null) {
             File convFile = new File(file.getOriginalFilename());

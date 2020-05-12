@@ -1,9 +1,6 @@
 package com.questnr.model.dto;
 
 import com.questnr.common.enums.PostActionType;
-import org.jboss.logging.annotations.Pos;
-
-import java.util.List;
 
 public class PostActionCardDTO extends PostActionDTO {
 
