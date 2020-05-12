@@ -22,4 +22,6 @@ public interface CommentActionRepository extends JpaRepository<CommentAction, Lo
     Boolean existsByCommentActionId(Long commentId);
 
     Long countAllByPostActionAndCreatedAtBetween(PostAction postAction, Date startingDate, Date endingDate);
+
+    int countByPostActionAndChildComment(PostAction postAction, boolean isChildComment);
 }

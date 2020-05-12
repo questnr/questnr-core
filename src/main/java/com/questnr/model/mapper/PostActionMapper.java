@@ -4,6 +4,7 @@ import com.questnr.common.enums.PostActionType;
 import com.questnr.model.dto.*;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
+import com.questnr.model.repositories.CommentActionRepository;
 import com.questnr.services.user.UserCommonService;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,9 @@ public abstract class PostActionMapper {
     @Autowired
     UserCommonService userCommonService;
 
+    @Autowired
+    CommentActionRepository commentActionRepository;
+
     @Mappings({
             @Mapping(source = "slug", target = "slug"),
             @Mapping(source = "postMediaList", target = "postMediaList"),
@@ -36,7 +40,7 @@ public abstract class PostActionMapper {
             @Mapping(target = "metaList", ignore = true),
             @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
             @Mapping(target = "totalLikes", expression = "java(postAction.getLikeActionSet().size())"),
-            @Mapping(target = "totalComments", expression = "java(postAction.getCommentActionSet().size())"),
+            @Mapping(target = "totalComments", expression = "java(this.commentActionRepository.countByPostActionAndChildComment(postAction, false))"),
             @Mapping(target = "totalPostVisits", expression = "java(postAction.getPostVisitSet().size())")
     })
     abstract public PostActionPublicDTO toPublicDTO(final PostAction postAction);
@@ -75,7 +79,7 @@ public abstract class PostActionMapper {
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
             @Mapping(target = "totalLikes", expression = "java(postAction.getLikeActionSet().size())"),
-            @Mapping(target = "totalComments", expression = "java(postAction.getCommentActionSet().size())"),
+            @Mapping(target = "totalComments", expression = "java(this.commentActionRepository.countByPostActionAndChildComment(postAction, false))"),
             @Mapping(target = "totalPostVisits", expression = "java(postAction.getPostVisitSet().size())"),
             @Mapping(target = "postActionType", expression = "java(postActionType)"),
             @Mapping(source = "userWhoShared", target = "userWhoShared")
@@ -91,7 +95,7 @@ public abstract class PostActionMapper {
             @Mapping(source = "commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "totalLikes", expression = "java(postAction.getLikeActionSet().size())"),
-            @Mapping(target = "totalComments", expression = "java(postAction.getCommentActionSet().size())"),
+            @Mapping(target = "totalComments", expression = "java(this.commentActionRepository.countByPostActionAndChildComment(postAction, false))"),
             @Mapping(target = "totalPostVisits", expression = "java(postAction.getPostVisitSet().size())"),
             @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
     })
