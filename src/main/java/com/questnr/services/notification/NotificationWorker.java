@@ -92,7 +92,8 @@ public class NotificationWorker extends Thread {
                             List<String> tokenList = userNotificationTokenRegistryList.stream().map(UserNotificationTokenRegistry::getToken).collect(Collectors.toList());
                             pushNotificationRequest.setTokenList(tokenList);
                             Map<String, String> data = new HashMap<>();
-                            data.put("openLink", notificationDTO.getClickAction());
+                            data.put("isNotification", "true");
+                            data.put("type", "normal");
                             this.pushNotificationService.multicastPushNotificationToTokenWithData(data, pushNotificationRequest);
                         }
                     } catch (Exception ex) {
