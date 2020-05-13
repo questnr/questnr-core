@@ -22,8 +22,8 @@ public class NotificationController {
     NotificationService notificationService;
 
     @RequestMapping(value = "/user/notification", method = RequestMethod.GET)
-    List<NotificationDTO> getNotificationsByUser() {
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+    List<NotificationDTO> getNotificationsByUser(@RequestParam(defaultValue = "0") int page) {
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("createdAt").descending());
         return notificationService.getNotificationsByUser(pageable);
     }
 
