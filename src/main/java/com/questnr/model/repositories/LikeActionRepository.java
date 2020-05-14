@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.Optional;
@@ -25,5 +26,5 @@ public interface LikeActionRepository extends JpaRepository<LikeAction, Long> {
             " where la.postAction.postActionId=:postActionId and userActor.username LIKE %:userString% or " +
             " userActor.firstName LIKE %:userString% or " +
             " userActor.lastName LIKE %:userString%")
-    Page<User> findAllByUserActorContains(Long postActionId, String userString, Pageable pageable);
+    Page<User> findAllByUserActorContains(@Param("postActionId") Long postActionId, @Param("userString") String userString, Pageable pageable);
 }
