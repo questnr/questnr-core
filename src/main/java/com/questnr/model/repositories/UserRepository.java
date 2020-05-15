@@ -1,7 +1,6 @@
 package com.questnr.model.repositories;
 
 import com.questnr.model.entities.User;
-import com.questnr.model.projections.UserProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmailId(String emailId);
 
     @Query("Select user from User user where user.username like %:userString% or user.firstName like %:userString% or user.lastName like %:userString%")
-    Page<UserProjection> findByUserContaining(@Param("userString") String userString, Pageable pageable);
+    Page<User> findByUserContaining(@Param("userString") String userString, Pageable pageable);
 
     //  @Query("select user.userId, " +
 //          " COUNT(DISTINCT pa.postActionId) as totalPosts, " +
