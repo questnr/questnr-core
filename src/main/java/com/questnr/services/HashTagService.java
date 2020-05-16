@@ -46,7 +46,7 @@ public class HashTagService {
     }
 
     public Set<HashTagProjection> searchHashTag(String hashTag) {
-        return hashTagRepository.findByHashTagValueContaining(hashTag);
+        return hashTagRepository.findByHashTagValueContaining(hashTag.toLowerCase());
     }
 
     public Page<HashTag> getTrendingHashTagList(Pageable pageable) {

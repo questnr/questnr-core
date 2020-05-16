@@ -14,7 +14,7 @@ public interface HashTagRepository extends JpaRepository<HashTag, Long> {
 
     HashTag findByHashTagValue(String hashTag);
 
-    @Query("Select h from HashTag h where h.hashTagValue like %:hashTag%")
+    @Query("Select h from HashTag h where h.hashTagValue like :hashTag%")
     Set<HashTagProjection> findByHashTagValueContaining(@Param("hashTag") String hashTag);
 
     @Query(value = "select h.hash_tag_value as hashTagValue, COUNT(postHashTag.hash_tag_id) as hashTagRank " +
