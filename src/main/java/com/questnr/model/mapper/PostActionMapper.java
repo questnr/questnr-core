@@ -53,6 +53,7 @@ public abstract class PostActionMapper {
             @Mapping(source = "postAction.slug", target = "slug"),
             @Mapping(source = "postAction.postMediaList", target = "postMediaList"),
             @Mapping(source = "postAction.community", target = "communityDTO"),
+            @Mapping(source = "postAction.userActor", target = "userDTO"),
             @Mapping(source = "postAction.likeActionSet", target = "likeActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(source = "postAction.commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
