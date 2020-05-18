@@ -39,6 +39,7 @@ public class NotificationMapper {
     public NotificationDTO toNotificationDTO(Notification notification) {
         NotificationDTO notificationDTO = new NotificationDTO();
         notificationDTO.setUser(notification.getUser());
+        notificationDTO.setMetaData(MetaDataMapper.getMetaDataMapper(notification.getCreatedAt(), notification.getUpdatedAt()));
         NotificationBase notificationBase = notification.getNotificationBase();
         if (notificationBase instanceof LikeAction) {
             LikeAction likeAction = (LikeAction) notificationBase;

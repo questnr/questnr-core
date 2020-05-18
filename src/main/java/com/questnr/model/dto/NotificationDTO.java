@@ -23,6 +23,8 @@ public class NotificationDTO {
 
     private boolean isOpened;
 
+    private MetaDataDTO metaData;
+
     public Long getNotificationId() {
         return notificationId;
     }
@@ -94,5 +96,13 @@ public class NotificationDTO {
 
     public void setOpened(boolean opened) {
         isOpened = opened;
+    }
+
+    public MetaDataDTO getMetaData() {
+        return metaData;
+    }
+
+    public void setMetaData(MetaDataDTO metaData) {
+        this.metaData = metaData;
     }
 }
