@@ -1,9 +1,9 @@
 package com.questnr.controllers;
 
-import com.questnr.model.entities.User;
 import com.questnr.requests.LoginRequest;
 import com.questnr.requests.UserEmailRequest;
 import com.questnr.requests.UserRequest;
+import com.questnr.requests.UsernameRequest;
 import com.questnr.responses.LoginResponse;
 import com.questnr.responses.ResetPasswordResponse;
 import com.questnr.services.BaseService;
@@ -32,8 +32,14 @@ public class BaseController {
 
     @RequestMapping(value = "/check-username", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    void checkUsername(@RequestParam String username) {
-        baseService.checkIfUsernameIsTakenWithException(username);
+    void checkUsername(@RequestBody UsernameRequest usernameRequest) {
+        baseService.checkIfUsernameIsTakenWithException(usernameRequest.getUsername());
+    }
+
+    @RequestMapping(value = "/check-email", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    void checkEmail(@RequestBody UserEmailRequest userEmailRequest) {
+        baseService.checkIfEmailIsTakenWithException(userEmailRequest.getEmail());
     }
 
     @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
@@ -41,7 +47,7 @@ public class BaseController {
     ResetPasswordResponse createPasswordResetRequest(@RequestBody UserEmailRequest userEmailRequest) {
 
         // ResponseEntity<ResetPasswordResponse> res = null;
-        ResetPasswordResponse response = baseService.generatePasswordResetToken(userEmailRequest.getUserEmail());
+        ResetPasswordResponse response = baseService.generatePasswordResetToken(userEmailRequest.getEmail());
         return response;
     }
 }

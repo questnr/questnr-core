@@ -1,13 +1,13 @@
 package com.questnr.requests;
 
 public class UserEmailRequest {
-    private String userEmail;
+    private String email;
 
-    public String getUserEmail() {
-        return userEmail;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -55,7 +55,7 @@ public class BaseService {
     @Autowired
     UserMapper userMapper;
 
-    public BaseService(){
+    public BaseService() {
         userMapper = Mappers.getMapper(UserMapper.class);
     }
 
@@ -147,7 +147,7 @@ public class BaseService {
         User user = userMapper.fromUserRequest(userRequest);
         if (user != null && user.getEmailId() != null && user.getUsername() != null) {
             try {
-                this.checkIfEmailIsTaken(user.getEmailId());
+                this.checkIfEmailIsTakenWithException(user.getEmailId());
                 this.checkIfUsernameIsTakenWithException(user.getUsername());
             } catch (AlreadyExistsException e) {
                 return this.createErrorLoginResponse(e.getMessage());
@@ -221,6 +221,13 @@ public class BaseService {
         return false;
     }
 
+    private boolean checkIfEmailIsTaken(String email) {
+        if (userRepository.existsByEmailId(email)) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean checkIfUsernameIsTaken(String username) {
         if (userRepository.existsByUsername(username)) {
             return true;
@@ -228,8 +235,8 @@ public class BaseService {
         return false;
     }
 
-    public boolean checkIfEmailIsTaken(String email) {
-        if (userRepository.existsByEmailId(email)) {
+    public boolean checkIfEmailIsTakenWithException(String email) {
+        if (this.checkIfEmailIsTaken(email)) {
             throw new AlreadyExistsException("User already exists");
         }
         return false;

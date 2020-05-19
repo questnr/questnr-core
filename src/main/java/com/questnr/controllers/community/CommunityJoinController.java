@@ -87,7 +87,7 @@ public class CommunityJoinController {
     @ResponseStatus(HttpStatus.OK)
     void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody UserEmailRequest userEmailRequest) {
         if (communityJoinAccessService.hasAccessToInviteUser(communityId)) {
-            communityJoinService.inviteUserToJoinCommunity(communityId, userEmailRequest.getUserEmail());
+            communityJoinService.inviteUserToJoinCommunity(communityId, userEmailRequest.getEmail());
         } else {
             throw new AccessException();
         }
@@ -111,14 +111,14 @@ public class CommunityJoinController {
     @RequestMapping(value = "/user/join/community/{communityId}/invitation/email", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void acceptInvitationFromCommunity(@PathVariable long communityId, @RequestBody UserEmailRequest userEmailRequest) {
-        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest.getUserEmail(), true);
+        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest.getEmail(), true);
     }
 
     // Decline the invitation sent to the user, using user email id
     @RequestMapping(value = "/user/join/community/{communityId}/invitation/email", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void declineInvitationFromCommunity(@PathVariable long communityId, @RequestBody UserEmailRequest userEmailRequest) {
-        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest.getUserEmail(), false);
+        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest.getEmail(), false);
     }
 
     // Revoke join operation
