@@ -8,7 +8,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.Objects;
@@ -25,8 +25,7 @@ public class User extends DomainObject {
     @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
     private Long userId;
 
-    @NotBlank(message = "Username is mandatory")
-    @Column(name = "username", length = 50, unique = true)
+    @Column(name = "username", length = 50, unique = true, nullable = false)
     private String username;
 
     @Column(name = "password", length = 100)
@@ -39,11 +38,11 @@ public class User extends DomainObject {
     @Column(name = "last_name", length = 50)
     private String lastName;
 
-    @Column(name = "email_id", unique = true)
-    @NotBlank(message = "Email is mandatory")
+    @Column(name = "email_id", unique = true, nullable = false)
     @Size(min = 4)
     private String emailId;
 
+    @Pattern(regexp = "[6-9]{1}[0-9]{9}", message = "Mobile number is invalid")
     @Column(name = "mobile_number", length = 15)
     private String mobileNumber;
 

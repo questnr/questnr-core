@@ -3,6 +3,7 @@ package com.questnr.model.mapper;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.projections.UserProjection;
+import com.questnr.requests.UserRequest;
 import com.questnr.services.user.UserCommonService;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,4 +40,6 @@ public abstract class UserMapper {
         }
         return userDTOS;
     }
+
+    abstract public User fromUserRequest(final UserRequest userRequest);
 }

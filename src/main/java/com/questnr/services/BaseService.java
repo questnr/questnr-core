@@ -6,9 +6,11 @@ import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.Authority;
 import com.questnr.model.entities.User;
+import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.AuthorityRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.requests.LoginRequest;
+import com.questnr.requests.UserRequest;
 import com.questnr.responses.LoginResponse;
 import com.questnr.responses.ResetPasswordResponse;
 import com.questnr.security.JwtTokenUtil;
@@ -16,6 +18,7 @@ import com.questnr.security.JwtUser;
 import com.questnr.util.EncryptionUtils;
 import com.questnr.util.SecureRandomService;
 import org.apache.commons.text.WordUtils;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +52,12 @@ public class BaseService {
     @Autowired
     SecureRandomService secureRandomService;
 
+    @Autowired
+    UserMapper userMapper;
+
+    public BaseService(){
+        userMapper = Mappers.getMapper(UserMapper.class);
+    }
 
     public String createUsername(String fullName) {
         String username = CommonService.removeSpecialCharactersWithWhiteSpace(fullName.toLowerCase());
@@ -134,7 +143,8 @@ public class BaseService {
         return user;
     }
 
-    public LoginResponse signUp(User user) {
+    public LoginResponse signUp(UserRequest userRequest) {
+        User user = userMapper.fromUserRequest(userRequest);
         if (user != null && user.getEmailId() != null && user.getUsername() != null) {
             try {
                 this.checkIfEmailIsTaken(user.getEmailId());

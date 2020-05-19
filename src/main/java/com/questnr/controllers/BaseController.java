@@ -3,6 +3,7 @@ package com.questnr.controllers;
 import com.questnr.model.entities.User;
 import com.questnr.requests.LoginRequest;
 import com.questnr.requests.UserEmailRequest;
+import com.questnr.requests.UserRequest;
 import com.questnr.responses.LoginResponse;
 import com.questnr.responses.ResetPasswordResponse;
 import com.questnr.services.BaseService;
@@ -20,8 +21,8 @@ public class BaseController {
     BaseService baseService;
 
     @RequestMapping(value = "/sign-up", method = RequestMethod.POST)
-    LoginResponse signUpUser(@Valid @RequestBody User user) {
-        return baseService.signUp(user);
+    LoginResponse signUpUser(@Valid @RequestBody UserRequest userRequest) {
+        return baseService.signUp(userRequest);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
