@@ -57,11 +57,11 @@ public class NotificationJob {
             ).collect(Collectors.toList());
 
             for (CommentAction childCommentAction : commentActionList) {
-                this.createNotificationJob(childCommentAction, toCreate);
+                this.createNotificationJob(new Notification(childCommentAction), toCreate);
             }
+        }else{
+            this.createNotificationJob(new Notification(commentAction), toCreate);
         }
-
-        this.createNotificationJob(new Notification(commentAction), toCreate);
     }
 
     public void createNotificationJob(LikeCommentAction likeCommentAction, boolean toCreate) {
