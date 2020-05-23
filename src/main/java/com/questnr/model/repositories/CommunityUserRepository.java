@@ -21,7 +21,7 @@ public interface CommunityUserRepository extends JpaRepository<CommunityUser, Lo
             " cu.user.username like :userString% " +
             " or cu.user.firstName like :userString% " +
             " or cu.user.lastName like :userString%  and cu.community=:community")
-    Page<CommunityUser> findAllByUserContainingString(Community community, @Param("userString") String userString, Pageable pageable);
+    Page<CommunityUser> findAllByUserContainingString(@Param("community") Community community, @Param("userString") String userString, Pageable pageable);
 
     Page<CommunityUser> findAllByUserOrderByCreatedAtDesc(User user, Pageable pageable);
 
