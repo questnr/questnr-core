@@ -10,6 +10,7 @@ import com.questnr.model.mapper.UserMapper;
 import com.questnr.requests.CommunityNameRequest;
 import com.questnr.services.SharableLinkService;
 import com.questnr.services.community.CommunityCommonService;
+import com.questnr.services.community.CommunityMetaService;
 import com.questnr.services.community.CommunityService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,9 @@ public class CommunityController {
 
     @Autowired
     SharableLinkService sharableLinkService;
+
+    @Autowired
+            private CommunityMetaService communityMetaService;
 
     CommunityController() {
         communityMapper = Mappers.getMapper(CommunityMapper.class);
@@ -90,7 +94,7 @@ public class CommunityController {
 
     @RequestMapping(value = "/community/{communitySlug}", method = RequestMethod.GET)
     CommunityDTO getCommunity(@PathVariable String communitySlug) {
-        return communityService.setCommunityMetaInformation(communityMapper.toDTO(communityCommonService.getCommunity(communitySlug)));
+        return communityMetaService.setCommunityMetaInformation(communityMapper.toDTO(communityCommonService.getCommunity(communitySlug)));
     }
 
     @RequestMapping(value = "/user/community/{communityId}", method = RequestMethod.DELETE)
