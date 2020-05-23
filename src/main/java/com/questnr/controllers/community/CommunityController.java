@@ -118,8 +118,7 @@ public class CommunityController {
          * */
         if (communityAvatarAccessService.hasAccessToGetCommunityUsers()) {
             Pageable pageable = PageRequest.of(page, size);
-            Page<User> userPage = communityService.getUsersOfCommunity(communitySlug, pageable);
-            return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
+            return communityService.getUsersOfCommunity(communitySlug, pageable);
         }
         throw new AccessException();
     }
@@ -136,8 +135,7 @@ public class CommunityController {
     @RequestMapping(value = "/user/community/{communitySlug}/search/users", method = RequestMethod.GET)
     Page<UserDTO> searchUserInCommunityUsers(@RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
-        return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
+        return communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
     }
 
     // Get sharable link of the community

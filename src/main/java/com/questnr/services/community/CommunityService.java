@@ -5,24 +5,31 @@ import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.CommunityDTO;
+import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.*;
+import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.CommunityRepository;
+import com.questnr.model.repositories.CommunityUserRepository;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.CustomPageService;
 import com.questnr.services.SharableLinkService;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.SecureRandomService;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,37 +37,47 @@ public class CommunityService {
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    AmazonS3Client amazonS3Client;
+    private AmazonS3Client amazonS3Client;
 
     @Autowired
-    CommonService commonService;
+    private CommonService commonService;
 
     @Autowired
-    CommunityCommonService communityCommonService;
+    private CommunityCommonService communityCommonService;
 
     @Autowired
-    CommunityRepository communityRepository;
+    private CommunityRepository communityRepository;
 
     @Autowired
-    UserCommonService userCommonService;
+    private UserCommonService userCommonService;
 
     @Autowired
-    CommunityAvatarService communityAvatarService;
+    private CommunityAvatarService communityAvatarService;
 
     @Autowired
-    SecureRandomService secureRandomService;
+    private SecureRandomService secureRandomService;
 
     @Autowired
-    CustomPageService<User> customPageService;
+    private CustomPageService<User> customPageService;
 
     @Value("${questnr.domain}")
-    String QUEST_NR_DOMAIN;
+    private String QUEST_NR_DOMAIN;
 
     @Autowired
-    SharableLinkService sharableLinkService;
+    private SharableLinkService sharableLinkService;
+
+    @Autowired
+    private CommunityUserRepository communityUserRepository;
 
     @Value("${facebook.appid}")
     private String fbAppId;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    public CommunityService() {
+        this.userMapper = Mappers.getMapper(UserMapper.class);
+    }
 
     final private String COMMUNITY_PATH = "community";
 
@@ -85,7 +102,7 @@ public class CommunityService {
         throw new ResourceNotFoundException("Community not found!");
     }
 
-    private CommunityMetaInformation getCommunityMetaInformation(String attrType, String type, String content){
+    private CommunityMetaInformation getCommunityMetaInformation(String attrType, String type, String content) {
         MetaInformation metaInfo = new MetaInformation();
         metaInfo.setAttributeType(attrType);
         metaInfo.setType(type);
@@ -107,7 +124,7 @@ public class CommunityService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "name",
                 "author",
-                communityDTO.getOwnerUserDTO().getFirstName()+ " "+ communityDTO.getOwnerUserDTO().getFirstName()
+                communityDTO.getOwnerUserDTO().getFirstName() + " " + communityDTO.getOwnerUserDTO().getFirstName()
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
@@ -180,6 +197,12 @@ public class CommunityService {
                 "property",
                 "twitter:image",
                 communityDTO.getAvatarDTO().getAvatarLink()
+        ));
+
+        communityMetaInformationList.add(this.getCommunityMetaInformation(
+                "property",
+                "fb:app_id",
+                fbAppId
         ));
 
         return communityMetaInformationList;
@@ -260,17 +283,15 @@ public class CommunityService {
         }
     }
 
-    public Page<User> getUsersOfCommunity(String communitySlug, Pageable pageable) {
+    public Page<UserDTO> getUsersOfCommunity(String communitySlug, Pageable pageable) {
         try {
-            List<CommunityUser> communityUserList = new ArrayList<>(communityCommonService.getCommunity(communitySlug).getUsers());
-
-            Comparator<CommunityUser> communityUserComparator = Comparator.comparing(CommunityUser::getCreatedAt);
-            communityUserList.sort(communityUserComparator.reversed());
-
-            List<User> users = communityUserList.stream()
+            Page<CommunityUser> communityUserPage = communityUserRepository.findAllByCommunityOrderByCreatedAtDesc(
+                    communityCommonService.getCommunity(communitySlug),
+                    pageable);
+            List<User> users = communityUserPage.getContent().stream()
                     .map(CommunityUser::getUser).collect(Collectors.toList());
 
-            return customPageService.customPage(users, pageable);
+            return new PageImpl<>(userMapper.toOthersDTOs(users), pageable, communityUserPage.getTotalElements());
         } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();
@@ -288,12 +309,17 @@ public class CommunityService {
         }
     }
 
-    public Page<User> searchUserInCommunityUsers(String communitySlug, String userString, Pageable pageable) {
-        Community community = communityCommonService.getCommunity(communitySlug);
-        List<CommunityUser> communityUsers = community.getUsers().stream().filter(communityUser ->
-                communityUser.getUser().getUsername().toLowerCase().matches("(.*)" + userString.toLowerCase() + "(.*)")
-        ).collect(Collectors.toList());
-        List<User> users = communityUsers.stream().map(CommunityUser::getUser).collect(Collectors.toList());
-        return customPageService.customPage(users, pageable);
+    public Page<UserDTO> searchUserInCommunityUsers(String communitySlug, String userString, Pageable pageable) {
+        try {
+            Page<CommunityUser> communityUserPage = communityUserRepository.findAllByUserContainingString(communityCommonService.getCommunity(communitySlug), userString, pageable);
+            List<User> users = communityUserPage.getContent().stream()
+                    .map(CommunityUser::getUser).collect(Collectors.toList());
+
+            return new PageImpl<>(userMapper.toOthersDTOs(users), pageable, communityUserPage.getTotalElements());
+        } catch (Exception e) {
+            LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
+            e.printStackTrace();
+            throw new InvalidRequestException("Error occurred. Please, try again!");
+        }
     }
 }
