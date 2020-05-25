@@ -140,6 +140,7 @@ public class BaseService {
 
         user.setFirstName(WordUtils.capitalizeFully(user.getFirstName(), delimiters));
         user.setLastName(WordUtils.capitalizeFully(user.getLastName(), delimiters));
+        user.setAgree(true);
         return user;
     }
 
@@ -152,7 +153,6 @@ public class BaseService {
             } catch (AlreadyExistsException e) {
                 return this.createErrorLoginResponse(e.getMessage());
             }
-
         }
         try {
             if (commonService.isNull(user.getPassword())) {

@@ -114,6 +114,9 @@ public class User extends DomainObject {
     @Column(name = "dob")
     private Date dob;
 
+    @Column(name = "terms_privacy_agree")
+    private Boolean agree;
+
     public Long getUserId() {
         return userId;
     }
@@ -292,6 +295,14 @@ public class User extends DomainObject {
 
     public void setDob(Date dob) {
         this.dob = dob;
+    }
+
+    public Boolean getAgree() {
+        return agree;
+    }
+
+    public void setAgree(Boolean agree) {
+        this.agree = agree;
     }
 
     public String getFullName() {
