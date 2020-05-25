@@ -3,6 +3,7 @@ package com.questnr.requests;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 public class UserRequest {
 
@@ -29,6 +30,9 @@ public class UserRequest {
     @Pattern(regexp = "^[a-zA-Z0-9_.-]+@[a-zA-Z0-9]+[a-zA-Z0-9.-]+[a-zA-Z0-9]+\\.[a-z]{1,3}$",
             message = "Email is invalid")
     private String emailId;
+
+    @NotBlank(message = "Date of birth is mandatory")
+    private Date dob;
 
     public String getUsername() {
         return username;
@@ -68,5 +72,13 @@ public class UserRequest {
 
     public void setEmailId(String emailId) {
         this.emailId = emailId;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
     }
 }

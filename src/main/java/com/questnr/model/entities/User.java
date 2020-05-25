@@ -111,6 +111,9 @@ public class User extends DomainObject {
     @Column(name = "is_public", columnDefinition = "bool default true")
     private Boolean isPublic;
 
+    @Column(name = "dob")
+    private Date dob;
+
     public Long getUserId() {
         return userId;
     }
@@ -281,6 +284,14 @@ public class User extends DomainObject {
 
     public void setPublic(Boolean aPublic) {
         isPublic = aPublic;
+    }
+
+    public Date getDob() {
+        return dob;
+    }
+
+    public void setDob(Date dob) {
+        this.dob = dob;
     }
 
     public String getFullName() {
