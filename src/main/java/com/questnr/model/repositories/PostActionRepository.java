@@ -28,7 +28,7 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             " from qr_users qrUser " +
             " left outer join qr_post_actions pa on " +
             " pa.user_id=qrUser.id " +
-            " where qrUser.id=:userId group by pa.post_action_id" +
+            " where qrUser.id=:userId and pa.deleted=false group by pa.post_action_id" +
             " union " +
             " select spa.post_action_id as postActionId, 1 as postType, pa.user_id as userWhoShared, spa.created_at as createdAt" +
             " from qr_users qrUser " +
@@ -36,7 +36,7 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             " on spa.user_actor_id=qrUser.id " + // The posts this user shared
             " inner join qr_post_actions pa " +
             " on spa.post_action_id=pa.post_action_id " +
-            " where qrUser.id=:userId " +
+            " where qrUser.id=:userId and pa.deleted=false " +
             " order by 4 desc offset :offset limit :limit"
             , nativeQuery = true)
     List<Object[]> getUserPosts(@Param("userId") Long userId, @Param("offset") int offset, @Param("limit") int limit);
@@ -92,14 +92,14 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             " ((pa.user_id=uf.user_id and (pa.community_id is null or pa.community_id=co.community_id)) " +
             " or (pa.community_id=co.community_id) " + // Anyone who posted on the communities followed by the user
             " or pa.user_id=qrUser.id) " +
-            " where qrUser.id=:userId group by pa.post_action_id" +
+            " where qrUser.id=:userId and pa.deleted=false group by pa.post_action_id" +
             " union " +
             " select spa.post_action_id as postActionId, 1 as postType, spa.user_actor_id as userWhoShared, spa.created_at as createdAt" +
             " from qr_users qrUser " +
             " inner join qr_user_followers uf on uf.following_user_id=qrUser.id " +
             " inner join qr_shared_post_actions spa " +
             " on spa.user_actor_id=uf.user_id " +
-            " where qrUser.id=:userId " +
+            " where qrUser.id=:userId" +
             " order by 4 desc offset :offset limit :limit"
             , nativeQuery = true)
     List<Object[]> getUserFeed(@Param("userId") Long userId, @Param("offset") int offset, @Param("limit") int limit);
