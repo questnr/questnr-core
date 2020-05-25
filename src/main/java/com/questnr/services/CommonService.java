@@ -5,6 +5,7 @@ import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.PostAction;
 import com.questnr.responses.TimeData;
+import org.apache.commons.text.WordUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Service;
@@ -140,5 +141,10 @@ public class CommonService {
             return convFile;
         }
         throw new InvalidRequestException("File name is not valid!");
+    }
+
+    public String titleCase(String input){
+        final char[] delimiters = { ' ', '_' };
+        return WordUtils.capitalizeFully(input, delimiters);
     }
 }

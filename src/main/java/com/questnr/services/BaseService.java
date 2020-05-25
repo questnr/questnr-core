@@ -130,6 +130,9 @@ public class BaseService {
             user.setSlug(this.createSlug(user.getUsername()));
         }
 
+        user.setFirstName(commonService.titleCase(user.getFirstName()));
+        user.setLastName(commonService.titleCase(user.getLastName()));
+
         user.setEmailVerified(false);
 
         user.setEnabled(true);
