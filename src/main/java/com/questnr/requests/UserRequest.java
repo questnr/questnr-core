@@ -31,7 +31,6 @@ public class UserRequest {
             message = "Email is invalid")
     private String emailId;
 
-    @NotBlank(message = "Date of birth is mandatory")
     private Date dob;
 
     public String getUsername() {
