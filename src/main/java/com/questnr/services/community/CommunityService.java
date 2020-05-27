@@ -181,6 +181,7 @@ public class CommunityService {
 
     public Page<Community> getCommunitiesFromLikeString(String communityString, Pageable pageable) {
         try {
+            communityString = communityString.toLowerCase();
             return communityRepository.findByCommunityNameContaining(communityString, pageable);
         } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");

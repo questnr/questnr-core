@@ -23,7 +23,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     Community findFirstBySlug(String slug);
 
-    @Query("Select c from Community c where c.communityName like %:communityString%")
+    @Query("Select c from Community c where LOWER(c.communityName) like %:communityString%")
     Page<Community> findByCommunityNameContaining(@Param("communityString") String communityString, Pageable pageable);
 
     Page<Community> findByOwnerUser(User user, Pageable pageable);

@@ -50,6 +50,7 @@ public class UserCommonService {
 
     public Page<User> searchUserString(String userString, Pageable pageable) {
         try {
+            userString = userString.toLowerCase();
             return userRepository.findByUserContaining(userString, pageable);
         } catch (Exception e) {
             throw new ResourceNotFoundException("User not found!");
