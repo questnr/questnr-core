@@ -1,5 +1,6 @@
 package com.questnr.model.mapper;
 
+import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.exceptions.InvalidInputException;
 import com.questnr.model.dto.AvatarDTO;
 import com.questnr.model.entities.Avatar;
@@ -22,7 +23,7 @@ public class AvatarMapper {
                 throw new InvalidInputException(Avatar.class.getName(), null, null);
             }
             AvatarDTO avatarDTO = new AvatarDTO();
-            avatarDTO.setAvatarLink(this.amazonS3Client.getS3BucketUrl(avatar.getAvatarKey()));
+            avatarDTO.setAvatarLink(this.amazonS3Client.getS3BucketUrl(avatar.getAvatarKey(), PostActionPrivacy.public_post));
             return avatarDTO;
         }catch (Exception e) {
             return new AvatarDTO();

@@ -82,6 +82,13 @@ public class AmazonS3Client {
         return s3Client.generatePresignedUrl(generatePresignedUrlRequest).toExternalForm();
     }
 
+    public String getS3BucketUrl(String pathToFile, PostActionPrivacy postActionPrivacy) {
+        if(postActionPrivacy == PostActionPrivacy.private_post){
+            return this.getS3BucketUrl(pathToFile);
+        }
+        return s3Client.getUrl(bucketName, pathToFile).toString();
+    }
+
     public ResourceStorageData uploadFile(File file) {
         return this.uploadFile(file, PostActionPrivacy.public_post);
     }
