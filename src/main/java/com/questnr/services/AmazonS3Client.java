@@ -8,11 +8,10 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
-import com.questnr.common.enums.ResourceType;
+import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
-import com.questnr.util.ImageCompression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -54,19 +53,20 @@ public class AmazonS3Client {
         this.s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(Regions.AP_SOUTHEAST_1).build();
     }
 
+    private void uploadFileToS3bucket(String pathToFile, File file, CannedAccessControlList cannedAccessControlList) {
+        this.s3Client.putObject(new PutObjectRequest(bucketName, pathToFile, file).withCannedAcl(cannedAccessControlList));
+    }
+
     private void uploadFileToS3bucket(String pathToFile, File file) {
-        this.s3Client.putObject(new PutObjectRequest(bucketName, pathToFile, file).withCannedAcl(CannedAccessControlList.PublicRead));
+        this.uploadFileToS3bucket(pathToFile, file, CannedAccessControlList.PublicRead);
+    }
+
+    public void changeS3ObjectAccess(String pathToFile, CannedAccessControlList cannedAccessControlList) {
+        s3Client.setObjectAcl(bucketName, pathToFile, cannedAccessControlList);
     }
 
     public String getS3BucketUrl(String pathToFile) {
-        return this.getS3BucketUrl(pathToFile, false);
-    }
-
-    public String getS3BucketUrl(String pathToFile, boolean isPublic) {
         int addTimeMillis = 1000 * 40;
-        if (isPublic) {
-            addTimeMillis = 1000 * 1000;
-        }
         Date expiration = new Date();
         long expTimeMillis = expiration.getTime();
         expTimeMillis += addTimeMillis;
@@ -83,23 +83,34 @@ public class AmazonS3Client {
     }
 
     public ResourceStorageData uploadFile(File file) {
+        return this.uploadFile(file, PostActionPrivacy.public_post);
+    }
+
+    public ResourceStorageData uploadFile(File file, PostActionPrivacy postActionPrivacy) {
         String fileName = commonService.generateFileName(file);
         String pathToFile = userCommonService.joinPathToFile(fileName);
-        return this.uploadFile(file, pathToFile);
+        return this.uploadFile(file, pathToFile, postActionPrivacy);
     }
 
     public ResourceStorageData uploadFile(File file, long communityId) {
-        String fileName = commonService.generateFileName(file);
-        String pathToFile = communityCommonService.joinPathToFile(fileName, communityId);
-        return this.uploadFile(file, pathToFile);
+        return this.uploadFile(file, communityId, PostActionPrivacy.public_post);
     }
 
-    private ResourceStorageData uploadFile(File file, String pathToFile) {
+    public ResourceStorageData uploadFile(File file, long communityId, PostActionPrivacy postActionPrivacy) {
+        String fileName = commonService.generateFileName(file);
+        String pathToFile = communityCommonService.joinPathToFile(fileName, communityId);
+        return this.uploadFile(file, pathToFile, postActionPrivacy);
+    }
+
+    private ResourceStorageData uploadFile(File file, String pathToFile, PostActionPrivacy postActionPrivacy) {
         ResourceStorageData resourceStorageData = new ResourceStorageData();
         try {
             resourceStorageData.setKey(pathToFile);
             resourceStorageData.setUrl(this.getS3BucketUrl(pathToFile));
-            this.uploadFileToS3bucket(pathToFile, file);
+            if (postActionPrivacy == PostActionPrivacy.public_post)
+                this.uploadFileToS3bucket(pathToFile, file);
+            else
+                this.uploadFileToS3bucket(pathToFile, file, CannedAccessControlList.Private);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -118,7 +129,6 @@ public class AmazonS3Client {
         }
         return null;
     }
-
 
     public String deleteFileFromS3BucketUsingFileUrl(String fileUrl) {
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
