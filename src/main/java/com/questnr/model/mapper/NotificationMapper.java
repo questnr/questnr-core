@@ -41,7 +41,18 @@ public class NotificationMapper {
         notificationDTO.setUser(notification.getUser());
         notificationDTO.setMetaData(MetaDataMapper.getMetaDataMapper(notification.getCreatedAt(), notification.getUpdatedAt()));
         NotificationBase notificationBase = notification.getNotificationBase();
-        if (notificationBase instanceof LikeAction) {
+        if (notificationBase instanceof PostAction) {
+            PostAction postAction = (PostAction) notificationBase;
+            if(postAction.getCommunity() != null){
+                UserDTO userActor = userMapper.toOthersDTO(postAction.getUserActor());
+                notificationDTO.setMessage(String.format(NotificationTitles.POST_ACTION_COMMUNITY, postAction.getCommunity().getCommunityName()));
+                notificationDTO.setNotificationType(NotificationType.post);
+                notificationDTO.setUserActor(userActor);
+                notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(postAction.getSlug()).getClickAction());
+                if (this.checkIfPostMediaListIsNotEmpty(postAction))
+                    notificationDTO.setPostMedia(postMediaMapper.toPostMediaDTO(postAction.getPostMediaList().get(0)));
+            }
+        } else if (notificationBase instanceof LikeAction) {
             LikeAction likeAction = (LikeAction) notificationBase;
             UserDTO userActor = userMapper.toOthersDTO(likeAction.getUserActor());
             notificationDTO.setMessage(NotificationTitles.LIKE_ACTION);

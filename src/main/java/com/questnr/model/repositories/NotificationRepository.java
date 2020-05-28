@@ -18,6 +18,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     Notification findByUserAndNotificationId(User user, Long notificationId);
 
-    @Query(value = "delete from qr_user_notifications where notification_base_id=:notificationBaseId and notification_type=:notificationType and user_id=:userId", nativeQuery = true)
+    @Query(value = "delete from qr_user_notifications where notification_base_id=:notificationBaseId and notification_type=:notificationType and user_id=:userId cascade", nativeQuery = true)
     void deleteByNotificationBaseAndType(@Param("notificationBaseId") Long notificationBaseId, @Param("notificationType") String notificationType, @Param("userId") Long userId);
 }

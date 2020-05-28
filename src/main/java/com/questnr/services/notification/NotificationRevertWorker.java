@@ -57,9 +57,11 @@ public class NotificationRevertWorker extends Thread {
                     continue;
                 }
                 try {
-                    if (item.getNotificationBase() instanceof LikeAction) {
+                    if (item.getNotificationBase() instanceof PostAction) {
+                        PostAction postAction = (PostAction) item.getNotificationBase();
+                        notificationRepository.deleteByNotificationBaseAndType(postAction.getPostActionId(), NotificationType.post.getJsonValue(), item.getUser().getUserId());
+                    } else if (item.getNotificationBase() instanceof LikeAction) {
                         LikeAction likeAction = (LikeAction) item.getNotificationBase();
-                        System.out.println(NotificationType.like.getJsonValue());
                         notificationRepository.deleteByNotificationBaseAndType(likeAction.getLikeActionId(), NotificationType.like.getJsonValue(), item.getUser().getUserId());
                     } else if (item.getNotificationBase() instanceof CommentAction) {
                         CommentAction commentAction = (CommentAction) item.getNotificationBase();

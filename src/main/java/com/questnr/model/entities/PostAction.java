@@ -1,7 +1,10 @@
 package com.questnr.model.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.questnr.common.NotificationTitles;
+import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PublishStatus;
 import org.hibernate.annotations.Where;
@@ -19,7 +22,7 @@ import java.util.*;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Where(clause = "deleted = false")
-public class PostAction extends DomainObject {
+public class PostAction extends DomainObject implements NotificationBase {
 
     @Id
     @Column(name = "post_action_id")
@@ -277,5 +280,15 @@ public class PostAction extends DomainObject {
     @Override
     public int hashCode() {
         return Objects.hash(postActionId);
+    }
+
+    @JsonIgnore
+    public NotificationType getNotificationType() {
+        return NotificationType.post;
+    }
+
+    @JsonIgnore
+    public String getNotificationTitles() {
+        return NotificationTitles.POST_ACTION_COMMUNITY;
     }
 }

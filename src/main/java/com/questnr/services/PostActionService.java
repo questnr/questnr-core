@@ -9,6 +9,7 @@ import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.PostActionRepository;
+import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.SecureRandomService;
 import org.slf4j.Logger;
@@ -42,6 +43,9 @@ public class PostActionService {
 
     @Autowired
     SecureRandomService secureRandomService;
+
+    @Autowired
+    NotificationJob notificationJob;
 
     private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
         List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));
@@ -101,7 +105,11 @@ public class PostActionService {
             if (postAction.getPostActionPrivacy() == null) {
                 postAction.setPostActionPrivacy(PostActionPrivacy.public_post);
             }
-            return postActionRepository.saveAndFlush(postAction);
+            PostAction savedPostAction = postActionRepository.saveAndFlush(postAction);
+            // Notification job created and assigned to Notification Processor.
+            notificationJob.createNotificationJob(savedPostAction);
+
+            return savedPostAction;
         } catch (Exception e) {
             LOGGER.error(PostAction.class.getName() + " Exception Occurred");
         }

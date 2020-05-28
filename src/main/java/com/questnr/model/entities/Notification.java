@@ -28,6 +28,7 @@ public class Notification extends DomainObject {
     )
     @AnyMetaDef(metaType = "string", idType = "long",
             metaValues = {
+                    @MetaValue(value = "P", targetEntity = PostAction.class),
                     @MetaValue(value = "L", targetEntity = LikeAction.class),
                     @MetaValue(value = "C", targetEntity = CommentAction.class),
                     @MetaValue(value = "LC", targetEntity = LikeCommentAction.class),
@@ -42,6 +43,14 @@ public class Notification extends DomainObject {
     private boolean isRead;
 
     public Notification() {
+        this.addMetadata();
+    }
+
+    public Notification(PostAction postAction, User user) {
+        this.user = user;
+        this.notificationBase = postAction;
+//        this.notificationType = NotificationType.like;
+        this.isRead = false;
         this.addMetadata();
     }
 

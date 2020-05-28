@@ -64,6 +64,17 @@ public class NotificationJob {
         }
     }
 
+    public void createNotificationJob(PostAction postAction, boolean toCreate) {
+        Community community = postAction.getCommunity();
+        if(community != null){
+            List<User> communityUsers = community.getUsers().stream().map(CommunityUser::getUser).collect(Collectors.toList());
+            communityUsers.add(community.getOwnerUser());
+            for(User user: communityUsers){
+                this.createNotificationJob(new Notification(postAction, user), toCreate);
+            }
+        }
+    }
+
     public void createNotificationJob(LikeCommentAction likeCommentAction, boolean toCreate) {
         this.createNotificationJob(new Notification(likeCommentAction), toCreate);
     }
@@ -80,6 +91,9 @@ public class NotificationJob {
         this.createNotificationJob(new Notification(userFollower), toCreate);
     }
 
+    public void createNotificationJob(PostAction postAction) {
+        this.createNotificationJob(postAction, true);
+    }
 
     public void createNotificationJob(LikeAction likeAction) {
         this.createNotificationJob(likeAction, true);
