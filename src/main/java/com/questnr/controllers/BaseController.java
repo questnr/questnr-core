@@ -44,7 +44,7 @@ public class BaseController {
 
     @RequestMapping(value = "/forgot-password", method = RequestMethod.POST)
     @ResponseBody
-    ResetPasswordResponse createPasswordResetRequest(@RequestBody UserEmailRequest userEmailRequest) {
+    ResetPasswordResponse createPasswordResetRequest(@RequestBody @Valid UserEmailRequest userEmailRequest) {
 
         // ResponseEntity<ResetPasswordResponse> res = null;
         ResetPasswordResponse response = baseService.generatePasswordResetToken(userEmailRequest.getEmail());

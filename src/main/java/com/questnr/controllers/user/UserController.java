@@ -64,12 +64,10 @@ public class UserController {
     }
 
     @RequestMapping(value = "/update-password", method = RequestMethod.POST)
-    @ResponseBody
     UpdatePasswordResponse createPasswordResetRequest(
             @Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
 
-        boolean validateToken =
-                userService.validatePasswordResetToken(updatePasswordRequest.getResetToken());
+        boolean validateToken = userService.validatePasswordResetToken(updatePasswordRequest.getResetToken());
         if (validateToken) {
             return userService.updatePassword(updatePasswordRequest);
         }
