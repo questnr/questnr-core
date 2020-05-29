@@ -14,6 +14,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +71,9 @@ public class UserHomeService {
         // Joined communities by this user.
         List<Community> thisUserJoinedCommunityList = commonService.getCommunityList(user.getCommunityJoinedList());
 
+        // Owned communities by this user.
+        Page<Community> thisUserOwnedCommunityPage = communityRepository.findByOwnerUser(user, PageRequest.of(0, Integer.MAX_VALUE));
+        List<Community> thisUserOwnedCommunityList = thisUserOwnedCommunityPage.getContent();
 
         // Joined communities by the users which are being followed from this user.
         List<User> followedUsers = user.getThisFollowingUserSet().stream().map(UserFollower::getUser).collect(Collectors.toList());
@@ -82,9 +86,9 @@ public class UserHomeService {
         List<Community> trendingCommunityList = this.getTrendingCommunityList(pageable).getContent();
         communityList.addAll(trendingCommunityList);
 
-        // Remove community which are already joined by the user.
+        // Remove community which are already joined/owned by the user.
         List<Community> filteredCommunityList = communityList.stream().filter(community ->
-                !thisUserJoinedCommunityList.contains(community)
+                !(thisUserJoinedCommunityList.contains(community) || thisUserOwnedCommunityList.contains(community))
         ).collect(Collectors.toList());
 
         List<CommunitySuggestionData> communitySuggestionDataList = new ArrayList<>();
