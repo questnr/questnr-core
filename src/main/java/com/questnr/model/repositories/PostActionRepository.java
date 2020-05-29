@@ -88,9 +88,11 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             " left outer join qr_user_followers uf on uf.following_user_id=qrUser.id " +
             " left outer join qr_community_users cu on cu.user_id=qrUser.id " +
             " left outer join qr_community co on co.community_id=cu.community_id " +
+            " left outer join qr_community cow on cow.owner_user_id=qrUser.id " +
             " left outer join qr_post_actions pa on " +
-            " ((pa.user_id=uf.user_id and (pa.community_id is null or pa.community_id=co.community_id)) " +
-            " or (pa.community_id=co.community_id) " + // Anyone who posted on the communities followed by the user
+            " ((pa.user_id=uf.user_id and (pa.community_id is null or pa.community_id=co.community_id or pa.community_id=cow.community_id)) " +
+            " or (pa.community_id=co.community_id) " + // Anyone who posted on the communities which are joined by the user
+            " or (pa.community_id=cow.community_id) " + // Anyone who posted on the communities which are owned by the user
             " or pa.user_id=qrUser.id) " +
             " where qrUser.id=:userId and pa.deleted=false group by pa.post_action_id" +
             " union " +
