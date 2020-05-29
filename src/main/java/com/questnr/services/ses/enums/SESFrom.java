@@ -2,11 +2,13 @@ package com.questnr.services.ses.enums;
 
 public enum SESFrom {
 
-    BRIJESH("brijeshlakkad22@gmail.com", "Brijesh from Questnr"),
+    BRIJESH("brijeshlakkad22@questnr.com", "Brijesh from Questnr"),
+    AMAN("amanchoudharyys@questnr.com", "Aman from Questnr"),
+    SATISH("satish.k.gaur2009@questnr.com", "Satish from Questnr"),
 
     // @Todo Change NO_REPLY to noreply@questnr.com
-//    NO_REPLY("noreply@questnr.com", "Questnr"),
-    NO_REPLY("brijeshlakkad22@gmail.com", "Questnr"),
+    NO_REPLY("noreply@questnr.com", "Questnr"),
+//    NO_REPLY("brijeshlakkad22@gmail.com", "Questnr"),
 
     SUPPORT("support@questnr.com", "Questnr Support");
 

@@ -35,10 +35,6 @@ public class EmailService {
     private TemplateEngine templateEngine;
     @Value("${questnr.website.url}")
     private String websiteHomePageURL;
-    @Value("${mail.from.email_address}")
-    private String senderEmail;
-    @Value("${mail.from.name}")
-    private String senderName;
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
