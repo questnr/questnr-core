@@ -117,6 +117,10 @@ public class User extends DomainObject {
     @Column(name = "terms_privacy_agree")
     private Boolean agree;
 
+    @JsonIgnoreProperties(value = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    Set<Notification> notificationSet;
+
     public Long getUserId() {
         return userId;
     }
@@ -195,6 +199,14 @@ public class User extends DomainObject {
 
     public void setEnabled(boolean enabled) {
         isEnabled = enabled;
+    }
+
+    public Boolean getEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        isEmailVerified = emailVerified;
     }
 
     public Date getLastPasswordResetDate() {

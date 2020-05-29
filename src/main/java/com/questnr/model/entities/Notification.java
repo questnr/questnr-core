@@ -1,11 +1,12 @@
 package com.questnr.model.entities;
 
-import org.hibernate.annotations.Any;
-import org.hibernate.annotations.AnyMetaDef;
-import org.hibernate.annotations.MetaValue;
+import org.hibernate.annotations.*;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.persistence.*;
 
 @Entity
@@ -37,6 +38,8 @@ public class Notification extends DomainObject {
                     @MetaValue(value = "FU", targetEntity = UserFollower.class)
             }
     )
+    @NotFound(action = NotFoundAction.IGNORE)
+    @Cascade(CascadeType.REMOVE)
     @JoinColumn(name = "notification_base_id")
     private NotificationBase notificationBase;
 
