@@ -19,13 +19,13 @@ build:
   script:
     - cp -r /var/tmp/tokens .
     - mvn clean install
-    - export WEBSITE_URL="https://beta.questnr.com/"
+    - export WEBSITE_URL="https://questnr.com/"
     - export DATASOURCE_URL="jdbc:postgresql://database-1.ccf4atcslzrk.ap-southeast-1.rds.amazonaws.com/questnrprod"
     - export DATASOURCE_USERNAME="postgres"
     - export DATASOURCE_PASSWORD="yUKSu1IMtAGGnGNjnDS6"
-    - export WEBSITE_API_URL="https://beta.questnr.com/api/v1"
-    - export FACEBOOK_REDIRECTION_URL="https://beta.questnr.com/facebook-redirect"
-    - export GOOGLE_REDIRECTION_URL="https://beta.questnr.com/google-redirect"
+    - export WEBSITE_API_URL="https://questnr.com/api/v1"
+    - export FACEBOOK_REDIRECTION_URL="https://questnr.com/facebook-redirect"
+    - export GOOGLE_REDIRECTION_URL="https://questnr.com/google-redirect"
     - export AMAZON_S3_ENDPOINT_URL="https://s3.us-east-2.amazonaws.com"
     - export AMAZON_S3_ACCESS_KEY="AKIAWRAGJU6P5PXDJMBN"
     - export AMAZON_S3_SECRET_KEY="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"
