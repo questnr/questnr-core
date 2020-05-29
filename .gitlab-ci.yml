@@ -19,7 +19,7 @@ build:
   script:
     - cp -r /var/tmp/tokens .
     - mvn clean install
-    - export WEBSITE_URL="https://questnr.com/"
+    - export WEBSITE_URL="https://questnr.com"
     - export DATASOURCE_URL="jdbc:postgresql://database-1.ccf4atcslzrk.ap-southeast-1.rds.amazonaws.com/questnrprod"
     - export DATASOURCE_USERNAME="postgres"
     - export DATASOURCE_PASSWORD="yUKSu1IMtAGGnGNjnDS6"

@@ -103,8 +103,10 @@ public class EmailService {
     public void sendEmailOnSignUp(User user) {
         Locale locale = Locale.ENGLISH;
         final Context ctx = new Context(locale);
-        ctx.setVariable("email", user.getUserId());
+        String loginURL = websiteHomePageURL + "/login";
+        ctx.setVariable("fullName", user.getFullName());
         ctx.setVariable("username", user.getUsername());
+        ctx.setVariable("loginURL", loginURL);
         final String htmlContent = templateEngine.process("mail/sign-up.html", ctx);
         final String htmlContentForAdmin = templateEngine.process("mail/sign-up-admin.html", ctx);
 

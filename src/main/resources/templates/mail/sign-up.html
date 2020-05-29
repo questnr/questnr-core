@@ -2,9 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:mc="http://www.w3.org/1999/xhtml" lang="en"
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Welcome/Signup</title>
+    <title>Reset Password</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=Fdevice-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
@@ -16,17 +16,98 @@
     </style>
 </head>
 <body style="background: #ffff;">
-<div>
-	<span style="
-        font-family: Arial; font-style: normal; font-stretch: normal;letter-spacing: normal;color: #ffffff; font-size: 32px;font-weight: bold;  line-height: 0.88;  margin: 22px 28px;  display: inline-block;">Welcome to Quesnr!</span>
-    <div style="margin: 20px 28px;"><img
-            src="https://drive.google.com/file/d/1LZFJ556IExvC6I0LEfnS3wsFSFHYX8Sp/view?usp=sharing" style="
-    margin-top: -25px;
-    /* margin-left: 152px; */
-    /* width: 100%; */
-    object-fit: contain;
-"/>
-    </div>
-</div>
+<table align="center" style=" margin-top: 35px;margin-bottom: 35px;border:solid 0.7px #999999;">
+    <thead>
+    <tr>
+        <th style="border-bottom:solid 0.7px #999999;">
+            <center><img src="https://lh3.googleusercontent.com/pw/ACtC-3fJcWTO9Jqqe2pgHOfCRanIt4ojSO_byK3Ob_DfRRCywCtiZTrX-cQZcs_SyQvav8o5Nn3WW7jZY5iM0EW5QIBEsylSHDRkEvo6h-mF3FUm5m8opddflGdI4VWkq_tle0FMjViG6EkCyvI82cIgS9o5=w512-h137-no"
+                         style="margin-bottom: 30px;margin-top: 30px;"></img></center>
+        </th>
+    </tr>
+
+    </thead>
+
+    <tbody style="padding: 27px 42px;background: white;margin: auto;margin-top: 18px;display: block;padding: 10px 30px;">
+    <tr>
+        <td>
+            <p style="color: #f15152; font-family: Arial; font-size: 20px; font-weight: bold; font-style: normal; font-stretch: normal; line-height: normal; letter-spacing: normal; margin-bottom: 21px;">
+                Welcome to Questnr
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p style="font-family: Arial; font-size: 14px; font-weight: normal; font-style: normal; font-stretch: normal; line-height: normal; letter-spacing: normal; color: #333333;margin-bottom: 21px;">
+                We are so glad you registered here.
+                Now you can create your community based on what you love and show the world how amazing you are!
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td><a th:href="@{${loginURL}}"
+               style="font-family: Arial; font-size: 16px; font-weight: normal; font-style: normal; font-stretch: normal; text-decoration: none; line-height: normal; letter-spacing: normal; color: #fff;border-radius: 2.8px; background-image: linear-gradient(259deg, #9b211f, #92140c);padding: 15px 32px;display: inline-block;margin-bottom: 29px;">
+            LOG IN TO YOUR ACCOUNT</a></td>
+    </tr>
+    <tr>
+        <td>
+            <p style="font-family: Arial; font-size: 18px; font-weight: normal; font-style: normal; font-stretch: normal; line-height: normal; letter-spacing: normal; color: #333333;margin-bottom: 21px;">
+                Your new account details
+            </p>
+            <p style="font-family: Arial; font-size: 14px; font-weight: normal; font-style: normal; font-stretch: normal; line-height: normal; letter-spacing: normal; color: #333333;margin-bottom: 21px;">
+                Username: <span th:text="${username}"></span>
+            </p>
+            <p style="font-family: Arial; font-size: 14px; font-weight: normal; font-style: normal; font-stretch: normal; line-height: normal; letter-spacing: normal; color: #333333;margin-bottom: 21px;">
+                Full Name: <span th:text="${fullName}"></span>
+            </p>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <p style="font-family: HelveticaNeue; font-size: 12px; font-weight: normal; font-style: normal; font-stretch: normal; line-height: normal; letter-spacing: normal; color: #333333;">Questnr Support</p></td>
+    </tr>
+    <tr>
+        <td>
+            <p style="font-family: HelveticaNeue; font-size: 14px; font-weight: 700; font-style: normal; font-stretch: normal; line-height: normal; letter-spacing: normal; color: #000000;margin-bottom: 8px;">support@questnr.com</p></td>
+    </tr>
+    </tbody>
+    <tfoot align="center" style="border-top:solid 0.7px #999999;display: block;    padding: 20px 20px 37px 20px;">
+
+    <tr>
+        <td>
+            <center><img src="https://lh3.googleusercontent.com/pw/ACtC-3dF61gnZMAIjEHJ6tulfy6TOOhcb2eU8MlIB_ucFaTx1GOncVULY4hquxSenh2NS3YwNP0E63QOG11jfP6la6X0vrh04tOJ1PCv3Vgx6XYP5izkXNUkKccB9RZb3vfa57Ug_Po26fAdPv1WwTDB8Oo=s51-no"
+                         style="width: 35px; height: 33px; padding: 5px 5px;margin-bottom: 7px;"></img></center>
+        </td>
+    </tr>
+
+
+    <tr>
+        <td>
+            <p style="font-family: HelveticaNeue; font-size: 12px; font-weight: normal; font-style: normal; font-stretch: normal; line-height: 1.67; letter-spacing: normal; text-align: center; color: #666666;line-height: 1.83;margin-bottom: 0px;">
+                © 2020. All rights reserved.</p></td>
+    </tr>
+
+
+    <tr>
+        <td>
+            <p style="font-family: HelveticaNeue; font-size: 12px; font-weight: normal; font-style: normal; font-stretch: normal; line-height: 1.67; letter-spacing: normal; text-align: center; color: #666666;line-height: 1.83;margin-bottom: 0px;">
+                New Delhi | contact@questnr.com </p></td>
+    </tr>
+
+    <tr>
+        <td colspan="3" style="text-align: center; margin-bottom: 18px;">
+            <p style=" font-size: 12px;line-height: 18px;color: black;text-align: center;margin-top: 7px;margin-bottom: 0px;">
+                <a style="margin:6px;" href="https://www.facebook.com/Questnr" target="_blank"><img
+                        src="https://lh3.googleusercontent.com/pw/ACtC-3cBoFFm1TDVBaLpGPVr95Ikhgu-wu7r_9dRki_wH6lFMZUETk0JAQ1fTcTgg4Ggdzbm_vLYQFSjnOmJLfany_ScswDVqQ3SMnbJxEnA9EOPiJG5dZJsIrayO4Ytg-l2umEkMe-qsiNcW9SkJGWUYMg=s21-no"></img></a>
+                <a style="margin:6px;" href="https://twitter.com/Questnr" target="_blank"><img
+                        src="https://lh3.googleusercontent.com/pw/ACtC-3cjd3SWB7NSoWEzUIGX4GwFmElwdg03sod8rF7rg8HbAyJpu1tm7cOhP74fWCsAFE5XhAwUA_T0eJC06KfBiFypKSsHqjk9F9tfd4bBRpmcU9OemGm2sYt0b9ZKVrJyuRQ8zXr-qrVCcQWlJxWPfvo=s21-no"></img></a>
+                <a style="margin:6px;" href="https://www.linkedin.com/company/Questnr-inc-/" target="_blank"><img
+                        src="https://lh3.googleusercontent.com/pw/ACtC-3c-D8QNIpuQlu4SegUr6FCMpnXAu9u6QCwDiAw1bZoTu_nhKplH91SFzBmQmkjOWyPlolt7mPOKfevQTeArwZvlQ0QGYhsxgRRAwR556RntA0j87P_dLZE-CP53ufw9jpMnkfdHLPfyx5CUxmENgNc=s21-no"></img></a>
+            </p>
+        </td>
+    </tr>
+    </tfoot>
+</table>
 </body>
 </html>
+
