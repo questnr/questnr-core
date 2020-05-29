@@ -2,6 +2,7 @@ package com.questnr.services.notification;
 
 import com.questnr.model.dto.NotificationDTO;
 import com.questnr.model.entities.Notification;
+import com.questnr.model.entities.UserNotificationSettings;
 import com.questnr.model.entities.UserNotificationTokenRegistry;
 import com.questnr.model.entities.notification.PushNotificationRequest;
 import com.questnr.model.mapper.NotificationMapper;
@@ -77,7 +78,8 @@ public class NotificationWorker extends Thread {
                 NotificationDTO notificationDTO = this.notificationMapper.toNotificationDTO(item);
                 if (!notificationDTO.getUserActor().getUserId().equals(notificationDTO.getUser().getUserId())) {
                     try {
-                        if (this.userNotificationSettingsRepository.existsByUserAndReceivingNotification(notificationDTO.getUser(), true)) {
+                        UserNotificationSettings userNotificationSettings = userNotificationSettingsRepository.findByUser(notificationDTO.getUser());
+                        if (userNotificationSettings == null || userNotificationSettings.isReceivingNotification()) {
                             PushNotificationRequest pushNotificationRequest = new PushNotificationRequest();
                             pushNotificationRequest.setTitle(notificationDTO.getUserActor().getUsername());
                             pushNotificationRequest.setMessage(notificationDTO.getMessage());
