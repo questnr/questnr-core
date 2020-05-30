@@ -15,6 +15,7 @@ import com.questnr.responses.LoginResponse;
 import com.questnr.responses.ResetPasswordResponse;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUser;
+import com.questnr.services.user.UserCommonService;
 import com.questnr.util.EncryptionUtils;
 import com.questnr.util.SecureRandomService;
 import org.apache.commons.text.WordUtils;
@@ -54,6 +55,9 @@ public class BaseService {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    UserCommonService userCommonService;
 
     public BaseService() {
         userMapper = Mappers.getMapper(UserMapper.class);
@@ -220,6 +224,27 @@ public class BaseService {
     public boolean checkIfUsernameIsTakenWithException(String username) {
         if (this.checkIfUsernameIsTaken(username)) {
             throw new AlreadyExistsException("Username is already taken");
+        }
+        return false;
+    }
+
+    public boolean checkIfOtherUsernameIsTaken(User user, String username){
+        return userRepository.existsByOtherUsername(user.getUserId(), username);
+    }
+
+    public boolean checkIfOtherUsernameIsTakenWithException(String username) {
+        User user = new User();
+        try{
+            user = userCommonService.getUser();
+        }catch (Exception e){}
+        if(commonService.isNull(user.getUsername())){
+            if (this.checkIfUsernameIsTaken(username)) {
+                throw new AlreadyExistsException("Username is already taken");
+            }
+        }else{
+            if (this.checkIfOtherUsernameIsTaken(user, username)) {
+                throw new AlreadyExistsException("Username is already taken");
+            }
         }
         return false;
     }

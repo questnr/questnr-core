@@ -24,6 +24,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("Select user from User user where LOWER(user.username) like %:userString% or LOWER(user.firstName) like %:userString% or LOWER(user.lastName) like %:userString%")
     Page<User> findByUserContaining(@Param("userString") String userString, Pageable pageable);
 
+    @Query("select case when count(u)> 0 then true else false end from User u where u.username=:username and u.userId<>:userId")
+    Boolean existsByOtherUsername(@Param("userId") Long userId,@Param("username") String username);
+
     //  @Query("select user.userId, " +
 //          " COUNT(DISTINCT pa.postActionId) as totalPosts, " +
 //          " COUNT(DISTINCT la.likeActionId) as totalLikes, " +

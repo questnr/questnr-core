@@ -33,7 +33,7 @@ public class BaseController {
     @RequestMapping(value = "/check-username", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void checkUsername(@RequestBody UsernameRequest usernameRequest) {
-        baseService.checkIfUsernameIsTakenWithException(usernameRequest.getUsername());
+        baseService.checkIfOtherUsernameIsTakenWithException(usernameRequest.getUsername());
     }
 
     @RequestMapping(value = "/check-email", method = RequestMethod.POST)
