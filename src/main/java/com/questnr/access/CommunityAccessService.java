@@ -33,4 +33,10 @@ public class CommunityAccessService {
         ).collect(Collectors.toList());
         return userIdList.contains(user.getUserId());
     }
+
+    public boolean hasAccessToCommunityBasic(Long communityId){
+        User user = userCommonService.getUser();
+        Community community = communityCommonService.getCommunity(communityId);
+        return this.isUserMemberOfCommunity(user, community);
+    }
 }

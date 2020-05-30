@@ -6,6 +6,8 @@ import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.requests.UpdatePasswordRequest;
+import com.questnr.requests.UserUpdateRequest;
+import com.questnr.responses.LoginResponse;
 import com.questnr.responses.UpdatePasswordResponse;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.SharableLinkService;
@@ -47,7 +49,12 @@ public class UserController {
     // @Todo: {userId:^[1-9][0-9]*} can be used.
     @RequestMapping(value = "/user/{userId}", method = RequestMethod.GET)
     UserDTO getUser(@PathVariable long userId) {
-        return userMapper.toOthersDTO(userCommonService.getUser());
+        return userMapper.toOthersDTO(userCommonService.getUser(userId));
+    }
+
+    @RequestMapping(value = "/user", method = RequestMethod.PUT)
+    LoginResponse updateUser(@RequestBody @Valid UserUpdateRequest userUpdateRequest) {
+        return userService.updateUser(userUpdateRequest);
     }
 
     @RequestMapping(value = "/user/search/users", method = RequestMethod.GET)

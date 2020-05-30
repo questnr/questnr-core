@@ -41,6 +41,9 @@ public class User extends DomainObject {
     @Size(min = 3, max = 25)
     private String lastName;
 
+    @Column(name = "bio", length = 800)
+    private String bio;
+
     @Column(name = "email_id", unique = true, nullable = false)
     @Size(min = 4)
     private String emailId;
@@ -159,6 +162,14 @@ public class User extends DomainObject {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public String getEmailId() {

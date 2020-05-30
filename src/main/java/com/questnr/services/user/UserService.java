@@ -6,13 +6,17 @@ import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.requests.UpdatePasswordRequest;
+import com.questnr.requests.UserUpdateRequest;
+import com.questnr.responses.LoginResponse;
 import com.questnr.responses.UpdatePasswordResponse;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUser;
 import com.questnr.services.AmazonS3Client;
+import com.questnr.services.BaseService;
 import com.questnr.services.CommonService;
 import com.questnr.services.EmailService;
 import com.questnr.services.community.CommunityCommonService;
+import com.questnr.services.community.CommunityService;
 import com.questnr.util.EncryptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +54,9 @@ public class UserService {
     @Autowired
     UserCommonService userCommonService;
 
+    @Autowired
+    BaseService baseService;
+
     public void deleteUser(Long userId) {
         User user = userCommonService.getUser();
         if (!Objects.equals(user.getUserId(), userId)) {
@@ -68,6 +75,22 @@ public class UserService {
         } catch (Exception e) {
             throw new ResourceNotFoundException("User not Found!");
         }
+    }
+
+    public LoginResponse updateUser(UserUpdateRequest userUpdateRequest){
+        User user = userCommonService.getUser();
+        try{
+            user.setFirstName(userUpdateRequest.getFirstName());
+            user.setLastName(userUpdateRequest.getLastName());
+            user.setUsername(userUpdateRequest.getUsername());
+            user.setDob(userUpdateRequest.getDob());
+            user.setBio(userUpdateRequest.getBio());
+            User savedUser = userRepository.save(user);
+            return baseService.createSuccessLoginResponse(savedUser);
+        }catch (Exception e) {
+            LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
+        }
+        return null;
     }
 
     public UpdatePasswordResponse updatePassword(UpdatePasswordRequest updatePasswordRequest) {

@@ -1,10 +1,10 @@
-package com.questnr.model.dto;
+package com.questnr.requests;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Nullable;
 
-public class CommunityRequestDTO {
+public class CommunityRequest {
     public String communityName;
 
     private String description;

@@ -2,12 +2,17 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.model.dto.*;
+import com.questnr.model.dto.CommunityCardDTO;
+import com.questnr.model.dto.CommunityDTO;
+import com.questnr.model.dto.SharableLinkDTO;
+import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.requests.CommunityNameRequest;
+import com.questnr.requests.CommunityRequest;
+import com.questnr.requests.CommunityUpdateRequest;
 import com.questnr.services.SharableLinkService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityMetaService;
@@ -56,16 +61,29 @@ public class CommunityController {
 
     // Community CRUD Operations
     @RequestMapping(value = "/user/community", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    CommunityDTO createCommunity(CommunityRequestDTO communityRequestDTO) {
+    CommunityDTO createCommunity(CommunityRequest communityRequest) {
         /*
          * Community Creation Security Checking
          * */
         if (communityAvatarAccessService.hasAccessToCommunityCreation()) {
-            if (communityRequestDTO.getAvatarFile() == null || communityRequestDTO.getAvatarFile().length == 0) {
-                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO)));
+            if (communityRequest.getAvatarFile() == null || communityRequest.getAvatarFile().length == 0) {
+                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequest)));
             } else {
-                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequestDTO), communityRequestDTO.getAvatarFile()[0]));
+                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequest), communityRequest.getAvatarFile()[0]));
             }
+        }
+        throw new AccessException();
+    }
+
+    // Community CRUD Operations
+    @RequestMapping(value = "/user/community/{communityId}", method = RequestMethod.PUT)
+    CommunityDTO updateCommunity(@PathVariable Long communityId, @RequestBody CommunityUpdateRequest communityUpdateRequest) {
+        /*
+         * Community Update Security Checking
+         * */
+        Community community = communityAvatarAccessService.hasAccessToCommunityUpdate(communityId);
+        if (community != null) {
+            return communityMapper.toDTO(communityService.updateCommunity(community, communityUpdateRequest));
         }
         throw new AccessException();
     }

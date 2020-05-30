@@ -10,6 +10,8 @@ public class UserDTO {
 
     private String lastName;
 
+    private String bio;
+
     private String slug;
 
     private AvatarDTO avatarDTO;
@@ -46,6 +48,14 @@ public class UserDTO {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public String getSlug() {

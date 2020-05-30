@@ -11,6 +11,7 @@ import com.questnr.model.entities.User;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityUserRepository;
+import com.questnr.requests.CommunityUpdateRequest;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.CustomPageService;
@@ -110,6 +111,16 @@ public class CommunityService {
                 return communityCommonService.getCommunity(communitySaved.getCommunityId());
             }
             return communitySaved;
+        } catch (Exception e) {
+            LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
+        }
+        return null;
+    }
+
+    public Community updateCommunity(Community community, CommunityUpdateRequest communityUpdateRequest) {
+        try {
+            community.setDescription(communityUpdateRequest.getDescription());
+            return communityRepository.save(community);
         } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
         }

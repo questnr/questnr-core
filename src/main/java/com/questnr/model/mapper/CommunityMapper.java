@@ -1,7 +1,10 @@
 package com.questnr.model.mapper;
 
-import com.questnr.model.dto.*;
+import com.questnr.model.dto.CommunityCardDTO;
+import com.questnr.model.dto.CommunityDTO;
+import com.questnr.model.dto.CommunityForPostActionDTO;
 import com.questnr.model.entities.Community;
+import com.questnr.requests.CommunityRequest;
 import com.questnr.services.user.UserCommonService;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,7 @@ public abstract class CommunityMapper {
     }
 
     @Mapping(target = "avatar", ignore = true)
-    public abstract Community toDomain(CommunityRequestDTO communityRequestDTO);
+    public abstract Community toDomain(CommunityRequest communityRequest);
 
     @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
     public abstract CommunityForPostActionDTO toCommunityForPostAction(Community community);
