@@ -9,18 +9,15 @@ import io.jsonwebtoken.Clock;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.DefaultClock;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.function.Function;
 
 @Service
 public class JwtTokenUtil {
@@ -34,8 +31,7 @@ public class JwtTokenUtil {
   private static final String CLAIM_KEY_ID = "id";
   private static final String CLAIM_KEY_NAME = "name";
   private static final String CLAIM_KEY_ROLE = "role";
-  private static final String CLAIM_KEY_CITY = "city";
-  private static final String CLAIM_KEY_PHONE_NUMBER = "phonenumber";
+  private static final String CLAIM_KEY_SLUG = "slug";
 
   private static final String CLAIM_KEY_CREATED = "created";
   private static final String CLAIM_KEY_EMAIL_ID = "emailId";
@@ -58,7 +54,7 @@ public class JwtTokenUtil {
       claims.put(CLAIM_KEY_NAME, ((JwtUser) userDetails).getFullName());
       claims.put(CLAIM_KEY_ROLE, userDetails.getAuthorities());
       claims.put(CLAIM_KEY_CREATED, new Date());
-      claims.put(CLAIM_KEY_PHONE_NUMBER,((JwtUser) userDetails).getPhoneNumber());
+      claims.put(CLAIM_KEY_SLUG,((JwtUser) userDetails).getSlug());
       claims.put(CLAIM_KEY_EMAIL_ID, jwtUser.getEmail());
     }
     return doGenerateToken(claims, userDetails.getUsername());

@@ -1,10 +1,11 @@
 package com.questnr.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Collection;
-import java.util.Date;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.Date;
 
 public class JwtUser implements UserDetails {
 
@@ -15,14 +16,14 @@ public class JwtUser implements UserDetails {
   private final String password;
   private final String email;
   private final String fullName;
-  private final String phoneNumber;
+  private final String slug;
   private final Collection<? extends GrantedAuthority> authorities;
   private final Date lastPasswordResetDate;
 
 
   public JwtUser(long id, String username, String firstName, String lastName, String fullName,
       String email, String password, Collection<? extends GrantedAuthority> authorities,
-      Date lastPasswordResetDate,String phoneNumber) {
+      Date lastPasswordResetDate, String slug) {
     this.id = id;
     this.username = username;
     this.firstName = firstName;
@@ -32,7 +33,7 @@ public class JwtUser implements UserDetails {
     this.authorities = authorities;
     this.lastPasswordResetDate = lastPasswordResetDate;
     this.fullName = fullName;
-    this.phoneNumber = phoneNumber;
+    this.slug = slug;
   }
 
   @JsonIgnore
@@ -100,10 +101,10 @@ public class JwtUser implements UserDetails {
     return fullName;
   }
 
-
-  public String getPhoneNumber() {
-    return phoneNumber;
+  public String getSlug() {
+    return slug;
   }
+
 
   /**
    * @return the uniqueUserId
