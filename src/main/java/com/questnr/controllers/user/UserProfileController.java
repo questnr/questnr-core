@@ -2,6 +2,7 @@ package com.questnr.controllers.user;
 
 import com.questnr.access.UserProfileAccessService;
 import com.questnr.exceptions.AccessException;
+import com.questnr.model.dto.BioUserDTO;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.UserMapper;
@@ -43,6 +44,15 @@ public class UserProfileController {
                 return userMapper.toOwnDTO(userCommonService.getUserByUserSlug(userSlug));
             }
             return userMapper.toOthersDTO(userCommonService.getUserByUserSlug(userSlug));
+        }
+        throw new AccessException();
+    }
+
+    @RequestMapping(value = "/profile/bio/{userSlug}", method = RequestMethod.GET)
+    BioUserDTO getUserBioData(@PathVariable String userSlug) {
+        User user = userProfileAccessService.getUserByUserSlug(userSlug);
+        if(user != null){
+            return userMapper.toBioUserDTO(user);
         }
         throw new AccessException();
     }

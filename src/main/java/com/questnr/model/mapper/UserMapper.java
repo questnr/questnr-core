@@ -1,5 +1,6 @@
 package com.questnr.model.mapper;
 
+import com.questnr.model.dto.BioUserDTO;
 import com.questnr.model.dto.UserDTO;
 import com.questnr.model.dto.UserOtherDTO;
 import com.questnr.model.dto.UserProfileDTO;
@@ -50,4 +51,6 @@ public abstract class UserMapper {
     }
 
     abstract public User fromUserRequest(final UserRequest userRequest);
+
+    abstract public BioUserDTO toBioUserDTO(final User user);
 }

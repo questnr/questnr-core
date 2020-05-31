@@ -6,8 +6,6 @@ import com.questnr.model.repositories.CommunityUserRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserFollowerRepository;
 import com.questnr.responses.UserMetaProfileResponse;
-import com.questnr.services.CommonService;
-import com.questnr.services.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
