@@ -7,7 +7,7 @@ public enum SESFrom {
     SATISH("satish.k.gaur2009@questnr.com", "Satish from Questnr"),
 
     // @Todo Change NO_REPLY to noreply@questnr.com
-    NO_REPLY("noreply@questnr.com", "Questnr"),
+    NO_REPLY("no_reply@questnr.com", "Questnr"),
 //    NO_REPLY("brijeshlakkad22@gmail.com", "Questnr"),
 
     SUPPORT("support@questnr.com", "Questnr Support");
