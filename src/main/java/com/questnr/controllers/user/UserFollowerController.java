@@ -4,6 +4,7 @@ import com.questnr.access.UserFollowerAccessService;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.UserOtherDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
@@ -40,7 +41,7 @@ public class UserFollowerController {
 
     // Get followers of the user
     @RequestMapping(value = "/follow/following/user/{userId}", method = RequestMethod.GET)
-    Page<UserDTO> getFollowersOfUser(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    Page<UserOtherDTO> getFollowersOfUser(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         User user = userFollowerAccessService.getFollowersOfUser(userId);
         if (user != null) {
             Pageable pageable = PageRequest.of(page, size);
@@ -51,7 +52,7 @@ public class UserFollowerController {
 
     // Get list of the users being followed by this user
     @RequestMapping(value = "/follow/user/following/{userId}", method = RequestMethod.GET)
-    Page<UserDTO> getUserFollowingToOtherUsers(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    Page<UserOtherDTO> getUserFollowingToOtherUsers(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         User user = userFollowerAccessService.getUserFollowingToOtherUsers(userId);
         if (user != null) {
             Pageable pageable = PageRequest.of(page, size);

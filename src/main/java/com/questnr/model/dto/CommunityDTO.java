@@ -18,7 +18,7 @@ public class CommunityDTO {
 
     public String slug;
 
-    private UserDTO ownerUserDTO;
+    private UserOtherDTO ownerUserDTO;
 
     private PublishStatus status;
 
@@ -72,11 +72,11 @@ public class CommunityDTO {
         this.slug = slug;
     }
 
-    public UserDTO getOwnerUserDTO() {
+    public UserOtherDTO getOwnerUserDTO() {
         return ownerUserDTO;
     }
 
-    public void setOwnerUserDTO(UserDTO ownerUserDTO) {
+    public void setOwnerUserDTO(UserOtherDTO ownerUserDTO) {
         this.ownerUserDTO = ownerUserDTO;
     }
 

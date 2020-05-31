@@ -7,15 +7,15 @@ import java.util.List;
 
 public class PostActionPublicDTO extends PostActionDTO {
 
-    private UserDTO userDTO;
+    private UserOtherDTO userDTO;
     private CommunityForPostActionDTO communityDTO;
     private List<PostActionMetaInformation> metaList = new ArrayList<>();
 
-    public UserDTO getUserDTO() {
+    public UserOtherDTO getUserDTO() {
         return userDTO;
     }
 
-    public void setUserDTO(UserDTO userDTO) {
+    public void setUserDTO(UserOtherDTO userDTO) {
         this.userDTO = userDTO;
     }
 

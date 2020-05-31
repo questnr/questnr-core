@@ -1,6 +1,9 @@
 package com.questnr.controllers.user;
 
+import com.questnr.access.UserProfileAccessService;
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.UserDTO;
+import com.questnr.model.entities.User;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.responses.UserMetaProfileResponse;
 import com.questnr.services.user.UserCommonService;
@@ -25,13 +28,23 @@ public class UserProfileController {
     @Autowired
     UserCommonService userCommonService;
 
+    @Autowired
+    UserProfileAccessService userProfileAccessService;
+
     UserProfileController() {
         userMapper = Mappers.getMapper(UserMapper.class);
     }
 
     @RequestMapping(value = "/profile/{userSlug}", method = RequestMethod.GET)
-    UserDTO getUserByUsername(@PathVariable String userSlug) {
-        return userMapper.toOthersDTO(userCommonService.getUserByUserSlug(userSlug));
+    UserDTO getUserByUserSlug(@PathVariable String userSlug) {
+        User user = userProfileAccessService.getUserByUserSlug(userSlug);
+        if(user != null){
+            if(user.equals(userCommonService.getUser())) {
+                return userMapper.toOwnDTO(userCommonService.getUserByUserSlug(userSlug));
+            }
+            return userMapper.toOthersDTO(userCommonService.getUserByUserSlug(userSlug));
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/profile/meta/{userSlug}/info", method = RequestMethod.GET)

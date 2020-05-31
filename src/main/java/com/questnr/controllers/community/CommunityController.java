@@ -2,10 +2,7 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityAvatarAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.model.dto.CommunityCardDTO;
-import com.questnr.model.dto.CommunityDTO;
-import com.questnr.model.dto.SharableLinkDTO;
-import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.*;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
@@ -130,7 +127,7 @@ public class CommunityController {
 
     // Get users of a single community.
     @RequestMapping(value = "/user/community/{communitySlug}/users", method = RequestMethod.GET)
-    Page<UserDTO> getUsersOfCommunity(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
+    Page<UserOtherDTO> getUsersOfCommunity(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
 //        List<UserDTO> userDTOS = new ArrayList<>();
 //        for(User user: communityService.getUsersFromCommunity(communityId)){
 //            userDTOS.add(userMapper.toOthersDTO(user));
@@ -155,7 +152,7 @@ public class CommunityController {
 
     // Search user in community user list
     @RequestMapping(value = "/user/community/{communitySlug}/search/users", method = RequestMethod.GET)
-    Page<UserDTO> searchUserInCommunityUsers(@RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
+    Page<UserOtherDTO> searchUserInCommunityUsers(@RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
         Pageable pageable = PageRequest.of(page, size);
         return communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
     }

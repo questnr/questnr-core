@@ -1,6 +1,8 @@
 package com.questnr.model.mapper;
 
 import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.UserOtherDTO;
+import com.questnr.model.dto.UserProfileDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.projections.UserProjection;
 import com.questnr.requests.UserRequest;
@@ -21,15 +23,21 @@ public abstract class UserMapper {
             @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
             @Mapping(target = "userMeta", expression = "java(UserMetaMapper.getMetaMapper(user, this.userCommonService))")
     })
-    abstract public UserDTO toOthersDTO(final User user);
+    abstract public UserOtherDTO toOthersDTO(final User user);
 
-    public List<UserDTO> toOthersDTOs(final List<User> users) {
-        List<UserDTO> userDTOS = new ArrayList<>();
+    public List<UserOtherDTO> toOthersDTOs(final List<User> users) {
+        List<UserOtherDTO> userDTOS = new ArrayList<>();
         for (User user : users) {
             userDTOS.add(this.toOthersDTO(user));
         }
         return userDTOS;
     }
+
+    @Mappings({
+            @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
+            @Mapping(target = "userMeta", expression = "java(UserMetaMapper.getMetaMapper(user, this.userCommonService))")
+    })
+    abstract public UserProfileDTO toOwnDTO(final User user);
 
     abstract public UserDTO toOthersDTOsFromProjection(final UserProjection user);
 

@@ -1,13 +1,13 @@
 package com.questnr.model.dto;
 
 public class PostActionForCommunityDTO extends PostActionDTO {
-    private UserDTO userDTO;
+    private UserOtherDTO userDTO;
 
-    public UserDTO getUserDTO() {
+    public UserOtherDTO getUserDTO() {
         return userDTO;
     }
 
-    public void setUserDTO(UserDTO userDTO) {
+    public void setUserDTO(UserOtherDTO userDTO) {
         this.userDTO = userDTO;
     }
 }

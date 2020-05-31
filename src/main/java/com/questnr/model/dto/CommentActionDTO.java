@@ -8,7 +8,7 @@ public class CommentActionDTO {
 
     private String commentObject;
 
-    private UserDTO userActorDTO;
+    private UserOtherDTO userActorDTO;
 
     private Set<ChildCommentActionDTO> childCommentDTOSet;
 
@@ -36,11 +36,11 @@ public class CommentActionDTO {
         this.commentObject = commentObject;
     }
 
-    public UserDTO getUserActorDTO() {
+    public UserOtherDTO getUserActorDTO() {
         return userActorDTO;
     }
 
-    public void setUserActorDTO(UserDTO userActorDTO) {
+    public void setUserActorDTO(UserOtherDTO userActorDTO) {
         this.userActorDTO = userActorDTO;
     }
 

@@ -3,7 +3,7 @@ package com.questnr.model.dto;
 public class LikeActionDTO {
     private Long likeActionId;
 
-    private UserDTO user;
+    private UserOtherDTO user;
 
 //    private MetaDataDTO metaData;
 
@@ -15,15 +15,15 @@ public class LikeActionDTO {
         this.likeActionId = likeActionId;
     }
 
-    public UserDTO getUser() {
+    public UserOtherDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(UserOtherDTO user) {
         this.user = user;
     }
 
-//    public MetaDataDTO getMetaData() {
+    //    public MetaDataDTO getMetaData() {
 //        return metaData;
 //    }
 //

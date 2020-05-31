@@ -7,7 +7,7 @@ public class ChildCommentActionDTO {
 
     private String commentObject;
 
-    private UserDTO userActorDTO;
+    private UserOtherDTO userActorDTO;
 
     private Date createdAt;
 
@@ -31,11 +31,11 @@ public class ChildCommentActionDTO {
         this.commentObject = commentObject;
     }
 
-    public UserDTO getUserActorDTO() {
+    public UserOtherDTO getUserActorDTO() {
         return userActorDTO;
     }
 
-    public void setUserActorDTO(UserDTO userActorDTO) {
+    public void setUserActorDTO(UserOtherDTO userActorDTO) {
         this.userActorDTO = userActorDTO;
     }
 

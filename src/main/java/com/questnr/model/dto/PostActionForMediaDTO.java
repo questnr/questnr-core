@@ -4,15 +4,15 @@ import java.util.List;
 
 public class PostActionForMediaDTO {
     private Long postActionId;
-    private UserDTO userDTO;
+    private UserOtherDTO userDTO;
     private CommunityForPostActionDTO communityDTO;
     private List<PostMediaDTO> postMediaList;
 
-    public UserDTO getUserDTO() {
+    public UserOtherDTO getUserDTO() {
         return userDTO;
     }
 
-    public void setUserDTO(UserDTO userDTO) {
+    public void setUserDTO(UserOtherDTO userDTO) {
         this.userDTO = userDTO;
     }
 

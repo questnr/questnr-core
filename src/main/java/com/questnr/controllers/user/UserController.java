@@ -3,6 +3,7 @@ package com.questnr.controllers.user;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.UserOtherDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.requests.UpdatePasswordRequest;
@@ -58,7 +59,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/user/search/users", method = RequestMethod.GET)
-    Page<UserDTO> searchUserString(@RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+    Page<UserOtherDTO> searchUserString(@RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = userCommonService.searchUserString(userString, pageable);
         return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());

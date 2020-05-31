@@ -3,7 +3,7 @@ package com.questnr.model.dto;
 public class LikeCommentActionDTO {
     private Long likeCommentActionId;
 
-    private UserDTO user;
+    private UserOtherDTO user;
 
     private MetaDataDTO metaData;
 
@@ -15,11 +15,11 @@ public class LikeCommentActionDTO {
         this.likeCommentActionId = likeCommentActionId;
     }
 
-    public UserDTO getUser() {
+    public UserOtherDTO getUser() {
         return user;
     }
 
-    public void setUser(UserDTO user) {
+    public void setUser(UserOtherDTO user) {
         this.user = user;
     }
 

@@ -5,6 +5,7 @@ import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.UserOtherDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
@@ -174,7 +175,7 @@ public class CommunityService {
         }
     }
 
-    public Page<UserDTO> getUsersOfCommunity(String communitySlug, Pageable pageable) {
+    public Page<UserOtherDTO> getUsersOfCommunity(String communitySlug, Pageable pageable) {
         try {
             Page<CommunityUser> communityUserPage = communityUserRepository.findAllByCommunityOrderByCreatedAtDesc(
                     communityCommonService.getCommunity(communitySlug),
@@ -201,7 +202,7 @@ public class CommunityService {
         }
     }
 
-    public Page<UserDTO> searchUserInCommunityUsers(String communitySlug, String userString, Pageable pageable) {
+    public Page<UserOtherDTO> searchUserInCommunityUsers(String communitySlug, String userString, Pageable pageable) {
         try {
             Page<CommunityUser> communityUserPage = communityUserRepository.findAllByUserContainingString(communityCommonService.getCommunity(communitySlug), userString, pageable);
             List<User> users = communityUserPage.getContent().stream()

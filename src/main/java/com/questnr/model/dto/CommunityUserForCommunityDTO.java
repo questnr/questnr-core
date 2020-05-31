@@ -2,13 +2,13 @@ package com.questnr.model.dto;
 
 public class CommunityUserForCommunityDTO {
 
-    private UserDTO communityUser;
+    private UserOtherDTO communityUser;
 
-    public UserDTO getCommunityUser() {
+    public UserOtherDTO getCommunityUser() {
         return communityUser;
     }
 
-    public void setCommunityUser(UserDTO communityUser) {
+    public void setCommunityUser(UserOtherDTO communityUser) {
         this.communityUser = communityUser;
     }
 }

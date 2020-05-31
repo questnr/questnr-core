@@ -5,9 +5,9 @@ import com.questnr.common.enums.PostActionType;
 public class PostActionCardDTO extends PostActionDTO {
 
     private CommunityForPostActionDTO communityDTO;
-    private UserDTO userDTO;
+    private UserOtherDTO userDTO;
     private PostActionType postActionType;
-    private UserDTO sharedPostOwner;
+    private UserOtherDTO sharedPostOwner;
 
     public CommunityForPostActionDTO getCommunityDTO() {
         return communityDTO;
@@ -17,11 +17,11 @@ public class PostActionCardDTO extends PostActionDTO {
         this.communityDTO = communityDTO;
     }
 
-    public UserDTO getUserDTO() {
+    public UserOtherDTO getUserDTO() {
         return userDTO;
     }
 
-    public void setUserDTO(UserDTO userDTO) {
+    public void setUserDTO(UserOtherDTO userDTO) {
         this.userDTO = userDTO;
     }
 
@@ -33,11 +33,11 @@ public class PostActionCardDTO extends PostActionDTO {
         this.postActionType = postActionType;
     }
 
-    public UserDTO getSharedPostOwner() {
+    public UserOtherDTO getSharedPostOwner() {
         return sharedPostOwner;
     }
 
-    public void setSharedPostOwner(UserDTO sharedPostOwner) {
+    public void setSharedPostOwner(UserOtherDTO sharedPostOwner) {
         this.sharedPostOwner = sharedPostOwner;
     }
 }

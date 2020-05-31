@@ -3,7 +3,7 @@ package com.questnr.services.user;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.UserOtherDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserFollower;
 import com.questnr.model.mapper.UserMapper;
@@ -136,13 +136,13 @@ public class UserFollowerService {
         return RelationShipType.none;
     }
 
-    public Page<UserDTO> getFollowersOfUser(User user, Pageable pageable) {
+    public Page<UserOtherDTO> getFollowersOfUser(User user, Pageable pageable) {
         Page<UserFollower> userPage = userFollowerRepository.findAllByUserOrderByCreatedAtDesc(user, pageable);
         List<User> followers = userPage.getContent().stream().map(UserFollower::getFollowingUser).collect(Collectors.toList());
         return new PageImpl<>(userMapper.toOthersDTOs(followers), pageable, userPage.getTotalElements());
     }
 
-    public Page<UserDTO> getUserFollowingToOtherUsers(User user, Pageable pageable) {
+    public Page<UserOtherDTO> getUserFollowingToOtherUsers(User user, Pageable pageable) {
         Page<UserFollower> userPage = userFollowerRepository.findAllByFollowingUserOrderByCreatedAtDesc(user, pageable);
         List<User> followingTo = userPage.getContent().stream().map(UserFollower::getUser).collect(Collectors.toList());
         return new PageImpl<>(userMapper.toOthersDTOs(followingTo), pageable, userPage.getTotalElements());

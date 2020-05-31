@@ -6,8 +6,8 @@ public class PostActionFeedDTO extends PostActionDTO {
 
     private CommunityForPostActionDTO communityDTO;
     private PostActionType postActionType;
-    private UserDTO userDTO;
-    private UserDTO userWhoShared;
+    private UserOtherDTO userDTO;
+    private UserOtherDTO userWhoShared;
 
     public CommunityForPostActionDTO getCommunityDTO() {
         return communityDTO;
@@ -25,19 +25,19 @@ public class PostActionFeedDTO extends PostActionDTO {
         this.postActionType = postActionType;
     }
 
-    public UserDTO getUserDTO() {
+    public UserOtherDTO getUserDTO() {
         return userDTO;
     }
 
-    public void setUserDTO(UserDTO userDTO) {
+    public void setUserDTO(UserOtherDTO userDTO) {
         this.userDTO = userDTO;
     }
 
-    public UserDTO getUserWhoShared() {
+    public UserOtherDTO getUserWhoShared() {
         return userWhoShared;
     }
 
-    public void setUserWhoShared(UserDTO userWhoShared) {
+    public void setUserWhoShared(UserOtherDTO userWhoShared) {
         this.userWhoShared = userWhoShared;
     }
 }

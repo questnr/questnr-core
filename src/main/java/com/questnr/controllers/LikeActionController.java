@@ -1,7 +1,7 @@
 package com.questnr.controllers;
 
 import com.questnr.model.dto.LikeActionDTO;
-import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.UserOtherDTO;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.LikeActionMapper;
@@ -57,7 +57,7 @@ public class LikeActionController {
     }
 
     @RequestMapping(value = "/user/posts/{postId}/like/search/user", method = RequestMethod.GET)
-    Page<UserDTO> searchUserOnLikeListOfPost(@PathVariable Long postId, @RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+    Page<UserOtherDTO> searchUserOnLikeListOfPost(@PathVariable Long postId, @RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> userPage = likeActionService.searchUserOnLikeListOfPost(postId, userString, pageable);
         return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
