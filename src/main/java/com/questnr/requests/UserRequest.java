@@ -26,7 +26,7 @@ public class UserRequest {
     @Size(min = 3, max = 25, message = "First name should contain maximum of 25 characters and at least 3 characters")
     private String lastName;
 
-    @NotBlank(message = "Username is mandatory")
+    @NotBlank(message = "Email is mandatory")
     @Pattern(regexp = "^[a-zA-Z0-9_.-]+@[a-zA-Z0-9]+[a-zA-Z0-9.-]+[a-zA-Z0-9]+\\.[a-z]{1,3}$",
             message = "Email is invalid")
     private String emailId;

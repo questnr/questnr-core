@@ -2,6 +2,7 @@ package com.questnr.services;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.questnr.common.EmailConstants;
+import com.questnr.model.entities.EmailOTPSent;
 import com.questnr.model.entities.User;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.services.ses.AmazonAttachment;
@@ -35,6 +36,8 @@ public class EmailService {
     private TemplateEngine templateEngine;
     @Value("${questnr.website.url}")
     private String websiteHomePageURL;
+    @Value("${app.name}")
+    private String appName;
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
@@ -124,6 +127,20 @@ public class EmailService {
 
         this.sendHTMLMessage(to, "Reset Password Request", htmlContent);
         this.sendHTMLMessage("admin@questnr.com", "[QuestNR] Password Lost/Changed", htmlContentForAdmin);
+    }
+
+    public void sendOTPEmail(String to, String otp) {
+        Locale locale = Locale.ENGLISH;
+        final Context ctx = new Context(locale);
+        ctx.setVariable("email", to);
+        ctx.setVariable("otp", otp);
+        final String htmlContent = templateEngine.process("mail/otp-verification.html", ctx);
+
+        this.sendHTMLMessage(to,  appName+" Email Verification", htmlContent);
+    }
+
+    public void sendOTPEmail(EmailOTPSent emailOTPSent) {
+        this.sendOTPEmail(emailOTPSent.getEmail(), emailOTPSent.getOtp());
     }
 
     public void sendMessageNotification(String to, String message, String from, String topic,
