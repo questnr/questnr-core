@@ -1,5 +1,7 @@
 package com.questnr.util;
 
+import org.springframework.stereotype.Service;
+
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -12,16 +14,21 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Date;
 
+@Service
 public class ImageCompression {
 
     private File inputFile;
 
-    public ImageCompression(File inputFile) {
-        this.inputFile = inputFile;
-    }
-
     private String generateFileName(String fileName) {
         return new Date().getTime() + "-" + fileName.replace(" ", "_");
+    }
+
+    public File getInputFile() {
+        return inputFile;
+    }
+
+    public void setInputFile(File inputFile) {
+        this.inputFile = inputFile;
     }
 
     public File doCompression() throws Exception {
@@ -41,7 +48,7 @@ public class ImageCompression {
 
         if (param.canWriteCompressed()) {
             param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            param.setCompressionQuality(0.05f);
+            param.setCompressionQuality(0.1f);
         }
 
         writer.write(null, new IIOImage(image, null, null), param);

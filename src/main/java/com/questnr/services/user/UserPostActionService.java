@@ -57,6 +57,9 @@ public class UserPostActionService {
     @Autowired
     CommonService commonService;
 
+    @Autowired
+    ImageCompression imageCompression;
+
     UserPostActionService() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
@@ -93,12 +96,12 @@ public class UserPostActionService {
                     File file = commonService.convertMultiPartToFile(multipartFile);
                     if (commonService.checkIfFileIsImage(file)) {
                         try {
-                            if(commonService.getFileExtension(file).equals("png")){
+                            if (commonService.getFileExtension(file).equals("png")) {
                                 resourceStorageData = this.amazonS3Client.uploadFile(file);
                                 resourceStorageData.setResourceType(ResourceType.image);
-                            }else{
-                                ImageCompression imageCompression = new ImageCompression(file);
-                                File compressedFile = imageCompression.doCompression();
+                            } else {
+                                this.imageCompression.setInputFile(file);
+                                File compressedFile = this.imageCompression.doCompression();
                                 resourceStorageData = this.amazonS3Client.uploadFile(compressedFile);
                                 resourceStorageData.setResourceType(ResourceType.image);
                             }

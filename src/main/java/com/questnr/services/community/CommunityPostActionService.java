@@ -14,6 +14,7 @@ import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.PostActionService;
 import com.questnr.services.user.UserCommonService;
+import com.questnr.util.ImageCompression;
 import com.questnr.util.VideoCompression;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -54,6 +55,9 @@ public class CommunityPostActionService {
     @Autowired
     CommonService commonService;
 
+    @Autowired
+    ImageCompression imageCompression;
+
     CommunityPostActionService() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
@@ -74,8 +78,15 @@ public class CommunityPostActionService {
                     File file = commonService.convertMultiPartToFile(multipartFile);
                     if (commonService.checkIfFileIsImage(file)) {
                         try {
-                            resourceStorageData = this.amazonS3Client.uploadFile(file, communityId);
-                            resourceStorageData.setResourceType(ResourceType.image);
+                            if (commonService.getFileExtension(file).equals("png")) {
+                                resourceStorageData = this.amazonS3Client.uploadFile(file, communityId);
+                                resourceStorageData.setResourceType(ResourceType.image);
+                            } else {
+                                this.imageCompression.setInputFile(file);
+                                File compressedFile = this.imageCompression.doCompression();
+                                resourceStorageData = this.amazonS3Client.uploadFile(compressedFile, communityId);
+                                resourceStorageData.setResourceType(ResourceType.image);
+                            }
                         } catch (Exception e) {
 
                         } finally {
