@@ -39,7 +39,6 @@ public class Notification extends DomainObject {
             }
     )
     @NotFound(action = NotFoundAction.IGNORE)
-    @Cascade(CascadeType.REMOVE)
     @JoinColumn(name = "notification_base_id")
     private NotificationBase notificationBase;
 

@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.common.enums.NotificationType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.CommentAction;
@@ -8,6 +9,7 @@ import com.questnr.model.entities.LikeCommentAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommentActionRepository;
 import com.questnr.model.repositories.LikeCommentActionRepository;
+import com.questnr.model.repositories.NotificationRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
@@ -37,6 +39,9 @@ public class LikeCommentActionService {
 
     @Autowired
     NotificationJob notificationJob;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     public Page<LikeCommentAction> getAllLikeActionByCommentId(Long commentId,
                                                                Pageable pageable) {
@@ -76,7 +81,15 @@ public class LikeCommentActionService {
         likeCommentActionRepository.findByCommentActionAndUserActor(commentActionRepository.findByCommentActionId(postId), userRepository.findByUserId(userId)).map(likeCommentAction -> {
 
             // Notification job created and assigned to Notification Processor.
-            notificationJob.createNotificationJob(likeCommentAction, false);
+//            notificationJob.createNotificationJob(likeCommentAction, false);
+            try {
+                notificationRepository.deleteByNotificationBaseAndType(
+                        likeCommentAction.getLikeCommentActionId(),
+                        NotificationType.likeComment.getJsonValue()
+                );
+            } catch (Exception e) {
+
+            }
 
             likeCommentActionRepository.delete(likeCommentAction);
             return ResponseEntity.ok().build();

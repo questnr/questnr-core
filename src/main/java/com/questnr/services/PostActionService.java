@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
@@ -8,6 +9,7 @@ import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.HashTagRepository;
+import com.questnr.model.repositories.NotificationRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
@@ -46,6 +48,9 @@ public class PostActionService {
 
     @Autowired
     NotificationJob notificationJob;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
         List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));
@@ -168,6 +173,14 @@ public class PostActionService {
 
     public void deletePostAction(PostAction postAction) {
         try {
+            try {
+                notificationRepository.deleteByNotificationBaseAndType(
+                        postAction.getPostActionId(),
+                        NotificationType.post.getJsonValue()
+                );
+            } catch (Exception e) {
+
+            }
             postAction.setDeleted(true);
             postActionRepository.save(postAction);
         } catch (Exception e) {

@@ -1,5 +1,6 @@
 package com.questnr.services.user;
 
+import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.ResourceNotFoundException;
@@ -7,10 +8,7 @@ import com.questnr.model.dto.UserOtherDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserFollower;
 import com.questnr.model.mapper.UserMapper;
-import com.questnr.model.repositories.CommunityRepository;
-import com.questnr.model.repositories.CommunityUserRepository;
-import com.questnr.model.repositories.UserFollowerRepository;
-import com.questnr.model.repositories.UserRepository;
+import com.questnr.model.repositories.*;
 import com.questnr.services.CustomPageService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.notification.NotificationJob;
@@ -60,6 +58,9 @@ public class UserFollowerService {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     UserFollowerService() {
         userMapper = Mappers.getMapper(UserMapper.class);
@@ -118,8 +119,15 @@ public class UserFollowerService {
             userRepository.save(user);
 
             // Notification job created and assigned to Notification Processor.
-            notificationJob.createNotificationJob(thisUserFollower, false);
+//            notificationJob.createNotificationJob(thisUserFollower, false);
+            try {
+                notificationRepository.deleteByNotificationBaseAndType(
+                        thisUserFollower.getUserFollowerId(),
+                        NotificationType.followedUser.getJsonValue()
+                );
+            } catch (Exception e) {
 
+            }
         } else {
             throw new ResourceNotFoundException("You are not following the user");
         }

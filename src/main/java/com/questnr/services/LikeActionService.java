@@ -1,11 +1,13 @@
 package com.questnr.services;
 
+import com.questnr.common.enums.NotificationType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.LikeActionRepository;
+import com.questnr.model.repositories.NotificationRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.services.notification.NotificationJob;
@@ -37,7 +39,10 @@ public class LikeActionService {
     @Autowired
     NotificationJob notificationJob;
 
-    public Page<LikeAction> getPublicLikesByPostId(String postSlug, Pageable pageable){
+    @Autowired
+    NotificationRepository notificationRepository;
+
+    public Page<LikeAction> getPublicLikesByPostId(String postSlug, Pageable pageable) {
         PostAction postAction = postActionRepository.findFirstBySlug(postSlug);
         if (postAction != null)
             return likeActionRepository.findByPostAction(postAction, pageable);
@@ -83,8 +88,16 @@ public class LikeActionService {
 
 
             // Notification job created and assigned to Notification Processor.
-            notificationJob.createNotificationJob(likeAction, false);
+//            notificationJob.createNotificationJob(likeAction, false);
 
+            try {
+                notificationRepository.deleteByNotificationBaseAndType(
+                        likeAction.getLikeActionId(),
+                        NotificationType.like.getJsonValue()
+                );
+            } catch (Exception e) {
+
+            }
             likeActionRepository.delete(likeAction);
             return ResponseEntity.ok().build();
         }).orElseThrow(() -> new ResourceNotFoundException("Like not found"));

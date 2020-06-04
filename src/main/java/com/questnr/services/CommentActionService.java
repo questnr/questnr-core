@@ -1,11 +1,13 @@
 package com.questnr.services;
 
+import com.questnr.common.enums.NotificationType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommentActionRepository;
+import com.questnr.model.repositories.NotificationRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.requests.CommentActionRequest;
@@ -41,6 +43,9 @@ public class CommentActionService {
 
     @Autowired
     NotificationJob notificationJob;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     public Page<CommentAction> getPublicCommentsByPostId(String postSlug, Pageable pageable) {
         PostAction postAction = postActionRepository.findFirstBySlug(postSlug);
@@ -100,8 +105,16 @@ public class CommentActionService {
         CommentAction commentAction = this.getCommentActionUsingPostActionAndUserIdAndCommentId(postAction, userId, commentId);
         if (commentAction != null) {
 
-            // Notification job created and assigned to Notification Processor.
-            notificationJob.createNotificationJob(commentAction, false);
+//            // Notification job created and assigned to Notification Processor.
+//            notificationJob.createNotificationJob(commentAction, false);
+            try {
+                notificationRepository.deleteByNotificationBaseAndType(
+                        commentAction.getCommentActionId(),
+                        NotificationType.comment.getJsonValue()
+                );
+            } catch (Exception e) {
+
+            }
             commentAction.setDeleted(true);
             commentActionRepository.save(commentAction);
         } else {

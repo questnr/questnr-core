@@ -1,5 +1,6 @@
 package com.questnr.services.community;
 
+import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.AlreadyExistsException;
@@ -11,10 +12,7 @@ import com.questnr.model.entities.CommunityInvitedUser;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
-import com.questnr.model.repositories.CommunityInvitedUserRepository;
-import com.questnr.model.repositories.CommunityRepository;
-import com.questnr.model.repositories.CommunityUserRepository;
-import com.questnr.model.repositories.UserRepository;
+import com.questnr.model.repositories.*;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import org.mapstruct.factory.Mappers;
@@ -58,6 +56,9 @@ public class CommunityJoinService {
 
     @Autowired
     CommunityMapper communityMapper;
+
+    @Autowired
+    NotificationRepository notificationRepository;
 
     CommunityJoinService() {
         communityMapper = Mappers.getMapper(CommunityMapper.class);
@@ -207,7 +208,16 @@ public class CommunityJoinService {
                 community.setUsers(joinedUsers);
 
                 // Notification job created and assigned to Notification Processor.
-                notificationJob.createNotificationJob(thisCommunityUser, false);
+//                notificationJob.createNotificationJob(thisCommunityUser, false);
+
+                try {
+                    notificationRepository.deleteByNotificationBaseAndType(
+                            thisCommunityUser.getCommunityUserId(),
+                            NotificationType.followedCommunity.getJsonValue()
+                    );
+                } catch (Exception e) {
+
+                }
 
                 return communityRepository.save(community);
             }
