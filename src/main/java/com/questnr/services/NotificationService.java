@@ -84,11 +84,18 @@ public class NotificationService {
 
     public Integer countUnreadNotifications() {
         User user = userCommonService.getUser();
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by("createdAt").descending());
         try {
             List<Notification> notifications = notificationRepository.findAllByUser(user, pageable);
-            List<Notification> filteredNotifications = notifications.stream().filter(notification -> !notification.isRead()).collect(Collectors.toList());
-            return filteredNotifications.size();
+            int count = 0;
+            for(Notification notification : notifications){
+                if(!notification.isRead()){
+                    count++;
+                }else{
+                    break;
+                }
+            }
+            return count;
         } catch (Exception e) {
             LOGGER.error("Exception occur while fetch Notification by User ", e);
             return 0;
