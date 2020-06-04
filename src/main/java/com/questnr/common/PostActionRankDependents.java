@@ -6,10 +6,10 @@ public interface PostActionRankDependents {
     // @Todo: Set thresholds after some time of release.
     Double MIN_THRESHOLD = Double.valueOf(0);
 
-    Double LIKE_ACTION = ((double)30)/PERCENT;
-    Double COMMENT_ACTION =  ((double)30)/PERCENT;
-    Double POST_VISIT = ((double)30)/PERCENT;
-    Double POST_SHARED = ((double)30)/PERCENT;
+    Double LIKE_ACTION = ((double)70)/PERCENT;
+    Double COMMENT_ACTION =  ((double)70)/PERCENT;
+    Double POST_VISIT = ((double)70)/PERCENT;
+    Double POST_SHARED = ((double)70)/PERCENT;
 
     int LIKE_COUNT_THRESHOLD = 1;
     int COMMENT_COUNT_THRESHOLD = 1;
