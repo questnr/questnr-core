@@ -1,6 +1,7 @@
 package com.questnr.domain.google;
 
 public class GoogleUserDetails {
+    private String sub;
     private String email;
     private String name;
     private String given_name;
@@ -8,6 +9,15 @@ public class GoogleUserDetails {
     private String picture;
     private String signUpSource;
     private Boolean email_verified;
+
+    public String getSub() {
+        return sub;
+    }
+
+    public void setSub(String sub) {
+        this.sub = sub;
+    }
+
     public String getEmail() {
         return email;
     }

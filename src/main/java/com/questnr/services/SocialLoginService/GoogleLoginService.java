@@ -100,9 +100,7 @@ public class GoogleLoginService {
                 return baseService.createSuccessLoginResponse(savedUser);
             }
 
-            LOGGER.info("In this case, use doesn't exist, lets create a new user");
-
-            // TODO save details for Google ID, other info to fetch from Google
+            // @TODO: save details for Google ID, other info to fetch from Google
             savedUser = baseService.createUserFromSocialLogin(socialUserDetails.getUser(googleUserDetails), source);
 
             emailService.sendEmailOnSignUp(savedUser);

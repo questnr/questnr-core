@@ -78,6 +78,15 @@ public class SocialLoginController {
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/facebook/login/token")
+    public ResponseEntity<?> faccebookLoginWithIdToken(@RequestParam("authToken") String authToken,  @RequestParam("source") String source) {
+        LOGGER.info("Entering FACEBOOK login service");
+
+        // @TODO validate csrf too
+        LoginResponse loginResponse = fbLoginService.facebookLoginWithAuthToken(authToken, source);
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+    }
+
     @GetMapping("/google/get-login-uri")
     public String getGoogleLoginUri() {
         String uri = "https://accounts.google.com/o/oauth2/v2/auth?client_id=" + GOOGLE_CLIENT_ID
@@ -111,7 +120,7 @@ public class SocialLoginController {
     @PostMapping("/google/login/mobile")
     public ResponseEntity<?> googleLoginWithAccessToken(@RequestBody GoogleUserDetails googleUserDetails,
                                                         HttpServletResponse httpServletResponse) {
-        LOGGER.info("Entering login service");
+        LOGGER.info("Entering GOOGLE login service");
 
         LoginResponse loginResponse = googleLoginService.saveLoginWithGoogle(googleUserDetails, googleUserDetails.getSignUpSource());
         return new ResponseEntity<>(loginResponse, HttpStatus.OK);

@@ -137,8 +137,6 @@ public class BaseService {
         user.setFirstName(commonService.titleCase(user.getFirstName()));
         user.setLastName(commonService.titleCase(user.getLastName()));
 
-        user.setEmailVerified(false);
-
         user.setEnabled(true);
         user.setAuthorities(this.createAuthoritySet());
         user.addMetadata();
@@ -170,6 +168,8 @@ public class BaseService {
         }
 
         this.processUserInformation(user);
+
+        user.setEmailVerified(true);
 
         user.setSignUpSource(SignUpSourceType.WEB);
 

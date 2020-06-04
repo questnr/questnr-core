@@ -107,6 +107,9 @@ public class User extends DomainObject {
     @Column(name = "login_type")
     private LoginType loginType;
 
+    @Column(name = "social_id")
+    private String socialId;
+
     @Column(name = "sign_up_source")
     @Enumerated(EnumType.STRING)
     private SignUpSourceType signUpSource = SignUpSourceType.WEB;
@@ -302,6 +305,14 @@ public class User extends DomainObject {
 
     public void setLoginType(LoginType loginType) {
         this.loginType = loginType;
+    }
+
+    public String getSocialId() {
+        return socialId;
+    }
+
+    public void setSocialId(String socialId) {
+        this.socialId = socialId;
     }
 
     public Boolean getPublic() {

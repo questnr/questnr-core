@@ -53,6 +53,12 @@ public class FBLoginService {
 
     private RestTemplate restTemplate = new RestTemplate();
 
+    public LoginResponse facebookLoginWithAuthToken(String authToken, String source){
+        LOGGER.debug("Token appears to be valid, fetching user details from token");
+
+        return this.saveLoginWithFacebook(this.getUserDetailsFromAccessToken(authToken), source);
+    }
+
     public LoginResponse facebookLogin(String fbAccessCode, String source) {
 
         if (fbAccessCode == null || fbAccessCode.isEmpty()) {
@@ -92,6 +98,7 @@ public class FBLoginService {
             if (savedUser != null) {
                 return baseService.createSuccessLoginResponse(savedUser);
             }
+
             savedUser = baseService.createUserFromSocialLogin(socialUserDetails.getUser(fbUserDetails), source);
 
             emailService.sendEmailOnSignUp(savedUser);
@@ -148,7 +155,7 @@ public class FBLoginService {
 
         Map<String, String> urlParams = new HashMap<>();
         urlParams.put("access_token", accessToken);
-        urlParams.put("fields", "id,name,email");
+        urlParams.put("fields", "id,email,birthday,first_name,last_name");
         LOGGER.info("Retrieving user details with {} and {}", accessToken, urlParams);
         return restTemplate.getForObject("https://graph.facebook.com/v3.0/me/?access_token={access_token}&fields={fields}",
                 FBUserDetails.class, urlParams);

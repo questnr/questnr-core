@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
-// @Todo: add these rights only to admin /api/v1/admin
 @RestController
 @RequestMapping(value = "/api/v1/admin")
 public class PushNotificationController {
