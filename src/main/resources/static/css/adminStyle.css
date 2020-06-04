@@ -142,7 +142,7 @@ html, body {
   align-items: stretch;
 }
 
-/* TODO: Find a proper solution to have the graphs
+/*
  * not float around outside their container in IE10/11.
  * Using a browserhacks.com solution for now.
  */
@@ -154,7 +154,6 @@ _:-ms-input-placeholder, :root .demo-graph {
   max-height: 300px;
 }
 
-/* TODO end */
 .demo-graph:nth-child(1) {
   color: #00b9d8;
 }

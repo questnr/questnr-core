@@ -93,8 +93,6 @@ public class PostActionTrendService implements Runnable {
 
         List<PostActionTrendLinearData> postActionTrendLinearDataList = new ArrayList<>();
         for (PostActionTrendData postActionTrendData : postActionTrendDataList) {
-            // @Todo: Test if this is working
-//            postActionTrendLinearDataList = addPostActionTrendLinearData(postActionTrendLinearDataList, postActionTrendData);
             addPostActionTrendLinearData(postActionTrendLinearDataList, postActionTrendData);
         }
 

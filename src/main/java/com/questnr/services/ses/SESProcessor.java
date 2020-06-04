@@ -21,7 +21,7 @@ public class SESProcessor extends Thread {
 
     private final int MAX_SLEEP_TIME = 3 * 60 * 60 * 1000; //3 hours
 
-    private final int MAX_WORKERS = 1; // @Todo: Set SES workers as required
+    private final int MAX_WORKERS = 20; // @Todo: Set SES workers as required
 
     private int current = 0;
 

@@ -114,8 +114,10 @@ public class VideoCompression implements Runnable {
             attrs.setFormat(infos.getFormat());
             attrs.setAudioAttributes(audio);
             attrs.setVideoAttributes(video);
-            attrs.setEncodingThreads(10);
-            attrs.setDecodingThreads(10);
+
+            // @Todo: Set encoding and decoding threads as required
+            attrs.setEncodingThreads(21);
+            attrs.setDecodingThreads(21);
             attrs.setDuration(infos.getDuration() > this.getDuration() ? this.getDuration() : infos.getDuration());
 
             /* Step 5. Do the Encoding*/

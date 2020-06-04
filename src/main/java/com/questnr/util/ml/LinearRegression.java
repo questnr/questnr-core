@@ -6,7 +6,7 @@ package com.questnr.util.ml;
  *  Compute least squares solution to y = beta * x + alpha.
  *  Simple linear regression.
  *
- *  // TODO: rename beta and alpha to slope and intercept.
+ *
  *
  *************************************************************************/
 

@@ -113,8 +113,6 @@ public class CommunityTrendService implements Runnable {
 
         List<CommunityTrendLinearData> communityTrendLinearDataList = new ArrayList<>();
         for (CommunityTrendData communityTrendData : communityTrendDataList) {
-            // @Todo: Test if this is working
-            // communityTrendLinearDataList = addCommunityTrendLinearData(communityTrendLinearDataList, communityTrendData);
             addCommunityTrendLinearData(communityTrendLinearDataList, communityTrendData);
         }
 

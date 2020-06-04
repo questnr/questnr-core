@@ -41,7 +41,8 @@ public class TrendingServices {
     private int userTrendServiceThreadCount = 0;
 
 
-    @Scheduled(fixedRate = (3600 * 24 * 1000))
+    // @Todo: Set trending services interval time
+    @Scheduled(fixedRate = (3600 * 20 * 1000))
     public void scheduledTrendingServices() {
         if (allowTrendingServices) {
             this.startTrendingServices();

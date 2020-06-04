@@ -127,7 +127,6 @@ public class PostActionService {
                 hashToken = hashToken.replaceAll("#", "").trim();
                 if (!hashToken.equals("")) {
                     HashTag hashTag = hashTagRepository.findByHashTagValue(hashToken.toLowerCase());
-                    // @Todo: Check if the hashTag exits
                     if (hashTag != null) {
                         hashTags.add(hashTag);
                     } else {

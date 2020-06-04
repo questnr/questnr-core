@@ -87,8 +87,6 @@ public class HashTagTrendService implements Runnable {
 
         List<HashTagTrendLinearData> hashTagTrendLinearDataArrayList = new ArrayList<>();
         for (HashTagTrendData hashTagTrendData : hashTagTrendDataList) {
-            // @Todo: Test if this is working
-//            postActionTrendLinearDataList = addPostActionTrendLinearData(postActionTrendLinearDataList, postActionTrendData);
             addPostActionTrendLinearData(hashTagTrendLinearDataArrayList, hashTagTrendData);
         }
 
