@@ -35,4 +35,6 @@ build:
     - export ALLOW_TRENDING_SERVICES=true
     - export ALLOW_EXCEPTION_MAIL=true
     - pkill java || true
-    - screen -d -m bash -c "java -jar target/web-1.0-SNAPSHOT.jar > /var/tmp/server.log 2>&1"
+    - screen -d -m bash -c "java -jar target/questnr-1.0-SNAPSHOT.jar > /var/tmp/server.log 2>&1"
+    - screen -d -m bash -c "java -Dserver.port=3011 -jar target/questnr-1.0-SNAPSHOT.jar > /var/tmp/server.log 2>&1"
+    - screen -d -m bash -c "java -Dserver.port=3012 -jar target/questnr-1.0-SNAPSHOT.jar > /var/tmp/server.log 2>&1"
