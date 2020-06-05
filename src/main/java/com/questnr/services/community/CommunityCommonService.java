@@ -16,6 +16,8 @@ public class CommunityCommonService {
 
     private final String DIR="c";
 
+    private final String COMMUNITY_AVATAR_DIR = "avt";
+
     @Autowired
     CommunityRepository communityRepository;
 
@@ -45,5 +47,19 @@ public class CommunityCommonService {
 
     public String joinPathToFile(String fileName, long communityId) {
         return Paths.get(this.getS3BucketUserFolder(communityId) ,fileName).toString();
+    }
+
+    public String getAvatarPathToDir(long communityId){
+        return Paths.get(this.getS3BucketUserFolder(communityId), COMMUNITY_AVATAR_DIR).toString();
+
+    }
+
+    public String getAvatarPathToFile(long communityId, String fileName){
+//        Path p = Paths.get("Brijesh/brij");
+//        Iterator<Path> ps = p.iterator();
+//        while(ps.hasNext()){
+//            System.out.println(ps.next());
+//        }
+        return Paths.get(this.getS3BucketUserFolder(communityId), COMMUNITY_AVATAR_DIR, fileName).toString();
     }
 }

@@ -4,6 +4,7 @@ import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.security.JwtTokenUtil;
+import com.questnr.services.CommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,17 @@ public class UserCommonService {
 
     private final String dir = "u";
 
+    final String USER_AVATAR_DIR = "avt";
+
     @Autowired
     JwtTokenUtil jwtTokenUtil;
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    private CommonService commonService;
+
 
     public User getUser() {
         long userId = jwtTokenUtil.getLoggedInUserID();
@@ -46,6 +53,20 @@ public class UserCommonService {
 
     public String joinPathToFile(String fileName) {
         return Paths.get(this.getS3BucketUserFolder(), fileName).toString();
+    }
+
+    public String getAvatarPathToDir(){
+        return Paths.get(this.getS3BucketUserFolder(), USER_AVATAR_DIR).toString();
+
+    }
+
+    public String getAvatarPathToFile(String fileName){
+//        Path p = Paths.get("Brijesh/brij");
+//        Iterator<Path> ps = p.iterator();
+//        while(ps.hasNext()){
+//            System.out.println(ps.next());
+//        }
+        return Paths.get(this.getS3BucketUserFolder(), USER_AVATAR_DIR, fileName).toString();
     }
 
     public Page<User> searchUserString(String userString, Pageable pageable) {

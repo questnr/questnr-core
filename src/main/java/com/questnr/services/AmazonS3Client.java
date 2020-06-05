@@ -55,10 +55,12 @@ public class AmazonS3Client {
 
     private void uploadFileToS3bucket(String pathToFile, File file, CannedAccessControlList cannedAccessControlList) {
         this.s3Client.putObject(new PutObjectRequest(bucketName, pathToFile, file).withCannedAcl(cannedAccessControlList));
+//        if(file.exists()) file.delete();
     }
 
     private void uploadFileToS3bucket(String pathToFile, File file) {
         this.uploadFileToS3bucket(pathToFile, file, CannedAccessControlList.PublicRead);
+//        if(file.exists()) file.delete();
     }
 
     public void changeS3ObjectAccess(String pathToFile, CannedAccessControlList cannedAccessControlList) {
@@ -89,24 +91,32 @@ public class AmazonS3Client {
         return s3Client.getUrl(bucketName, pathToFile).toString();
     }
 
-    public ResourceStorageData uploadFile(File file) {
-        return this.uploadFile(file, PostActionPrivacy.public_post);
-    }
-
     public ResourceStorageData uploadFile(File file, PostActionPrivacy postActionPrivacy) {
         String fileName = commonService.generateFileName(file);
         String pathToFile = userCommonService.joinPathToFile(fileName);
         return this.uploadFile(file, pathToFile, postActionPrivacy);
     }
 
-    public ResourceStorageData uploadFile(File file, long communityId) {
-        return this.uploadFile(file, communityId, PostActionPrivacy.public_post);
-    }
-
     public ResourceStorageData uploadFile(File file, long communityId, PostActionPrivacy postActionPrivacy) {
         String fileName = commonService.generateFileName(file);
         String pathToFile = communityCommonService.joinPathToFile(fileName, communityId);
         return this.uploadFile(file, pathToFile, postActionPrivacy);
+    }
+
+    public ResourceStorageData uploadFile(File file) {
+        return this.uploadFile(file, PostActionPrivacy.public_post);
+    }
+
+    public ResourceStorageData uploadFileToPath(File file, String path) {
+        return this.uploadFile(file, path, PostActionPrivacy.public_post);
+    }
+
+    public ResourceStorageData uploadFileToPath(File file, String path, PostActionPrivacy postActionPrivacy) {
+        return this.uploadFile(file, path, postActionPrivacy);
+    }
+
+    public ResourceStorageData uploadFile(File file, long communityId) {
+        return this.uploadFile(file, communityId, PostActionPrivacy.public_post);
     }
 
     private ResourceStorageData uploadFile(File file, String pathToFile, PostActionPrivacy postActionPrivacy) {
@@ -139,12 +149,12 @@ public class AmazonS3Client {
 
     public String deleteFileFromS3BucketUsingFileUrl(String fileUrl) {
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
-        this.s3Client.deleteObject(new DeleteObjectRequest(bucketName + "/", fileName));
+        this.s3Client.deleteObject(new DeleteObjectRequest(bucketName, fileName));
         return "Successfully deleted";
     }
 
     public String deleteFileFromS3BucketUsingPathToFile(String pathToFile) {
-        this.s3Client.deleteObject(new DeleteObjectRequest(bucketName + "/", pathToFile));
+        this.s3Client.deleteObject(new DeleteObjectRequest(bucketName, pathToFile));
         return "Successfully deleted";
     }
 

@@ -1,7 +1,5 @@
 package com.questnr.util;
 
-import org.springframework.stereotype.Service;
-
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -12,16 +10,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.Date;
 
-@Service
 public class ImageCompression {
 
     private File inputFile;
 
-    private String generateFileName(String fileName) {
-        return new Date().getTime() + "-" + fileName.replace(" ", "_");
-    }
+    private String format;
 
     public File getInputFile() {
         return inputFile;
@@ -31,15 +25,28 @@ public class ImageCompression {
         this.inputFile = inputFile;
     }
 
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
     public File doCompression() throws Exception {
         if (this.inputFile == null) throw new FileNotFoundException();
 
         BufferedImage image = ImageIO.read(inputFile);
 
-        File compressedImageFile = new File(this.inputFile.getName());
+        File compressedImageFile = new File("out_" + this.inputFile.getName());
         OutputStream os = new FileOutputStream(compressedImageFile);
 
-        ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
+        String outputImagePath = this.inputFile.getName();
+        // extracts extension of output file
+        format = outputImagePath.substring(outputImagePath
+                .lastIndexOf(".") + 1);
+
+        ImageWriter writer = ImageIO.getImageWritersByFormatName(format).next();
 
         ImageOutputStream ios = ImageIO.createImageOutputStream(os);
         writer.setOutput(ios);

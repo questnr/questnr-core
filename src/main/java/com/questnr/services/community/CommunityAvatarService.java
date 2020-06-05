@@ -1,5 +1,6 @@
 package com.questnr.services.community;
 
+import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Avatar;
@@ -9,6 +10,10 @@ import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
+import com.questnr.services.ImageResize.ImageResizeJob;
+import com.questnr.services.ImageResize.ImageResizeJobRequest;
+import com.questnr.util.ImageCompression;
+import com.questnr.util.ImageResizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,12 +39,40 @@ public class CommunityAvatarService {
     @Autowired
     CommunityRepository communityRepository;
 
+    @Autowired
+    ImageResizeJob imageResizeJob;
+
     public String uploadAvatar(long communityId, MultipartFile multipartFile) {
         try {
             File file = commonService.convertMultiPartToFile(multipartFile);
             if (commonService.checkIfFileIsImage(file)) {
-                ResourceStorageData resourceStorageData = this.amazonS3Client.uploadFile(file, communityId);
+                ResourceStorageData resourceStorageData;
                 try {
+                    String fileName = commonService.generateFileName(file);
+                    ImageResizeJobRequest imageResizeJobRequest = new ImageResizeJobRequest();
+                    ImageResizer imageResizer = new ImageResizer();
+                    if (commonService.getFileExtension(file).equals("png")) {
+                        imageResizer.setInputFile(file);
+                        imageResizeJobRequest.setFormat("png");
+                        resourceStorageData = this.amazonS3Client.uploadFileToPath(file,
+                                communityCommonService.getAvatarPathToFile(communityId, fileName));
+                        resourceStorageData.setResourceType(ResourceType.image);
+                    } else {
+                        ImageCompression imageCompression = new ImageCompression();
+                        imageCompression.setInputFile(file);
+                        File compressedFile = imageCompression.doCompression();
+                        if(file.exists()) file.delete();
+                        imageResizer.setInputFile(compressedFile);
+                        imageResizeJobRequest.setFormat(imageCompression.getFormat());
+                        resourceStorageData = this.amazonS3Client.uploadFileToPath(compressedFile,
+                                communityCommonService.getAvatarPathToFile(communityId, fileName));
+                        resourceStorageData.setResourceType(ResourceType.image);
+                    }
+
+                    imageResizeJobRequest.setImageResizer(imageResizer);
+                    imageResizeJobRequest.setPathToDir(communityCommonService.getAvatarPathToDir(communityId));
+                    imageResizeJob.createImageResizeJob(imageResizeJobRequest);
+
                     Community community = communityCommonService.getCommunity(communityId);
                     Avatar avatar = new Avatar();
                     avatar.addMetadata();

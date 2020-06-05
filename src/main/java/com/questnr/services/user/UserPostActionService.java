@@ -57,9 +57,6 @@ public class UserPostActionService {
     @Autowired
     CommonService commonService;
 
-    @Autowired
-    ImageCompression imageCompression;
-
     UserPostActionService() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
@@ -100,15 +97,15 @@ public class UserPostActionService {
                                 resourceStorageData = this.amazonS3Client.uploadFile(file);
                                 resourceStorageData.setResourceType(ResourceType.image);
                             } else {
-                                this.imageCompression.setInputFile(file);
-                                File compressedFile = this.imageCompression.doCompression();
+                                ImageCompression imageCompression = new ImageCompression();
+                                imageCompression.setInputFile(file);
+                                File compressedFile = imageCompression.doCompression();
+                                if(file.exists()) file.delete();
                                 resourceStorageData = this.amazonS3Client.uploadFile(compressedFile);
                                 resourceStorageData.setResourceType(ResourceType.image);
                             }
                         } catch (Exception e) {
 
-                        } finally {
-                            file.delete();
                         }
                     } else {
                         String fileName = "out_" + commonService.generateFileName(file);
@@ -118,13 +115,11 @@ public class UserPostActionService {
                             Thread videoCompressionThread = new Thread(videoCompression, fileName);
                             videoCompressionThread.start();
                             videoCompressionThread.join();
+                            if(file.exists()) file.delete();
                             resourceStorageData = this.amazonS3Client.uploadFile(target);
                             resourceStorageData.setResourceType(ResourceType.video);
                         } catch (InterruptedException e) {
 
-                        } finally {
-                            file.delete();
-                            target.delete();
                         }
                     }
                     if (resourceStorageData.getKey() != null && !CommonService.isNull(resourceStorageData.getKey())) {
