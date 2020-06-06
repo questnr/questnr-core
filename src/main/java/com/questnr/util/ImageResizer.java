@@ -13,6 +13,7 @@ public class ImageResizer implements Runnable {
     private String outputFileName;
     private int scaledWidth;
     private int scaledHeight;
+    private String fileName;
     private String format;
 
     public File getInputFile() {
@@ -41,6 +42,14 @@ public class ImageResizer implements Runnable {
 
     public void setScaledHeight(int scaledHeight) {
         this.scaledHeight = scaledHeight;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public String getFormat() {
@@ -96,7 +105,7 @@ public class ImageResizer implements Runnable {
 //            format  = outputImagePath.substring(outputImagePath
 //                    .lastIndexOf(".") + 1);
 
-            this.outputFile = new File(this.getOutputFileName()+this.getInputFile().getName() + "."+format);
+            this.outputFile = new File(this.getOutputFileName()+this.getFileName());
             // writes to output file
             ImageIO.write(outputImage, format, this.getOutputFile());
         } catch (IOException io) {

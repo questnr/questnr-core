@@ -25,13 +25,19 @@ public class ImageResizeWorker extends Thread {
 
     private final int id;
 
-    private final int ICON_SIZE = 45;
+    private final int ICON_SIZE = 70;
 
-    private final int SMALL_SIZE = 70;
+    private final int SMALL_SIZE = 100;
 
-    private final int MEDIUM_SIZE = 230;
+    private final int MEDIUM_SIZE = 200;
 
-    private final int LARGE_SIZE = 400;
+    private final int LARGE_SIZE = 300;
+
+    private final String ICON_PREFIX = "icon";
+
+    private final String SMALL_PREFIX = "small";
+
+    private final String MEDIUM_PREFIX = "medium";
 
     public ImageResizeWorker(int id, AmazonS3Client amazonS3Client) {
         super("ImageResizeWorker-" + id);
@@ -69,7 +75,7 @@ public class ImageResizeWorker extends Thread {
                     ImageResizer imageResizer = item.getImageResizer();
                     imageResizer.setScaledHeight(ICON_SIZE);
                     imageResizer.setScaledWidth(ICON_SIZE);
-                    imageResizer.setOutputFileName("icon");
+                    imageResizer.setOutputFileName(ICON_PREFIX);
                     Thread imageResizeIconThread = new Thread(imageResizer, "ImageResizeIconThread-" + id);
                     imageResizeIconThread.run();
                     imageResizeIconThread.join();
@@ -80,7 +86,7 @@ public class ImageResizeWorker extends Thread {
                     ImageResizer imageResizerSmall = item.getImageResizer();
                     imageResizerSmall.setScaledHeight(SMALL_SIZE);
                     imageResizerSmall.setScaledWidth(SMALL_SIZE);
-                    imageResizerSmall.setOutputFileName("small");
+                    imageResizerSmall.setOutputFileName(SMALL_PREFIX);
                     Thread imageResizeSmallThread = new Thread(imageResizerSmall, "ImageResizeSmallThread-" + id);
                     imageResizeSmallThread.run();
                     imageResizeSmallThread.join();
@@ -91,7 +97,7 @@ public class ImageResizeWorker extends Thread {
                     ImageResizer imageResizerMedium = item.getImageResizer();
                     imageResizerMedium.setScaledHeight(MEDIUM_SIZE);
                     imageResizerMedium.setScaledWidth(MEDIUM_SIZE);
-                    imageResizerMedium.setOutputFileName("medium");
+                    imageResizerMedium.setOutputFileName(MEDIUM_PREFIX);
                     Thread imageResizeMediumThread = new Thread(imageResizerMedium, "ImageResizeMediumThread-" + id);
                     imageResizeMediumThread.run();
                     imageResizeMediumThread.join();

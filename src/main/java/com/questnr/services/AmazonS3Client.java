@@ -9,9 +9,11 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import com.questnr.common.enums.PostActionPrivacy;
+import com.questnr.model.entities.Avatar;
 import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
+import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +21,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class AmazonS3Client {
@@ -43,6 +48,18 @@ public class AmazonS3Client {
     private String accessKey;
     @Value("${amazonProperties.secretKey}")
     private String secretKey;
+
+    @Value("${app.icon-prefix}")
+    private String ICON_PREFIX;
+
+    @Value("${app.small-prefix}")
+    private String SMALL_PREFIX;
+
+    @Value("${app.medium-prefix}")
+    private String MEDIUM_PREFIX;
+
+    @Value("${app.large-prefix}")
+    private String LARGE_PREFIX;
 
     final String UNPROCESSABLE_ENTITY = "Requested file can not be processed";
 
@@ -85,10 +102,27 @@ public class AmazonS3Client {
     }
 
     public String getS3BucketUrl(String pathToFile, PostActionPrivacy postActionPrivacy) {
-        if(postActionPrivacy == PostActionPrivacy.private_post){
-            return this.getS3BucketUrl(pathToFile);
+        if(this.checkIfKeyExistsOnS3(pathToFile)) {
+            if (postActionPrivacy == PostActionPrivacy.private_post) {
+                return this.getS3BucketUrl(pathToFile);
+            }
+            return s3Client.getUrl(bucketName, pathToFile).toString();
         }
-        return s3Client.getUrl(bucketName, pathToFile).toString();
+        return null;
+    }
+
+    public boolean checkIfKeyExistsOnS3(String key){
+        try {
+            ObjectMetadata object = this.s3Client.getObjectMetadata(bucketName, key);
+            return true;
+        } catch (AmazonS3Exception e) {
+            if (e.getStatusCode() == HttpStatus.SC_NOT_FOUND) {
+                // bucket/key does not exist
+                return false;
+            } else {
+               return false;
+            }
+        }
     }
 
     public ResourceStorageData uploadFile(File file, PostActionPrivacy postActionPrivacy) {
@@ -158,6 +192,25 @@ public class AmazonS3Client {
         return "Successfully deleted";
     }
 
+    public void deleteAvatarFromS3(Avatar avatar){
+        List<String> keys = new ArrayList<>();
+        if(!CommonService.isNull(avatar.getFileName())){
+            keys.add(Paths.get(avatar.getPathToDir(), avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), ICON_PREFIX+avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), SMALL_PREFIX+avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), MEDIUM_PREFIX+avatar.getFileName()).toString());
+            this.deleteFileFromS3BucketUsingPathToFile(keys);
+        }else if(!CommonService.isNull(avatar.getAvatarKey())){
+            this.deleteFileFromS3BucketUsingPathToFile(avatar.getAvatarKey());
+        }
+    }
+
+    public String deleteFileFromS3BucketUsingPathToFile(List<String> keys) {
+        for(int i=0;i < keys.size(); i++){
+            this.deleteFileFromS3BucketUsingPathToFile(keys.get(i));
+        }
+        return "Successfully deleted";
+    }
 //    @ExceptionHandler(AmazonS3Exception.class)
 //    public final void handleAmazonS3Exception(AmazonS3Exception ex, WebRequest request) {
 //        throw new AmazonS3APIError(UNPROCESSABLE_ENTITY, ex.getLocalizedMessage());

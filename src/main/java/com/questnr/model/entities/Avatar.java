@@ -17,6 +17,12 @@ public class Avatar extends DomainObject{
     @Column(name ="avatar")
     private String avatarKey;
 
+    @Column(name ="path_to_dir")
+    private String pathToDir;
+
+    @Column(name = "file_name")
+    private String fileName;
+
     public Long getAvatarId() {
         return avatarId;
     }
@@ -31,5 +37,21 @@ public class Avatar extends DomainObject{
 
     public void setAvatarKey(String avatarKey) {
         this.avatarKey = avatarKey;
+    }
+
+    public String getPathToDir() {
+        return pathToDir;
+    }
+
+    public void setPathToDir(String pathToDir) {
+        this.pathToDir = pathToDir;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

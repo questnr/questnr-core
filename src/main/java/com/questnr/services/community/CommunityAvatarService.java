@@ -22,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CommunityAvatarService {
@@ -43,50 +45,58 @@ public class CommunityAvatarService {
     ImageResizeJob imageResizeJob;
 
     public String uploadAvatar(long communityId, MultipartFile multipartFile) {
+        Community community = communityCommonService.getCommunity(communityId);
         try {
-            File file = commonService.convertMultiPartToFile(multipartFile);
-            if (commonService.checkIfFileIsImage(file)) {
-                ResourceStorageData resourceStorageData;
-                try {
-                    String fileName = commonService.generateFileName(file);
-                    ImageResizeJobRequest imageResizeJobRequest = new ImageResizeJobRequest();
-                    ImageResizer imageResizer = new ImageResizer();
-                    if (commonService.getFileExtension(file).equals("png")) {
-                        imageResizer.setInputFile(file);
-                        imageResizeJobRequest.setFormat("png");
-                        resourceStorageData = this.amazonS3Client.uploadFileToPath(file,
-                                communityCommonService.getAvatarPathToFile(communityId, fileName));
-                        resourceStorageData.setResourceType(ResourceType.image);
-                    } else {
-                        ImageCompression imageCompression = new ImageCompression();
-                        imageCompression.setInputFile(file);
-                        File compressedFile = imageCompression.doCompression();
-                        if(file.exists()) file.delete();
-                        imageResizer.setInputFile(compressedFile);
-                        imageResizeJobRequest.setFormat(imageCompression.getFormat());
-                        resourceStorageData = this.amazonS3Client.uploadFileToPath(compressedFile,
-                                communityCommonService.getAvatarPathToFile(communityId, fileName));
-                        resourceStorageData.setResourceType(ResourceType.image);
-                    }
-
-                    imageResizeJobRequest.setImageResizer(imageResizer);
-                    imageResizeJobRequest.setPathToDir(communityCommonService.getAvatarPathToDir(communityId));
-                    imageResizeJob.createImageResizeJob(imageResizeJobRequest);
-
-                    Community community = communityCommonService.getCommunity(communityId);
-                    Avatar avatar = new Avatar();
+                Avatar avatar = new Avatar();
+                if(community.getAvatar() != null){
+                    avatar.updateMetadata();
+                    this.deleteAvatarFromS3(community);
+                    avatar = community.getAvatar();
+                }else{
                     avatar.addMetadata();
-                    avatar.setAvatarKey(resourceStorageData.getKey());
-                    community.setAvatar(avatar);
-                    communityRepository.save(community);
-                } catch (Exception e) {
-                    LOGGER.error(CommunityAvatarService.class.getName() + " Exception Occurred");
-                    throw new InvalidRequestException("Error occurred. Please, try again!");
                 }
-                return resourceStorageData.getUrl();
-            }else{
-                throw new InvalidRequestException("Avatar can not be of video format");
-            }
+                File file = commonService.convertMultiPartToFile(multipartFile);
+                if (commonService.checkIfFileIsImage(file)) {
+                    ResourceStorageData resourceStorageData;
+                    String fileName = commonService.generateFileName(file);
+                    try {
+                        ImageResizeJobRequest imageResizeJobRequest = new ImageResizeJobRequest();
+                        ImageResizer imageResizer = new ImageResizer();
+                        imageResizer.setFileName(fileName);
+                        if(commonService.getFileExtension(file).equals("png")) {
+                            imageResizer.setInputFile(file);
+                            imageResizeJobRequest.setFormat("png");
+                            resourceStorageData = this.amazonS3Client.uploadFileToPath(file,
+                                    communityCommonService.getAvatarPathToFile(communityId, fileName));
+                        } else {
+                            ImageCompression imageCompression = new ImageCompression();
+                            imageCompression.setInputFile(file);
+                            File compressedFile = imageCompression.doCompression();
+                            if (file.exists()) file.delete();
+                            imageResizer.setInputFile(compressedFile);
+                            imageResizeJobRequest.setFormat(imageCompression.getFormat());
+                            resourceStorageData = this.amazonS3Client.uploadFileToPath(compressedFile,
+                                    communityCommonService.getAvatarPathToFile(communityId, fileName));
+                        }
+
+                        resourceStorageData.setResourceType(ResourceType.image);
+                        imageResizeJobRequest.setImageResizer(imageResizer);
+                        imageResizeJobRequest.setPathToDir(communityCommonService.getAvatarPathToDir(communityId));
+                        imageResizeJob.createImageResizeJob(imageResizeJobRequest);
+
+                        avatar.setAvatarKey(null);
+                        avatar.setFileName(fileName);
+                        avatar.setPathToDir(communityCommonService.getAvatarPathToDir(communityId));
+                        community.setAvatar(avatar);
+                        communityRepository.save(community);
+                    } catch (Exception e) {
+                        LOGGER.error(CommunityAvatarService.class.getName() + " Exception Occurred");
+                        throw new InvalidRequestException("Error occurred. Please, try again!");
+                    }
+                    return resourceStorageData.getUrl();
+                } else {
+                    throw new InvalidRequestException("Avatar can not be of video format");
+                }
         } catch (IOException ex) {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
@@ -104,13 +114,12 @@ public class CommunityAvatarService {
         return null;
     }
 
-    public void deleteAvatar(long communityId) {
-        Community community = communityCommonService.getCommunity(communityId);
-        if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
+    private void deleteAvatar(Community community) {
+        if (!CommonService.isNull(community.getAvatar().getAvatarKey())) {
             try {
-                this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(community.getAvatar().getAvatarKey());
+                this.deleteAvatarFromS3(community);
             } catch (Exception e) {
-                throw new ResourceNotFoundException("User avatar not found!");
+                throw new ResourceNotFoundException("Community avatar not found!");
             }
             try {
                 community.setAvatar(null);
@@ -120,6 +129,18 @@ public class CommunityAvatarService {
                 throw new InvalidRequestException("Error occurred. Please, try again!");
             }
         }
+    }
+
+    public void deleteAvatar(long communityId) {
+        this.deleteAvatar(communityCommonService.getCommunity(communityId));
+    }
+
+    public void deleteAvatarFromS3(Community community){
+        this.amazonS3Client.deleteAvatarFromS3(community.getAvatar());
+    }
+
+    public void deleteAvatarFromS3(Long communityId){
+        this.deleteAvatarFromS3(communityCommonService.getCommunity(communityId));
     }
 
     public byte[] getAvatarInBytes(String communitySlug) {

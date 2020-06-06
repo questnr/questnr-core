@@ -4,6 +4,7 @@ import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Avatar;
+import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.responses.ResourceStorageData;
@@ -42,14 +43,24 @@ public class UserAvatarService {
     ImageResizeJob imageResizeJob;
 
     public String uploadAvatar(MultipartFile multipartFile) {
+        User user = userCommonService.getUser();
         try {
+            Avatar avatar = new Avatar();
+            if(user.getAvatar() != null){
+                avatar.updateMetadata();
+                this.deleteAvatarFromS3(user);
+                avatar = user.getAvatar();
+            }else{
+                avatar.addMetadata();
+            }
             File file = commonService.convertMultiPartToFile(multipartFile);
             if (commonService.checkIfFileIsImage(file)) {
                 ResourceStorageData resourceStorageData;
+                String fileName = commonService.generateFileName(file);
                 try {
-                    String fileName = commonService.generateFileName(file);
                     ImageResizeJobRequest imageResizeJobRequest = new ImageResizeJobRequest();
                     ImageResizer imageResizer = new ImageResizer();
+                    imageResizer.setFileName(fileName);
                     if (commonService.getFileExtension(file).equals("png")) {
                         imageResizer.setInputFile(file);
                         imageResizeJobRequest.setFormat("png");
@@ -72,10 +83,9 @@ public class UserAvatarService {
                     imageResizeJobRequest.setPathToDir(userCommonService.getAvatarPathToDir());
                     imageResizeJob.createImageResizeJob(imageResizeJobRequest);
 
-                    User user = userCommonService.getUser();
-                    Avatar avatar = new Avatar();
-                    avatar.addMetadata();
-                    avatar.setAvatarKey(resourceStorageData.getKey());
+                    avatar.setAvatarKey(null);
+                    avatar.setFileName(fileName);
+                    avatar.setPathToDir(userCommonService.getAvatarPathToDir());
                     user.setAvatar(avatar);
                     userRepository.save(user);
                     return resourceStorageData.getUrl();
@@ -115,9 +125,8 @@ public class UserAvatarService {
         return null;
     }
 
-    public void deleteAvatar() {
-        User user = userCommonService.getUser();
-        if (!commonService.isNull(user.getAvatar().getAvatarKey())) {
+    private void deleteAvatar(User user) {
+        if (!CommonService.isNull(user.getAvatar().getAvatarKey())) {
             try {
                 this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(user.getAvatar().getAvatarKey());
             } catch (Exception e) {
@@ -131,6 +140,18 @@ public class UserAvatarService {
                 throw new InvalidRequestException("Error occurred. Please, try again!");
             }
         }
+    }
+
+    public void deleteAvatar() {
+       this.deleteAvatar(userCommonService.getUser());
+    }
+
+    public void deleteAvatarFromS3(User user){
+        this.amazonS3Client.deleteAvatarFromS3(user.getAvatar());
+    }
+
+    public void deleteAvatarFromS3(){
+        this.deleteAvatarFromS3(userCommonService.getUser());
     }
 
     public byte[] getAvatar() {
