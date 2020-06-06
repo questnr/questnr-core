@@ -1,6 +1,6 @@
 package com.questnr.controllers.user;
 
-import com.questnr.responses.AvatarResponse;
+import com.questnr.model.dto.AvatarDTO;
 import com.questnr.services.user.UserAvatarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -18,18 +18,18 @@ public class UserAvatarController {
     UserAvatarService userAvatarService;
 
     @RequestMapping(value = "/avatar", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    public AvatarResponse uploadFile(@RequestPart(value = "file") MultipartFile file) {
-        return new AvatarResponse(this.userAvatarService.uploadAvatar(file));
+    public AvatarDTO uploadFile(@RequestPart(value = "file") MultipartFile file) {
+        return this.userAvatarService.uploadAvatar(file);
     }
 
     @RequestMapping(value = "/avatar", method = RequestMethod.GET)
-    public AvatarResponse getUserAvatar() {
-        return new AvatarResponse(this.userAvatarService.getUserAvatar());
+    public AvatarDTO getUserAvatar() {
+        return this.userAvatarService.getUserAvatar();
     }
 
     @RequestMapping(value = "/{userSlug}/avatar", method = RequestMethod.GET)
-    public AvatarResponse getUserAvatar(@PathVariable String userSlug) {
-        return new AvatarResponse(this.userAvatarService.getUserAvatar(userSlug));
+    public AvatarDTO getUserAvatar(@PathVariable String userSlug) {
+        return this.userAvatarService.getUserAvatar(userSlug);
     }
 
     @RequestMapping(value = "/avatar", method = RequestMethod.DELETE)

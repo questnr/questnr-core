@@ -3,9 +3,11 @@ package com.questnr.services.community;
 import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.AvatarDTO;
 import com.questnr.model.entities.Avatar;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
+import com.questnr.model.mapper.AvatarMapper;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.AmazonS3Client;
@@ -22,8 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class CommunityAvatarService {
@@ -44,7 +44,10 @@ public class CommunityAvatarService {
     @Autowired
     ImageResizeJob imageResizeJob;
 
-    public String uploadAvatar(long communityId, MultipartFile multipartFile) {
+    @Autowired
+    AvatarMapper avatarMapper;
+
+    public AvatarDTO uploadAvatar(long communityId, MultipartFile multipartFile) {
         Community community = communityCommonService.getCommunity(communityId);
         try {
                 Avatar avatar = new Avatar();
@@ -83,17 +86,16 @@ public class CommunityAvatarService {
                         imageResizeJobRequest.setImageResizer(imageResizer);
                         imageResizeJobRequest.setPathToDir(communityCommonService.getAvatarPathToDir(communityId));
                         imageResizeJob.createImageResizeJob(imageResizeJobRequest);
-
                         avatar.setAvatarKey(null);
                         avatar.setFileName(fileName);
                         avatar.setPathToDir(communityCommonService.getAvatarPathToDir(communityId));
                         community.setAvatar(avatar);
-                        communityRepository.save(community);
+                        Community savedCommunity = communityRepository.save(community);
+                        return avatarMapper.toAvatarDTO(savedCommunity.getAvatar());
                     } catch (Exception e) {
                         LOGGER.error(CommunityAvatarService.class.getName() + " Exception Occurred");
                         throw new InvalidRequestException("Error occurred. Please, try again!");
                     }
-                    return resourceStorageData.getUrl();
                 } else {
                     throw new InvalidRequestException("Avatar can not be of video format");
                 }
@@ -102,16 +104,8 @@ public class CommunityAvatarService {
         }
     }
 
-    public String getAvatar(String communitySlug) {
-        Community community = communityCommonService.getCommunity(communitySlug);
-        if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
-            try {
-                return this.amazonS3Client.getS3BucketUrl(community.getAvatar().getAvatarKey());
-            } catch (Exception e) {
-                return null;
-            }
-        }
-        return null;
+    public AvatarDTO getAvatar(String communitySlug) {
+        return this.avatarMapper.toAvatarDTO(communityCommonService.getCommunity(communitySlug).getAvatar());
     }
 
     private void deleteAvatar(Community community) {
@@ -145,7 +139,7 @@ public class CommunityAvatarService {
 
     public byte[] getAvatarInBytes(String communitySlug) {
         Community community = communityCommonService.getCommunity(communitySlug);
-        if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
+        if (!CommonService.isNull(community.getAvatar().getAvatarKey()) || !CommonService.isNull(community.getAvatar().getFileName())) {
             return this.amazonS3Client.getFile(community.getAvatar().getAvatarKey());
         }
         return null;

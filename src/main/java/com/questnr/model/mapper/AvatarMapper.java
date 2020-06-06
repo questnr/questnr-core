@@ -34,7 +34,7 @@ public class AvatarMapper {
 
     public AvatarDTO toAvatarDTO(Avatar avatar) {
         try{
-            if(avatar == null || CommonService.isNull(avatar.getFileName())) {
+            if(avatar == null || !(CommonService.isNull(avatar.getFileName()) || CommonService.isNull(avatar.getAvatarKey()))) {
                 throw new InvalidInputException(Avatar.class.getName(), null, null);
             }
             AvatarDTO avatarDTO = new AvatarDTO();

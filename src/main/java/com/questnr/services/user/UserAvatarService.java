@@ -3,9 +3,10 @@ package com.questnr.services.user;
 import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.AvatarDTO;
 import com.questnr.model.entities.Avatar;
-import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
+import com.questnr.model.mapper.AvatarMapper;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.AmazonS3Client;
@@ -42,7 +43,10 @@ public class UserAvatarService {
     @Autowired
     ImageResizeJob imageResizeJob;
 
-    public String uploadAvatar(MultipartFile multipartFile) {
+    @Autowired
+    AvatarMapper avatarMapper;
+
+    public AvatarDTO uploadAvatar(MultipartFile multipartFile) {
         User user = userCommonService.getUser();
         try {
             Avatar avatar = new Avatar();
@@ -87,8 +91,8 @@ public class UserAvatarService {
                     avatar.setFileName(fileName);
                     avatar.setPathToDir(userCommonService.getAvatarPathToDir());
                     user.setAvatar(avatar);
-                    userRepository.save(user);
-                    return resourceStorageData.getUrl();
+                    User savedUser = userRepository.save(user);
+                   return avatarMapper.toAvatarDTO(savedUser.getAvatar());
                 } catch (Exception e) {
                     LOGGER.error(UserAvatarService.class.getName() + " Exception Occurred");
                     throw new InvalidRequestException("Error occurred. Please, try again!");
@@ -101,28 +105,16 @@ public class UserAvatarService {
         }
     }
 
-    public String getUserAvatar() {
-        User user = userCommonService.getUser();
-        if (user.getAvatar() != null) {
-            try {
-                return this.amazonS3Client.getS3BucketUrl(user.getAvatar().getAvatarKey());
-            } catch (Exception e) {
-                throw new InvalidRequestException("Error occurred. Please, try again!");
-            }
-        }
-        return null;
+    public AvatarDTO getUserAvatar(User user) {
+        return avatarMapper.toAvatarDTO(user.getAvatar());
     }
 
-    public String getUserAvatar(String userSlug) {
-        User user = userRepository.findBySlug(userSlug);
-        if (user.getAvatar() != null) {
-            try {
-                return this.amazonS3Client.getS3BucketUrl(user.getAvatar().getAvatarKey());
-            } catch (Exception e) {
-                throw new InvalidRequestException("Error occurred. Please, try again!");
-            }
-        }
-        return null;
+    public AvatarDTO getUserAvatar() {
+        return avatarMapper.toAvatarDTO(userCommonService.getUser().getAvatar());
+    }
+
+    public AvatarDTO getUserAvatar(String userSlug) {
+        return avatarMapper.toAvatarDTO(userCommonService.getUser(userSlug).getAvatar());
     }
 
     private void deleteAvatar(User user) {
