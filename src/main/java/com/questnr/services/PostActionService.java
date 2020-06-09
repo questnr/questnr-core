@@ -85,7 +85,7 @@ public class PostActionService {
         Long timeStamp = new Date().getTime();
         return postAction.getUserActor().getUsername().toLowerCase() +
                 "_" +
-                CommonService.removeSpecialCharacters(String.join("-", this.makeChunkFromText(postAction.getText(), 5, 10))) +
+                CommonService.removeSpecialCharacters(String.join("-", this.makeChunkFromText(this.getPostActionTitleTag(postAction), 5, 10))) +
                 "-" +
                 secureRandomService.getSecureRandom().toString() +
                 "-" +
@@ -93,7 +93,9 @@ public class PostActionService {
     }
 
     private String getPostActionTitleTag(PostAction postAction) {
-        return CommonService.removeSpecialCharacters(String.join(" ", this.makeChunkFromText(postAction.getText(), 10, 10)));
+        // Remove html tags
+        String postActionText = postAction.getText().replaceAll("\\<.*?\\>", "");
+        return CommonService.removeSpecialCharacters(String.join(" ", this.makeChunkFromText(postActionText, 10, 10)));
     }
 
     public PostAction creatPostAction(PostAction postAction) {
