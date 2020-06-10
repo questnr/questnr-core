@@ -81,13 +81,12 @@ public class CommunityPostActionService {
                             } else {
                                 ImageCompression imageCompression = new ImageCompression();
                                 imageCompression.setInputFile(file);
-                                if(file.exists()) file.delete();
                                 File compressedFile = imageCompression.doCompression();
+                                if(file.exists()) file.delete();
                                 resourceStorageData = this.amazonS3Client.uploadFile(compressedFile, communityId);
                                 resourceStorageData.setResourceType(ResourceType.image);
                             }
                         } catch (Exception e) {
-
                         }
                     } else {
                         String fileName = "out_" + commonService.generateFileName(file);
