@@ -93,8 +93,12 @@ public class PostActionService {
     }
 
     private String getPostActionTitleTag(PostAction postAction) {
+        return this.getPostActionTitleTag(postAction.getText());
+    }
+
+    public String getPostActionTitleTag(String postText) {
         // Remove html tags
-        String postActionText = postAction.getText().replaceAll("\\<.*?\\>", "");
+        String postActionText = postText.replaceAll("\\<.*?\\>", "");
         return CommonService.removeSpecialCharacters(String.join(" ", this.makeChunkFromText(postActionText, 10, 10)));
     }
 

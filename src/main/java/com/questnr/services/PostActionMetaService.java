@@ -14,6 +14,9 @@ import java.util.List;
 public class PostActionMetaService {
     @Autowired
     private SharableLinkService sharableLinkService;
+
+    @Autowired
+    PostActionService postActionService;
     
     @Value("${app.name}")
     private String appName;
@@ -36,11 +39,16 @@ public class PostActionMetaService {
     private List<PostActionMetaInformation> getPostActionMetaInformationList(PostActionPublicDTO postActionPublicDTO) {
         List<PostActionMetaInformation> postActionMetaInformationList = new ArrayList<>();
 
-        postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                "name",
-                "description",
-                CommonService.removeSpecialCharacters(postActionPublicDTO.getText().substring(0, Math.max(postActionPublicDTO.getText().length() , MAX_POST_TEXT_LENGTH)))
-        ));
+        String postText = "";
+
+        if(postActionPublicDTO.getText().length() > 0){
+            postText = postActionService.getPostActionTitleTag(postActionPublicDTO.getText());
+            postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                    "name",
+                    "description",
+                    postText
+            ));
+        }
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "name",
@@ -97,11 +105,13 @@ public class PostActionMetaService {
                 appName
         ));
 
-        postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                "property",
-                "twitter:description",
-                CommonService.removeSpecialCharacters(postActionPublicDTO.getText().substring(0, Math.max(postActionPublicDTO.getText().length() , MAX_POST_TEXT_LENGTH)))
-        ));
+        if(postText.length()>0){
+            postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                    "property",
+                    "twitter:description",
+                    postText
+            ));
+        }
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
