@@ -30,15 +30,15 @@ public class User extends DomainObject {
     private String username;
 
     @Column(name = "password", length = 100)
-    @Size(min = 6, max = 100)
+    @Size(max = 100)
     private String password;
 
-    @Column(name = "first_name", length = 25)
-    @Size(min = 3, max = 25)
+    @Column(name = "first_name", length = 30)
+    @Size(max = 30)
     private String firstName;
 
-    @Column(name = "last_name", length = 25)
-    @Size(min = 3, max = 25)
+    @Column(name = "last_name", length = 30)
+    @Size(max = 30)
     private String lastName;
 
     @Column(name = "bio", length = 800)
