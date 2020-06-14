@@ -4,6 +4,8 @@ import com.questnr.access.CommunityJoinAccessService;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.CommunityDTO;
+import com.questnr.model.dto.UserOtherDTO;
+import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.requests.UserEmailRequest;
@@ -34,7 +36,6 @@ public class CommunityJoinController {
     CommunityJoinAccessService communityJoinAccessService;
 
     CommunityJoinController() {
-
         communityMapper = Mappers.getMapper(CommunityMapper.class);
     }
 
@@ -134,5 +135,16 @@ public class CommunityJoinController {
     @RequestMapping(value = "/user/join/check/community/{communityId}", method = RequestMethod.POST)
     RelationShipType getUserRelationShipWithCommunity(@PathVariable long communityId) {
         return communityJoinService.getUserRelationShipWithCommunity(communityId);
+    }
+
+    // Check user follows this community
+    @RequestMapping(value = "/user/join/community/{communityId}/users", method = RequestMethod.GET)
+    Page<UserOtherDTO> getUserListToInvite(@PathVariable long communityId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        CommunityUser communityUser = communityJoinAccessService.getUserListToInvite(communityId);
+        if (communityUser != null) {
+            Pageable pageable = PageRequest.of(page, size);
+            return communityJoinService.getUserListToInvite(communityUser, pageable);
+        }
+        throw new AccessException();
     }
 }

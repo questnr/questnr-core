@@ -32,4 +32,13 @@ public interface CommunityUserRepository extends JpaRepository<CommunityUser, Lo
     int countByUser(User user);
 
     int countByCommunity(Community community);
+
+    @Query("select distinct uf.followingUser from CommunityUser cu " +
+            " join UserFollower uf " +
+            " on cu.community=:community " +
+            " where " +
+            " uf.user=:user and cu.user <> uf.followingUser " + // Users
+            "  ")
+    Page<User> getAllByCommunityAndInviteUser(@Param("community") Community community,
+                                                      @Param("user") User user, Pageable pageable);
 }

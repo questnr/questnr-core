@@ -5,6 +5,8 @@ import com.questnr.model.entities.UserFollower;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.Date;
 import java.util.List;
@@ -27,4 +29,7 @@ public interface UserFollowerRepository extends JpaRepository<UserFollower, Long
     int countByFollowingUser(User user);
 
     List<UserFollower> findAllByUserAndCreatedAtBetween(User user, Date startingDate, Date endingDate);
+
+    @Query("select uf.followingUser from UserFollower uf where uf.user=:user")
+    Page<User> getAllByUser(@Param("user") User user, Pageable pageable);
 }

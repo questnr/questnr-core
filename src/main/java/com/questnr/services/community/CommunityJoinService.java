@@ -1,5 +1,6 @@
 package com.questnr.services.community;
 
+import com.questnr.access.CommunityAccessService;
 import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
@@ -7,11 +8,13 @@ import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.CommunityDTO;
+import com.questnr.model.dto.UserOtherDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityInvitedUser;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
+import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.*;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
@@ -21,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -60,8 +64,18 @@ public class CommunityJoinService {
     @Autowired
     NotificationRepository notificationRepository;
 
+    @Autowired
+    UserFollowerRepository userFollowerRepository;
+
+    @Autowired
+    UserMapper userMapper;
+
+    @Autowired
+    CommunityAccessService communityAccessService;
+
     CommunityJoinService() {
         communityMapper = Mappers.getMapper(CommunityMapper.class);
+        userMapper = Mappers.getMapper(UserMapper.class);
     }
 
     public Page<CommunityDTO> getJoinedCommunityList(User user, Pageable pageable) {
@@ -236,5 +250,30 @@ public class CommunityJoinService {
             return RelationShipType.followed;
         }
         return RelationShipType.none;
+    }
+
+    public Page<UserOtherDTO> getUserListToInvite(CommunityUser communityUser, Pageable pageable) {
+//        Page<User> userPage = this.communityUserRepository.getAllByCommunityAndInviteUser(
+//                communityUser.getCommunity(),
+//                communityUser.getUser(),
+//                pageable);
+//        List<User> userList = communityUserPage.getContent().stream().map(CommunityUser::getUser).collect(Collectors.toList());
+
+        Page<User> userPage = this.userFollowerRepository.getAllByUser(communityUser.getUser(), PageRequest.of(0, Integer.MAX_VALUE));
+
+        List<User> userList = userPage.getContent();
+        List<User> filteredUserList = userList.stream().filter(user ->
+                !this.communityAccessService.isUserMemberOfCommunity(user, communityUser.getCommunity())
+        ).collect(Collectors.toList());
+
+        List<User> pagedUserList = filteredUserList.subList( pageable.getPageNumber() * pageable.getPageSize(),
+                Math.min(
+                        (pageable.getPageNumber() + 1) * pageable.getPageSize(),
+                        filteredUserList.size()
+                ));
+
+        return new PageImpl<>(userMapper.toOthersDTOs(pagedUserList),
+                pageable,
+                userPage.getTotalElements());
     }
 }

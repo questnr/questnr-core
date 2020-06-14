@@ -1,6 +1,7 @@
 package com.questnr.access;
 
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
@@ -9,6 +10,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CommunityJoinAccessService {
+
+    @Autowired
+    CommunityAccessService communityAccessService;
+
     @Autowired
     CommunityCommonService communityCommonService;
 
@@ -41,5 +46,17 @@ public class CommunityJoinAccessService {
     public User getCommunityInvitationList(Long userId) {
         // @Todo: isPublic
         return userCommonService.getUser(userId);
+    }
+
+    public CommunityUser getUserListToInvite(Long communityId){
+        User user = userCommonService.getUser();
+        Community community = communityCommonService.getCommunity(communityId);
+        if(communityAccessService.isUserMemberOfCommunity(user, community)){
+            CommunityUser communityUser = new CommunityUser();
+            communityUser.setCommunity(community);
+            communityUser.setUser(user);
+            return communityUser;
+        }
+        return null;
     }
 }
