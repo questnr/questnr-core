@@ -28,6 +28,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -266,14 +267,18 @@ public class CommunityJoinService {
                 !this.communityAccessService.isUserMemberOfCommunity(user, communityUser.getCommunity())
         ).collect(Collectors.toList());
 
-        List<User> pagedUserList = filteredUserList.subList( pageable.getPageNumber() * pageable.getPageSize(),
-                Math.min(
-                        (pageable.getPageNumber() + 1) * pageable.getPageSize(),
-                        filteredUserList.size()
-                ));
+        List<User> pagedUserList = new ArrayList<>();
+
+        if(pageable.getPageNumber() * pageable.getPageSize() < filteredUserList.size()) {
+             pagedUserList = filteredUserList.subList(pageable.getPageNumber() * pageable.getPageSize(),
+                    Math.min(
+                            (pageable.getPageNumber() + 1) * pageable.getPageSize(),
+                            filteredUserList.size()
+                    ));
+        }
 
         return new PageImpl<>(userMapper.toOthersDTOs(pagedUserList),
                 pageable,
-                userPage.getTotalElements());
+                filteredUserList.size());
     }
 }

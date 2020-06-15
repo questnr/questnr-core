@@ -75,39 +75,44 @@ public class NotificationWorker extends Thread {
                 if (item == null) {
                     continue;
                 }
-                NotificationDTO notificationDTO = this.notificationMapper.toNotificationDTO(item);
-                if (!notificationDTO.getUserActor().getUserId().equals(notificationDTO.getUser().getUserId())) {
-                    try {
-                        UserNotificationSettings userNotificationSettings = userNotificationSettingsRepository.findByUser(notificationDTO.getUser());
-                        if (userNotificationSettings == null || userNotificationSettings.isReceivingNotification()) {
-                            PushNotificationRequest pushNotificationRequest = new PushNotificationRequest();
-                            pushNotificationRequest.setTitle(notificationDTO.getUserActor().getUsername());
-                            pushNotificationRequest.setMessage(notificationDTO.getMessage());
-                            if (notificationDTO.getCommunity() != null && !CommonService.isNull(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink())) {
-                                pushNotificationRequest.setImgURL(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink());
-                            } else if (notificationDTO.getPostMedia() != null && !CommonService.isNull(notificationDTO.getPostMedia().getPostMediaLink())) {
-                                pushNotificationRequest.setImgURL(notificationDTO.getPostMedia().getPostMediaLink());
-                            }
-                            pushNotificationRequest.setClickAction(notificationDTO.getClickAction());
+                try {
+                    NotificationDTO notificationDTO = this.notificationMapper.toNotificationDTO(item);
+                    if (!notificationDTO.getUserActor().getUserId().equals(notificationDTO.getUser().getUserId())) {
+                        try {
+                            UserNotificationSettings userNotificationSettings = userNotificationSettingsRepository.findByUser(notificationDTO.getUser());
+                            if (userNotificationSettings == null || userNotificationSettings.isReceivingNotification()) {
+                                PushNotificationRequest pushNotificationRequest = new PushNotificationRequest();
+                                pushNotificationRequest.setTitle(notificationDTO.getUserActor().getUsername());
+                                pushNotificationRequest.setMessage(notificationDTO.getMessage());
+                                if (notificationDTO.getCommunity() != null && !CommonService.isNull(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink())) {
+                                    pushNotificationRequest.setImgURL(notificationDTO.getCommunity().getAvatarDTO().getAvatarLink());
+                                } else if (notificationDTO.getPostMedia() != null && !CommonService.isNull(notificationDTO.getPostMedia().getPostMediaLink())) {
+                                    pushNotificationRequest.setImgURL(notificationDTO.getPostMedia().getPostMediaLink());
+                                }
+                                pushNotificationRequest.setClickAction(notificationDTO.getClickAction());
 
-                            List<UserNotificationTokenRegistry> userNotificationTokenRegistryList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
-                            List<String> tokenList = userNotificationTokenRegistryList.stream().map(UserNotificationTokenRegistry::getToken).collect(Collectors.toList());
-                            pushNotificationRequest.setTokenList(tokenList);
-                            Map<String, String> data = new HashMap<>();
-                            data.put("isNotification", "true");
-                            data.put("type", "normal");
-                            this.pushNotificationService.multicastPushNotificationToTokenWithData(data, pushNotificationRequest);
+                                List<UserNotificationTokenRegistry> userNotificationTokenRegistryList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
+                                List<String> tokenList = userNotificationTokenRegistryList.stream().map(UserNotificationTokenRegistry::getToken).collect(Collectors.toList());
+                                pushNotificationRequest.setTokenList(tokenList);
+                                Map<String, String> data = new HashMap<>();
+                                data.put("isNotification", "true");
+                                data.put("type", "normal");
+                                this.pushNotificationService.multicastPushNotificationToTokenWithData(data, pushNotificationRequest);
+                            }
+                        } catch (Exception ex) {
+                            LOG.log(Level.SEVERE, "Exception while sending Notification via firebase ...{0}",
+                                    ex.getMessage());
                         }
-                    } catch (Exception ex) {
-                        LOG.log(Level.SEVERE, "Exception while sending Notification via firebase ...{0}",
-                                ex.getMessage());
+                        try {
+                            this.notificationRepository.save(item);
+                        } catch (Exception ex) {
+                            LOG.log(Level.SEVERE, "Exception while sending Notification ...{0}",
+                                    ex.getMessage());
+                        }
                     }
-                    try {
-                        this.notificationRepository.save(item);
-                    } catch (Exception ex) {
-                        LOG.log(Level.SEVERE, "Exception while sending Notification ...{0}",
-                                ex.getMessage());
-                    }
+                }catch (Exception ex){
+                    LOG.log(Level.SEVERE, "Exception while mapping to NotificationDTO ...{0}",
+                            ex.getMessage());
                 }
             }
         }

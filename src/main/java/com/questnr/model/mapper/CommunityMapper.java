@@ -3,6 +3,7 @@ package com.questnr.model.mapper;
 import com.questnr.model.dto.CommunityCardDTO;
 import com.questnr.model.dto.CommunityDTO;
 import com.questnr.model.dto.CommunityForPostActionDTO;
+import com.questnr.model.dto.CommunityListViewDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.requests.CommunityRequest;
 import com.questnr.services.user.UserCommonService;
@@ -50,4 +51,12 @@ public abstract class CommunityMapper {
     public abstract CommunityCardDTO toCommunityCard(Community community);
 
     public abstract List<CommunityCardDTO> toCommunityCards(List<Community> communityList);
+
+    @Mappings({
+            @Mapping(source = "ownerUser", target = "ownerUserDTO"),
+            @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
+    })
+    public abstract CommunityListViewDTO toCommunityListView(Community community);
+
+    public abstract List<CommunityListViewDTO> toCommunityListViews(List<Community> communityList);
 }

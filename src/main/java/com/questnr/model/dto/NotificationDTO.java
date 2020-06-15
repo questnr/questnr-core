@@ -11,7 +11,7 @@ public class NotificationDTO {
 
     private User user;
 
-    private CommunityCardDTO community;
+    private CommunityListViewDTO community;
 
     private PostMediaDTO postMedia;
 
@@ -50,11 +50,11 @@ public class NotificationDTO {
         this.user = user;
     }
 
-    public CommunityCardDTO getCommunity() {
+    public CommunityListViewDTO getCommunity() {
         return community;
     }
 
-    public void setCommunity(CommunityCardDTO community) {
+    public void setCommunity(CommunityListViewDTO community) {
         this.community = community;
     }
 

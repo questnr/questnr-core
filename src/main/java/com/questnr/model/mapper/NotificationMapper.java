@@ -88,7 +88,7 @@ public class NotificationMapper {
             notificationDTO.setMessage(String.format(NotificationTitles.INVITATION_ACTION, communityInvitedUser.getCommunity().getCommunityName()));
             notificationDTO.setNotificationType(NotificationType.invitation);
             notificationDTO.setUserActor(userMapper.toOthersDTO(communityInvitedUser.getUserActor()));
-            notificationDTO.setCommunity(communityMapper.toCommunityCard(communityInvitedUser.getCommunity()));
+            notificationDTO.setCommunity(communityMapper.toCommunityListView(communityInvitedUser.getCommunity()));
             notificationDTO.setClickAction(sharableLinkService.getCommunitySharableLink(communityInvitedUser.getCommunity().getSlug()).getClickAction());
         } else if (notificationBase instanceof CommunityUser) {
             CommunityUser communityUser = (CommunityUser) notificationBase;
@@ -96,7 +96,7 @@ public class NotificationMapper {
             notificationDTO.setMessage(String.format(NotificationTitles.FOLLOWED_COMMUNITY, communityUser.getCommunity().getCommunityName()));
             notificationDTO.setNotificationType(NotificationType.followedCommunity);
             notificationDTO.setUserActor(userMapper.toOthersDTO(communityUser.getUser()));
-            notificationDTO.setCommunity(communityMapper.toCommunityCard(communityUser.getCommunity()));
+            notificationDTO.setCommunity(communityMapper.toCommunityListView(communityUser.getCommunity()));
             notificationDTO.setClickAction(sharableLinkService.getCommunitySharableLink(communityUser.getCommunity().getSlug()).getClickAction());
         } else if (notificationBase instanceof UserFollower) {
             UserFollower userFollower = (UserFollower) notificationBase;
