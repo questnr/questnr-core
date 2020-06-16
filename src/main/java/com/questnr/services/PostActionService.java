@@ -5,17 +5,14 @@ import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
-import com.questnr.model.entities.HashTag;
-import com.questnr.model.entities.PostAction;
-import com.questnr.model.entities.PostActionTrendLinearData;
-import com.questnr.model.entities.User;
-import com.questnr.model.repositories.HashTagRepository;
-import com.questnr.model.repositories.NotificationRepository;
-import com.questnr.model.repositories.PostActionRepository;
-import com.questnr.model.repositories.PostActionTrendLinearDataRepository;
+import com.questnr.model.entities.*;
+import com.questnr.model.mapper.PostReportMapper;
+import com.questnr.model.repositories.*;
+import com.questnr.requests.PostReportRequest;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.SecureRandomService;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +53,16 @@ public class PostActionService {
 
     @Autowired
     PostActionTrendLinearDataRepository postActionTrendLinearDataRepository;
+
+    @Autowired
+    PostReportRepository postReportRepository;
+
+    @Autowired
+    PostReportMapper postReportMapper;
+
+    PostActionService(){
+        postReportMapper = Mappers.getMapper(PostReportMapper.class);
+    }
 
     private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
         List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));
@@ -199,6 +206,28 @@ public class PostActionService {
             postAction.setDeleted(true);
             postActionRepository.save(postAction);
         } catch (Exception e) {
+            throw new InvalidRequestException("Error occurred. Please, try again!");
+        }
+    }
+
+    public PostAction getPostActionUsingId(Long postId){
+        PostAction postAction = postActionRepository.findByPostActionId(postId);
+        if(postAction != null){
+            return postAction;
+        }
+        throw new ResourceNotFoundException("Post not found!");
+    }
+
+    public void reportPost(Long postId, PostReportRequest postReportRequest){
+        User user = userCommonService.getUser();
+        PostAction postAction = this.getPostActionUsingId(postId);
+        try{
+            PostReport postReport = postReportMapper.fromPostReportRequest(postReportRequest);
+            postReport.setUserActor(user);
+            postReport.setPostAction(postAction);
+            postReport.addMetadata();
+            this.postReportRepository.save(postReport);
+        }catch (Exception e){
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }

@@ -4,15 +4,14 @@ import com.questnr.model.dto.PostActionForMediaDTO;
 import com.questnr.model.dto.PostActionPublicDTO;
 import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.mapper.PostActionMapper;
+import com.questnr.requests.PostReportRequest;
 import com.questnr.services.PostActionMetaService;
 import com.questnr.services.PostActionService;
 import com.questnr.services.SharableLinkService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -49,5 +48,12 @@ public class PostActionController {
     @RequestMapping(value = "/user/posts/{postId}/media", method = RequestMethod.GET)
     PostActionForMediaDTO getPostActionMediaList(@PathVariable Long postId) {
         return postActionMapper.toPostActionForMediaDTO(postActionService.getPostActionMediaList(postId));
+    }
+
+    // Report post
+    @RequestMapping(value = "user/posts/{postId}/report", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    void reportPost(@PathVariable Long postId, @RequestBody PostReportRequest postReportRequest){
+        this.postActionService.reportPost(postId, postReportRequest);
     }
 }
