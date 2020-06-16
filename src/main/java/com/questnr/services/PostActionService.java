@@ -7,10 +7,12 @@ import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.PostAction;
+import com.questnr.model.entities.PostActionTrendLinearData;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.NotificationRepository;
 import com.questnr.model.repositories.PostActionRepository;
+import com.questnr.model.repositories.PostActionTrendLinearDataRepository;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.SecureRandomService;
@@ -51,6 +53,9 @@ public class PostActionService {
 
     @Autowired
     NotificationRepository notificationRepository;
+
+    @Autowired
+    PostActionTrendLinearDataRepository postActionTrendLinearDataRepository;
 
     private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
         List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));
@@ -180,6 +185,10 @@ public class PostActionService {
     public void deletePostAction(PostAction postAction) {
         try {
             try {
+                PostActionTrendLinearData postActionTrendLinearData = postActionTrendLinearDataRepository.findByPostAction(postAction);
+                if (postActionTrendLinearData != null) {
+                   postActionTrendLinearDataRepository.delete(postActionTrendLinearData);
+                }
                 notificationRepository.deleteByNotificationBaseAndType(
                         postAction.getPostActionId(),
                         NotificationType.post.getJsonValue()

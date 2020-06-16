@@ -4,7 +4,7 @@ public interface HashTagRankDependents {
     int PERCENT = 1;
 
     // @Todo: Set thresholds after some time of release.
-    Double MIN_THRESHOLD = Double.valueOf(0);
+    Double MIN_THRESHOLD = Double.valueOf(100);
 
     Double TIME_BEING_USED = ((double)70)/PERCENT;
 

@@ -87,9 +87,6 @@ public class UserTrendService implements Runnable {
     private void calculateUserTrendOverTime() {
         // Can be improved this by only finding the slope for those who has new data
 
-        userTrendLinearDataRepository.deleteAll();
-
-
         StartingEndingDate startingEndingDate = new StartingEndingDate();
         startingEndingDate.setDaysBefore(40);
         startingEndingDate.build();
@@ -123,6 +120,9 @@ public class UserTrendService implements Runnable {
             userTrendLinearData.setTrendRank(trendRank++);
         }
 
+        if (subListUserTrendLinearDataList.size() > 0) {
+            userTrendLinearDataRepository.deleteAll();
+        }
         userTrendLinearDataRepository.saveAll(subListUserTrendLinearDataList);
     }
 
@@ -132,15 +132,15 @@ public class UserTrendService implements Runnable {
 
 
         StartingEndingDate startingEndingDate = new StartingEndingDate();
-        startingEndingDate.setDaysBefore(40);
+//        startingEndingDate.setDaysBefore(5);
         startingEndingDate.build();
 
         // Yesterday's Date
         Date datePointer = startingEndingDate.getStartingDate();
 
         // If this algorithm hasn't been run before for this day.
-//        if (userTrendDataRepository.countByObservedDate(datePointer) == 0) {
-        while (datePointer.getTime() < startingEndingDate.getEndingDate().getTime()) {
+        if (userTrendDataRepository.countByObservedDate(datePointer) == 0) {
+//            while (datePointer.getTime() < startingEndingDate.getEndingDate().getTime()) {
             LOGGER.info("User Trending Algorithm Started!");
 
             // Get day + 1
@@ -214,11 +214,10 @@ public class UserTrendService implements Runnable {
 
             this.calculateUserTrendOverTime();
 
-            datePointer = nextDatePointer;
+//                datePointer = nextDatePointer;
             LOGGER.info("User Trending Algorithm Completed! Decided trend xx User");
+        } else {
+            LOGGER.info("User Trending Algorithm Ignored...");
         }
-//        else{
-//            LOGGER.info("User Trending Algorithm Ignored...");
-//        }
     }
 }

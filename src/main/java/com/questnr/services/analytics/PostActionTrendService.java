@@ -82,9 +82,6 @@ public class PostActionTrendService implements Runnable {
     private void calculatePostActionTrendOverTime() {
         // Can be improved this by only finding the slope for those who has new data
 
-        postActionTrendLinearDataRepository.deleteAll();
-
-
         StartingEndingDate startingEndingDate = new StartingEndingDate();
         startingEndingDate.setDaysBefore(40);
         startingEndingDate.build();
@@ -118,10 +115,14 @@ public class PostActionTrendService implements Runnable {
             postActionTrendLinearData.setTrendRank(trendRank++);
         }
 
+        if (subListPostActionTrendLinearDataList.size() > 0) {
+            postActionTrendLinearDataRepository.deleteAll();
+        }
         postActionTrendLinearDataRepository.saveAll(subListPostActionTrendLinearDataList);
     }
 
     public void run() {
+        this.calculatePostActionTrendOverTime();
 
         List<PostAction> postActionList = postActionRepository.findAll();
 

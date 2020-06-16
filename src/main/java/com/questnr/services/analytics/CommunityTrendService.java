@@ -99,8 +99,6 @@ public class CommunityTrendService implements Runnable {
     private void calculateCommunityTrendOverTime() {
         // Can be improved this by only finding the slope for those who has new data
 
-        communityTrendLinearDataRepository.deleteAll();
-
 //        Comparator<CommunityTrendData> communityTrendDataComparator
 //                = Comparator.comparing(CommunityTrendData::getObservedDate);
 //        communityTrendDataList.sort(communityTrendDataComparator.reversed());
@@ -138,6 +136,9 @@ public class CommunityTrendService implements Runnable {
             communityTrendLinearData.setTrendRank(trendRank++);
         }
 
+        if (subListCommunityTrendLinearDataList.size() > 0) {
+            communityTrendLinearDataRepository.deleteAll();
+        }
         communityTrendLinearDataRepository.saveAll(subListCommunityTrendLinearDataList);
     }
 
@@ -260,7 +261,6 @@ public class CommunityTrendService implements Runnable {
 
 
         } catch (CsvException ex) {
-
             LOGGER.error("Error mapping Bean to CSV", ex);
         }
     }
