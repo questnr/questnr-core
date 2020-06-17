@@ -32,7 +32,10 @@ public class CommunityProfileService {
     UserHomeService userHomeService;
 
     public CommunityMetaProfileResponse getCommunityProfileDetails(String communitySlug) {
-        Community community = communityCommonService.getCommunity(communitySlug);
+        return this.getCommunityProfileDetails(communityCommonService.getCommunity(communitySlug));
+    }
+
+    public CommunityMetaProfileResponse getCommunityProfileDetails(Community community) {
         CommunityMetaProfileResponse communityMetaProfileResponse = new CommunityMetaProfileResponse();
         communityMetaProfileResponse.setFollowers(communityUserRepository.countByCommunity(community));
         communityMetaProfileResponse.setPosts(postActionRepository.countByCommunity(community));

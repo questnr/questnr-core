@@ -1,6 +1,7 @@
 package com.questnr.services.notification;
 
 import com.questnr.model.dto.NotificationDTO;
+import com.questnr.model.entities.CommunityInvitedUser;
 import com.questnr.model.entities.Notification;
 import com.questnr.model.entities.UserNotificationSettings;
 import com.questnr.model.entities.UserNotificationTokenRegistry;
@@ -10,6 +11,7 @@ import com.questnr.model.repositories.NotificationRepository;
 import com.questnr.model.repositories.UserNotificationControlRepository;
 import com.questnr.model.repositories.UserNotificationSettingsRepository;
 import com.questnr.services.CommonService;
+import com.questnr.services.EmailService;
 import com.questnr.services.notification.firebase.PushNotificationService;
 
 import java.util.*;
@@ -39,9 +41,17 @@ public class NotificationWorker extends Thread {
 
     private NotificationMapper notificationMapper;
 
+    private EmailService emailService;
+
     private final int id;
 
-    public NotificationWorker(int id, NotificationRepository notificationRepository, UserNotificationControlRepository userNotificationControlRepository, UserNotificationSettingsRepository userNotificationSettingsRepository, PushNotificationService pushNotificationService, NotificationMapper notificationMapper) {
+    public NotificationWorker(int id,
+                              NotificationRepository notificationRepository,
+                              UserNotificationControlRepository userNotificationControlRepository,
+                              UserNotificationSettingsRepository userNotificationSettingsRepository,
+                              PushNotificationService pushNotificationService,
+                              NotificationMapper notificationMapper,
+                              EmailService emailService) {
         super("NotificationWorker-" + id);
         setDaemon(true);
         this.id = id;
@@ -50,6 +60,7 @@ public class NotificationWorker extends Thread {
         this.userNotificationSettingsRepository = userNotificationSettingsRepository;
         this.pushNotificationService = pushNotificationService;
         this.notificationMapper = notificationMapper;
+        this.emailService = emailService;
     }
 
     @Override
@@ -104,6 +115,9 @@ public class NotificationWorker extends Thread {
                                     ex.getMessage());
                         }
                         try {
+                            if(item.getNotificationBase() instanceof CommunityInvitedUser){
+                                this.emailService.sendInvitationEmailToUserToJoinCommunity(notificationDTO);
+                            }
                             this.notificationRepository.save(item);
                         } catch (Exception ex) {
                             LOG.log(Level.SEVERE, "Exception while sending Notification ...{0}",

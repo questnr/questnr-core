@@ -2,9 +2,12 @@ package com.questnr.services;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.questnr.common.EmailConstants;
+import com.questnr.model.dto.NotificationDTO;
 import com.questnr.model.entities.EmailOTPSent;
 import com.questnr.model.entities.User;
+import com.questnr.responses.CommunityMetaProfileResponse;
 import com.questnr.security.JwtTokenUtil;
+import com.questnr.services.community.CommunityProfileService;
 import com.questnr.services.ses.AmazonAttachment;
 import com.questnr.services.ses.AmazonEmail;
 import com.questnr.services.ses.SESProcessor;
@@ -41,6 +44,9 @@ public class EmailService {
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    CommunityProfileService communityProfileService;
 
     public void setMailSender(MailSender mailSender) {
         this.mailSender = mailSender;
@@ -109,8 +115,25 @@ public class EmailService {
         final String htmlContent = templateEngine.process("mail/sign-up.html", ctx);
         final String htmlContentForAdmin = templateEngine.process("mail/sign-up-admin.html", ctx);
 
-        this.sendHTMLMessage(user.getEmailId(), "Welcome To Quesnr", htmlContent);
-        this.sendHTMLMessage("admin@quesnr.com", "[Quesnr] New User Registration", htmlContentForAdmin);
+        this.sendHTMLMessage(user.getEmailId(), "Welcome To Questnr", htmlContent);
+//        this.sendHTMLMessage("admin@questnr.com", "[Questnr] New User Registration", htmlContentForAdmin);
+    }
+
+    public void sendInvitationEmailToUserToJoinCommunity(NotificationDTO notificationDTO) {
+        CommunityMetaProfileResponse communityMetaProfileResponse = this.communityProfileService.getCommunityProfileDetails(notificationDTO.getCommunity().getSlug());
+        Locale locale = Locale.ENGLISH;
+        final Context ctx = new Context(locale);
+        ctx.setVariable("communityName", notificationDTO.getCommunity().getCommunityName());
+        ctx.setVariable("communityDescription", notificationDTO.getCommunity().getDescription());
+        ctx.setVariable("clickAction", notificationDTO.getClickAction());
+        ctx.setVariable("username", notificationDTO.getUser().getUsername());
+        ctx.setVariable("totalPosts", communityMetaProfileResponse.getPosts());
+        ctx.setVariable("totalMembers", communityMetaProfileResponse.getFollowers());
+        ctx.setVariable("isInTrend", communityMetaProfileResponse.isInTrend());
+        ctx.setVariable("trendRank", communityMetaProfileResponse.getTrendRank());
+        final String htmlContent = templateEngine.process("mail/community-invitation.html", ctx);
+
+        this.sendHTMLMessage(notificationDTO.getUser().getEmailId(), "Invitation From Community", htmlContent);
     }
 
     public void sendPasswordRequestEmail(String to, String token, String fullName) {
