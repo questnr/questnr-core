@@ -38,7 +38,7 @@ public class UserRequest {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.toLowerCase();
     }
 
     public String getPassword() {
@@ -70,7 +70,7 @@ public class UserRequest {
     }
 
     public void setEmailId(String emailId) {
-        this.emailId = emailId;
+        this.emailId = emailId.toLowerCase();
     }
 
     public Date getDob() {
