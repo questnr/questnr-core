@@ -76,7 +76,7 @@ public class UserFollowerService {
         return userBeingFollowed;
     }
 
-    private boolean existsUserFollower(User userBeingFollowed, User user) {
+    public boolean existsUserFollower(User userBeingFollowed, User user) {
         return userFollowerRepository.existsByUserAndFollowingUser(userBeingFollowed, user);
     }
 

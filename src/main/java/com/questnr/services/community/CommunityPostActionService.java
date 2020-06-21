@@ -1,14 +1,18 @@
 package com.questnr.services.community;
 
+import com.questnr.common.enums.PostType;
 import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionForCommunityDTO;
-import com.questnr.model.entities.Community;
-import com.questnr.model.entities.PostAction;
-import com.questnr.model.entities.PostMedia;
+import com.questnr.model.dto.PostPollQuestionForCommunityDTO;
+import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
+import com.questnr.model.mapper.PostPollQuestionMapper;
 import com.questnr.model.repositories.PostActionRepository;
+import com.questnr.model.repositories.PostPollQuestionRepository;
+import com.questnr.requests.PostPollAnswerRequest;
+import com.questnr.requests.PostPollQuestionRequest;
 import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
@@ -50,10 +54,16 @@ public class CommunityPostActionService {
     UserCommonService userCommonService;
 
     @Autowired
-    final PostActionMapper postActionMapper;
+    PostActionMapper postActionMapper;
+
+    @Autowired
+    PostPollQuestionMapper postPollQuestionMapper;
 
     @Autowired
     CommonService commonService;
+
+    @Autowired
+    PostPollQuestionRepository postPollQuestionRepository;
 
     CommunityPostActionService() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
@@ -82,7 +92,7 @@ public class CommunityPostActionService {
                                 ImageCompression imageCompression = new ImageCompression();
                                 imageCompression.setInputFile(file);
                                 File compressedFile = imageCompression.doCompression();
-                                if(file.exists()) file.delete();
+                                if (file.exists()) file.delete();
                                 resourceStorageData = this.amazonS3Client.uploadFile(compressedFile, communityId);
                                 resourceStorageData.setResourceType(ResourceType.image);
                             }
@@ -96,7 +106,7 @@ public class CommunityPostActionService {
                             Thread videoCompressionThread = new Thread(videoCompression, fileName);
                             videoCompressionThread.start();
                             videoCompressionThread.join();
-                            if(file.exists()) file.delete();
+                            if (file.exists()) file.delete();
                             resourceStorageData = this.amazonS3Client.uploadFile(target, communityId);
                             resourceStorageData.setResourceType(ResourceType.video);
                         } catch (InterruptedException e) {
@@ -129,6 +139,31 @@ public class CommunityPostActionService {
             }
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
             return postActionMapper.toPostActionForCommunityDTO(postActionService.creatPostAction(postAction));
+        } else {
+            throw new InvalidRequestException("Error occurred. Please, try again!");
+        }
+    }
+
+    public PostPollQuestionForCommunityDTO createPollQuestionPost(PostPollQuestionRequest postPollQuestionRequest) {
+        if (postPollQuestionRequest != null) {
+            PostAction postAction = new PostAction();
+            postAction.setText(postPollQuestionRequest.getText());
+            PostPollQuestion postPollQuestion = postPollQuestionMapper.fromRequest(postPollQuestionRequest);
+            PostAction savedPostAction = postActionService.creatPostAction(postAction, PostType.question);
+            savedPostAction.setPostPollQuestion(postPollQuestion);
+            return postActionMapper.toPostPollQuestionForCommunityDTO(postActionRepository.save(savedPostAction));
+        } else {
+            throw new InvalidRequestException("Error occurred. Please, try again!");
+        }
+    }
+
+    public void createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
+        if (postPollAnswerRequest != null) {
+            PostPollAnswer postPollAnswer = new PostPollAnswer();
+            postPollAnswer.setAnswer(postPollAnswerRequest.getPollAnswer());
+            PostPollQuestion postPollQuestion = postAction.getPostPollQuestion();
+            postPollQuestion.getPostPollAnswer().add(postPollAnswer);
+            postPollQuestionRepository.save(postPollQuestion);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }

@@ -1,7 +1,7 @@
 package com.questnr.services.user;
 
 import com.questnr.common.CommunitySuggestionData;
-import com.questnr.model.dto.PostActionPublicDTO;
+import com.questnr.model.dto.PostBaseDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.CommunityRepository;
@@ -124,13 +124,12 @@ public class UserHomeService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(returnCommunityList.subList(
-                0, returnCommunityList.size() > pageable.getPageSize() ?
-                        pageable.getPageSize() :
-                        returnCommunityList.size()
+                0, Math.min(pageable.getPageSize(),
+        returnCommunityList.size())
         ), pageable, returnCommunityList.size());
     }
 
-    public Page<PostActionPublicDTO> getTrendingPostList(Pageable pageable) {
+    public Page<PostBaseDTO> getTrendingPostList(Pageable pageable) {
         Page<PostActionTrendLinearData> postActionTrendLinearDataPage = postActionTrendLinearDataRepository.findAll(pageable);
 
 //        Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator

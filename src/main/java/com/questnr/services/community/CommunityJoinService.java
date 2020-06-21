@@ -125,7 +125,7 @@ public class CommunityJoinService {
         return community;
     }
 
-    private boolean existsCommunityUser(Community community, User user) {
+    public boolean existsCommunityUser(Community community, User user) {
         return communityUserRepository.existsByCommunityAndUser(community, user);
     }
 

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.questnr.common.NotificationTitles;
 import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.PostActionPrivacy;
+import com.questnr.common.enums.PostType;
 import com.questnr.common.enums.PublishStatus;
 import org.hibernate.annotations.Where;
 import org.hibernate.search.annotations.Index;
@@ -22,7 +23,7 @@ import java.util.*;
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Where(clause = "deleted = false")
-public class PostAction extends DomainObject implements NotificationBase {
+public class PostAction extends DomainObject implements NotificationBase, PostBase {
 
     @Id
     @Column(name = "post_action_id")
@@ -116,6 +117,15 @@ public class PostAction extends DomainObject implements NotificationBase {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "postAction", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderColumn(name = "sequence")
     private List<PostActionMetaInformation> metaList;
+
+    @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
+    @Column(name = "post_type")
+    @Enumerated(EnumType.STRING)
+    private PostType postType;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "post_poll_question_id")
+    private PostPollQuestion postPollQuestion;
 
     public Long getPostActionId() {
         return postActionId;
@@ -269,6 +279,27 @@ public class PostAction extends DomainObject implements NotificationBase {
         this.metaList = metaList;
     }
 
+    // Post Types
+
+    public PostPollQuestion getPostPollQuestion() {
+        return postPollQuestion;
+    }
+
+    public void setPostPollQuestion(PostPollQuestion postPollQuestion) {
+        this.postPollQuestion = postPollQuestion;
+    }
+
+    // End Post Types
+
+    @Override
+    public PostType getPostType() {
+        return postType;
+    }
+
+    public void setPostType(PostType postType) {
+        this.postType = postType;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -291,4 +322,6 @@ public class PostAction extends DomainObject implements NotificationBase {
     public String getNotificationTitles() {
         return NotificationTitles.POST_ACTION_COMMUNITY;
     }
+
+
 }

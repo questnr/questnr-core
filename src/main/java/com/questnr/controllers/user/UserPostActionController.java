@@ -2,12 +2,12 @@ package com.questnr.controllers.user;
 
 import com.questnr.access.UserPostActionAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.model.dto.PostActionCardDTO;
-import com.questnr.model.dto.PostActionRequestDTO;
-import com.questnr.model.dto.PostActionUpdateRequestDTO;
+import com.questnr.model.dto.*;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;
+import com.questnr.requests.PostPollAnswerRequest;
+import com.questnr.requests.PostPollQuestionRequest;
 import com.questnr.services.PostActionService;
 import com.questnr.services.user.UserPostActionService;
 import org.mapstruct.factory.Mappers;
@@ -44,7 +44,7 @@ public class UserPostActionController {
 
     // Basic post operations for users.
     @RequestMapping(value = "/{userId}/posts", method = RequestMethod.GET)
-    Page<PostActionCardDTO> getAllPostsByUserId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable Long userId) {
+    Page<PostBaseDTO> getAllPostsByUserId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable Long userId) {
         User user = userPostActionAccessService.getAllPostsByUserId(userId);
         if (user != null) {
             Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
@@ -54,7 +54,7 @@ public class UserPostActionController {
     }
 
     @RequestMapping(value = "/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    PostActionCardDTO createPost(PostActionRequestDTO postActionRequestDTO) {
+    PostActionFeedDTO createPost(PostActionRequestDTO postActionRequestDTO) {
         if (postActionRequestDTO.getFiles() != null && postActionRequestDTO.getFiles().size() > 0) {
             return userPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), postActionRequestDTO.getFiles());
         } else {
@@ -68,6 +68,24 @@ public class UserPostActionController {
         PostAction postAction = userPostActionAccessService.hasAccessToPostModification(postId);
         postActionService.updatePostAction(postAction, postActionRequest);
     }
+
+    @RequestMapping(value = "/posts/poll/question", method = RequestMethod.POST)
+    PostPollQuestionForCommunityDTO createPollQuestionPost(@Valid @RequestBody PostPollQuestionRequest postPollQuestionRequest) {
+        return userPostActionService.createPollQuestionPost(postPollQuestionRequest);
+    }
+
+    @RequestMapping(value = "/posts/{postId}/poll/answer", method = RequestMethod.POST)
+    void createPollAnswerPost(@PathVariable Long postId, @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
+        PostAction postAction = userPostActionAccessService.createPollAnswerPost(postId);
+        userPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+    }
+
+//    @RequestMapping(value = "/posts/question/poll/{postId}", method = RequestMethod.PUT)
+//    @ResponseStatus(HttpStatus.OK)
+//    void updatePollQuestionPost(@PathVariable Long postId, @Valid @RequestBody PollQuestionPostRequest pollQuestionPostRequest) {
+//        PostAction postAction = userPostActionAccessService.hasAccessToPostModification(postId);
+//        postActionService.updatePollQuestionPost(postAction, pollQuestionPostRequest);
+//    }
 
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)

@@ -2,6 +2,7 @@ package com.questnr.services;
 
 import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.PostActionPrivacy;
+import com.questnr.common.enums.PostType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
@@ -64,6 +65,22 @@ public class PostActionService {
         postReportMapper = Mappers.getMapper(PostReportMapper.class);
     }
 
+    public PostAction getPostActionById(Long postActionId){
+        PostAction postAction = postActionRepository.findByPostActionId(postActionId);
+        if(postAction != null){
+            return postAction;
+        }
+        throw new ResourceNotFoundException("Post not found!");
+    }
+
+    public PostAction getPostActionByIdAndType(Long postActionId, PostType postType){
+        PostAction postAction = postActionRepository.findByPostActionIdAndPostType(postActionId, postType);
+        if(postAction != null){
+            return postAction;
+        }
+        throw new ResourceNotFoundException("Post not found!");
+    }
+
     private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
         List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));
         int maxTitleChunk = titleChunks.size();
@@ -114,7 +131,7 @@ public class PostActionService {
         return CommonService.removeSpecialCharacters(String.join(" ", this.makeChunkFromText(postActionText, 10, 10)));
     }
 
-    public PostAction creatPostAction(PostAction postAction) {
+    public PostAction creatPostAction(PostAction postAction, PostType postType) {
         try {
             User user = userCommonService.getUser();
             postAction.addMetadata();
@@ -125,10 +142,11 @@ public class PostActionService {
             postAction.setTags(this.getPostActionTitleTag(postAction));
             postAction.setFeatured(false);
             postAction.setPopular(false);
+            postAction.setPostType(postType);
             if (postAction.getPostActionPrivacy() == null) {
                 postAction.setPostActionPrivacy(PostActionPrivacy.public_post);
             }
-            PostAction savedPostAction = postActionRepository.saveAndFlush(postAction);
+            PostAction savedPostAction = postActionRepository.save(postAction);
             // Notification job created and assigned to Notification Processor.
             notificationJob.createNotificationJob(savedPostAction);
 
@@ -137,6 +155,10 @@ public class PostActionService {
             LOGGER.error(PostAction.class.getName() + " Exception Occurred");
         }
         throw new InvalidRequestException("Error occurred. Please, try again!");
+    }
+
+    public PostAction creatPostAction(PostAction postAction) {
+        return this.creatPostAction(postAction, PostType.simple);
     }
 
     public Set<HashTag> parsePostText(String postText) {
@@ -188,6 +210,10 @@ public class PostActionService {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
+
+//    public void updatePollQuestionPost(PostAction postAction, PollQuestionPostRequest pollQuestionPostRequest){
+//
+//    }
 
     public void deletePostAction(PostAction postAction) {
         try {

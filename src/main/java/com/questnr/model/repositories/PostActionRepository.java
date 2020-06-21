@@ -1,5 +1,6 @@
 package com.questnr.model.repositories;
 
+import com.questnr.common.enums.PostType;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.PostAction;
@@ -21,6 +22,8 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
     Set<PostActionProjection> findAllBySlugOrderByCreatedAtDesc(String slug);
 
     PostAction findByPostActionId(Long postId);
+
+    PostAction findByPostActionIdAndPostType(Long postId, PostType postType);
 
     PostAction findByPostActionIdAndUserActor(Long postActionId, User userActor);
 

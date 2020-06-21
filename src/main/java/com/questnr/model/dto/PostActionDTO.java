@@ -1,92 +1,14 @@
 package com.questnr.model.dto;
 
-import com.questnr.common.enums.PostActionPrivacy;
-import com.questnr.model.entities.HashTag;
-
 import java.util.List;
-import java.util.Set;
 
-public class PostActionDTO {
-    private Long postActionId;
-    private String slug;
-    private String text;
-    private PostActionPrivacy postActionPrivacy;
-    private boolean featured;
-    private boolean popular;
-    private String tags;
-    private Set<HashTag> hashTags;
+public class PostActionDTO extends PostBaseDTO{
     private List<LikeActionDTO> likeActionList;
     private List<CommentActionDTO> commentActionList;
     private List<PostMediaDTO> postMediaList;
     private int totalLikes;
     private int totalComments;
     private int totalPostVisits;
-    private MetaDataDTO metaData;
-    private PostActionMetaDTO postActionMeta;
-
-    public Long getPostActionId() {
-        return postActionId;
-    }
-
-    public void setPostActionId(Long postActionId) {
-        this.postActionId = postActionId;
-    }
-
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public PostActionPrivacy getPostActionPrivacy() {
-        return postActionPrivacy;
-    }
-
-    public void setPostActionPrivacy(PostActionPrivacy postActionPrivacy) {
-        this.postActionPrivacy = postActionPrivacy;
-    }
-
-    public boolean isFeatured() {
-        return featured;
-    }
-
-    public void setFeatured(boolean featured) {
-        this.featured = featured;
-    }
-
-    public boolean isPopular() {
-        return popular;
-    }
-
-    public void setPopular(boolean popular) {
-        this.popular = popular;
-    }
-
-    public String getTags() {
-        return tags;
-    }
-
-    public void setTags(String tags) {
-        this.tags = tags;
-    }
-
-    public Set<HashTag> getHashTags() {
-        return hashTags;
-    }
-
-    public void setHashTags(Set<HashTag> hashTags) {
-        this.hashTags = hashTags;
-    }
 
     public List<LikeActionDTO> getLikeActionList() {
         return likeActionList;
@@ -134,21 +56,5 @@ public class PostActionDTO {
 
     public void setTotalPostVisits(int totalPostVisits) {
         this.totalPostVisits = totalPostVisits;
-    }
-
-    public MetaDataDTO getMetaData() {
-        return metaData;
-    }
-
-    public void setMetaData(MetaDataDTO metaData) {
-        this.metaData = metaData;
-    }
-
-    public PostActionMetaDTO getPostActionMeta() {
-        return postActionMeta;
-    }
-
-    public void setPostActionMeta(PostActionMetaDTO postActionMeta) {
-        this.postActionMeta = postActionMeta;
     }
 }

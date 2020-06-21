@@ -5,8 +5,11 @@ import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.PostActionForCommunityDTO;
 import com.questnr.model.dto.PostActionRequestDTO;
 import com.questnr.model.dto.PostActionUpdateRequestDTO;
+import com.questnr.model.dto.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
+import com.questnr.requests.PostPollAnswerRequest;
+import com.questnr.requests.PostPollQuestionRequest;
 import com.questnr.services.CommonService;
 import com.questnr.services.PostActionService;
 import com.questnr.services.community.CommunityPostActionService;
@@ -78,6 +81,25 @@ public class CommunityPostActionController {
         postActionService.updatePostAction(postAction, postActionRequest);
     }
 
+    @RequestMapping(value = "/community/{communityId}/posts/poll/question", method = RequestMethod.POST)
+    PostPollQuestionForCommunityDTO createPollQuestionPost(@PathVariable long communityId, @Valid @RequestBody PostPollQuestionRequest postPollQuestionRequest) {
+        /*
+         * Community Post Security Checking
+         * */
+        if (communityPostActionAccessService.hasAccessToPostCreation(communityId)) {
+            return communityPostActionService.createPollQuestionPost(postPollQuestionRequest);
+        }
+        throw new AccessException();
+    }
+
+    @RequestMapping(value = "/community/{communityId}/posts/{postId}/poll/answer", method = RequestMethod.POST)
+    void createPollAnswerPost(@PathVariable Long communityId,
+                              @PathVariable Long postId,
+                              @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
+        PostAction postAction = communityPostActionAccessService.createPollAnswerPost(communityId, postId);
+        communityPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+    }
+
     @RequestMapping(value = "/community/{communityId}/posts/{postId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deletePost(@PathVariable long communityId, @PathVariable Long postId) {
@@ -87,5 +109,4 @@ public class CommunityPostActionController {
         PostAction postAction = communityPostActionAccessService.hasAccessToPostDeletion(communityId, postId);
         postActionService.deletePostAction(postAction);
     }
-
 }

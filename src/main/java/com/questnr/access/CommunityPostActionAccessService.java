@@ -1,5 +1,6 @@
 package com.questnr.access;
 
+import com.questnr.common.enums.PostType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Community;
@@ -7,14 +8,14 @@ import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.CommonService;
+import com.questnr.services.PostActionService;
 import com.questnr.services.community.CommunityCommonService;
+import com.questnr.services.community.CommunityJoinService;
 import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 public class CommunityPostActionAccessService {
@@ -37,6 +38,12 @@ public class CommunityPostActionAccessService {
 
     @Autowired
     PostActionAccessService postActionAccessService;
+
+    @Autowired
+    CommunityJoinService communityJoinService;
+
+    @Autowired
+    PostActionService postActionService;
 
     public boolean isUserOwnerOfPost(User user, PostAction postAction) {
         return user.equals(postAction.getUserActor());
@@ -68,5 +75,15 @@ public class CommunityPostActionAccessService {
 
     public PostAction hasAccessToPostDeletion(Long communityId, Long postId) {
         return this.hasAccessToPostModification(communityId, postId);
+    }
+
+    public PostAction createPollAnswerPost(Long communityId, Long postId){
+        User user = userCommonService.getUser();
+        Community community = communityCommonService.getCommunity(communityId);
+        PostAction postAction = postActionService.getPostActionByIdAndType(postId, PostType.question);
+        if(communityJoinService.existsCommunityUser(community, user)){
+            return postAction;
+        }
+        throw new AccessException("You are not following the user");
     }
 }

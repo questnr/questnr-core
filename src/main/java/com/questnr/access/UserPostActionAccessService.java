@@ -1,12 +1,16 @@
 package com.questnr.access;
 
+import com.questnr.common.enums.PostType;
+import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.CommonService;
+import com.questnr.services.PostActionService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
+import com.questnr.services.user.UserFollowerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,12 @@ public class UserPostActionAccessService {
     @Autowired
     PostActionAccessService postActionAccessService;
 
+    @Autowired
+    UserFollowerService userFollowerService;
+
+    @Autowired
+    PostActionService postActionService;
+
     public User getAllPostsByUserId(Long userId) {
         User user = userCommonService.getUser(userId);
         if (user.equals(userCommonService.getUser()) || user.getPublic()) {
@@ -55,5 +65,14 @@ public class UserPostActionAccessService {
 
     public PostAction hasAccessToPostDeletion(Long postId) {
         return this.hasAccessToPostModification(postId);
+    }
+
+    public PostAction createPollAnswerPost(Long postId){
+        User user = userCommonService.getUser();
+        PostAction postAction = postActionService.getPostActionByIdAndType(postId, PostType.question);
+        if(postAction.getUserActor().equals(user) || userFollowerService.existsUserFollower(postAction.getUserActor(), user)){
+            return postAction;
+        }
+        throw new AccessException("You are not following the user");
     }
 }

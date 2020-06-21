@@ -1,7 +1,9 @@
 package com.questnr.services.user;
 
 import com.questnr.common.enums.PostActionType;
-import com.questnr.model.dto.PostActionFeedDTO;
+import com.questnr.common.enums.PostType;
+import com.questnr.model.dto.PostBaseDTO;
+import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.PostActionRepository;
@@ -38,28 +40,36 @@ public class UserFeedService {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
 
-    public Page<PostActionFeedDTO> getUserFeed(Pageable pageable) {
+    public Page<PostBaseDTO> getUserFeed(Pageable pageable) {
         User user = userCommonService.getUser();
         List<Object[]> postActionList = postActionRepository.getUserFeed(user.getUserId(), pageable.getPageSize() * pageable.getPageNumber(), pageable.getPageSize());
 
-        List<PostActionFeedDTO> postActionFeedDTOList = new ArrayList<>();
+        List<PostBaseDTO> postActionFeedDTOList = new ArrayList<>();
         for (Object[] object : postActionList) {
+            User userWhoShared;
+            PostActionType postActionType;
+            PostAction postAction = postActionRepository.findByPostActionId(Long.parseLong(object[0].toString()));
             if (Integer.parseInt(object[1].toString()) == 1) {
-                postActionFeedDTOList.add(postActionMapper.toFeedDTO(
-                        postActionRepository.findByPostActionId(Long.parseLong(object[0].toString())),
-                        PostActionType.shared,
-                        userCommonService.getUser(Long.parseLong(object[2].toString()))
+                userWhoShared = userCommonService.getUser(Long.parseLong(object[2].toString()));
+                postActionType = PostActionType.shared;
+            } else {
+                userWhoShared = null;
+                postActionType = PostActionType.normal;
+            }
+            if (postAction.getPostType() == PostType.simple) {
+                postActionFeedDTOList.add(postActionMapper.toPostActionFeedDTO(
+                        postAction,
+                        postActionType,
+                        userWhoShared
                 ));
             } else {
-                postActionFeedDTOList.add(postActionMapper.toFeedDTO(
-                        postActionRepository.findByPostActionId(Long.parseLong(object[0].toString())),
-                        PostActionType.normal,
-                        null
+                postActionFeedDTOList.add(postActionMapper.toPostPollQuestionFeedDTO(
+                        postAction,
+                        postActionType,
+                        userWhoShared
                 ));
             }
         }
-
         return new PageImpl<>(postActionFeedDTOList, pageable, postActionFeedDTOList.size());
-
     }
 }

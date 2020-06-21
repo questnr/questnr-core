@@ -1,6 +1,6 @@
 package com.questnr.controllers;
 
-import com.questnr.model.dto.PostActionPublicDTO;
+import com.questnr.model.dto.PostBaseDTO;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.projections.HashTagProjection;
@@ -41,7 +41,7 @@ public class HashTagController {
     }
 
     @RequestMapping(value = "/user/hash-tag/{hashTagValue}/posts", method = RequestMethod.GET)
-    Page<PostActionPublicDTO> getPostActionListUsingHashTag(@PathVariable String hashTagValue, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    Page<PostBaseDTO> getPostActionListUsingHashTag(@PathVariable String hashTagValue, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         return hashTagService.getPostActionListUsingHashTag(hashTagValue, pageable);
     }

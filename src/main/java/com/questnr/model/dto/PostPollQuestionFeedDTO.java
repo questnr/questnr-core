@@ -2,12 +2,12 @@ package com.questnr.model.dto;
 
 import com.questnr.common.enums.PostActionType;
 
-public class PostActionCardDTO extends PostActionDTO {
+public class PostPollQuestionFeedDTO extends PostBaseDTO {
 
     private CommunityForPostActionDTO communityDTO;
-    private UserOtherDTO userDTO;
     private PostActionType postActionType;
-    private UserOtherDTO sharedPostOwner;
+    private UserOtherDTO userDTO;
+    private PostPollQuestionDTO postPollQuestion;
 
     public CommunityForPostActionDTO getCommunityDTO() {
         return communityDTO;
@@ -15,14 +15,6 @@ public class PostActionCardDTO extends PostActionDTO {
 
     public void setCommunityDTO(CommunityForPostActionDTO communityDTO) {
         this.communityDTO = communityDTO;
-    }
-
-    public UserOtherDTO getUserDTO() {
-        return userDTO;
-    }
-
-    public void setUserDTO(UserOtherDTO userDTO) {
-        this.userDTO = userDTO;
     }
 
     public PostActionType getPostActionType() {
@@ -33,11 +25,19 @@ public class PostActionCardDTO extends PostActionDTO {
         this.postActionType = postActionType;
     }
 
-    public UserOtherDTO getSharedPostOwner() {
-        return sharedPostOwner;
+    public UserOtherDTO getUserDTO() {
+        return userDTO;
     }
 
-    public void setSharedPostOwner(UserOtherDTO sharedPostOwner) {
-        this.sharedPostOwner = sharedPostOwner;
+    public void setUserDTO(UserOtherDTO userDTO) {
+        this.userDTO = userDTO;
+    }
+
+    public PostPollQuestionDTO getPostPollQuestion() {
+        return postPollQuestion;
+    }
+
+    public void setPostPollQuestion(PostPollQuestionDTO postPollQuestion) {
+        this.postPollQuestion = postPollQuestion;
     }
 }
