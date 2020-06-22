@@ -1,5 +1,6 @@
 package com.questnr.services.community;
 
+import com.questnr.common.enums.PostType;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityTrendLinearData;
 import com.questnr.model.repositories.CommunityTrendLinearDataRepository;
@@ -40,6 +41,8 @@ public class CommunityProfileService {
         communityMetaProfileResponse.setFollowers(communityUserRepository.countByCommunity(community));
         communityMetaProfileResponse.setPosts(postActionRepository.countByCommunity(community));
         CommunityTrendLinearData communityTrendLinearData = communityTrendLinearDataRepository.findByCommunity(community);
+        communityMetaProfileResponse.setTotalQuestions(postActionRepository.countAllByCommunityAndPostType(community,
+                PostType.question));
         if (communityTrendLinearData != null) {
             communityMetaProfileResponse.setInTrend(true);
             communityMetaProfileResponse.setTrendRank(communityTrendLinearData.getTrendRank());

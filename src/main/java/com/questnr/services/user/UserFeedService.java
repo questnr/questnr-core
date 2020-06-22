@@ -56,18 +56,23 @@ public class UserFeedService {
                 userWhoShared = null;
                 postActionType = PostActionType.normal;
             }
-            if (postAction.getPostType() == PostType.simple) {
-                postActionFeedDTOList.add(postActionMapper.toPostActionFeedDTO(
-                        postAction,
-                        postActionType,
-                        userWhoShared
-                ));
-            } else {
-                postActionFeedDTOList.add(postActionMapper.toPostPollQuestionFeedDTO(
-                        postAction,
-                        postActionType,
-                        userWhoShared
-                ));
+            try{
+                if (postAction.getPostType() == PostType.simple) {
+                    postActionFeedDTOList.add(postActionMapper.toPostActionFeedDTO(
+                            postAction,
+                            postActionType,
+                            userWhoShared
+                    ));
+                } else {
+                    postActionFeedDTOList.add(postActionMapper.toPostPollQuestionFeedDTO(
+                            postAction,
+                            postActionType,
+                            userWhoShared
+                    ));
+                }
+            }catch (Exception e){
+                LOGGER.error(UserFeedService.class.getName() + " Post Parsing Error, "+
+                        postAction.getPostActionId());
             }
         }
         return new PageImpl<>(postActionFeedDTOList, pageable, postActionFeedDTOList.size());

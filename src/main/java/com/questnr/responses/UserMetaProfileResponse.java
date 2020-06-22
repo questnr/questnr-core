@@ -6,6 +6,7 @@ public class UserMetaProfileResponse {
     private int postsOnProfile;
     private int postsOnCommunities;
     private int posts;
+    private int totalQuestions;
     private int ownsCommunities;
     private int followsCommunities;
 
@@ -47,6 +48,14 @@ public class UserMetaProfileResponse {
 
     public void setPosts(int posts) {
         this.posts = posts;
+    }
+
+    public int getTotalQuestions() {
+        return totalQuestions;
+    }
+
+    public void setTotalQuestions(int totalQuestions) {
+        this.totalQuestions = totalQuestions;
     }
 
     public int getOwnsCommunities() {

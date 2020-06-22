@@ -1,5 +1,6 @@
 package com.questnr.services.user;
 
+import com.questnr.common.enums.PostType;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityUserRepository;
@@ -38,6 +39,7 @@ public class UserProfileService {
         userMetaProfileResponse.setPostsOnProfile(postActionRepository.countByUserActorAndCommunity(user, null));
         userMetaProfileResponse.setPosts(postActionRepository.countByUserActor(user));
         userMetaProfileResponse.setPostsOnCommunities(userMetaProfileResponse.getPosts() - userMetaProfileResponse.getPostsOnProfile());
+        userMetaProfileResponse.setTotalQuestions(postActionRepository.countAllByUserActorAndPostType(user, PostType.question));
         userMetaProfileResponse.setFollowsCommunities(communityUserRepository.countByUser(user));
         userMetaProfileResponse.setOwnsCommunities(communityRepository.countByOwnerUser(user));
         return userMetaProfileResponse;

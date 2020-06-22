@@ -124,7 +124,7 @@ public class PostAction extends DomainObject implements NotificationBase, PostBa
     private PostType postType;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JoinColumn(name = "post_poll_question_id")
+    @JoinColumn(name = "post_poll_question_id", nullable = false)
     private PostPollQuestion postPollQuestion;
 
     public Long getPostActionId() {

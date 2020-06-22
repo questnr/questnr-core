@@ -144,10 +144,12 @@ public class CommunityPostActionService {
         }
     }
 
-    public PostPollQuestionForCommunityDTO createPollQuestionPost(PostPollQuestionRequest postPollQuestionRequest) {
+    public PostPollQuestionForCommunityDTO createPollQuestionPost(Long communityId, PostPollQuestionRequest postPollQuestionRequest) {
         if (postPollQuestionRequest != null) {
+            Community community = communityCommonService.getCommunity(communityId);
             PostAction postAction = new PostAction();
             postAction.setText(postPollQuestionRequest.getText());
+            postAction.setCommunity(community);
             PostPollQuestion postPollQuestion = postPollQuestionMapper.fromRequest(postPollQuestionRequest);
             PostAction savedPostAction = postActionService.creatPostAction(postAction, PostType.question);
             savedPostAction.setPostPollQuestion(postPollQuestion);
@@ -167,5 +169,13 @@ public class CommunityPostActionService {
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
+    }
+
+    public Page<PostAction> getAllPostPollQuestion(Long communityId, Pageable pageable){
+        Community community = communityCommonService.getCommunity(communityId);
+        if (community != null)
+            return postActionRepository.findAllByCommunityAndPostTypeOrderByCreatedAtDesc(community,
+                    PostType.question, pageable);
+        throw new ResourceNotFoundException("Community not found!");
     }
 }

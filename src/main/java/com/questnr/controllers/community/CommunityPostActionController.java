@@ -87,7 +87,7 @@ public class CommunityPostActionController {
          * Community Post Security Checking
          * */
         if (communityPostActionAccessService.hasAccessToPostCreation(communityId)) {
-            return communityPostActionService.createPollQuestionPost(postPollQuestionRequest);
+            return communityPostActionService.createPollQuestionPost(communityId,  postPollQuestionRequest);
         }
         throw new AccessException();
     }
@@ -108,5 +108,17 @@ public class CommunityPostActionController {
          * */
         PostAction postAction = communityPostActionAccessService.hasAccessToPostDeletion(communityId, postId);
         postActionService.deletePostAction(postAction);
+    }
+
+    // Get the list of poll questions of Community
+    @RequestMapping(value = "/community/{communityId}/posts/poll/question", method = RequestMethod.GET)
+    Page<PostPollQuestionForCommunityDTO> getAllPostPollQuestion(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size, @PathVariable Long communityId) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+        Page<PostAction> postActionPage = communityPostActionService.getAllPostPollQuestion(communityId, pageable);
+        List<PostPollQuestionForCommunityDTO> postActionForCommunityDTOS = postActionPage.getContent().stream()
+                .map(postActionMapper::toPostPollQuestionForCommunityDTO).collect(Collectors.toList());
+        return new PageImpl<>(postActionForCommunityDTOS, pageable, postActionPage.getTotalElements());
     }
 }

@@ -5,6 +5,8 @@ public class CommunityMetaProfileResponse {
 
     private int posts;
 
+    private int totalQuestions;
+
     private boolean isInTrend;
 
     private int trendRank;
@@ -23,6 +25,14 @@ public class CommunityMetaProfileResponse {
 
     public void setPosts(int posts) {
         this.posts = posts;
+    }
+
+    public int getTotalQuestions() {
+        return totalQuestions;
+    }
+
+    public void setTotalQuestions(int totalQuestions) {
+        this.totalQuestions = totalQuestions;
     }
 
     public boolean isInTrend() {

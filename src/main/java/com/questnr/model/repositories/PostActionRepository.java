@@ -44,6 +44,25 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             , nativeQuery = true)
     List<Object[]> getUserPosts(@Param("userId") Long userId, @Param("offset") int offset, @Param("limit") int limit);
 
+    @Query(value = " select pa.post_action_id as postActionId, 0 as postType, null as userWhoShared, pa.created_at as createdAt " +
+            " from qr_users qrUser " +
+            " left outer join qr_post_actions pa on " +
+            " pa.user_id=qrUser.id " +
+            " where qrUser.id=:userId and pa.deleted=false and pa.post_type='question' group by pa.post_action_id" +
+            " union " +
+            " select spa.post_action_id as postActionId, 1 as postType, pa.user_id as userWhoShared, spa.created_at as createdAt" +
+            " from qr_users qrUser " +
+            " inner join qr_shared_post_actions spa " +
+            " on spa.user_actor_id=qrUser.id " + // The posts this user shared
+            " inner join qr_post_actions pa " +
+            " on spa.post_action_id=pa.post_action_id " +
+            " where qrUser.id=:userId and pa.deleted=false and pa.post_type='question'" +
+            " order by 4 desc offset :offset limit :limit"
+            , nativeQuery = true)
+    List<Object[]> getAllPostPollQuestion(@Param("userId") Long userId, @Param("offset") int offset, @Param("limit") int limit);
+
+    int countAllByUserActorAndPostType(User user, PostType postType);
+
     @Query("select pa.postActionId, " +
             " COUNT(DISTINCT la.likeActionId) as totalLikes, " +
             " COUNT(DISTINCT ca.commentActionId) as totalComments, " +
@@ -61,6 +80,10 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
     Page<Object[]> findAllByTrendingPost(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, Pageable pageable);
 
     Page<PostAction> findAllByCommunityOrderByCreatedAtDesc(Community community, Pageable pageable);
+
+    Page<PostAction> findAllByCommunityAndPostTypeOrderByCreatedAtDesc(Community community, PostType postType, Pageable pageable);
+
+    int countAllByCommunityAndPostType(Community community, PostType postType);
 
     PostAction findByPostActionIdAndCommunity(long postActionId, Community community);
 

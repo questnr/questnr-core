@@ -93,4 +93,16 @@ public class UserPostActionController {
         PostAction postAction = userPostActionAccessService.hasAccessToPostDeletion(postId);
         postActionService.deletePostAction(postAction);
     }
+
+    // Get the list of poll questions for User Profile
+    @RequestMapping(value = "/{userId}/posts/poll/question", method = RequestMethod.GET)
+    Page<PostPollQuestionFeedDTO> getAllPostPollQuestion(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable Long userId) {
+        User user = userPostActionAccessService.getAllPostsByUserId(userId);
+        if (user != null) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            return userPostActionService.getAllPostPollQuestion(user, pageable);
+        }
+        throw new AccessException();
+    }
+
 }

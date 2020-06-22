@@ -6,6 +6,7 @@ import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.PostActionFeedDTO;
 import com.questnr.model.dto.PostBaseDTO;
+import com.questnr.model.dto.PostPollQuestionFeedDTO;
 import com.questnr.model.dto.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
@@ -103,6 +104,31 @@ public class UserPostActionService {
         }
 
         return new PageImpl<>(postBaseDTOArrayList, pageable, postBaseDTOArrayList.size());
+    }
+
+    public Page<PostPollQuestionFeedDTO> getAllPostPollQuestion(User user, Pageable pageable) {
+        List<Object[]> postActionList = postActionRepository.getAllPostPollQuestion(user.getUserId(), pageable.getPageSize() * pageable.getPageNumber(), pageable.getPageSize());
+
+        List<PostPollQuestionFeedDTO> postPollQuestionFeedDTOS = new ArrayList<>();
+        for (Object[] object : postActionList) {
+            User userWhoShared;
+            PostActionType postActionType;
+            PostAction postAction = postActionRepository.findByPostActionId(Long.parseLong(object[0].toString()));
+            if (Integer.parseInt(object[1].toString()) == 1) {
+                userWhoShared = userCommonService.getUser(Long.parseLong(object[2].toString()));
+                postActionType = PostActionType.shared;
+            } else {
+                userWhoShared = null;
+                postActionType = PostActionType.normal;
+            }
+            postPollQuestionFeedDTOS.add(postActionMapper.toPostPollQuestionFeedDTO(
+                    postAction,
+                    postActionType,
+                    userWhoShared
+            ));
+        }
+
+        return new PageImpl<>(postPollQuestionFeedDTOS, pageable, postPollQuestionFeedDTOS.size());
     }
 
     public PostActionFeedDTO creatPostAction(PostAction postAction, List<MultipartFile> files) {
