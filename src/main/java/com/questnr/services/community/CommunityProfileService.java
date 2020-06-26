@@ -36,13 +36,52 @@ public class CommunityProfileService {
         return this.getCommunityProfileDetails(communityCommonService.getCommunity(communitySlug));
     }
 
+    public CommunityMetaProfileResponse getCommunityProfileDetails(String communitySlug, String params) {
+        return this.getCommunityProfileDetails(communityCommonService.getCommunity(communitySlug), params);
+    }
+
+    public CommunityMetaProfileResponse getCommunityProfileDetails(Community community, String params) {
+        String[] paramArray = params.split(",");
+        CommunityMetaProfileResponse communityMetaProfileResponse = new CommunityMetaProfileResponse();
+        for(String param: paramArray){
+            this.setCommunityMetaProfileProperty(community, communityMetaProfileResponse, param.trim());
+        }
+        return communityMetaProfileResponse;
+    }
+
+    public CommunityMetaProfileResponse setCommunityMetaProfileProperty(Community community,
+                                                                        CommunityMetaProfileResponse communityMetaProfileResponse,
+                                                                        String param){
+        switch (param) {
+            case "followers":
+                communityMetaProfileResponse.setFollowers(this.getCommunityMemberCount(community));
+                break;
+            case "posts":
+                communityMetaProfileResponse.setPosts(this.getPostCount(community));
+                break;
+            case "totalQuestions":
+                communityMetaProfileResponse.setTotalQuestions(this.getPostPollQuestionCount(community));
+                break;
+            case "isInTrend":
+            case "trendRank":
+                CommunityTrendLinearData communityTrendLinearData = communityTrendLinearDataRepository.findByCommunity(community);
+                if (communityTrendLinearData != null) {
+                    communityMetaProfileResponse.setInTrend(true);
+                    communityMetaProfileResponse.setTrendRank(communityTrendLinearData.getTrendRank());
+                } else {
+                    communityMetaProfileResponse.setInTrend(false);
+                }
+                break;
+        }
+        return communityMetaProfileResponse;
+    }
+
     public CommunityMetaProfileResponse getCommunityProfileDetails(Community community) {
         CommunityMetaProfileResponse communityMetaProfileResponse = new CommunityMetaProfileResponse();
-        communityMetaProfileResponse.setFollowers(communityUserRepository.countByCommunity(community));
-        communityMetaProfileResponse.setPosts(postActionRepository.countByCommunity(community));
+        communityMetaProfileResponse.setFollowers(this.getCommunityMemberCount(community));
+        communityMetaProfileResponse.setPosts(this.getPostCount(community));
+        communityMetaProfileResponse.setTotalQuestions(this.getPostPollQuestionCount(community));
         CommunityTrendLinearData communityTrendLinearData = communityTrendLinearDataRepository.findByCommunity(community);
-        communityMetaProfileResponse.setTotalQuestions(postActionRepository.countAllByCommunityAndPostType(community,
-                PostType.question));
         if (communityTrendLinearData != null) {
             communityMetaProfileResponse.setInTrend(true);
             communityMetaProfileResponse.setTrendRank(communityTrendLinearData.getTrendRank());
@@ -50,5 +89,18 @@ public class CommunityProfileService {
             communityMetaProfileResponse.setInTrend(false);
         }
         return communityMetaProfileResponse;
+    }
+
+    public int getCommunityMemberCount(Community community){
+        return communityUserRepository.countByCommunity(community);
+    }
+
+    public int getPostCount(Community community){
+        return postActionRepository.countByCommunity(community);
+    }
+
+    public int getPostPollQuestionCount(Community community){
+        return postActionRepository.countAllByCommunityAndPostType(community,
+                PostType.question);
     }
 }

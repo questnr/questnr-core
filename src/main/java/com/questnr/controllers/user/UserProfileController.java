@@ -11,10 +11,7 @@ import com.questnr.services.user.UserCommonService;
 import com.questnr.services.user.UserProfileService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1/user")
@@ -60,5 +57,11 @@ public class UserProfileController {
     @RequestMapping(value = "/profile/meta/{userSlug}/info", method = RequestMethod.GET)
     UserMetaProfileResponse getUserProfileDetails(@PathVariable String userSlug) {
         return this.userProfileService.getUserProfileDetails(userSlug);
+    }
+
+    @RequestMapping(value = "/profile/meta/{userSlug}/info/params", method = RequestMethod.GET)
+    UserMetaProfileResponse getCommunityProfileDetails(@PathVariable String userSlug,
+                                                            @RequestParam(defaultValue = "") String params) {
+        return this.userProfileService.getUserProfileDetails(userSlug, params);
     }
 }
