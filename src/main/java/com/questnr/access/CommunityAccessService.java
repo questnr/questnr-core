@@ -18,6 +18,18 @@ public class CommunityAccessService {
     @Autowired
     UserCommonService userCommonService;
 
+    public Community isUserOwnerOfCommunity(Long communityId) {
+        return this.isUserOwnerOfCommunity(userCommonService.getUser(), communityId);
+    }
+
+    public Community isUserOwnerOfCommunity(User user, Long communityId) {
+        Community community = communityCommonService.getCommunity(communityId);
+        if(this.isUserMemberOfCommunity(user, community)){
+            return community;
+        }
+        return null;
+    }
+
     public boolean isUserOwnerOfCommunity(User user, Community community) {
         return user.equals(community.getOwnerUser());
     }

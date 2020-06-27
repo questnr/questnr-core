@@ -3,7 +3,6 @@ package com.questnr.model.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questnr.common.NotificationTitles;
 import com.questnr.common.enums.NotificationType;
-import org.hibernate.mapping.ToOne;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -21,7 +20,7 @@ public class CommunityInvitedUser implements NotificationBase {
     @SequenceGenerator(name = "community_invitation_seq", sequenceName = "community_invitation_seq", allocationSize = 1)
     public Long communityInvitationId;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "user_actor_id")
     private User userActor;
 

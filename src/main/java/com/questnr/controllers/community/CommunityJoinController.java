@@ -76,7 +76,7 @@ public class CommunityJoinController {
     @RequestMapping(value = "/user/join/community/{communityId}/invite", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody UserIdRequest userIdRequest) {
-        if (communityJoinAccessService.hasAccessToInviteUser(communityId)) {
+        if (communityJoinAccessService.hasAccessToInviteUser(communityId, userIdRequest.getUserId())) {
             communityJoinService.inviteUserToJoinCommunity(communityId, userIdRequest.getUserId());
         } else {
             throw new AccessException();
@@ -87,7 +87,7 @@ public class CommunityJoinController {
     @RequestMapping(value = "/user/join/community/{communityId}/invite/email", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     void inviteUserToJoinCommunity(@PathVariable long communityId, @RequestBody UserEmailRequest userEmailRequest) {
-        if (communityJoinAccessService.hasAccessToInviteUser(communityId)) {
+        if (communityJoinAccessService.hasAccessToInviteUser(communityId, userEmailRequest.getEmail())) {
             communityJoinService.inviteUserToJoinCommunity(communityId, userEmailRequest.getEmail());
         } else {
             throw new AccessException();

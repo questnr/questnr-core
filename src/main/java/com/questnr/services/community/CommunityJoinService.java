@@ -159,13 +159,13 @@ public class CommunityJoinService {
         communityRepository.findById(communityId).map(community -> {
             if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
                 throw new AlreadyExistsException("User is already member!");
-            if (this.existsCommunityInvitation(community, user))
-                throw new AlreadyExistsException("User have already been invited!");
+//            if (this.existsCommunityInvitation(community, user))
+//                throw new AlreadyExistsException("User have already been invited!");
             if (this.hasCommunityInvitationAccess(userCommonService.getUserId(), community.getOwnerUser().getUserId())) {
                 communityRepository.save(this.addInvitationFromCommunity(community, user));
 
                 // Notification job created and assigned to Notification Processor.
-                notificationJob.createNotificationJob(communityInvitedUserRepository.findByCommunityAndUser(community, user));
+                notificationJob.createNotificationJob(communityInvitedUserRepository.findFirstByCommunityAndUser(community, user));
             }
             return community;
         }).orElseThrow(() -> {
@@ -179,7 +179,6 @@ public class CommunityJoinService {
 
     public void inviteUserToJoinCommunity(Long communityId, String userEmail) {
         this.inviteUserToJoinCommunity(communityId, userCommonService.getUser(userEmail));
-
     }
 
     private void actionOnInvitationFromCommunity(Long communityId, User user, boolean hasAccepted) {
