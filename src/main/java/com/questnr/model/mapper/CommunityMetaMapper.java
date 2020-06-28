@@ -1,7 +1,7 @@
 package com.questnr.model.mapper;
 
 import com.questnr.common.enums.RelationShipType;
-import com.questnr.model.dto.CommunityMetaDTO;
+import com.questnr.model.dto.community.CommunityMetaDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.services.user.UserCommonService;

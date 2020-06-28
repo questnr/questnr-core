@@ -1,4 +1,4 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.user;
 
 import com.questnr.common.enums.RelationShipType;
 

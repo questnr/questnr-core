@@ -4,7 +4,7 @@ import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.dto.UserOtherDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserFollower;
 import com.questnr.model.mapper.UserMapper;

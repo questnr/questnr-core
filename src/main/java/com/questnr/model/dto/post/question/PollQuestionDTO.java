@@ -1,6 +1,6 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post.question;
 
-public class PostPollQuestionDTO{
+public class PollQuestionDTO {
     private Double agreePercentage = Double.valueOf(0);
 
     private Double disagreePercentage = Double.valueOf(0);

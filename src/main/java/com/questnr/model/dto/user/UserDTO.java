@@ -1,4 +1,6 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.user;
+
+import com.questnr.model.dto.AvatarDTO;
 
 public class UserDTO {
 

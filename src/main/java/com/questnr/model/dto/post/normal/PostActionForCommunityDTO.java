@@ -1,4 +1,6 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post.normal;
+
+import com.questnr.model.dto.user.UserOtherDTO;
 
 public class PostActionForCommunityDTO extends PostActionDTO {
     private UserOtherDTO userDTO;

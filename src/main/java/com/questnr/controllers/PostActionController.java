@@ -1,7 +1,7 @@
 package com.questnr.controllers;
 
-import com.questnr.model.dto.PostActionForMediaDTO;
-import com.questnr.model.dto.PostActionPublicDTO;
+import com.questnr.model.dto.post.normal.PostActionForMediaDTO;
+import com.questnr.model.dto.post.normal.PostActionPublicDTO;
 import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.requests.PostReportRequest;

@@ -1,6 +1,6 @@
 package com.questnr.services;
 
-import com.questnr.model.dto.PostActionPublicDTO;
+import com.questnr.model.dto.post.normal.PostActionPublicDTO;
 import com.questnr.model.entities.MetaInformation;
 import com.questnr.model.entities.PostActionMetaInformation;
 import org.springframework.beans.factory.annotation.Autowired;

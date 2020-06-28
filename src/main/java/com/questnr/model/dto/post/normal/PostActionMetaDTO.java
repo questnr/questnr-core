@@ -1,4 +1,4 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post.normal;
 
 public class PostActionMetaDTO {
     private boolean isLiked = false;

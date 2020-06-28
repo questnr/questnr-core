@@ -1,4 +1,8 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post.normal;
+
+import com.questnr.model.dto.community.CommunityForPostActionDTO;
+import com.questnr.model.dto.PostMediaDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
 
 import java.util.List;
 

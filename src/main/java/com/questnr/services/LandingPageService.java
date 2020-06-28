@@ -1,7 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.model.dto.HashTagWithRankDTO;
-import com.questnr.model.dto.UserWithRankDTO;
+import com.questnr.model.dto.user.UserWithRankDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserTrendLinearData;
 import com.questnr.model.mapper.HashTagWithRankMapper;

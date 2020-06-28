@@ -1,14 +1,20 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post.normal;
+
+import com.questnr.model.dto.CommentActionDTO;
+import com.questnr.model.dto.LikeActionDTO;
+import com.questnr.model.dto.PostMediaDTO;
+import com.questnr.model.dto.post.PostBaseDTO;
 
 import java.util.List;
 
-public class PostActionDTO extends PostBaseDTO{
+public class PostActionDTO extends PostBaseDTO {
     private List<LikeActionDTO> likeActionList;
     private List<CommentActionDTO> commentActionList;
     private List<PostMediaDTO> postMediaList;
     private int totalLikes;
     private int totalComments;
     private int totalPostVisits;
+    private PostActionMetaDTO postActionMeta;
 
     public List<LikeActionDTO> getLikeActionList() {
         return likeActionList;
@@ -56,5 +62,13 @@ public class PostActionDTO extends PostBaseDTO{
 
     public void setTotalPostVisits(int totalPostVisits) {
         this.totalPostVisits = totalPostVisits;
+    }
+
+    public PostActionMetaDTO getPostActionMeta() {
+        return postActionMeta;
+    }
+
+    public void setPostActionMeta(PostActionMetaDTO postActionMeta) {
+        this.postActionMeta = postActionMeta;
     }
 }

@@ -1,5 +1,7 @@
 package com.questnr.model.dto;
 
+import com.questnr.model.dto.user.UserOtherDTO;
+
 public class LikeCommentActionDTO {
     private Long likeCommentActionId;
 

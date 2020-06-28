@@ -7,7 +7,7 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvException;
 import com.questnr.common.CommunityRankDependents;
 import com.questnr.common.StartingEndingDate;
-import com.questnr.model.dto.CommunityRankDTO;
+import com.questnr.model.dto.community.CommunityRankDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.*;
 import com.questnr.services.analytics.regression.LinearRegressionService;

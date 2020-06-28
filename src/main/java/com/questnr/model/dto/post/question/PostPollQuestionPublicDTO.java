@@ -1,16 +1,17 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post.question;
 
+import com.questnr.model.dto.community.CommunityForPostActionDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
 import com.questnr.model.entities.PostActionMetaInformation;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostPollQuestionPublicDTO extends PostBaseDTO {
+public class PostPollQuestionPublicDTO extends PostPollQuestionDTO {
 
     private UserOtherDTO userDTO;
     private CommunityForPostActionDTO communityDTO;
     private List<PostActionMetaInformation> metaList = new ArrayList<>();
-    private PostPollQuestionDTO postPollQuestion;
 
     public UserOtherDTO getUserDTO() {
         return userDTO;
@@ -34,13 +35,5 @@ public class PostPollQuestionPublicDTO extends PostBaseDTO {
 
     public void setMetaList(List<PostActionMetaInformation> metaList) {
         this.metaList = metaList;
-    }
-
-    public PostPollQuestionDTO getPostPollQuestion() {
-        return postPollQuestion;
-    }
-
-    public void setPostPollQuestion(PostPollQuestionDTO postPollQuestion) {
-        this.postPollQuestion = postPollQuestion;
     }
 }

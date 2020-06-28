@@ -1,20 +1,16 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.community;
 
 import com.questnr.common.enums.PublishStatus;
-import com.questnr.model.entities.CommunityMetaInformation;
+import com.questnr.model.dto.AvatarDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class CommunityDTO {
+public class CommunityCardDTO {
 
     public Long communityId;
 
     public String communityName;
 
     private String description;
-
-    private String rules;
 
     public String slug;
 
@@ -25,12 +21,6 @@ public class CommunityDTO {
     private AvatarDTO avatarDTO;
 
     private int totalMembers;
-
-    private List<CommunityMetaInformation> metaList = new ArrayList<>();
-
-    private MetaDataDTO metaData;
-
-    private CommunityMetaDTO communityMeta;
 
     public Long getCommunityId() {
         return communityId;
@@ -54,14 +44,6 @@ public class CommunityDTO {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getRules() {
-        return rules;
-    }
-
-    public void setRules(String rules) {
-        this.rules = rules;
     }
 
     public String getSlug() {
@@ -102,29 +84,5 @@ public class CommunityDTO {
 
     public void setTotalMembers(int totalMembers) {
         this.totalMembers = totalMembers;
-    }
-
-    public List<CommunityMetaInformation> getMetaList() {
-        return metaList;
-    }
-
-    public void setMetaList(List<CommunityMetaInformation> metaList) {
-        this.metaList = metaList;
-    }
-
-    public MetaDataDTO getMetaData() {
-        return metaData;
-    }
-
-    public void setMetaData(MetaDataDTO metaData) {
-        this.metaData = metaData;
-    }
-
-    public CommunityMetaDTO getCommunityMeta() {
-        return communityMeta;
-    }
-
-    public void setCommunityMeta(CommunityMetaDTO communityMeta) {
-        this.communityMeta = communityMeta;
     }
 }

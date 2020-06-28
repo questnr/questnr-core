@@ -1,4 +1,4 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.user;
 
 public class UserWithRankDTO extends UserDTO{
     private int totalFollowers;

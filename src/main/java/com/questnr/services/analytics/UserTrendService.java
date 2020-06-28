@@ -2,7 +2,7 @@ package com.questnr.services.analytics;
 
 import com.questnr.common.StartingEndingDate;
 import com.questnr.common.UserRankDependents;
-import com.questnr.model.dto.UserRankDTO;
+import com.questnr.model.dto.user.UserRankDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.*;
 import com.questnr.services.analytics.regression.LinearRegressionService;

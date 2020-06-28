@@ -2,8 +2,8 @@ package com.questnr.controllers.user;
 
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.SharableLinkDTO;
-import com.questnr.model.dto.UserDTO;
-import com.questnr.model.dto.UserOtherDTO;
+import com.questnr.model.dto.user.UserDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.requests.UpdatePasswordRequest;

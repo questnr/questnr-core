@@ -2,7 +2,11 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityPostActionAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.model.dto.*;
+import com.questnr.model.dto.post.normal.PostActionForCommunityDTO;
+import com.questnr.model.dto.post.normal.PostActionRequestDTO;
+import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
+import com.questnr.model.dto.post.question.PollQuestionDTO;
+import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.requests.PostPollAnswerRequest;
@@ -90,9 +94,9 @@ public class CommunityPostActionController {
     }
 
     @RequestMapping(value = "/community/{communityId}/posts/{postId}/poll/answer", method = RequestMethod.POST)
-    PostPollQuestionDTO createPollAnswerPost(@PathVariable Long communityId,
-                                             @PathVariable Long postId,
-                                             @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
+    PollQuestionDTO createPollAnswerPost(@PathVariable Long communityId,
+                                         @PathVariable Long postId,
+                                         @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
         PostAction postAction = communityPostActionAccessService.createPollAnswerPost(communityId, postId);
         if(postAction != null) {
             return communityPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);

@@ -2,7 +2,7 @@ package com.questnr.services.analytics;
 
 import com.questnr.common.PostActionRankDependents;
 import com.questnr.common.StartingEndingDate;
-import com.questnr.model.dto.PostActionRankDTO;
+import com.questnr.model.dto.post.normal.PostActionRankDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostActionTrendData;
 import com.questnr.model.entities.PostActionTrendLinearData;

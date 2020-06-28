@@ -1,9 +1,9 @@
 package com.questnr.model.mapper;
 
 import com.questnr.model.dto.BioUserDTO;
-import com.questnr.model.dto.UserDTO;
-import com.questnr.model.dto.UserOtherDTO;
-import com.questnr.model.dto.UserProfileDTO;
+import com.questnr.model.dto.user.UserDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
+import com.questnr.model.dto.user.UserProfileDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.projections.UserProjection;
 import com.questnr.requests.UserRequest;

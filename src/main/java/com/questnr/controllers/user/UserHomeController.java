@@ -1,7 +1,7 @@
 package com.questnr.controllers.user;
 
-import com.questnr.model.dto.CommunityCardDTO;
-import com.questnr.model.dto.PostBaseDTO;
+import com.questnr.model.dto.community.CommunityCardDTO;
+import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.PostActionMapper;

@@ -5,10 +5,13 @@ import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PostType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.dto.PostActionUpdateRequestDTO;
+import com.questnr.model.dto.post.question.PollQuestionDTO;
+import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
 import com.questnr.model.entities.*;
+import com.questnr.model.mapper.PostPollQuestionMapper;
 import com.questnr.model.mapper.PostReportMapper;
 import com.questnr.model.repositories.*;
+import com.questnr.requests.PostPollAnswerRequest;
 import com.questnr.requests.PostReportRequest;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
@@ -60,6 +63,15 @@ public class PostActionService {
 
     @Autowired
     PostReportMapper postReportMapper;
+
+    @Autowired
+    PostPollQuestionMapper postPollQuestionMapper;
+
+    @Autowired
+    PostPollQuestionRepository postPollQuestionRepository;
+
+    @Autowired
+            PostPollAnswerRepository postPollAnswerRepository;
 
     PostActionService(){
         postReportMapper = Mappers.getMapper(PostReportMapper.class);
@@ -254,6 +266,25 @@ public class PostActionService {
             postReport.addMetadata();
             this.postReportRepository.save(postReport);
         }catch (Exception e){
+            throw new InvalidRequestException("Error occurred. Please, try again!");
+        }
+    }
+
+    public PollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
+        User user = userCommonService.getUser();
+        if (postPollAnswerRequest != null) {
+            if(!postPollAnswerRepository.existsByPostActionAndUserActor(postAction, user)) {
+                PostPollAnswer postPollAnswer = new PostPollAnswer();
+                postPollAnswer.setAnswer(postPollAnswerRequest.getPollAnswer());
+                postPollAnswer.setUserActor(user);
+                postPollAnswer.setPostAction(postAction);
+                PostPollQuestion postPollQuestion = postAction.getPostPollQuestion();
+                postPollQuestion.getPostPollAnswer().add(postPollAnswer);
+                return postPollQuestionMapper.toDTO(postPollQuestionRepository.save(postPollQuestion));
+            }else{
+                throw new InvalidRequestException("Already submitted the answer");
+            }
+        } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }

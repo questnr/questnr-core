@@ -1,4 +1,6 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.community;
+
+import com.questnr.model.dto.user.UserOtherDTO;
 
 public class CommunityUserForCommunityDTO {
 

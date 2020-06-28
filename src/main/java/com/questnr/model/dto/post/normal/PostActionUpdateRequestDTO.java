@@ -1,4 +1,4 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post.normal;
 
 import com.questnr.common.enums.PublishStatus;
 

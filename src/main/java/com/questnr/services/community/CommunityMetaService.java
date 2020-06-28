@@ -1,6 +1,6 @@
 package com.questnr.services.community;
 
-import com.questnr.model.dto.CommunityDTO;
+import com.questnr.model.dto.community.CommunityDTO;
 import com.questnr.model.entities.CommunityMetaInformation;
 import com.questnr.model.entities.MetaInformation;
 import com.questnr.services.CommonService;

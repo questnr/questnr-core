@@ -1,6 +1,6 @@
 package com.questnr.controllers;
 
-import com.questnr.model.dto.PostBaseDTO;
+import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.projections.HashTagProjection;

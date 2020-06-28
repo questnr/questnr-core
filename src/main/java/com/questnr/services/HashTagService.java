@@ -1,6 +1,6 @@
 package com.questnr.services;
 
-import com.questnr.model.dto.PostBaseDTO;
+import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.entities.HashTag;
 import com.questnr.model.entities.HashTagTrendLinearData;
 import com.questnr.model.entities.PostAction;

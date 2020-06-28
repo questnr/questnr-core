@@ -2,7 +2,13 @@ package com.questnr.controllers.user;
 
 import com.questnr.access.UserPostActionAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.model.dto.*;
+import com.questnr.model.dto.post.PostBaseDTO;
+import com.questnr.model.dto.post.normal.PostActionFeedDTO;
+import com.questnr.model.dto.post.normal.PostActionRequestDTO;
+import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
+import com.questnr.model.dto.post.question.PollQuestionDTO;
+import com.questnr.model.dto.post.question.PostPollQuestionFeedDTO;
+import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;
@@ -75,7 +81,7 @@ public class UserPostActionController {
     }
 
     @RequestMapping(value = "/posts/{postId}/poll/answer", method = RequestMethod.POST)
-    PostPollQuestionDTO createPollAnswerPost(@PathVariable Long postId, @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
+    PollQuestionDTO createPollAnswerPost(@PathVariable Long postId, @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
         PostAction postAction = userPostActionAccessService.createPollAnswerPost(postId);
         if(postAction != null){
             return userPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);

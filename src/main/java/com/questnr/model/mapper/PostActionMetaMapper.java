@@ -1,6 +1,6 @@
 package com.questnr.model.mapper;
 
-import com.questnr.model.dto.PostActionMetaDTO;
+import com.questnr.model.dto.post.normal.PostActionMetaDTO;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.PostAction;
 import com.questnr.services.user.UserCommonService;

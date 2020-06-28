@@ -1,6 +1,6 @@
 package com.questnr.model.mapper;
 
-import com.questnr.model.dto.UserWithRankDTO;
+import com.questnr.model.dto.user.UserWithRankDTO;
 import com.questnr.model.entities.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -3,7 +3,7 @@ package com.questnr.model.mapper;
 import com.questnr.common.NotificationTitles;
 import com.questnr.common.enums.NotificationType;
 import com.questnr.model.dto.NotificationDTO;
-import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.user.UserDTO;
 import com.questnr.model.entities.*;
 import com.questnr.services.SharableLinkService;
 import org.mapstruct.factory.Mappers;

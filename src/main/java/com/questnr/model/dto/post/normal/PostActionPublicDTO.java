@@ -1,5 +1,7 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post.normal;
 
+import com.questnr.model.dto.community.CommunityForPostActionDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
 import com.questnr.model.entities.PostActionMetaInformation;
 
 import java.util.ArrayList;

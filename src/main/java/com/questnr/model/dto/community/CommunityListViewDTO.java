@@ -1,8 +1,10 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.community;
 
 import com.questnr.common.enums.PublishStatus;
+import com.questnr.model.dto.AvatarDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
 
-public class CommunityForPostActionDTO {
+public class CommunityListViewDTO {
 
     public Long communityId;
 
@@ -10,9 +12,9 @@ public class CommunityForPostActionDTO {
 
     private String description;
 
-    private String rules;
-
     public String slug;
+
+    private UserOtherDTO ownerUserDTO;
 
     private PublishStatus status;
 
@@ -42,20 +44,20 @@ public class CommunityForPostActionDTO {
         this.description = description;
     }
 
-    public String getRules() {
-        return rules;
-    }
-
-    public void setRules(String rules) {
-        this.rules = rules;
-    }
-
     public String getSlug() {
         return slug;
     }
 
     public void setSlug(String slug) {
         this.slug = slug;
+    }
+
+    public UserOtherDTO getOwnerUserDTO() {
+        return ownerUserDTO;
+    }
+
+    public void setOwnerUserDTO(UserOtherDTO ownerUserDTO) {
+        this.ownerUserDTO = ownerUserDTO;
     }
 
     public PublishStatus getStatus() {

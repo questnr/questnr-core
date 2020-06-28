@@ -1,7 +1,7 @@
 package com.questnr.controllers;
 
 import com.questnr.model.dto.LikeActionDTO;
-import com.questnr.model.dto.UserOtherDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
 import com.questnr.model.entities.LikeAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.LikeActionMapper;

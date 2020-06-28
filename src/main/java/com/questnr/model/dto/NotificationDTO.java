@@ -2,6 +2,8 @@ package com.questnr.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questnr.common.enums.NotificationType;
+import com.questnr.model.dto.community.CommunityListViewDTO;
+import com.questnr.model.dto.user.UserDTO;
 import com.questnr.model.entities.User;
 
 public class NotificationDTO {

@@ -1,4 +1,4 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.user;
 
 public class UserProfileDTO extends  UserDTO{
 

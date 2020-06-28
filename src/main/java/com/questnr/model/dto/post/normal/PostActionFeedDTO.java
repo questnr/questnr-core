@@ -1,11 +1,11 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post.normal;
 
-import com.questnr.common.enums.PostActionType;
+import com.questnr.model.dto.community.CommunityForPostActionDTO;
+import com.questnr.model.dto.user.UserOtherDTO;
 
 public class PostActionFeedDTO extends PostActionDTO {
 
     private CommunityForPostActionDTO communityDTO;
-    private PostActionType postActionType;
     private UserOtherDTO userDTO;
     private UserOtherDTO userWhoShared;
 
@@ -15,14 +15,6 @@ public class PostActionFeedDTO extends PostActionDTO {
 
     public void setCommunityDTO(CommunityForPostActionDTO communityDTO) {
         this.communityDTO = communityDTO;
-    }
-
-    public PostActionType getPostActionType() {
-        return postActionType;
-    }
-
-    public void setPostActionType(PostActionType postActionType) {
-        this.postActionType = postActionType;
     }
 
     public UserOtherDTO getUserDTO() {

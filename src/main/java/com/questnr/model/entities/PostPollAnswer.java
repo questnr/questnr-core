@@ -24,6 +24,14 @@ public class PostPollAnswer {
     @Enumerated(EnumType.STRING)
     private PostPollAnswerType answer;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User userActor;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_action_id", nullable = false)
+    private PostAction postAction;
+
     public Long getPollAnswerId() {
         return pollAnswerId;
     }
@@ -38,5 +46,21 @@ public class PostPollAnswer {
 
     public void setAnswer(PostPollAnswerType answer) {
         this.answer = answer;
+    }
+
+    public User getUserActor() {
+        return userActor;
+    }
+
+    public void setUserActor(User userActor) {
+        this.userActor = userActor;
+    }
+
+    public PostAction getPostAction() {
+        return postAction;
+    }
+
+    public void setPostAction(PostAction postAction) {
+        this.postAction = postAction;
     }
 }

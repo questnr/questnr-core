@@ -4,9 +4,9 @@ import com.questnr.common.enums.PostType;
 import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.dto.PostActionForCommunityDTO;
-import com.questnr.model.dto.PostPollQuestionDTO;
-import com.questnr.model.dto.PostPollQuestionForCommunityDTO;
+import com.questnr.model.dto.post.normal.PostActionForCommunityDTO;
+import com.questnr.model.dto.post.question.PollQuestionDTO;
+import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.mapper.PostPollQuestionMapper;
@@ -160,16 +160,8 @@ public class CommunityPostActionService {
         }
     }
 
-    public PostPollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
-        if (postPollAnswerRequest != null) {
-            PostPollAnswer postPollAnswer = new PostPollAnswer();
-            postPollAnswer.setAnswer(postPollAnswerRequest.getPollAnswer());
-            PostPollQuestion postPollQuestion = postAction.getPostPollQuestion();
-            postPollQuestion.getPostPollAnswer().add(postPollAnswer);
-            return postPollQuestionMapper.toDTO(postPollQuestionRepository.save(postPollQuestion));
-        } else {
-            throw new InvalidRequestException("Error occurred. Please, try again!");
-        }
+    public PollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
+        return this.postActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
     }
 
     public Page<PostAction> getAllPostPollQuestion(Long communityId, Pageable pageable){

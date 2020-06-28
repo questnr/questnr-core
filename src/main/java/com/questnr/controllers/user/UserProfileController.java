@@ -3,7 +3,7 @@ package com.questnr.controllers.user;
 import com.questnr.access.UserProfileAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.BioUserDTO;
-import com.questnr.model.dto.UserDTO;
+import com.questnr.model.dto.user.UserDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.responses.UserMetaProfileResponse;

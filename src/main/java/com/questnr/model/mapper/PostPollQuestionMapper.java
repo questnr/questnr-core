@@ -1,7 +1,7 @@
 package com.questnr.model.mapper;
 
 import com.questnr.common.enums.PostPollAnswerType;
-import com.questnr.model.dto.PostPollQuestionDTO;
+import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.entities.PostPollAnswer;
 import com.questnr.model.entities.PostPollQuestion;
 import com.questnr.requests.PostPollQuestionRequest;
@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 @Component
 public class PostPollQuestionMapper {
 
-    public PostPollQuestionDTO toDTO(PostPollQuestion pollQuestionAction) {
-        PostPollQuestionDTO postPollQuestionDTO = new PostPollQuestionDTO();
+    public PollQuestionDTO toDTO(PostPollQuestion pollQuestionAction) {
+        PollQuestionDTO pollQuestionDTO = new PollQuestionDTO();
         if(pollQuestionAction != null) {
             List<PostPollAnswer> postPollAnswerList = pollQuestionAction.getPostPollAnswer();
             List<PostPollAnswer> agreePostPollAnswers = postPollAnswerList.stream().filter(postPollAnswer ->
@@ -24,13 +24,13 @@ public class PostPollQuestionMapper {
             int positiveCount = agreePostPollAnswers.size();
             int negativeCount = totalCount - agreePostPollAnswers.size();
             if(totalCount > 0) {
-                postPollQuestionDTO.setAgreePercentage(((double) positiveCount / totalCount) * 100);
-                postPollQuestionDTO.setDisagreePercentage(((double) negativeCount / totalCount * 100));
+                pollQuestionDTO.setAgreePercentage(((double) positiveCount / totalCount) * 100);
+                pollQuestionDTO.setDisagreePercentage(((double) negativeCount / totalCount * 100));
             }
-            postPollQuestionDTO.setAgreeText(pollQuestionAction.getAgreeText());
-            postPollQuestionDTO.setDisagreeText(pollQuestionAction.getDisagreeText());
+            pollQuestionDTO.setAgreeText(pollQuestionAction.getAgreeText());
+            pollQuestionDTO.setDisagreeText(pollQuestionAction.getDisagreeText());
         }
-        return postPollQuestionDTO;
+        return pollQuestionDTO;
     }
 
     public PostPollQuestion fromRequest(PostPollQuestionRequest postPollQuestionRequest){

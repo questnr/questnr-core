@@ -2,7 +2,7 @@ package com.questnr.services.user;
 
 import com.questnr.common.enums.PostActionType;
 import com.questnr.common.enums.PostType;
-import com.questnr.model.dto.PostBaseDTO;
+import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;

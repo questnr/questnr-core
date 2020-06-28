@@ -1,7 +1,7 @@
 package com.questnr.services.user;
 
 import com.questnr.common.CommunitySuggestionData;
-import com.questnr.model.dto.PostBaseDTO;
+import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.CommunityRepository;

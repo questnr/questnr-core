@@ -1,6 +1,6 @@
 package com.questnr.model.mapper;
 
-import com.questnr.model.dto.CommunityUserForCommunityDTO;
+import com.questnr.model.dto.community.CommunityUserForCommunityDTO;
 import com.questnr.model.entities.CommunityUser;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,9 +1,9 @@
 package com.questnr.model.mapper;
 
-import com.questnr.model.dto.CommunityCardDTO;
-import com.questnr.model.dto.CommunityDTO;
-import com.questnr.model.dto.CommunityForPostActionDTO;
-import com.questnr.model.dto.CommunityListViewDTO;
+import com.questnr.model.dto.community.CommunityCardDTO;
+import com.questnr.model.dto.community.CommunityDTO;
+import com.questnr.model.dto.community.CommunityForPostActionDTO;
+import com.questnr.model.dto.community.CommunityListViewDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.requests.CommunityRequest;
 import com.questnr.services.user.UserCommonService;

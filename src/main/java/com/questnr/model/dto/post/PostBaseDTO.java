@@ -1,7 +1,9 @@
-package com.questnr.model.dto;
+package com.questnr.model.dto.post;
 
 import com.questnr.common.enums.PostActionPrivacy;
+import com.questnr.common.enums.PostActionType;
 import com.questnr.common.enums.PostType;
+import com.questnr.model.dto.MetaDataDTO;
 import com.questnr.model.entities.HashTag;
 
 import java.util.Set;
@@ -15,9 +17,9 @@ public class PostBaseDTO {
     private boolean popular;
     private String tags;
     private Set<HashTag> hashTags;
+    private PostActionType postActionType;
     private PostType postType;
     private MetaDataDTO metaData;
-    private PostActionMetaDTO postActionMeta;
 
     public Long getPostActionId() {
         return postActionId;
@@ -83,6 +85,14 @@ public class PostBaseDTO {
         this.hashTags = hashTags;
     }
 
+    public PostActionType getPostActionType() {
+        return postActionType;
+    }
+
+    public void setPostActionType(PostActionType postActionType) {
+        this.postActionType = postActionType;
+    }
+
     public PostType getPostType() {
         return postType;
     }
@@ -97,13 +107,5 @@ public class PostBaseDTO {
 
     public void setMetaData(MetaDataDTO metaData) {
         this.metaData = metaData;
-    }
-
-    public PostActionMetaDTO getPostActionMeta() {
-        return postActionMeta;
-    }
-
-    public void setPostActionMeta(PostActionMetaDTO postActionMeta) {
-        this.postActionMeta = postActionMeta;
     }
 }

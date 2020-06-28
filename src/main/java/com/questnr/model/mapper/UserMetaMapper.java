@@ -1,7 +1,7 @@
 package com.questnr.model.mapper;
 
 import com.questnr.common.enums.RelationShipType;
-import com.questnr.model.dto.UserMetaDTO;
+import com.questnr.model.dto.user.UserMetaDTO;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserFollower;
 import com.questnr.services.user.UserCommonService;
