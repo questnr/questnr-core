@@ -15,9 +15,7 @@ public class PostPollQuestionMapper {
 
     public PostPollQuestionDTO toDTO(PostPollQuestion pollQuestionAction) {
         PostPollQuestionDTO postPollQuestionDTO = new PostPollQuestionDTO();
-        if(pollQuestionAction != null &&
-                pollQuestionAction.getPostPollAnswer()!=null &&
-                pollQuestionAction.getPostPollAnswer().size() > 0) {
+        if(pollQuestionAction != null) {
             List<PostPollAnswer> postPollAnswerList = pollQuestionAction.getPostPollAnswer();
             List<PostPollAnswer> agreePostPollAnswers = postPollAnswerList.stream().filter(postPollAnswer ->
                     postPollAnswer.getAnswer() == PostPollAnswerType.agree

@@ -5,6 +5,7 @@ import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.PostActionForCommunityDTO;
+import com.questnr.model.dto.PostPollQuestionDTO;
 import com.questnr.model.dto.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
@@ -159,13 +160,13 @@ public class CommunityPostActionService {
         }
     }
 
-    public void createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
+    public PostPollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
         if (postPollAnswerRequest != null) {
             PostPollAnswer postPollAnswer = new PostPollAnswer();
             postPollAnswer.setAnswer(postPollAnswerRequest.getPollAnswer());
             PostPollQuestion postPollQuestion = postAction.getPostPollQuestion();
             postPollQuestion.getPostPollAnswer().add(postPollAnswer);
-            postPollQuestionRepository.save(postPollQuestion);
+            return postPollQuestionMapper.toDTO(postPollQuestionRepository.save(postPollQuestion));
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }

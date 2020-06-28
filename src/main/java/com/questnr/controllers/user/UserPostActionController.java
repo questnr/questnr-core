@@ -75,9 +75,12 @@ public class UserPostActionController {
     }
 
     @RequestMapping(value = "/posts/{postId}/poll/answer", method = RequestMethod.POST)
-    void createPollAnswerPost(@PathVariable Long postId, @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
+    PostPollQuestionDTO createPollAnswerPost(@PathVariable Long postId, @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
         PostAction postAction = userPostActionAccessService.createPollAnswerPost(postId);
-        userPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+        if(postAction != null){
+            return userPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+        }
+        throw new AccessException();
     }
 
 //    @RequestMapping(value = "/posts/question/poll/{postId}", method = RequestMethod.PUT)

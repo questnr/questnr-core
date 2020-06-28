@@ -4,10 +4,7 @@ import com.questnr.common.enums.PostActionType;
 import com.questnr.common.enums.PostType;
 import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
-import com.questnr.model.dto.PostActionFeedDTO;
-import com.questnr.model.dto.PostBaseDTO;
-import com.questnr.model.dto.PostPollQuestionFeedDTO;
-import com.questnr.model.dto.PostPollQuestionForCommunityDTO;
+import com.questnr.model.dto.*;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.mapper.PostPollQuestionMapper;
@@ -215,13 +212,13 @@ public class UserPostActionService {
         }
     }
 
-    public void createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
+    public PostPollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
         if (postPollAnswerRequest != null) {
             PostPollAnswer postPollAnswer = new PostPollAnswer();
             postPollAnswer.setAnswer(postPollAnswerRequest.getPollAnswer());
             PostPollQuestion postPollQuestion = postAction.getPostPollQuestion();
             postPollQuestion.getPostPollAnswer().add(postPollAnswer);
-            postPollQuestionRepository.save(postPollQuestion);
+            return postPollQuestionMapper.toDTO(postPollQuestionRepository.save(postPollQuestion));
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }

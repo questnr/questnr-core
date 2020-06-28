@@ -2,10 +2,7 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityPostActionAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.model.dto.PostActionForCommunityDTO;
-import com.questnr.model.dto.PostActionRequestDTO;
-import com.questnr.model.dto.PostActionUpdateRequestDTO;
-import com.questnr.model.dto.PostPollQuestionForCommunityDTO;
+import com.questnr.model.dto.*;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.requests.PostPollAnswerRequest;
@@ -93,11 +90,14 @@ public class CommunityPostActionController {
     }
 
     @RequestMapping(value = "/community/{communityId}/posts/{postId}/poll/answer", method = RequestMethod.POST)
-    void createPollAnswerPost(@PathVariable Long communityId,
-                              @PathVariable Long postId,
-                              @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
+    PostPollQuestionDTO createPollAnswerPost(@PathVariable Long communityId,
+                                             @PathVariable Long postId,
+                                             @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
         PostAction postAction = communityPostActionAccessService.createPollAnswerPost(communityId, postId);
-        communityPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+        if(postAction != null) {
+            return communityPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/community/{communityId}/posts/{postId}", method = RequestMethod.DELETE)
