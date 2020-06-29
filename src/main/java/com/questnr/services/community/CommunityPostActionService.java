@@ -1,9 +1,11 @@
 package com.questnr.services.community;
 
+import com.questnr.common.enums.PostActionType;
 import com.questnr.common.enums.PostType;
 import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.PostActionForCommunityDTO;
 import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
@@ -26,12 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,10 +74,39 @@ public class CommunityPostActionService {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
 
-    public Page<PostAction> getAllPostActionsByCommunityId(long communityId, Pageable pageable) {
+    public Page<PostBaseDTO> getAllPostActionsByCommunityId(long communityId, Pageable pageable) {
         Community community = communityCommonService.getCommunity(communityId);
-        if (community != null)
-            return postActionRepository.findAllByCommunityOrderByCreatedAtDesc(community, pageable);
+        if (community != null) {
+            List<Object[]> postActionList = postActionRepository.findAllByCommunityPosts(community.getCommunityId(),
+                    pageable.getPageSize() * pageable.getPageNumber(), pageable.getPageSize());
+            List<PostBaseDTO> postBaseDTOArrayList = new ArrayList<>();
+            for (Object[] object : postActionList) {
+                User userWhoShared;
+                PostActionType postActionType;
+                PostAction postAction = postActionRepository.findByPostActionId(Long.parseLong(object[0].toString()));
+                if (Integer.parseInt(object[1].toString()) == 1) {
+                    userWhoShared = userCommonService.getUser(Long.parseLong(object[2].toString()));
+                    postActionType = PostActionType.shared;
+                } else {
+                    userWhoShared = null;
+                    postActionType = PostActionType.normal;
+                }
+                if (postAction.getPostType() == PostType.simple) {
+                    postBaseDTOArrayList.add(postActionMapper.toPostActionFeedDTO(
+                            postAction,
+                            postActionType,
+                            userWhoShared
+                    ));
+                } else {
+                    postBaseDTOArrayList.add(postActionMapper.toPostPollQuestionFeedDTO(
+                            postAction,
+                            postActionType,
+                            userWhoShared
+                    ));
+                }
+            }
+            return new PageImpl<>(postBaseDTOArrayList, pageable, postBaseDTOArrayList.size());
+        }
         throw new ResourceNotFoundException("Community not found!");
     }
 
@@ -164,7 +197,7 @@ public class CommunityPostActionService {
         return this.postActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
     }
 
-    public Page<PostAction> getAllPostPollQuestion(Long communityId, Pageable pageable){
+    public Page<PostAction> getAllPostPollQuestion(Long communityId, Pageable pageable) {
         Community community = communityCommonService.getCommunity(communityId);
         if (community != null)
             return postActionRepository.findAllByCommunityAndPostTypeOrderByCreatedAtDesc(community,

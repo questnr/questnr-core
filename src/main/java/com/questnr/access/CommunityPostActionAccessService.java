@@ -78,12 +78,6 @@ public class CommunityPostActionAccessService {
     }
 
     public PostAction createPollAnswerPost(Long communityId, Long postId){
-        User user = userCommonService.getUser();
-        Community community = communityCommonService.getCommunity(communityId);
-        PostAction postAction = postActionService.getPostActionByIdAndType(postId, PostType.question);
-        if(communityJoinService.existsCommunityUser(community, user)){
-            return postAction;
-        }
-        throw new AccessException("You are not following the user");
+        return postActionService.getPostActionByIdAndType(postId, PostType.question);
     }
 }

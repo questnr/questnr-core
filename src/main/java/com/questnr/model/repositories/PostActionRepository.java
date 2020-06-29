@@ -79,7 +79,14 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             " totalVisits DESC nulls last")
     Page<Object[]> findAllByTrendingPost(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, Pageable pageable);
 
-    Page<PostAction> findAllByCommunityOrderByCreatedAtDesc(Community community, Pageable pageable);
+    @Query(value = " select pa.post_action_id as postActionId, 0 as postType, null as userWhoShared, pa.created_at as createdAt " +
+            " from qr_community qrCommunity " +
+            " left outer join qr_post_actions pa on " +
+            " pa.community_id=qrCommunity.community_id " +
+            " where qrCommunity.community_id=:communityId and pa.deleted=false group by pa.post_action_id" +
+            " order by 4 desc offset :offset limit :limit"
+            , nativeQuery = true)
+    List<Object[]> findAllByCommunityPosts(@Param("communityId") Long communityId, @Param("offset") int offset, @Param("limit") int limit);
 
     Page<PostAction> findAllByCommunityAndPostTypeOrderByCreatedAtDesc(Community community, PostType postType, Pageable pageable);
 

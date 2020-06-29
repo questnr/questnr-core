@@ -1,5 +1,6 @@
 package com.questnr.model.mapper;
 
+import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.model.dto.PostMediaDTO;
 import com.questnr.model.entities.PostMedia;
 import com.questnr.model.repositories.PostActionRepository;
@@ -33,7 +34,7 @@ public class PostMediaMapper {
 
     public PostMediaDTO toPostMediaDTO(PostMedia postMedia) {
         PostMediaDTO postMediaDTO = new PostMediaDTO();
-        postMediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(postMedia.getMediaKey()));
+        postMediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(postMedia.getMediaKey(), PostActionPrivacy.public_post));
         postMediaDTO.setResourceType(postMedia.getResourceType());
         return postMediaDTO;
     }

@@ -278,6 +278,7 @@ public class PostActionService {
                 postPollAnswer.setAnswer(postPollAnswerRequest.getPollAnswer());
                 postPollAnswer.setUserActor(user);
                 postPollAnswer.setPostAction(postAction);
+                postPollAnswer.addMetadata();
                 PostPollQuestion postPollQuestion = postAction.getPostPollQuestion();
                 postPollQuestion.getPostPollAnswer().add(postPollAnswer);
                 return postPollQuestionMapper.toDTO(postPollQuestionRepository.save(postPollQuestion));

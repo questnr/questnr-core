@@ -2,6 +2,7 @@ package com.questnr.controllers.community;
 
 import com.questnr.access.CommunityPostActionAccessService;
 import com.questnr.exceptions.AccessException;
+import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.PostActionForCommunityDTO;
 import com.questnr.model.dto.post.normal.PostActionRequestDTO;
 import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
@@ -50,11 +51,9 @@ public class CommunityPostActionController {
 
     // Basic post operations for users.
     @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.GET)
-    Page<PostActionForCommunityDTO> getAllPostsByCommunityId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable long communityId) {
+    Page<PostBaseDTO> getAllPostsByCommunityId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable long communityId) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<PostAction> postActionPage = communityPostActionService.getAllPostActionsByCommunityId(communityId, pageable);
-        List<PostActionForCommunityDTO> postActionForCommunityDTOS = postActionPage.getContent().stream().map(postActionMapper::toPostActionForCommunityDTO).collect(Collectors.toList());
-        return new PageImpl<>(postActionForCommunityDTOS, pageable, postActionPage.getTotalElements());
+        return communityPostActionService.getAllPostActionsByCommunityId(communityId, pageable);
     }
 
     @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -88,7 +87,7 @@ public class CommunityPostActionController {
          * Community Post Security Checking
          * */
         if (communityPostActionAccessService.hasAccessToPostCreation(communityId)) {
-            return communityPostActionService.createPollQuestionPost(communityId,  postPollQuestionRequest);
+            return communityPostActionService.createPollQuestionPost(communityId, postPollQuestionRequest);
         }
         throw new AccessException();
     }
@@ -98,7 +97,7 @@ public class CommunityPostActionController {
                                          @PathVariable Long postId,
                                          @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
         PostAction postAction = communityPostActionAccessService.createPollAnswerPost(communityId, postId);
-        if(postAction != null) {
+        if (postAction != null) {
             return communityPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
         }
         throw new AccessException();

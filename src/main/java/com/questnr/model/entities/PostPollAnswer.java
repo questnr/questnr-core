@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Indexed
 @Table(name = "qr_post_poll_answers")
-public class PostPollAnswer {
+public class PostPollAnswer extends DomainObject{
     @Id
     @Column(name = "post_poll_answer_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_poll_answer_seq")
