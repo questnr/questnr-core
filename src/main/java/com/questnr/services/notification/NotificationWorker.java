@@ -107,7 +107,7 @@ public class NotificationWorker extends Thread {
                                 pushNotificationRequest.setTokenList(tokenList);
                                 Map<String, String> data = new HashMap<>();
                                 data.put("isNotification", "true");
-                                data.put("type", "normal");
+                                data.put("type", item.getNotificationFunctionality().getJsonValue());
                                 this.pushNotificationService.multicastPushNotificationToTokenWithData(data, pushNotificationRequest);
                             }
                         } catch (Exception ex) {

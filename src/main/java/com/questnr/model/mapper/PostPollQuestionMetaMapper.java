@@ -21,6 +21,7 @@ public class PostPollQuestionMetaMapper {
                 List<PostPollAnswer> postPollAnswerList = postAction.getPostPollQuestion().getPostPollAnswer().stream().filter(postPollAnswer ->
                         postPollAnswer.getUserActor().getUserId().equals(userId)
                 ).collect(Collectors.toList());
+                postPollQuestionMetaDTO.setTotalAnswered(postAction.getPostPollQuestion().getPostPollAnswer().size());
                 if (postPollAnswerList.size() == 1) {
                     postPollQuestionMetaDTO.setPollAnswer(postPollAnswerList.get(0).getAnswer());
                 }
