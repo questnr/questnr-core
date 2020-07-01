@@ -89,15 +89,22 @@ public class CommunityJoinService {
         List<Community> invitedCommunityList = communityInvitedUserPage.getContent().stream().map(CommunityInvitedUser::getCommunity).collect(Collectors.toList());
         return new PageImpl<>(communityMapper.toDTOs(invitedCommunityList), pageable, communityInvitedUserPage.getTotalElements());
     }
+//
+//    private Community addUserToCommunity(Community community, User user) {
+//        Set<CommunityUser> communityUsers = community.getUsers();
+//        CommunityUser communityUser = new CommunityUser();
+//        communityUser.setUser(user);
+//        communityUser.setCommunity(community);
+//        communityUsers.add(communityUser);
+//        community.setUsers(communityUsers);
+//        return community;
+//    }
 
-    private Community addUserToCommunity(Community community, User user) {
-        Set<CommunityUser> communityUsers = community.getUsers();
+    private CommunityUser createCommunityUser(Community community, User user) {
         CommunityUser communityUser = new CommunityUser();
         communityUser.setUser(user);
         communityUser.setCommunity(community);
-        communityUsers.add(communityUser);
-        community.setUsers(communityUsers);
-        return community;
+        return communityUserRepository.save(communityUser);
     }
 
     private Community addInvitationFromCommunity(Community community, User user) {
@@ -142,10 +149,11 @@ public class CommunityJoinService {
             User user = userCommonService.getUser();
             if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
                 throw new AlreadyExistsException("You are already been joined!");
-            communityRepository.save(this.addUserToCommunity(community, user));
+//            communityRepository.save(this.addUserToCommunity(community, user));
 
+            CommunityUser savedCommunityUser = this.createCommunityUser(community, user);
             // Notification job created and assigned to Notification Processor.
-            notificationJob.createNotificationJob(communityUserRepository.findByCommunityAndUser(community, user));
+            notificationJob.createNotificationJob(savedCommunityUser);
 
             return community;
         }).orElseThrow(() -> {
@@ -185,9 +193,11 @@ public class CommunityJoinService {
             if (!this.existsCommunityUser(community, user) && this.existsCommunityInvitation(community, user)) {
                 community = this.removeThisUserFromInvitationList(community, user);
                 if (hasAccepted) {
-                    community = this.addUserToCommunity(community, user);
+//                    community = this.addUserToCommunity(community, user);
+                    this.createCommunityUser(community, user);
                 }
-                return communityRepository.save(community);
+//                return communityRepository.save(community);
+                return community;
             } else if (this.existsCommunityUser(community, user)) {
                 throw new AlreadyExistsException("You have already been joined");
             }
@@ -208,33 +218,24 @@ public class CommunityJoinService {
     public void revokeJoinFromUser(Long communityId, Long userId) {
         User user = userCommonService.getUser(userId);
         communityRepository.findById(communityId).map(community -> {
-            if (this.existsCommunityUser(community, user)) {
-                Set<CommunityUser> joinedUsers = community.getUsers();
-                CommunityUser thisCommunityUser = new CommunityUser();
-                for (CommunityUser communityUser : joinedUsers) {
-                    if (Objects.equals(communityUser.getUser().getUserId(), user.getUserId())) {
-                        thisCommunityUser = communityUser;
-                        joinedUsers.remove(communityUser);
-                        break;
-                    }
-                }
-                community.setUsers(joinedUsers);
+            CommunityUser communityUser = communityUserRepository.findByCommunityAndUser(community, user);
+            if (communityUser != null) {
 
                 // Notification job created and assigned to Notification Processor.
 //                notificationJob.createNotificationJob(thisCommunityUser, false);
-
                 try {
                     notificationRepository.deleteByNotificationBaseAndType(
-                            thisCommunityUser.getCommunityUserId(),
-                            thisCommunityUser.getNotificationType().getJsonValue()
+                            communityUser.getCommunityUserId(),
+                            communityUser.getNotificationType().getJsonValue()
                     );
                 } catch (Exception e) {
 
                 }
-
-                return communityRepository.save(community);
+                communityUserRepository.delete(communityUser);
+                return community;
+            } else {
+                throw new InvalidRequestException("You are not member of this community");
             }
-            throw new InvalidRequestException("You are not member of this community");
         }).orElseThrow(() -> {
             throw new ResourceNotFoundException("Error in accepting the invitation");
         });
@@ -267,8 +268,8 @@ public class CommunityJoinService {
 
         List<User> pagedUserList = new ArrayList<>();
 
-        if(pageable.getPageNumber() * pageable.getPageSize() < filteredUserList.size()) {
-             pagedUserList = filteredUserList.subList(pageable.getPageNumber() * pageable.getPageSize(),
+        if (pageable.getPageNumber() * pageable.getPageSize() < filteredUserList.size()) {
+            pagedUserList = filteredUserList.subList(pageable.getPageNumber() * pageable.getPageSize(),
                     Math.min(
                             (pageable.getPageNumber() + 1) * pageable.getPageSize(),
                             filteredUserList.size()
