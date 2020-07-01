@@ -1,6 +1,5 @@
 package com.questnr.services.user;
 
-import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.ResourceNotFoundException;
@@ -104,30 +103,20 @@ public class UserFollowerService {
     public void undoFollowUser(Long userId, Long userBeingFollowedId) {
         User user = userCommonService.getUser(userId);
         User userBeingFollowed = userRepository.findByUserId(userBeingFollowedId);
-        if (this.existsUserFollower(userBeingFollowed, user)) {
-            Set<UserFollower> userFollowers = user.getThisFollowingUserSet();
-            UserFollower thisUserFollower = new UserFollower();
-            for (UserFollower userFollower : userFollowers) {
-                if (Objects.equals(userFollower.getFollowingUser().getUserId(), user.getUserId()) && Objects.equals(userFollower.getUser().getUserId(), userBeingFollowed.getUserId())) {
-                    thisUserFollower = userFollower;
-                    userFollowers.remove(userFollower);
-                    break;
-                }
-            }
-            user.setThisFollowingUserSet(userFollowers);
-
-            userRepository.save(user);
-
+        UserFollower userFollower = userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user);
+        if (userFollower != null) {
             // Notification job created and assigned to Notification Processor.
 //            notificationJob.createNotificationJob(thisUserFollower, false);
             try {
                 notificationRepository.deleteByNotificationBaseAndType(
-                        thisUserFollower.getUserFollowerId(),
-                        NotificationType.followedUser.getJsonValue()
+                        userFollower.getUserFollowerId(),
+                        userFollower.getNotificationType().getJsonValue(),
+                        userBeingFollowed.getUserId()
                 );
             } catch (Exception e) {
 
             }
+            userFollowerRepository.delete(userFollower);
         } else {
             throw new ResourceNotFoundException("You are not following the user");
         }

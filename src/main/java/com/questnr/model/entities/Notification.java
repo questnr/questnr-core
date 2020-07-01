@@ -1,8 +1,12 @@
 package com.questnr.model.entities;
 
+import com.questnr.common.enums.NotificationFunctionality;
 import org.hibernate.annotations.*;
-import org.hibernate.annotations.CascadeType;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Entity;
@@ -35,33 +39,47 @@ public class Notification extends DomainObject {
                     @MetaValue(value = "LC", targetEntity = LikeCommentAction.class),
                     @MetaValue(value = "I", targetEntity = CommunityInvitedUser.class),
                     @MetaValue(value = "FC", targetEntity = CommunityUser.class),
-                    @MetaValue(value = "FU", targetEntity = UserFollower.class)
+                    @MetaValue(value = "FU", targetEntity = UserFollower.class),
+                    @MetaValue(value = "PA", targetEntity = PostPollAnswer.class)
             }
     )
-    @NotFound(action = NotFoundAction.IGNORE)
+    @Cascade( { org.hibernate.annotations.CascadeType.ALL } )
     @JoinColumn(name = "notification_base_id")
     private NotificationBase notificationBase;
 
     private boolean isRead;
 
+    @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
+    @Column(name = "functionality", columnDefinition = "varchar default 'normal'")
+    @Enumerated(EnumType.STRING)
+    private NotificationFunctionality notificationFunctionality;
+
     public Notification() {
         this.addMetadata();
+    }
+
+    public Notification(PostPollAnswer postPollAnswer) {
+        this.user = postPollAnswer.getPostAction().getUserActor();
+        this.notificationBase = postPollAnswer;
+        this.isRead = false;
+        this.addMetadata();
+        this.setNotificationFunctionality(NotificationFunctionality.answer);
     }
 
     public Notification(PostAction postAction, User user) {
         this.user = user;
         this.notificationBase = postAction;
-//        this.notificationType = NotificationType.like;
         this.isRead = false;
         this.addMetadata();
+        this.setNotificationFunctionality(NotificationFunctionality.normal);
     }
 
     public Notification(LikeAction likeAction) {
         this.user = likeAction.getPostAction().getUserActor();
         this.notificationBase = likeAction;
-//        this.notificationType = NotificationType.like;
         this.isRead = false;
         this.addMetadata();
+        this.setNotificationFunctionality(NotificationFunctionality.normal);
     }
 
     public Notification(CommentAction commentAction) {
@@ -72,15 +90,14 @@ public class Notification extends DomainObject {
             this.user = commentAction.getPostAction().getUserActor();
         }
         this.notificationBase = commentAction;
-//        this.notificationType = NotificationType.comment;
         this.isRead = false;
         this.addMetadata();
+        this.setNotificationFunctionality(NotificationFunctionality.normal);
     }
 
     public Notification(LikeCommentAction likeCommentAction) {
         this.user = likeCommentAction.getCommentAction().getPostAction().getUserActor();
         this.notificationBase = likeCommentAction;
-//        this.notificationType = NotificationType.likeComment;
         this.isRead = false;
         this.addMetadata();
     }
@@ -88,9 +105,9 @@ public class Notification extends DomainObject {
     public Notification(CommunityInvitedUser communityInvitedUser) {
         this.user = communityInvitedUser.getUser();
         this.notificationBase = communityInvitedUser;
-//        this.notificationType = NotificationType.invitation;
         this.isRead = false;
         this.addMetadata();
+        this.setNotificationFunctionality(NotificationFunctionality.normal);
     }
 
     public Notification(CommunityUser communityUser) {
@@ -98,6 +115,7 @@ public class Notification extends DomainObject {
         this.notificationBase = communityUser;
         this.isRead = false;
         this.addMetadata();
+        this.setNotificationFunctionality(NotificationFunctionality.normal);
     }
 
     public Notification(UserFollower userFollower) {
@@ -105,6 +123,7 @@ public class Notification extends DomainObject {
         this.notificationBase = userFollower;
         this.isRead = false;
         this.addMetadata();
+        this.setNotificationFunctionality(NotificationFunctionality.normal);
     }
 
     public Long getNotificationId() {
@@ -137,5 +156,13 @@ public class Notification extends DomainObject {
 
     public void setRead(boolean read) {
         isRead = read;
+    }
+
+    public NotificationFunctionality getNotificationFunctionality() {
+        return notificationFunctionality;
+    }
+
+    public void setNotificationFunctionality(NotificationFunctionality notificationFunctionality) {
+        this.notificationFunctionality = notificationFunctionality;
     }
 }

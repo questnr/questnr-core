@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.common.enums.NotificationFunctionality;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.NotificationDTO;
 import com.questnr.model.entities.Notification;
@@ -17,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class NotificationService {
@@ -74,7 +74,9 @@ public class NotificationService {
     public List<NotificationDTO> getNotificationsByUser(Pageable pageable) {
         User user = userCommonService.getUser();
         try {
-            List<Notification> notifications = notificationRepository.findAllByUser(user, pageable);
+            List<Notification> notifications = notificationRepository.findAllByUserAndNotificationFunctionality(user,
+                    NotificationFunctionality.normal,
+                    pageable);
             return notificationMapper.toNotificationDTOs(notifications);
         } catch (Exception e) {
             LOGGER.error("Exception occur while fetch Notification by User ", e);
@@ -86,7 +88,9 @@ public class NotificationService {
         User user = userCommonService.getUser();
         Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by("createdAt").descending());
         try {
-            List<Notification> notifications = notificationRepository.findAllByUser(user, pageable);
+            List<Notification> notifications = notificationRepository.findAllByUserAndNotificationFunctionality(user,
+                    NotificationFunctionality.normal,
+                    pageable);
             int count = 0;
             for(Notification notification : notifications){
                 if(!notification.isRead()){

@@ -1,5 +1,6 @@
 package com.questnr.model.repositories;
 
+import com.questnr.common.enums.NotificationFunctionality;
 import com.questnr.model.entities.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,9 +13,9 @@ import java.util.List;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    Notification findByUser(User user);
+    Notification findByUserAndNotificationFunctionality(User user, NotificationFunctionality nf);
 
-    List<Notification> findAllByUser(User user, Pageable pageable);
+    List<Notification> findAllByUserAndNotificationFunctionality(User user,NotificationFunctionality nf, Pageable pageable);
 
     Notification findByUserAndNotificationId(User user, Long notificationId);
 

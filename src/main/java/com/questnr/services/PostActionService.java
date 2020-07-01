@@ -71,23 +71,23 @@ public class PostActionService {
     PostPollQuestionRepository postPollQuestionRepository;
 
     @Autowired
-            PostPollAnswerRepository postPollAnswerRepository;
+    PostPollAnswerRepository postPollAnswerRepository;
 
-    PostActionService(){
+    PostActionService() {
         postReportMapper = Mappers.getMapper(PostReportMapper.class);
     }
 
-    public PostAction getPostActionById(Long postActionId){
+    public PostAction getPostActionById(Long postActionId) {
         PostAction postAction = postActionRepository.findByPostActionId(postActionId);
-        if(postAction != null){
+        if (postAction != null) {
             return postAction;
         }
         throw new ResourceNotFoundException("Post not found!");
     }
 
-    public PostAction getPostActionByIdAndType(Long postActionId, PostType postType){
+    public PostAction getPostActionByIdAndType(Long postActionId, PostType postType) {
         PostAction postAction = postActionRepository.findByPostActionIdAndPostType(postActionId, postType);
-        if(postAction != null){
+        if (postAction != null) {
             return postAction;
         }
         throw new ResourceNotFoundException("Post not found!");
@@ -232,7 +232,7 @@ public class PostActionService {
             try {
                 PostActionTrendLinearData postActionTrendLinearData = postActionTrendLinearDataRepository.findByPostAction(postAction);
                 if (postActionTrendLinearData != null) {
-                   postActionTrendLinearDataRepository.delete(postActionTrendLinearData);
+                    postActionTrendLinearDataRepository.delete(postActionTrendLinearData);
                 }
                 notificationRepository.deleteByNotificationBaseAndType(
                         postAction.getPostActionId(),
@@ -248,24 +248,24 @@ public class PostActionService {
         }
     }
 
-    public PostAction getPostActionUsingId(Long postId){
+    public PostAction getPostActionUsingId(Long postId) {
         PostAction postAction = postActionRepository.findByPostActionId(postId);
-        if(postAction != null){
+        if (postAction != null) {
             return postAction;
         }
         throw new ResourceNotFoundException("Post not found!");
     }
 
-    public void reportPost(Long postId, PostReportRequest postReportRequest){
+    public void reportPost(Long postId, PostReportRequest postReportRequest) {
         User user = userCommonService.getUser();
         PostAction postAction = this.getPostActionUsingId(postId);
-        try{
+        try {
             PostReport postReport = postReportMapper.fromPostReportRequest(postReportRequest);
             postReport.setUserActor(user);
             postReport.setPostAction(postAction);
             postReport.addMetadata();
             this.postReportRepository.save(postReport);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
@@ -273,7 +273,7 @@ public class PostActionService {
     public PollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
         User user = userCommonService.getUser();
         if (postPollAnswerRequest != null) {
-            if(!postPollAnswerRepository.existsByPostActionAndUserActor(postAction, user)) {
+            if (!postPollAnswerRepository.existsByPostActionAndUserActor(postAction, user)) {
                 PostPollAnswer postPollAnswer = new PostPollAnswer();
                 postPollAnswer.setAnswer(postPollAnswerRequest.getPollAnswer());
                 postPollAnswer.setUserActor(user);
@@ -281,8 +281,13 @@ public class PostActionService {
                 postPollAnswer.addMetadata();
                 PostPollQuestion postPollQuestion = postAction.getPostPollQuestion();
                 postPollQuestion.getPostPollAnswer().add(postPollAnswer);
-                return postPollQuestionMapper.toDTO(postPollQuestionRepository.save(postPollQuestion));
-            }else{
+                PostPollQuestion savedPostPollQuestion = postPollQuestionRepository.save(postPollQuestion);
+
+                // Notification job created and assigned to Notification Processor.
+                notificationJob.createNotificationJob(postPollAnswerRepository.findFirstByPostActionAndUserActor(postAction, user));
+
+                return postPollQuestionMapper.toDTO(savedPostPollQuestion);
+            } else {
                 throw new InvalidRequestException("Already submitted the answer");
             }
         } else {

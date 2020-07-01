@@ -100,6 +100,10 @@ public class NotificationJob {
         this.createNotificationJob(new Notification(userFollower), toCreate);
     }
 
+    public void createNotificationJob(PostPollAnswer postPollAnswer, boolean toCreate) {
+        this.createNotificationJob(new Notification(postPollAnswer), toCreate);
+    }
+
     public void createNotificationJob(PostAction postAction) {
         this.createNotificationJob(postAction, true);
     }
@@ -126,5 +130,9 @@ public class NotificationJob {
 
     public void createNotificationJob(UserFollower userFollower) {
         this.createNotificationJob(userFollower, true);
+    }
+
+    public void createNotificationJob(PostPollAnswer postPollAnswer) {
+        this.createNotificationJob(postPollAnswer, true);
     }
 }

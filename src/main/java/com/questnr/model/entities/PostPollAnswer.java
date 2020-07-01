@@ -1,5 +1,7 @@
 package com.questnr.model.entities;
 
+import com.questnr.common.NotificationTitles;
+import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.PostPollAnswerType;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -12,7 +14,7 @@ import javax.persistence.*;
 @Entity
 @Indexed
 @Table(name = "qr_post_poll_answers")
-public class PostPollAnswer extends DomainObject{
+public class PostPollAnswer extends DomainObject implements NotificationBase {
     @Id
     @Column(name = "post_poll_answer_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_poll_answer_seq")
@@ -62,5 +64,13 @@ public class PostPollAnswer extends DomainObject{
 
     public void setPostAction(PostAction postAction) {
         this.postAction = postAction;
+    }
+
+    public NotificationType getNotificationType() {
+        return NotificationType.pollAnswer;
+    }
+
+    public String getNotificationTitles() {
+        return NotificationTitles.POLL_ANSWER;
     }
 }

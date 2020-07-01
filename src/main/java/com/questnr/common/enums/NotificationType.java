@@ -7,7 +7,8 @@ public enum NotificationType {
   likeComment("LC"),
   invitation("I"),
   followedUser("FU"),
-  followedCommunity("FC");
+  followedCommunity("FC"),
+  pollAnswer("PA");
 
   public String jsonValue;
 

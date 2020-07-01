@@ -9,4 +9,5 @@ public interface NotificationTitles {
     String INVITATION_ACTION = "invited you to join %s";
     String FOLLOWED_COMMUNITY = "started following %s";
     String FOLLOWED_USER = "started following you";
+    String POLL_ANSWER = "answered on your question";
 }

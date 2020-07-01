@@ -1,7 +1,6 @@
 package com.questnr.services.community;
 
 import com.questnr.access.CommunityAccessService;
-import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.AlreadyExistsException;
@@ -227,7 +226,7 @@ public class CommunityJoinService {
                 try {
                     notificationRepository.deleteByNotificationBaseAndType(
                             thisCommunityUser.getCommunityUserId(),
-                            NotificationType.followedCommunity.getJsonValue()
+                            thisCommunityUser.getNotificationType().getJsonValue()
                     );
                 } catch (Exception e) {
 
