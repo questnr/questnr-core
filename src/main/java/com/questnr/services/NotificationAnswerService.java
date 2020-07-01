@@ -1,7 +1,6 @@
 package com.questnr.services;
 
 import com.questnr.common.enums.NotificationFunctionality;
-import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.NotificationDTO;
 import com.questnr.model.entities.Notification;
 import com.questnr.model.entities.User;
@@ -20,7 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class NotificationService {
+public class NotificationAnswerService {
 
     @Autowired
     UserCommonService userCommonService;
@@ -39,11 +38,11 @@ public class NotificationService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
-    public List<NotificationDTO> getNotificationsByUser(Pageable pageable) {
+    public List<NotificationDTO> getAnswerNotificationsByUser(Pageable pageable) {
         User user = userCommonService.getUser();
         try {
             List<Notification> notifications = notificationRepository.findAllByUserAndNotificationFunctionality(user,
-                    NotificationFunctionality.normal,
+                    NotificationFunctionality.answer,
                     pageable);
             return notificationMapper.toNotificationDTOs(notifications);
         } catch (Exception e) {
@@ -52,43 +51,12 @@ public class NotificationService {
         }
     }
 
-    public void readNotification(Long notificationId) {
-        User user = userCommonService.getUser();
-        Notification notification = notificationRepository.findByUserAndNotificationId(user, notificationId);
-        if (notification != null) {
-            try {
-                notification.setRead(true);
-                notificationRepository.save(notification);
-            } catch (Exception e) {
-                LOGGER.error("Exception occur while save Notification ", e);
-                throw new ResourceNotFoundException("Notification not found!");
-            }
-        } else {
-            throw new ResourceNotFoundException("Notification not found!");
-        }
-    }
-
-    public void deleteNotification(Long notificationId) {
-        User user = userCommonService.getUser();
-        Notification notification = notificationRepository.findByUserAndNotificationId(user, notificationId);
-        if (notification != null) {
-            try {
-                notificationRepository.delete(notification);
-            } catch (Exception e) {
-                LOGGER.error("Exception occur while save Notification ", e);
-                throw new ResourceNotFoundException("Notification not found!");
-            }
-        } else {
-            throw new ResourceNotFoundException("Notification not found!");
-        }
-    }
-
     public Integer countUnreadNotifications() {
         User user = userCommonService.getUser();
         Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by("createdAt").descending());
         try {
             List<Notification> notifications = notificationRepository.findAllByUserAndNotificationFunctionality(user,
-                    NotificationFunctionality.normal,
+                    NotificationFunctionality.answer,
                     pageable);
             int count = 0;
             for(Notification notification : notifications){
