@@ -75,6 +75,13 @@ public class UserFollowerService {
         return userBeingFollowed;
     }
 
+    private User addUserToUserFollowing(User user, UserFollower userFollower) {
+        Set<UserFollower> userFollowers = user.getThisFollowingUserSet();
+        userFollowers.add(userFollower);
+        user.setThisFollowingUserSet(userFollowers);
+        return user;
+    }
+
     public boolean existsUserFollower(User userBeingFollowed, User user) {
         return userFollowerRepository.existsByUserAndFollowingUser(userBeingFollowed, user);
     }
@@ -86,10 +93,17 @@ public class UserFollowerService {
             if (this.existsUserFollower(userBeingFollowed, user))
                 throw new AlreadyExistsException("You are already following the user!");
             try {
-                userRepository.save(this.addUserToUser(userBeingFollowed, user));
+//                userRepository.save(this.addUserToUser(userBeingFollowed, user));
+                UserFollower userFollower = new UserFollower();
+                userFollower.setUser(userBeingFollowed);
+                userFollower.setFollowingUser(user);
+                UserFollower savedUserFollower = userFollowerRepository.save(userFollower);
+//                userRepository.save(this.addUserToUserFollowing(user, savedUserFollower));
 
                 // Notification job created and assigned to Notification Processor.
-                notificationJob.createNotificationJob(userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user));
+                notificationJob.createNotificationJob(savedUserFollower);
+
+//                notificationJob.createNotificationJob(userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user));
 
                 return userBeingFollowed;
             } catch (Exception e) {
@@ -106,16 +120,15 @@ public class UserFollowerService {
         UserFollower userFollower = userFollowerRepository.findByUserAndFollowingUser(userBeingFollowed, user);
         if (userFollower != null) {
             // Notification job created and assigned to Notification Processor.
-//            notificationJob.createNotificationJob(thisUserFollower, false);
-            try {
-                notificationRepository.deleteByNotificationBaseAndType(
-                        userFollower.getUserFollowerId(),
-                        userFollower.getNotificationType().getJsonValue(),
-                        userBeingFollowed.getUserId()
-                );
-            } catch (Exception e) {
-
-            }
+            notificationJob.createNotificationJob(userFollower, false);
+//            try {
+//                notificationRepository.deleteByNotificationBaseAndType(
+//                        userFollower.getUserFollowerId(),
+//                        userFollower.getNotificationType().getJsonValue()
+//                );
+//            } catch (Exception e) {
+//
+//            }
             userFollowerRepository.delete(userFollower);
         } else {
             throw new ResourceNotFoundException("You are not following the user");

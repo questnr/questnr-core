@@ -43,7 +43,7 @@ public class Notification extends DomainObject {
                     @MetaValue(value = "PA", targetEntity = PostPollAnswer.class)
             }
     )
-    @Cascade( { org.hibernate.annotations.CascadeType.ALL } )
+    @Cascade( { org.hibernate.annotations.CascadeType.MERGE } )
     @JoinColumn(name = "notification_base_id")
     private NotificationBase notificationBase;
 
