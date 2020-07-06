@@ -2,6 +2,7 @@ package com.questnr.services.analytics;
 
 import com.questnr.common.PostActionRankDependents;
 import com.questnr.common.StartingEndingDate;
+import com.questnr.common.enums.PostType;
 import com.questnr.model.dto.post.normal.PostActionRankDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostActionTrendData;
@@ -38,6 +39,9 @@ public class PostActionTrendService implements Runnable {
     SharePostActionRepository sharePostActionRepository;
 
     @Autowired
+    PostPollAnswerRepository postPollAnswerRepository;
+
+    @Autowired
     PostActionTrendDataRepository postActionTrendDataRepository;
 
     @Autowired
@@ -52,11 +56,15 @@ public class PostActionTrendService implements Runnable {
     @Value("${questnr.max-trending-posts}")
     private int MAX_TRENDING_POSTS;
 
-    private Double calculatePostActionRank(PostActionRankDTO postActionRankDTO) {
+    private Double calculateNormalPostActionRank(PostActionRankDTO postActionRankDTO) {
         return PostActionRankDependents.LIKE_ACTION * postActionRankDTO.getTotalLikes() +
-                PostActionRankDependents.COMMENT_ACTION * postActionRankDTO.getTotalComments() +
-                PostActionRankDependents.POST_VISIT * postActionRankDTO.getTotalPostVisits() +
-                PostActionRankDependents.POST_SHARED * postActionRankDTO.getTotalPostShared();
+                PostActionRankDependents.COMMENT_ACTION * postActionRankDTO.getTotalComments();
+//                PostActionRankDependents.POST_VISIT * postActionRankDTO.getTotalPostVisits() +
+//                PostActionRankDependents.POST_SHARED * postActionRankDTO.getTotalPostShared();
+    }
+
+    private Double calculateQuestionPostActionRank(PostActionRankDTO postActionRankDTO) {
+        return PostActionRankDependents.ANSWER_ACTION * postActionRankDTO.getTotalAnswers();
     }
 
     private List<PostActionTrendLinearData> addPostActionTrendLinearData(List<PostActionTrendLinearData> postActionTrendLinearDataList, PostActionTrendData postActionTrendData) {
@@ -146,36 +154,50 @@ public class PostActionTrendService implements Runnable {
 
             // Today's Date
             Date nextDatePointer = c.getTime();
-            Long totalLikes;
-            Long totalComments;
-            Long totalPostVisits;
-            Long totalPostShared;
-
             for (PostAction postAction : postActionList) {
-
-                totalLikes = likeActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
-
-                totalComments = commentActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
-
-                totalPostVisits = postVisitRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
-
-                totalPostShared = sharePostActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
-
-                if (totalLikes <= PostActionRankDependents.LIKE_COUNT_THRESHOLD
-                        && totalComments <= PostActionRankDependents.COMMENT_COUNT_THRESHOLD
-                        && totalPostVisits <= PostActionRankDependents.POST_VISIT_COUNT_THRESHOLD
-                        && totalPostShared <= PostActionRankDependents.POST_SHARED_COUNT_THRESHOLD)
-                    continue;
-
+                Long totalLikes;
+                Long totalComments;
+//                Long totalPostVisits;
+//                Long totalPostShared;
+                Long totalAnswers;
                 PostActionRankDTO postActionRankDTO = new PostActionRankDTO();
-                postActionRankDTO.setTotalPosts(Long.valueOf(postActionList.size()));
-                postActionRankDTO.setTotalLikes(totalLikes);
-                postActionRankDTO.setTotalComments(totalComments);
-                postActionRankDTO.setTotalPostVisits(totalPostVisits);
-                postActionRankDTO.setTotalPostShared(totalPostShared);
-                postActionRankDTO.setRank(this.calculatePostActionRank(postActionRankDTO));
                 postActionRankDTO.setDate(datePointer);
 
+                if(postAction.getPostType() == PostType.simple) {
+
+                    totalLikes = likeActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
+                    if (totalLikes <= PostActionRankDependents.LIKE_COUNT_THRESHOLD)
+                        continue;
+
+                    totalComments = commentActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
+                    if(totalComments <= PostActionRankDependents.COMMENT_COUNT_THRESHOLD)
+                        continue;
+//
+//                    totalPostVisits = postVisitRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
+//                    if(totalPostVisits < PostActionRankDependents.POST_VISIT_COUNT_THRESHOLD)
+//                        continue;
+//
+//                    totalPostShared = sharePostActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
+//                    if(totalPostShared < PostActionRankDependents.POST_SHARED_COUNT_THRESHOLD)
+//                        continue;
+
+                    postActionRankDTO.setTotalPosts((long) postActionList.size());
+                    postActionRankDTO.setTotalLikes(totalLikes);
+                    postActionRankDTO.setTotalComments(totalComments);
+//                    postActionRankDTO.setTotalPostVisits(totalPostVisits);
+//                    postActionRankDTO.setTotalPostShared(totalPostShared);
+                    postActionRankDTO.setRank(this.calculateNormalPostActionRank(postActionRankDTO));
+                } else if (postAction.getPostType() == PostType.question) {
+
+                    totalAnswers = postPollAnswerRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
+                    if(totalAnswers <= PostActionRankDependents.ANSWER_COUNT_THRESHOLD){
+                        continue;
+                    }
+
+                    postActionRankDTO.setTotalPosts((long) postActionList.size());
+                    postActionRankDTO.setTotalAnswers(totalAnswers);
+                    postActionRankDTO.setRank(this.calculateQuestionPostActionRank(postActionRankDTO));
+                }
                 if (postActionRankDTO.getRank() > PostActionRankDependents.MIN_THRESHOLD) {
                     PostActionTrendData postActionTrendData = new PostActionTrendData();
                     postActionTrendData.setPostAction(postAction);
@@ -183,7 +205,6 @@ public class PostActionTrendService implements Runnable {
                     postActionTrendData.setRank(postActionRankDTO.getRank());
                     postActionTrendDataRepository.save(postActionTrendData);
                 }
-
             }
 
             this.calculatePostActionTrendOverTime();

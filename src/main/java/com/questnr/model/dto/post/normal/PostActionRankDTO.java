@@ -15,6 +15,8 @@ public class PostActionRankDTO {
 
     private Long totalPostShared;
 
+    private Long totalAnswers;
+
     private Double rank;
 
     private Date date;
@@ -65,6 +67,14 @@ public class PostActionRankDTO {
 
     public void setTotalPostShared(Long totalPostShared) {
         this.totalPostShared = totalPostShared;
+    }
+
+    public Long getTotalAnswers() {
+        return totalAnswers;
+    }
+
+    public void setTotalAnswers(Long totalAnswers) {
+        this.totalAnswers = totalAnswers;
     }
 
     public Double getRank() {
