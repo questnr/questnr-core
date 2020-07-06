@@ -82,6 +82,7 @@ public class PostActionTrendService implements Runnable {
             newPostActionTrendLinearData.setPostAction(postActionTrendData.getPostAction());
             newPostActionTrendLinearData.addX(Double.valueOf(postActionTrendData.getObservedDate().getTime()));
             newPostActionTrendLinearData.addY(postActionTrendData.getRank());
+            newPostActionTrendLinearData.setPostType(postActionTrendData.getPostType());
             postActionTrendLinearDataList.add(newPostActionTrendLinearData);
         }
         return postActionTrendLinearDataList;
@@ -203,6 +204,7 @@ public class PostActionTrendService implements Runnable {
                     postActionTrendData.setPostAction(postAction);
                     postActionTrendData.setObservedDate(datePointer);
                     postActionTrendData.setRank(postActionRankDTO.getRank());
+                    postActionTrendData.setPostType(postAction.getPostType());
                     postActionTrendDataRepository.save(postActionTrendData);
                 }
             }

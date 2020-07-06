@@ -1,6 +1,11 @@
 package com.questnr.model.entities;
 
 
+import com.questnr.common.enums.PostType;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -19,6 +24,11 @@ public class PostActionTrendData {
     @ManyToOne
     @JoinColumn(name = "post_action_id")
     private PostAction postAction;
+
+    @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
+    @Column(name = "post_type", columnDefinition = "varchar default 'simple'")
+    @Enumerated(EnumType.STRING)
+    private PostType postType;
 
     @Column(name = "rank", length = 50)
     private Double rank;
@@ -40,6 +50,14 @@ public class PostActionTrendData {
 
     public void setPostAction(PostAction postAction) {
         this.postAction = postAction;
+    }
+
+    public PostType getPostType() {
+        return postType;
+    }
+
+    public void setPostType(PostType postType) {
+        this.postType = postType;
     }
 
     public Double getRank() {

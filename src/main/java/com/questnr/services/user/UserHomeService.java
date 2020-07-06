@@ -1,6 +1,7 @@
 package com.questnr.services.user;
 
 import com.questnr.common.CommunitySuggestionData;
+import com.questnr.common.enums.PostType;
 import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
@@ -131,6 +132,20 @@ public class UserHomeService {
 
     public Page<PostBaseDTO> getTrendingPostList(Pageable pageable) {
         Page<PostActionTrendLinearData> postActionTrendLinearDataPage = postActionTrendLinearDataRepository.findAll(pageable);
+
+//        Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator
+//                = Comparator.comparing(PostActionTrendLinearData::getSlop);
+//
+//        List<PostActionTrendLinearData> postActionTrendLinearDataList = new ArrayList<>(postActionTrendLinearDataPage.getContent());
+//        postActionTrendLinearDataList.sort(postActionTrendLinearDataComparator.reversed());
+
+        return new PageImpl<>(postActionMapper.toPublicDTOs(postActionTrendLinearDataPage.getContent().stream().map(PostActionTrendLinearData::getPostAction).collect(Collectors.toList())), pageable, postActionTrendLinearDataPage.getTotalElements());
+    }
+
+    public Page<PostBaseDTO> getTrendingPostPollQuestionList(Pageable pageable) {
+        Page<PostActionTrendLinearData> postActionTrendLinearDataPage =
+                postActionTrendLinearDataRepository.findAllByPostType(PostType.question,
+                pageable);
 
 //        Comparator<PostActionTrendLinearData> postActionTrendLinearDataComparator
 //                = Comparator.comparing(PostActionTrendLinearData::getSlop);

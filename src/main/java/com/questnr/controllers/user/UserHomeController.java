@@ -64,4 +64,10 @@ public class UserHomeController {
         Pageable pageable = PageRequest.of(page, size);
         return userHomeService.getTrendingPostList(pageable);
     }
+
+    @RequestMapping(value = "/user/explore/question", method = RequestMethod.GET)
+    Page<PostBaseDTO> getTrendingPostPollQuestionsOfTheWeek(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userHomeService.getTrendingPostPollQuestionList(pageable);
+    }
 }
