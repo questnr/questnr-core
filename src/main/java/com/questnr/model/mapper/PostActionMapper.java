@@ -47,6 +47,12 @@ public abstract class PostActionMapper {
     })
     abstract public PostActionPublicDTO toPublicDTO(final PostAction postAction);
 
+    public PostBaseDTO toPostBasePublicDTO(final PostAction postAction){
+        return postAction.getPostType() == PostType.simple ?
+                this.toPublicDTO(postAction) :
+                this.toPollQuestionPublicDTO(postAction);
+    }
+
     public List<PostBaseDTO> toPublicDTOs(final List<PostAction> postActionList) {
         List<PostBaseDTO> postActionDTOS = new ArrayList<>();
         for (PostAction postAction : postActionList) {

@@ -1,8 +1,10 @@
 package com.questnr.controllers;
 
-import com.questnr.model.dto.post.normal.PostActionForMediaDTO;
-import com.questnr.model.dto.post.normal.PostActionPublicDTO;
+import com.questnr.common.enums.PostType;
 import com.questnr.model.dto.SharableLinkDTO;
+import com.questnr.model.dto.post.PostBaseDTO;
+import com.questnr.model.dto.post.normal.PostActionForMediaDTO;
+import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.requests.PostReportRequest;
 import com.questnr.services.PostActionMetaService;
@@ -34,8 +36,14 @@ public class PostActionController {
 
     // Get PostAction using post slug
     @RequestMapping(value = "/post/{postSlug}", method = RequestMethod.GET)
-    PostActionPublicDTO getPostActionFromSlug(@PathVariable String postSlug) {
-        return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPublicDTO(postActionService.getPostActionFromSlug(postSlug)));
+    PostBaseDTO getPostActionFromSlug(@PathVariable String postSlug) {
+        PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
+        if(postAction.getPostType() == PostType.simple){
+            return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPublicDTO(postAction));
+        }else if(postAction.getPostType() == PostType.question){
+            return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPollQuestionPublicDTO(postAction));
+        }
+        return null;
     }
 
     // Get PostAction sharable link
