@@ -167,11 +167,11 @@ public class PostActionTrendService implements Runnable {
                 if(postAction.getPostType() == PostType.simple) {
 
                     totalLikes = likeActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
-                    if (totalLikes <= PostActionRankDependents.LIKE_COUNT_THRESHOLD)
+                    if (totalLikes < PostActionRankDependents.LIKE_COUNT_THRESHOLD)
                         continue;
 
                     totalComments = commentActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
-                    if(totalComments <= PostActionRankDependents.COMMENT_COUNT_THRESHOLD)
+                    if(totalComments < PostActionRankDependents.COMMENT_COUNT_THRESHOLD)
                         continue;
 //
 //                    totalPostVisits = postVisitRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
@@ -191,7 +191,7 @@ public class PostActionTrendService implements Runnable {
                 } else if (postAction.getPostType() == PostType.question) {
 
                     totalAnswers = postPollAnswerRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
-                    if(totalAnswers <= PostActionRankDependents.ANSWER_COUNT_THRESHOLD){
+                    if(totalAnswers < PostActionRankDependents.ANSWER_COUNT_THRESHOLD){
                         continue;
                     }
 
