@@ -1,6 +1,5 @@
 package com.questnr.model.repositories;
 
-import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import org.springframework.data.domain.Page;
@@ -9,8 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     Community findByCommunityId(long communityId);
@@ -18,8 +15,6 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     int countByCommunityName(String communityName);
 
     Community findByCommunityName(String name);
-
-    List<Community> findAllByStatus(PublishStatus status);
 
     Community findFirstBySlug(String slug);
 

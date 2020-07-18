@@ -50,16 +50,12 @@ public class CommunityJoinController {
         throw new AccessException();
     }
 
-    // Decline the invitation sent to the user
-    @RequestMapping(value = "/user/{userId}/invitations/community/", method = RequestMethod.GET)
+    // Get the list of invitation from communities for user
+    @RequestMapping(value = "/user/community/invitation", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    Page<CommunityDTO> getCommunityInvitationList(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
-        User user = communityJoinAccessService.getCommunityInvitationList(userId);
-        if (user != null) {
-            Pageable pageable = PageRequest.of(page, size);
-            return communityJoinService.getCommunityInvitationList(user, pageable);
-        }
-        throw new AccessException();
+    Page<CommunityDTO> getCommunityInvitationList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return communityJoinService.getCommunityInvitationList(pageable);
     }
 
     // Join user to the community
@@ -137,7 +133,7 @@ public class CommunityJoinController {
         return communityJoinService.getUserRelationShipWithCommunity(communityId);
     }
 
-    // Check user follows this community
+    // Get user list to invite
     @RequestMapping(value = "/user/join/community/{communityId}/users", method = RequestMethod.GET)
     Page<UserOtherDTO> getUserListToInvite(@PathVariable long communityId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         CommunityUser communityUser = communityJoinAccessService.getUserListToInvite(communityId);

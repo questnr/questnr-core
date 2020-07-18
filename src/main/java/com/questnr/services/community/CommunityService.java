@@ -1,6 +1,6 @@
 package com.questnr.services.community;
 
-import com.questnr.common.enums.PublishStatus;
+import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
@@ -131,6 +131,7 @@ public class CommunityService {
         if (community != null) {
             if (this.checkCommunityNameExists(community.getCommunityName())) {
                 try {
+                    community.setCommunityPrivacy(CommunityPrivacy.pub);
                     community.setOwnerUser(userCommonService.getUser());
                     community.addMetadata();
                     community.setSlug(this.createCommunitySlug(community));
@@ -166,7 +167,7 @@ public class CommunityService {
 
     public List<Community> findAllCommunityNames() {
         try {
-            return communityRepository.findAllByStatus(PublishStatus.publish);
+            return communityRepository.findAll();
         } catch (Exception e) {
             LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
             e.printStackTrace();

@@ -1,7 +1,5 @@
 package com.questnr.access;
 
-import com.questnr.model.entities.Community;
-import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.CommonService;
@@ -34,36 +32,13 @@ public class CommunityAvatarAccessService {
     @Autowired
     CommunityRepository communityRepository;
 
+    @Autowired
+    UserCommonAccessService userCommonAccessService;
+
+    @Autowired
+    CommunityCommonAccessService communityCommonAccessService;
 
     public boolean hasAccessToCommunityAvatar(Long communityId) {
         return communityAccessService.hasAccessToCommunityBasic(communityId);
-    }
-
-    public boolean hasAccessToCommunityCreation() {
-        return true;
-    }
-
-    public Community hasAccessToCommunityUpdate(Long communityId) {
-        Community community = communityRepository.findByCommunityId(communityId);
-        if(communityAccessService.isUserOwnerOfCommunity(userCommonService.getUser(),
-               community)){
-            return community;
-        }
-        return null;
-    }
-
-    public User getCommunityListOfUser(Long userId) {
-        return userCommonService.getUser(userId);
-//        if(userId.equals(userCommonService.getUserId())) {
-//
-//        }
-    }
-
-    public boolean hasAccessToCommunityDeletion() {
-        return true;
-    }
-
-    public boolean hasAccessToGetCommunityUsers() {
-        return true;
     }
 }

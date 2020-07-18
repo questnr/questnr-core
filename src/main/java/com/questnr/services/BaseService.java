@@ -2,6 +2,7 @@ package com.questnr.services;
 
 import com.questnr.common.enums.AuthorityName;
 import com.questnr.common.enums.SignUpSourceType;
+import com.questnr.common.enums.UserPrivacy;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.Authority;
@@ -140,7 +141,7 @@ public class BaseService {
         user.setEnabled(true);
         user.setAuthorities(this.createAuthoritySet());
         user.addMetadata();
-        user.setPublic(true);
+        user.setUserPrivacy(UserPrivacy.pub);
         final char[] delimiters = {' '};
 
         user.setFirstName(WordUtils.capitalizeFully(user.getFirstName(), delimiters));

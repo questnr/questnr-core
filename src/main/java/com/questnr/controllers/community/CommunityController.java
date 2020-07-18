@@ -1,8 +1,8 @@
 package com.questnr.controllers.community;
 
-import com.questnr.access.CommunityAvatarAccessService;
+import com.questnr.access.CommunityAccessService;
 import com.questnr.exceptions.AccessException;
-import com.questnr.model.dto.*;
+import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.dto.community.CommunityCardDTO;
 import com.questnr.model.dto.community.CommunityDTO;
 import com.questnr.model.dto.user.UserOtherDTO;
@@ -34,7 +34,7 @@ public class CommunityController {
     final String errorMessage = "You don't have access for the particular operation";
 
     @Autowired
-    CommunityAvatarAccessService communityAvatarAccessService;
+    CommunityAccessService communityAccessService;
 
     @Autowired
     CommunityService communityService;
@@ -65,7 +65,7 @@ public class CommunityController {
         /*
          * Community Creation Security Checking
          * */
-        if (communityAvatarAccessService.hasAccessToCommunityCreation()) {
+        if (communityAccessService.hasAccessToCommunityCreation()) {
             if (communityRequest.getAvatarFile() == null || communityRequest.getAvatarFile().length == 0) {
                 return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequest)));
             } else {
@@ -81,17 +81,18 @@ public class CommunityController {
         /*
          * Community Update Security Checking
          * */
-        Community community = communityAvatarAccessService.hasAccessToCommunityUpdate(communityId);
+        Community community = communityAccessService.hasAccessToCommunityUpdate(communityId);
         if (community != null) {
             return communityMapper.toDTO(communityService.updateCommunity(community, communityUpdateRequest));
         }
         throw new AccessException();
     }
 
+    // Community list created by user
     @RequestMapping(value = "/user/{userId}/community", method = RequestMethod.GET)
     Page<CommunityDTO> getCommunityListByUser(@PathVariable Long userId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        User user = communityAvatarAccessService.getCommunityListOfUser(userId);
+        User user = communityAccessService.getCommunityListOfUser(userId);
         if (user != null) {
             Page<Community> communityPage = communityService.getCommunityListOfUser(user, pageable);
             return new PageImpl<>(communityMapper.toDTOs(communityPage.getContent()), pageable, communityPage.getTotalElements());
@@ -121,7 +122,7 @@ public class CommunityController {
         /*
          * Community Deletion Security Checking
          * */
-        if (communityAvatarAccessService.hasAccessToCommunityDeletion()) {
+        if (communityAccessService.hasAccessToCommunityDeletion()) {
             communityService.deleteCommunity(communityId);
         } else {
             throw new AccessException();
@@ -131,14 +132,10 @@ public class CommunityController {
     // Get users of a single community.
     @RequestMapping(value = "/user/community/{communitySlug}/users", method = RequestMethod.GET)
     Page<UserOtherDTO> getUsersOfCommunity(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
-//        List<UserDTO> userDTOS = new ArrayList<>();
-//        for(User user: communityService.getUsersFromCommunity(communityId)){
-//            userDTOS.add(userMapper.toOthersDTO(user));
-//        }
         /*
          * Community Users Fetching Security Checking
          * */
-        if (communityAvatarAccessService.hasAccessToGetCommunityUsers()) {
+        if (communityAccessService.hasAccessToGetCommunityUsers(communitySlug)) {
             Pageable pageable = PageRequest.of(page, size);
             return communityService.getUsersOfCommunity(communitySlug, pageable);
         }
@@ -156,8 +153,14 @@ public class CommunityController {
     // Search user in community user list
     @RequestMapping(value = "/user/community/{communitySlug}/search/users", method = RequestMethod.GET)
     Page<UserOtherDTO> searchUserInCommunityUsers(@RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
-        Pageable pageable = PageRequest.of(page, size);
-        return communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
+        /*
+         * Community Users Fetching Security Checking
+         * */
+        if (communityAccessService.hasAccessToCommunity(communitySlug)) {
+            Pageable pageable = PageRequest.of(page, size);
+            return communityService.searchUserInCommunityUsers(communitySlug, userString, pageable);
+        }
+        throw new AccessException();
     }
 
     // Get sharable link of the community

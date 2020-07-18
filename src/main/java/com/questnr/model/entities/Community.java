@@ -2,7 +2,7 @@ package com.questnr.model.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.questnr.common.enums.PublishStatus;
+import com.questnr.common.enums.CommunityPrivacy;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Store;
@@ -41,14 +41,14 @@ public class Community extends DomainObject {
     @Column(name = "community_tags")
     private String tags;
 
+    @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "privacy", length = 5, columnDefinition = "varchar default 'pub'")
+    private CommunityPrivacy communityPrivacy;
+
     @ManyToOne
     @JoinColumn(name = "owner_user_id")
     private User ownerUser;
-
-    @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
-    @Enumerated(EnumType.STRING)
-    @Column(name = "community_status", length = 2000)
-    private PublishStatus status;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "avatar_id")
@@ -122,20 +122,20 @@ public class Community extends DomainObject {
         this.tags = tags;
     }
 
+    public CommunityPrivacy getCommunityPrivacy() {
+        return communityPrivacy;
+    }
+
+    public void setCommunityPrivacy(CommunityPrivacy communityPrivacy) {
+        this.communityPrivacy = communityPrivacy;
+    }
+
     public User getOwnerUser() {
         return ownerUser;
     }
 
     public void setOwnerUser(User ownerUser) {
         this.ownerUser = ownerUser;
-    }
-
-    public PublishStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(PublishStatus status) {
-        this.status = status;
     }
 
     public Avatar getAvatar() {

@@ -4,7 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.LoginType;
 import com.questnr.common.enums.SignUpSourceType;
+import com.questnr.common.enums.UserPrivacy;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -114,8 +119,10 @@ public class User extends DomainObject {
     @Enumerated(EnumType.STRING)
     private SignUpSourceType signUpSource = SignUpSourceType.WEB;
 
-    @Column(name = "is_public", columnDefinition = "bool default true")
-    private Boolean isPublic;
+    @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "privacy", length = 5, columnDefinition = "varchar default 'pub'")
+    private UserPrivacy userPrivacy;
 
     @Column(name = "dob")
     private Date dob;
@@ -315,12 +322,12 @@ public class User extends DomainObject {
         this.socialId = socialId;
     }
 
-    public Boolean getPublic() {
-        return isPublic;
+    public UserPrivacy getUserPrivacy() {
+        return userPrivacy;
     }
 
-    public void setPublic(Boolean aPublic) {
-        isPublic = aPublic;
+    public void setUserPrivacy(UserPrivacy userPrivacy) {
+        this.userPrivacy = userPrivacy;
     }
 
     public Date getDob() {
@@ -341,6 +348,10 @@ public class User extends DomainObject {
 
     public String getFullName() {
         return this.getFirstName() + " " + this.getLastName();
+    }
+
+    public boolean getPublic(){
+        return this.getUserPrivacy() == UserPrivacy.pub;
     }
 
     @Override

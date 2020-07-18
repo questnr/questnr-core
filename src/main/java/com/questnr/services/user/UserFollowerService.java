@@ -86,6 +86,11 @@ public class UserFollowerService {
         return userFollowerRepository.existsByUserAndFollowingUser(userBeingFollowed, user);
     }
 
+    public boolean isFollowingUser(User userBeingFollowed, User user) {
+        return userFollowerRepository.existsByUserAndFollowingUser(userBeingFollowed, user)
+                || userBeingFollowed.equals(user);
+    }
+
     public User followUser(Long userId) {
         User user = userCommonService.getUser();
         User userBeingFollowed = userRepository.findByUserId(userId);
