@@ -1,14 +1,16 @@
 package com.questnr.model.dto.user;
 
-public class UserProfileDTO extends  UserDTO{
+import java.util.Date;
 
-    private String dob;
+public class UserProfileDTO extends UserDTO {
 
-    public String getDob() {
+    private Date dob;
+
+    public Date getDob() {
         return dob;
     }
 
-    public void setDob(String dob) {
+    public void setDob(Date dob) {
         this.dob = dob;
     }
 }

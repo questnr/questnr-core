@@ -16,14 +16,14 @@ public class UserRequest {
     @Size(min = 6, max = 100, message = "Password requirements don't match")
     private String password;
 
-    @NotBlank(message = "First name is mandatory")
-    @Pattern(regexp = "^[\\S]*$", message = "First name is invalid")
-    @Size(min = 3, max = 25, message = "First name should contain maximum of 25 characters and at least 3 characters")
+//    @NotBlank(message = "First name is mandatory")
+//    @Pattern(regexp = "^[\\S]*$", message = "First name is invalid")
+//    @Size(min = 3, max = 25, message = "First name should contain maximum of 25 characters and at least 3 characters")
     private String firstName;
 
-    @NotBlank(message = "Last name is mandatory")
-    @Pattern(regexp = "^[\\S]*$", message = "Last name is invalid")
-    @Size(min = 3, max = 25, message = "First name should contain maximum of 25 characters and at least 3 characters")
+//    @NotBlank(message = "Last name is mandatory")
+//    @Pattern(regexp = "^[\\S]*$", message = "Last name is invalid")
+//    @Size(min = 3, max = 25, message = "First name should contain maximum of 25 characters and at least 3 characters")
     private String lastName;
 
     @NotBlank(message = "Email is mandatory")
