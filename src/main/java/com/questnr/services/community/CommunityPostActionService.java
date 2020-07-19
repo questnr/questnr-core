@@ -140,9 +140,9 @@ public class CommunityPostActionService {
                             Thread videoCompressionThread = new Thread(videoCompression, fileName);
                             videoCompressionThread.start();
                             videoCompressionThread.join();
-                            if (file.exists()) file.delete();
                             resourceStorageData = this.amazonS3Client.uploadFile(target, communityId);
                             resourceStorageData.setResourceType(ResourceType.video);
+                            if (file.exists()) file.delete();
                         } catch (InterruptedException e) {
 
                         }
