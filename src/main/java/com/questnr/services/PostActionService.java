@@ -3,6 +3,7 @@ package com.questnr.services;
 import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PostType;
+import com.questnr.common.enums.PublishStatus;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.post.question.PollQuestionDTO;
@@ -152,6 +153,7 @@ public class PostActionService {
             postAction.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
             postAction.setSlug(this.createPostActionSlug(postAction));
             postAction.setTags(this.getPostActionTitleTag(postAction));
+            postAction.setStatus(PublishStatus.publish);
             postAction.setFeatured(false);
             postAction.setPopular(false);
             postAction.setPostType(postType);
