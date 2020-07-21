@@ -8,6 +8,7 @@ public enum NotificationType {
   invitation("I"),
   followedUser("FU"),
   followedCommunity("FC"),
+  followRequestCommunity("FRC"),
   pollAnswer("PA");
 
   public String jsonValue;

@@ -95,4 +95,9 @@ public class CommunityJoinAccessService {
         }
         return null;
     }
+
+    public boolean getCommunityUserRequestList(Long communityId){
+        // Only owner is allowed to see the list
+        return communityCommonService.isUserOwnerOfCommunity(communityId);
+    }
 }

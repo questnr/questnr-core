@@ -1,6 +1,7 @@
 package com.questnr.services.community;
 
 import com.questnr.access.CommunityAccessService;
+import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.AlreadyExistsException;
@@ -8,10 +9,7 @@ import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.community.CommunityDTO;
 import com.questnr.model.dto.user.UserOtherDTO;
-import com.questnr.model.entities.Community;
-import com.questnr.model.entities.CommunityInvitedUser;
-import com.questnr.model.entities.CommunityUser;
-import com.questnr.model.entities.User;
+import com.questnr.model.entities.*;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.*;
@@ -73,6 +71,9 @@ public class CommunityJoinService {
     @Autowired
     CommunityAccessService communityAccessService;
 
+    @Autowired
+    CommunityUserRequestRepository communityUserRequestRepository;
+
     CommunityJoinService() {
         communityMapper = Mappers.getMapper(CommunityMapper.class);
         userMapper = Mappers.getMapper(UserMapper.class);
@@ -101,10 +102,14 @@ public class CommunityJoinService {
 //    }
 
     private CommunityUser createCommunityUser(Community community, User user) {
-        CommunityUser communityUser = new CommunityUser();
-        communityUser.setUser(user);
-        communityUser.setCommunity(community);
-        return communityUserRepository.save(communityUser);
+        if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
+            throw new AlreadyExistsException("You are already been joined!");
+        else {
+            CommunityUser communityUser = new CommunityUser();
+            communityUser.setUser(user);
+            communityUser.setCommunity(community);
+            return communityUserRepository.save(communityUser);
+        }
     }
 
     private Community addInvitationFromCommunity(Community community, User user) {
@@ -144,22 +149,26 @@ public class CommunityJoinService {
         throw new AccessException("You don not have access to send an invitation.");
     }
 
-    public Community joinCommunity(Long communityId) {
-        communityRepository.findById(communityId).map(community -> {
-            User user = userCommonService.getUser();
-            if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
-                throw new AlreadyExistsException("You are already been joined!");
-//            communityRepository.save(this.addUserToCommunity(community, user));
+    public void joinCommunity(Long communityId) {
+        User user = userCommonService.getUser();
+        Community community = communityCommonService.getCommunity(communityId);
+        if (community.getCommunityPrivacy() == CommunityPrivacy.pri) {
+            if (communityUserRequestRepository.existsByCommunityAndUser(community, user)) {
+                throw new AlreadyExistsException("Request has already been sent");
+            } else {
+                CommunityUserRequest communityUserRequest = new CommunityUserRequest();
+                communityUserRequest.setCommunity(community);
+                communityUserRequest.setUser(user);
+                CommunityUserRequest savedCommunityUserRequest = communityUserRequestRepository.save(communityUserRequest);
 
+                // @Todo create notification for requests
+            }
+        } else {
             CommunityUser savedCommunityUser = this.createCommunityUser(community, user);
             // Notification job created and assigned to Notification Processor.
             notificationJob.createNotificationJob(savedCommunityUser);
+        }
 
-            return community;
-        }).orElseThrow(() -> {
-            throw new ResourceNotFoundException("Error in joining community");
-        });
-        return null;
     }
 
     private void inviteUserToJoinCommunity(Long communityId, User user) {
@@ -190,7 +199,7 @@ public class CommunityJoinService {
 
     private void actionOnInvitationFromCommunity(Long communityId, User user, boolean hasAccepted) {
         communityRepository.findById(communityId).map(community -> {
-            if (!this.existsCommunityUser(community, user) && this.existsCommunityInvitation(community, user)) {
+            if (this.existsCommunityInvitation(community, user)) {
                 community = this.removeThisUserFromInvitationList(community, user);
                 if (hasAccepted) {
 //                    community = this.addUserToCommunity(community, user);
@@ -198,8 +207,6 @@ public class CommunityJoinService {
                 }
 //                return communityRepository.save(community);
                 return community;
-            } else if (this.existsCommunityUser(community, user)) {
-                throw new AlreadyExistsException("You have already been joined");
             }
             throw new InvalidRequestException("You don't have invitation from this community");
         }).orElseThrow(() -> {
@@ -279,5 +286,40 @@ public class CommunityJoinService {
         return new PageImpl<>(userMapper.toOthersDTOs(pagedUserList),
                 pageable,
                 filteredUserList.size());
+    }
+
+    public Page<UserOtherDTO> getCommunityUserRequestList(Long communityId, Pageable pageable) {
+        Community community = communityCommonService.getCommunity(communityId);
+        Page<CommunityUserRequest> communityUserRequestPage = communityUserRequestRepository.findByCommunity(community, pageable);
+        List<User> userList = communityUserRequestPage.getContent().stream().map(CommunityUserRequest::getUser).collect(Collectors.toList());
+        return new PageImpl<>(userMapper.toOthersDTOs(userList), pageable, communityUserRequestPage.getTotalElements());
+    }
+
+    public void actionOnCommunityUserRequest(Long communityId, Long userId, boolean shouldAccept) {
+        User user = userCommonService.getUser(userId);
+        Community community = communityCommonService.getCommunity(communityId);
+        this.actionOnCommunityUserRequest(community, user, shouldAccept);
+    }
+
+    public void actionOnCommunityUserRequest(CommunityUserRequest communityUserRequest, boolean shouldAccept) {
+        this.actionOnCommunityUserRequest(communityUserRequest.getCommunity(), communityUserRequest.getUser(), shouldAccept);
+    }
+
+    public void actionOnCommunityUserRequest(Community community, User user, boolean shouldAccept) {
+        CommunityUserRequest communityUserRequest = communityUserRequestRepository.findByCommunityAndUser(community, user);
+        if (communityUserRequest != null) {
+            communityUserRequestRepository.delete(communityUserRequest);
+            if (shouldAccept) {
+                this.createCommunityUser(community, user);
+            }
+        }
+        throw new ResourceNotFoundException("Community user request doesn't exists");
+    }
+
+    public void actionOnAllCommunityUserRequest(Community community, boolean shouldAccept) {
+        List<CommunityUserRequest> communityUserRequestList = communityUserRequestRepository.findByCommunity(community);
+        for (CommunityUserRequest communityUserRequest : communityUserRequestList) {
+            this.actionOnCommunityUserRequest(communityUserRequest, shouldAccept);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.questnr.services.community;
 
+import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.model.entities.Community;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.requests.CommunityPrivacyUpdateRequest;
@@ -18,7 +19,10 @@ public class CommunityPrivacyService {
     @Autowired
     CommunityCommonService communityCommonService;
 
-    public CommunityPrivacyUpdateRequest getCommunityPrivacy(Long communityId){
+    @Autowired
+    CommunityJoinService communityJoinService;
+
+    public CommunityPrivacyUpdateRequest getCommunityPrivacy(Long communityId) {
         Community community = communityCommonService.getCommunity(communityId);
         CommunityPrivacyUpdateRequest communityPrivacyUpdateRequest = new CommunityPrivacyUpdateRequest();
         communityPrivacyUpdateRequest.setCommunityPrivacy(community.getCommunityPrivacy());
@@ -28,6 +32,11 @@ public class CommunityPrivacyService {
     public Community updateCommunityPrivacy(Long communityId, CommunityPrivacyUpdateRequest communityPrivacyUpdateRequest) {
         Community community = communityCommonService.getCommunity(communityId);
         community.setCommunityPrivacy(communityPrivacyUpdateRequest.getCommunityPrivacy());
+
+        if (communityPrivacyUpdateRequest.getCommunityPrivacy() == CommunityPrivacy.pub) {
+            // Accept all user requests which are pending in user request list
+            communityJoinService.actionOnAllCommunityUserRequest(community, true);
+        }
         return communityRepository.save(community);
     }
 }

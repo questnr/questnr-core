@@ -60,12 +60,41 @@ public class CommunityJoinController {
 
     // Join user to the community
     @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.POST)
-    CommunityDTO joinCommunity(@PathVariable long communityId) {
+    void joinCommunity(@PathVariable long communityId) {
         if (communityJoinAccessService.hasAccessToJoinCommunity(communityId)) {
-            return communityMapper.toDTO(communityJoinService.joinCommunity(communityId));
+            communityJoinService.joinCommunity(communityId);
         } else {
             throw new AccessException();
         }
+    }
+
+    // Get the list of user requests who wants to join the community
+    @RequestMapping(value = "/user/community/{communityId}/users/request", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    Page<UserOtherDTO> getCommunityUserRequestList(@PathVariable Long communityId,
+                                                   @RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "4") int size) {
+        if (communityJoinAccessService.getCommunityUserRequestList(communityId)) {
+            Pageable pageable = PageRequest.of(page, size);
+            return communityJoinService.getCommunityUserRequestList(communityId, pageable);
+        }
+        throw new AccessException();
+    }
+
+    // Accept community user request from list of user requests
+    @RequestMapping(value = "/user/community/{communityId}/users/{userId}/request", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
+    void acceptCommunityUserRequest(@PathVariable Long communityId,
+                                    @PathVariable Long userId) {
+        communityJoinService.actionOnCommunityUserRequest(communityId, userId, true);
+    }
+
+    // Accept community user request from list of user requests
+    @RequestMapping(value = "/user/community/{communityId}/users/{userId}/request", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    void declineCommunityUserRequest(@PathVariable Long communityId,
+                                    @PathVariable Long userId) {
+         communityJoinService.actionOnCommunityUserRequest(communityId, userId, false);
     }
 
     // Ask user to join the community
