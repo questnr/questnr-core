@@ -2,6 +2,7 @@ package com.questnr.access;
 
 import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.User;
 import com.questnr.services.community.CommunityJoinService;
 import com.questnr.services.user.UserCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,11 @@ public class CommunityCommonAccessService {
     @Autowired
     CommunityJoinService communityJoinService;
 
-    public boolean isCommunityAccessibleWithPrivacy(Community community){
+    public boolean isCommunityAccessibleWithPrivacy(Community community) {
+        User user = userCommonService.getUser();
         return community.getCommunityPrivacy() == CommunityPrivacy.pub ||
                 (community.getCommunityPrivacy() == CommunityPrivacy.pri
-                && communityJoinService.existsCommunityUser(community, userCommonService.getUser()));
+                        && (communityJoinService.existsCommunityUser(community, user)
+                        || community.getOwnerUser().equals(user)));
     }
 }

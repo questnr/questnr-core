@@ -52,7 +52,7 @@ public class CommunityController {
     SharableLinkService sharableLinkService;
 
     @Autowired
-            private CommunityMetaService communityMetaService;
+    private CommunityMetaService communityMetaService;
 
     CommunityController() {
         communityMapper = Mappers.getMapper(CommunityMapper.class);

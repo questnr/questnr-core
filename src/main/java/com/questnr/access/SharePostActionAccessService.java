@@ -1,7 +1,6 @@
 package com.questnr.access;
 
 import com.questnr.exceptions.InvalidRequestException;
-import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.SharedPostAction;
 import com.questnr.model.repositories.SharePostActionRepository;
 import com.questnr.services.user.UserCommonService;
@@ -16,8 +15,11 @@ public class SharePostActionAccessService {
     @Autowired
     SharePostActionRepository sharePostActionRepository;
 
+    @Autowired
+    PostActionAccessService postActionAccessService;
+
     public boolean sharePost(Long postId) {
-        return true;
+        return postActionAccessService.hasAccessToActionsOnPost(postId);
     }
 
     public SharedPostAction deleteSharedPost(Long sharedPostId) {

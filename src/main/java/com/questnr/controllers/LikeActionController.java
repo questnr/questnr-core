@@ -1,5 +1,7 @@
 package com.questnr.controllers;
 
+import com.questnr.access.LikeActionAccessService;
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.LikeActionDTO;
 import com.questnr.model.dto.user.UserOtherDTO;
 import com.questnr.model.entities.LikeAction;
@@ -24,6 +26,9 @@ public class LikeActionController {
     LikeActionMapper likeActionMapper;
 
     @Autowired
+    LikeActionAccessService likeActionAccessService;
+
+    @Autowired
     UserMapper userMapper;
 
     LikeActionController() {
@@ -33,33 +38,50 @@ public class LikeActionController {
 
     @RequestMapping(value = "/post/{postSlug}/like", method = RequestMethod.GET)
     Page<LikeActionDTO> getPublicLikesByPostId(@PathVariable String postSlug, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<LikeAction> likeActionPage = likeActionService.getPublicLikesByPostId(postSlug, pageable);
-        return new PageImpl<>(likeActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
+        if (likeActionAccessService.hasAccessToPostLikeAction(postSlug)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<LikeAction> likeActionPage = likeActionService.getPublicLikesByPostId(postSlug, pageable);
+            return new PageImpl<>(likeActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/user/posts/{postId}/like", method = RequestMethod.GET)
     Page<LikeActionDTO> getAllLikesByPostId(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<LikeAction> likeActionPage = likeActionService.getAllLikeActionByPostId(postId, pageable);
-        return new PageImpl<>(likeActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
+        if (likeActionAccessService.hasAccessToPostLikeAction(postId)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<LikeAction> likeActionPage = likeActionService.getAllLikeActionByPostId(postId, pageable);
+            return new PageImpl<>(likeActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/user/posts/{postId}/like", method = RequestMethod.POST)
     LikeActionDTO createLike(@PathVariable Long postId) {
-        return likeActionMapper.toDTO(likeActionService.createLikeAction(postId));
+        if (likeActionAccessService.hasAccessToPostLikeAction(postId)) {
+            return likeActionMapper.toDTO(likeActionService.createLikeAction(postId));
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/user/posts/{postId}/like", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteLike(@PathVariable Long postId) {
-        likeActionService.deleteLikeAction(postId);
+        if (likeActionAccessService.hasAccessToPostLikeAction(postId)) {
+            likeActionService.deleteLikeAction(postId);
+        }
+        else{
+            throw new AccessException();
+        }
     }
 
     @RequestMapping(value = "/user/posts/{postId}/like/search/user", method = RequestMethod.GET)
     Page<UserOtherDTO> searchUserOnLikeListOfPost(@PathVariable Long postId, @RequestParam String userString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<User> userPage = likeActionService.searchUserOnLikeListOfPost(postId, userString, pageable);
-        return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
+        if (likeActionAccessService.hasAccessToPostLikeAction(postId)) {
+            Pageable pageable = PageRequest.of(page, size);
+            Page<User> userPage = likeActionService.searchUserOnLikeListOfPost(postId, userString, pageable);
+            return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
+        }
+        throw new AccessException();
     }
 }

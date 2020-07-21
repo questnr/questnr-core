@@ -1,8 +1,5 @@
 package com.questnr.access;
 
-import com.questnr.common.enums.PostType;
-import com.questnr.exceptions.AccessException;
-import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
@@ -52,32 +49,32 @@ public class CommunityPostActionAccessService {
     public boolean hasAccessToPostBaseService(Long communityId) {
         User user = userCommonService.getUser();
         Community community = communityCommonService.getCommunity(communityId);
-        return communityAccessService.isUserMemberOfCommunity(user, community);
+        return communityCommonService.isUserMemberOfCommunity(user, community);
+    }
+
+    public boolean hasAccessToPosts(Long communityId) {
+        return communityAccessService.hasAccessToCommunity(communityId);
     }
 
     public boolean hasAccessToPostCreation(Long communityId) {
         return this.hasAccessToPostBaseService(communityId);
     }
 
-    public PostAction hasAccessToPostModification(Long communityId, Long postId) {
+    public boolean hasAccessToPostModification(Long communityId, Long postId) {
         // This rights only given to user actor of the post when user is the member of the community
         PostAction postAction = postActionRepository.findByPostActionIdAndCommunity(postId, communityCommonService.getCommunity(communityId));
-        if (postAction != null) {
-            if (this.hasAccessToPostBaseService(communityId) && postActionAccessService.isUserOwnerOfPost(userCommonService.getUser(), postAction)) {
-                return postAction;
-            } else {
-                throw new AccessException();
-            }
-        } else {
-            throw new ResourceNotFoundException("Post not found!");
+        if (postActionAccessService.hasAccessToActionsOnPost(postAction)) {
+            return this.hasAccessToPostBaseService(communityId) && postActionAccessService.isUserOwnerOfPost(userCommonService.getUser(), postAction);
         }
+        return false;
     }
 
-    public PostAction hasAccessToPostDeletion(Long communityId, Long postId) {
+    public boolean hasAccessToPostDeletion(Long communityId, Long postId) {
         return this.hasAccessToPostModification(communityId, postId);
     }
 
-    public PostAction createPollAnswerPost(Long communityId, Long postId){
-        return postActionService.getPostActionByIdAndType(postId, PostType.question);
+    public boolean hasAccessToAnswerOnPollQuestion(Long communityId, Long postId) {
+        PostAction postAction = postActionRepository.findByPostActionIdAndCommunity(postId, communityCommonService.getCommunity(communityId));
+        return postActionAccessService.hasAccessToActionsOnPost(postAction);
     }
 }

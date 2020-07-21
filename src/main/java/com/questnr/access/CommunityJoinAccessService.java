@@ -45,8 +45,8 @@ public class CommunityJoinAccessService {
 
     public boolean hasAccessToInviteUser(Long communityId, User user) {
         User userActor = userCommonService.getUser();
-        Community community = communityAccessService.isUserOwnerOfCommunity(userActor, communityId);
-        if(community != null){
+        if(communityCommonService.isUserOwnerOfCommunity(userActor, communityId)){
+            Community community = communityCommonService.getCommunity(communityId);
             Date endingDate = new Date();
             Date startingDate = new Date(endingDate.getTime() - PER_DAYS);
             int numberOfHasBeenSent = communityInvitedUserRepository.countAllByCommunityAndUserActorAndUserAndCreatedAtBetween(
@@ -87,7 +87,7 @@ public class CommunityJoinAccessService {
     public CommunityUser getUserListToInvite(Long communityId){
         User user = userCommonService.getUser();
         Community community = communityCommonService.getCommunity(communityId);
-        if(communityAccessService.isUserMemberOfCommunity(user, community)){
+        if(communityCommonService.isUserMemberOfCommunity(user, community)){
             CommunityUser communityUser = new CommunityUser();
             communityUser.setCommunity(community);
             communityUser.setUser(user);

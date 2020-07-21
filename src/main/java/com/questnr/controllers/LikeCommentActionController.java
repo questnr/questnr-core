@@ -1,5 +1,7 @@
 package com.questnr.controllers;
 
+import com.questnr.access.LikeCommentActionAccessService;
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.LikeCommentActionDTO;
 import com.questnr.model.entities.LikeCommentAction;
 import com.questnr.model.mapper.LikeCommentActionMapper;
@@ -20,32 +22,47 @@ public class LikeCommentActionController {
     @Autowired
     LikeCommentActionMapper likeCommentActionMapper;
 
+    @Autowired
+    LikeCommentActionAccessService likeCommentActionAccessService;
+
     LikeCommentActionController() {
         likeCommentActionMapper = Mappers.getMapper(LikeCommentActionMapper.class);
     }
 
     @RequestMapping(value = "/post/comment/{commentId}/like", method = RequestMethod.GET)
     Page<LikeCommentActionDTO> getPublicLikesOnCommentByCommentId(@PathVariable Long commentId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<LikeCommentAction> likeActionPage = likeCommentActionService.getAllLikeActionByCommentId(commentId, pageable);
-        return new PageImpl<>(likeCommentActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
+        return getLikeCommentActionDTOS(commentId, page, size);
     }
 
     @RequestMapping(value = "/user/posts/comment/{commentId}/like", method = RequestMethod.GET)
     Page<LikeCommentActionDTO> getAllLikesOnCommentByCommentId(@PathVariable Long commentId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<LikeCommentAction> likeActionPage = likeCommentActionService.getAllLikeActionByCommentId(commentId, pageable);
-        return new PageImpl<>(likeCommentActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
+        return getLikeCommentActionDTOS(commentId, page, size);
+    }
+
+    private Page<LikeCommentActionDTO> getLikeCommentActionDTOS(Long commentId, int page, int size) {
+        if (likeCommentActionAccessService.hasAccessToCommentLikeAction(commentId)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<LikeCommentAction> likeActionPage = likeCommentActionService.getAllLikeActionByCommentId(commentId, pageable);
+            return new PageImpl<>(likeCommentActionMapper.toDTOs(likeActionPage.getContent()), pageable, likeActionPage.getTotalElements());
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/user/posts/comment/{commentId}/like", method = RequestMethod.POST)
     LikeCommentAction createLikeOnComment(@PathVariable Long commentId) {
-        return likeCommentActionService.createLikeAction(commentId);
+        if (likeCommentActionAccessService.hasAccessToCommentLikeAction(commentId)) {
+            return likeCommentActionService.createLikeAction(commentId);
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/user/posts/comment/{commentId}/like", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteLikeOnComment(@PathVariable Long commentId) {
-        likeCommentActionService.deleteLikeAction(commentId);
+        if (likeCommentActionAccessService.hasAccessToCommentLikeAction(commentId)) {
+            likeCommentActionService.deleteLikeAction(commentId);
+        } else {
+            throw new AccessException();
+        }
     }
 }

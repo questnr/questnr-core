@@ -6,14 +6,15 @@ import com.questnr.common.enums.PostType;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
-import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
+import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostPollQuestionMapper;
 import com.questnr.model.mapper.PostReportMapper;
 import com.questnr.model.repositories.*;
 import com.questnr.requests.PostPollAnswerRequest;
 import com.questnr.requests.PostReportRequest;
+import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.SecureRandomService;
@@ -74,6 +75,9 @@ public class PostActionService {
     @Autowired
     PostPollAnswerRepository postPollAnswerRepository;
 
+    @Autowired
+    CommunityCommonService communityCommonService;
+
     PostActionService() {
         postReportMapper = Mappers.getMapper(PostReportMapper.class);
     }
@@ -84,6 +88,14 @@ public class PostActionService {
             return postAction;
         }
         throw new ResourceNotFoundException("Post not found!");
+    }
+
+    public boolean isPostActionBelongsToCommunity(Long postActionId) {
+        return this.isPostActionBelongsToCommunity(this.getPostActionUsingId(postActionId));
+    }
+
+    public boolean isPostActionBelongsToCommunity(PostAction postAction) {
+        return postAction != null && postAction.getCommunity() != null && !commonService.isNull(postAction.getCommunity().getCommunityId().toString());
     }
 
     public PostAction getPostActionByIdAndType(Long postActionId, PostType postType) {
@@ -213,24 +225,38 @@ public class PostActionService {
         return postActionRepository.findByPostActionId(postActionId);
     }
 
-    public void updatePostAction(PostAction post, PostActionUpdateRequestDTO postActionRequest) {
+    public void updatePostAction(Long postActionId, PostActionUpdateRequestDTO postActionRequest) {
+        this.updatePostAction(this.getPostActionUsingId(postActionId), postActionRequest);
+    }
+
+    public void updatePostAction(Long postActionId, Long communityId, PostActionUpdateRequestDTO postActionRequest) {
+        PostAction postAction = postActionRepository.findByPostActionIdAndCommunity(postActionId, communityCommonService.getCommunity(communityId));
+        this.updatePostAction(postAction, postActionRequest);
+    }
+
+    public void updatePostAction(PostAction postAction, PostActionUpdateRequestDTO postActionRequest) {
         try {
-            post.setText(postActionRequest.getText());
-            post.setHashTags(this.parsePostText(postActionRequest.getText()));
-            post.setStatus(postActionRequest.getStatus());
-            post.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-            postActionRepository.save(post);
+            postAction.setText(postActionRequest.getText());
+            postAction.setHashTags(this.parsePostText(postActionRequest.getText()));
+            postAction.setStatus(postActionRequest.getStatus());
+            postAction.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            postActionRepository.save(postAction);
         } catch (Exception e) {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
 
-//    public void updatePollQuestionPost(PostAction postAction, PollQuestionPostRequest pollQuestionPostRequest){
-//
-//    }
+    public void deletePostAction(Long postActionId, Long communityId) {
+        PostAction postAction = postActionRepository.findByPostActionIdAndCommunity(postActionId, communityCommonService.getCommunity(communityId));
+        this.deletePostAction(postAction);
+    }
+
+    public void deletePostAction(Long postActionId) {
+        this.deletePostAction(this.getPostActionUsingId(postActionId));
+    }
 
     public void deletePostAction(PostAction postAction) {
-        try {
+        if (postAction != null) {
             try {
                 PostActionTrendLinearData postActionTrendLinearData = postActionTrendLinearDataRepository.findByPostAction(postAction);
                 if (postActionTrendLinearData != null) {
@@ -245,8 +271,8 @@ public class PostActionService {
             }
             postAction.setDeleted(true);
             postActionRepository.save(postAction);
-        } catch (Exception e) {
-            throw new InvalidRequestException("Error occurred. Please, try again!");
+        } else {
+            throw new InvalidRequestException("Post not found!");
         }
     }
 

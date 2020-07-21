@@ -52,8 +52,11 @@ public class CommunityPostActionController {
     // Basic post operations for users.
     @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.GET)
     Page<PostBaseDTO> getAllPostsByCommunityId(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size, @PathVariable long communityId) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return communityPostActionService.getAllPostActionsByCommunityId(communityId, pageable);
+        if (communityPostActionAccessService.hasAccessToPosts(communityId)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            return communityPostActionService.getAllPostActionsByCommunityId(communityId, pageable);
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -77,8 +80,11 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        PostAction postAction = communityPostActionAccessService.hasAccessToPostModification(communityId, postId);
-        postActionService.updatePostAction(postAction, postActionRequest);
+        if (communityPostActionAccessService.hasAccessToPostModification(communityId, postId)) {
+            postActionService.updatePostAction(postId, communityId, postActionRequest);
+        } else {
+            throw new AccessException();
+        }
     }
 
     @RequestMapping(value = "/community/{communityId}/posts/poll/question", method = RequestMethod.POST)
@@ -96,9 +102,8 @@ public class CommunityPostActionController {
     PollQuestionDTO createPollAnswerPost(@PathVariable Long communityId,
                                          @PathVariable Long postId,
                                          @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
-        PostAction postAction = communityPostActionAccessService.createPollAnswerPost(communityId, postId);
-        if (postAction != null) {
-            return communityPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+        if (communityPostActionAccessService.hasAccessToAnswerOnPollQuestion(communityId, postId)) {
+            return communityPostActionService.createPollAnswerPost(postId, postPollAnswerRequest);
         }
         throw new AccessException();
     }
@@ -109,8 +114,11 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        PostAction postAction = communityPostActionAccessService.hasAccessToPostDeletion(communityId, postId);
-        postActionService.deletePostAction(postAction);
+        if (communityPostActionAccessService.hasAccessToPostDeletion(communityId, postId)) {
+            postActionService.deletePostAction(postId, communityId);
+        } else {
+            throw new AccessException();
+        }
     }
 
     // Get the list of poll questions of Community
@@ -118,10 +126,13 @@ public class CommunityPostActionController {
     Page<PostPollQuestionForCommunityDTO> getAllPostPollQuestion(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "4") int size, @PathVariable Long communityId) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<PostAction> postActionPage = communityPostActionService.getAllPostPollQuestion(communityId, pageable);
-        List<PostPollQuestionForCommunityDTO> postActionForCommunityDTOS = postActionPage.getContent().stream()
-                .map(postActionMapper::toPostPollQuestionForCommunityDTO).collect(Collectors.toList());
-        return new PageImpl<>(postActionForCommunityDTOS, pageable, postActionPage.getTotalElements());
+        if (communityPostActionAccessService.hasAccessToPosts(communityId)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<PostAction> postActionPage = communityPostActionService.getAllPostPollQuestion(communityId, pageable);
+            List<PostPollQuestionForCommunityDTO> postActionForCommunityDTOS = postActionPage.getContent().stream()
+                    .map(postActionMapper::toPostPollQuestionForCommunityDTO).collect(Collectors.toList());
+            return new PageImpl<>(postActionForCommunityDTOS, pageable, postActionPage.getTotalElements());
+        }
+        throw new AccessException();
     }
 }

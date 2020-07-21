@@ -71,8 +71,11 @@ public class UserPostActionController {
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     void updatePost(@PathVariable Long postId, @Valid @RequestBody PostActionUpdateRequestDTO postActionRequest) {
-        PostAction postAction = userPostActionAccessService.hasAccessToPostModification(postId);
-        postActionService.updatePostAction(postAction, postActionRequest);
+        if (userPostActionAccessService.hasAccessToPostModification(postId)) {
+            postActionService.updatePostAction(postId, postActionRequest);
+        } else {
+            throw new AccessException();
+        }
     }
 
     @RequestMapping(value = "/posts/poll/question", method = RequestMethod.POST)
@@ -83,7 +86,7 @@ public class UserPostActionController {
     @RequestMapping(value = "/posts/{postId}/poll/answer", method = RequestMethod.POST)
     PollQuestionDTO createPollAnswerPost(@PathVariable Long postId, @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
         PostAction postAction = userPostActionAccessService.createPollAnswerPost(postId);
-        if(postAction != null){
+        if (postAction != null) {
             return userPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
         }
         throw new AccessException();
@@ -99,8 +102,11 @@ public class UserPostActionController {
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deletePost(@PathVariable Long postId) {
-        PostAction postAction = userPostActionAccessService.hasAccessToPostDeletion(postId);
-        postActionService.deletePostAction(postAction);
+        if (userPostActionAccessService.hasAccessToPostDeletion(postId)) {
+            postActionService.deletePostAction(postId);
+        } else {
+            throw new AccessException();
+        }
     }
 
     // Get the list of poll questions for User Profile

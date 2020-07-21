@@ -34,16 +34,22 @@ public class CommentActionController {
 
     @RequestMapping(value = "/post/{postSlug}/comment", method = RequestMethod.GET)
     Page<CommentActionDTO> getPublicCommentsByPostId(@PathVariable String postSlug, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<CommentAction> commentActionPage = commentActionService.getPublicCommentsByPostId(postSlug, pageable);
-        return new PageImpl<>(commentActionMapper.toDTOs(commentActionPage.getContent()), pageable, commentActionPage.getTotalElements());
+        if (commentActionAccessService.hasAccessToPostCommentAction(postSlug)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<CommentAction> commentActionPage = commentActionService.getPublicCommentsByPostId(postSlug, pageable);
+            return new PageImpl<>(commentActionMapper.toDTOs(commentActionPage.getContent()), pageable, commentActionPage.getTotalElements());
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/user/posts/{postId}/comment", method = RequestMethod.GET)
     Page<CommentActionDTO> getAllCommentsByPostId(@PathVariable Long postId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        Page<CommentAction> commentActionPage = commentActionService.getAllCommentActionByPostId(postId, pageable);
-        return new PageImpl<>(commentActionMapper.toDTOs(commentActionPage.getContent()), pageable, commentActionPage.getTotalElements());
+        if (commentActionAccessService.hasAccessToPostCommentAction(postId)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Page<CommentAction> commentActionPage = commentActionService.getAllCommentActionByPostId(postId, pageable);
+            return new PageImpl<>(commentActionMapper.toDTOs(commentActionPage.getContent()), pageable, commentActionPage.getTotalElements());
+        }
+        throw new AccessException();
     }
 
     @RequestMapping(value = "/user/posts/{postId}/comment", method = RequestMethod.POST)

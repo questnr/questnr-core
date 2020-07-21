@@ -263,7 +263,7 @@ public class CommunityJoinService {
 
         List<User> userList = userPage.getContent();
         List<User> filteredUserList = userList.stream().filter(user ->
-                !this.communityAccessService.isUserMemberOfCommunity(user, communityUser.getCommunity())
+                !this.communityCommonService.isUserMemberOfCommunity(user, communityUser.getCommunity())
         ).collect(Collectors.toList());
 
         List<User> pagedUserList = new ArrayList<>();

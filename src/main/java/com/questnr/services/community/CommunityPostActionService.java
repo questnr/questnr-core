@@ -193,8 +193,8 @@ public class CommunityPostActionService {
         }
     }
 
-    public PollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
-        return this.postActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+    public PollQuestionDTO createPollAnswerPost(Long postActionId, PostPollAnswerRequest postPollAnswerRequest) {
+        return this.postActionService.createPollAnswerPost(postActionService.getPostActionByIdAndType(postActionId, PostType.question), postPollAnswerRequest);
     }
 
     public Page<PostAction> getAllPostPollQuestion(Long communityId, Pageable pageable) {

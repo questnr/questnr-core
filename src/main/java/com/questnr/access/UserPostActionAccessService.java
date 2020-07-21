@@ -2,7 +2,6 @@ package com.questnr.access;
 
 import com.questnr.common.enums.PostType;
 import com.questnr.exceptions.AccessException;
-import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.PostActionRepository;
@@ -52,25 +51,21 @@ public class UserPostActionAccessService {
         return null;
     }
 
-    public PostAction hasAccessToPostModification(Long postId) {
+    public boolean hasAccessToPostModification(Long postId) {
         User user = userCommonService.getUser();
         // This rights only given to user actor of the post
         PostAction postAction = postActionRepository.findByPostActionIdAndUserActor(postId, user);
-        if (postAction != null) {
-            return postAction;
-        } else {
-            throw new ResourceNotFoundException("Post not found!");
-        }
+        return postActionAccessService.hasAccessToActionsOnPost(postAction);
     }
 
-    public PostAction hasAccessToPostDeletion(Long postId) {
+    public boolean hasAccessToPostDeletion(Long postId) {
         return this.hasAccessToPostModification(postId);
     }
 
-    public PostAction createPollAnswerPost(Long postId){
+    public PostAction createPollAnswerPost(Long postId) {
         User user = userCommonService.getUser();
         PostAction postAction = postActionService.getPostActionByIdAndType(postId, PostType.question);
-        if(postAction.getUserActor().equals(user) || userFollowerService.existsUserFollower(postAction.getUserActor(), user)){
+        if (postAction.getUserActor().equals(user) || userFollowerService.existsUserFollower(postAction.getUserActor(), user)) {
             return postAction;
         }
         throw new AccessException("You are not following the user");

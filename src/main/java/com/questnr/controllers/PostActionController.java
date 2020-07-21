@@ -1,6 +1,8 @@
 package com.questnr.controllers;
 
+import com.questnr.access.PostActionAccessService;
 import com.questnr.common.enums.PostType;
+import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.PostActionForMediaDTO;
@@ -30,6 +32,9 @@ public class PostActionController {
     @Autowired
     PostActionMetaService postActionMetaService;
 
+    @Autowired
+    PostActionAccessService postActionAccessService;
+
     PostActionController() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
@@ -37,13 +42,16 @@ public class PostActionController {
     // Get PostAction using post slug
     @RequestMapping(value = "/post/{postSlug}", method = RequestMethod.GET)
     PostBaseDTO getPostActionFromSlug(@PathVariable String postSlug) {
-        PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
-        if(postAction.getPostType() == PostType.simple){
-            return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPublicDTO(postAction));
-        }else if(postAction.getPostType() == PostType.question){
-            return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPollQuestionPublicDTO(postAction));
+        if (postActionAccessService.hasAccessToActionsOnPost(postSlug)) {
+            PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
+            if (postAction.getPostType() == PostType.simple) {
+                return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPublicDTO(postAction));
+            } else if (postAction.getPostType() == PostType.question) {
+                return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPollQuestionPublicDTO(postAction));
+            }
+            return null;
         }
-        return null;
+        throw new AccessException();
     }
 
     // Get PostAction sharable link
@@ -55,13 +63,20 @@ public class PostActionController {
     // Get post media links only
     @RequestMapping(value = "/user/posts/{postId}/media", method = RequestMethod.GET)
     PostActionForMediaDTO getPostActionMediaList(@PathVariable Long postId) {
-        return postActionMapper.toPostActionForMediaDTO(postActionService.getPostActionMediaList(postId));
+        if (postActionAccessService.hasAccessToActionsOnPost(postId)) {
+            return postActionMapper.toPostActionForMediaDTO(postActionService.getPostActionMediaList(postId));
+        }
+        throw new AccessException();
     }
 
     // Report post
     @RequestMapping(value = "user/posts/{postId}/report", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
-    void reportPost(@PathVariable Long postId, @RequestBody PostReportRequest postReportRequest){
-        this.postActionService.reportPost(postId, postReportRequest);
+    void reportPost(@PathVariable Long postId, @RequestBody PostReportRequest postReportRequest) {
+        if (postActionAccessService.hasAccessToActionsOnPost(postId)) {
+            this.postActionService.reportPost(postId, postReportRequest);
+        } else {
+            throw new AccessException();
+        }
     }
 }

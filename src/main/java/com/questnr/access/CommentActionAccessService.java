@@ -26,6 +26,9 @@ public class CommentActionAccessService {
     UserCommonService userCommonService;
 
     @Autowired
+    PostActionAccessService postActionAccessService;
+
+    @Autowired
     private CommunityPostActionAccessService communityPostActionAccessService;
 
     private boolean isUserOwnerOfComment(User user, CommentAction commentAction) {
@@ -33,26 +36,38 @@ public class CommentActionAccessService {
     }
 
     public boolean hasAccessToCommentCreation(Long postId) {
-        PostAction postAction = postActionRepository.findByPostActionId(postId);
-        Long communityId = commonService.getCommunityId(postAction);
-        return communityId == null || communityPostActionAccessService.hasAccessToPostBaseService(communityId);
+        return this.hasAccessToPostCommentAction(postId);
     }
 
     public boolean hasAccessToCommentDeletion(Long postId, Long commentId) {
         User user = userCommonService.getUser();
         PostAction postAction = postActionRepository.findByPostActionId(postId);
+        if(this.hasAccessToPostCommentAction(postAction)) {
 
-        // If the user is the owner of the post
-        if (communityPostActionAccessService.isUserOwnerOfPost(user, postAction))
-            return true;
+            // If the user is the owner of the post
+            if (communityPostActionAccessService.isUserOwnerOfPost(user, postAction))
+                return true;
 
-        CommentAction commentAction = commentActionRepository.findByCommentActionId(commentId);
+            CommentAction commentAction = commentActionRepository.findByCommentActionId(commentId);
 
-        // If the user is the owner of the comment
-        if (this.isUserOwnerOfComment(user, commentAction))
-            return true;
+            // If the user is the owner of the comment
+            if (this.isUserOwnerOfComment(user, commentAction))
+                return true;
 
-        return this.hasAccessToCommentCreation(postId);
+            return this.hasAccessToCommentCreation(postId);
+        }
+        return false;
     }
 
+    public boolean hasAccessToPostCommentAction(Long postId) {
+        return postActionAccessService.hasAccessToActionsOnPost(postId);
+    }
+
+    public boolean hasAccessToPostCommentAction(String postSlug) {
+        return postActionAccessService.hasAccessToActionsOnPost(postSlug);
+    }
+
+    public boolean hasAccessToPostCommentAction(PostAction postAction) {
+        return postActionAccessService.hasAccessToActionsOnPost(postAction);
+    }
 }

@@ -1,5 +1,6 @@
 package com.questnr.model.dto.community;
 
+import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.dto.AvatarDTO;
 import com.questnr.model.dto.MetaDataDTO;
@@ -28,6 +29,8 @@ public class CommunityDTO {
     private AvatarDTO avatarDTO;
 
     private int totalMembers;
+
+    private CommunityPrivacy communityPrivacy;
 
     private List<CommunityMetaInformation> metaList = new ArrayList<>();
 
@@ -129,5 +132,13 @@ public class CommunityDTO {
 
     public void setCommunityMeta(CommunityMetaDTO communityMeta) {
         this.communityMeta = communityMeta;
+    }
+
+    public CommunityPrivacy getCommunityPrivacy() {
+        return communityPrivacy;
+    }
+
+    public void setCommunityPrivacy(CommunityPrivacy communityPrivacy) {
+        this.communityPrivacy = communityPrivacy;
     }
 }

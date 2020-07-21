@@ -16,8 +16,10 @@ public class UserCommonAccessService {
     @Autowired
     UserFollowerService userFollowerService;
 
-    public boolean isUserAccessibleWithPrivacy(User user){
-        return user.getUserPrivacy() == UserPrivacy.pub || (user.getUserPrivacy() == UserPrivacy.pri
-                && userFollowerService.isFollowingUser(user, userCommonService.getUser()));
+    public boolean isUserAccessibleWithPrivacy(User user) {
+        return user.equals(userCommonService.getUser()) ||
+                user.getUserPrivacy() == UserPrivacy.pub ||
+                (user.getUserPrivacy() == UserPrivacy.pri
+                        && userFollowerService.isFollowingUser(user, userCommonService.getUser()));
     }
 }
