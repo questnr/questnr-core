@@ -1,6 +1,6 @@
 package com.questnr.controllers.community;
 
-import com.questnr.access.CommunityJoinAccessService;
+import com.questnr.access.community.CommunityJoinAccessService;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.community.CommunityDTO;

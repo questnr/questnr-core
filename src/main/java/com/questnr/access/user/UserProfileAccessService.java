@@ -1,4 +1,4 @@
-package com.questnr.access;
+package com.questnr.access.user;
 
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.User;

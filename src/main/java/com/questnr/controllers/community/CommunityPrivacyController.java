@@ -1,6 +1,6 @@
 package com.questnr.controllers.community;
 
-import com.questnr.access.CommunityPrivacyAccessService;
+import com.questnr.access.community.CommunityPrivacyAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.community.CommunityDTO;
 import com.questnr.model.mapper.CommunityMapper;

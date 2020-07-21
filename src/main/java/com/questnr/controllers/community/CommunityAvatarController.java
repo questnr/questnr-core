@@ -1,6 +1,6 @@
 package com.questnr.controllers.community;
 
-import com.questnr.access.CommunityAvatarAccessService;
+import com.questnr.access.community.CommunityAvatarAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.AvatarDTO;
 import com.questnr.services.community.CommunityAvatarService;

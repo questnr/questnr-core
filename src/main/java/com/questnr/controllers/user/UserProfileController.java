@@ -1,6 +1,6 @@
 package com.questnr.controllers.user;
 
-import com.questnr.access.UserProfileAccessService;
+import com.questnr.access.user.UserProfileAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.BioUserDTO;
 import com.questnr.model.dto.user.UserDTO;

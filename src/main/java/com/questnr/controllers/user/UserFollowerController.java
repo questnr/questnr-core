@@ -1,6 +1,6 @@
 package com.questnr.controllers.user;
 
-import com.questnr.access.UserFollowerAccessService;
+import com.questnr.access.user.UserFollowerAccessService;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.user.UserDTO;

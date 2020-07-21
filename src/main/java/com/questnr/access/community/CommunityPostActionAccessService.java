@@ -1,8 +1,7 @@
-package com.questnr.access;
+package com.questnr.access.community;
 
-import com.questnr.model.entities.Community;
+import com.questnr.access.PostActionAccessService;
 import com.questnr.model.entities.PostAction;
-import com.questnr.model.entities.User;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.CommonService;
 import com.questnr.services.PostActionService;
@@ -42,29 +41,15 @@ public class CommunityPostActionAccessService {
     @Autowired
     PostActionService postActionService;
 
-    public boolean isUserOwnerOfPost(User user, PostAction postAction) {
-        return user.equals(postAction.getUserActor());
-    }
-
-    public boolean hasAccessToPostBaseService(Long communityId) {
-        User user = userCommonService.getUser();
-        Community community = communityCommonService.getCommunity(communityId);
-        return communityCommonService.isUserMemberOfCommunity(user, community);
-    }
-
     public boolean hasAccessToPosts(Long communityId) {
         return communityAccessService.hasAccessToCommunity(communityId);
-    }
-
-    public boolean hasAccessToPostCreation(Long communityId) {
-        return this.hasAccessToPostBaseService(communityId);
     }
 
     public boolean hasAccessToPostModification(Long communityId, Long postId) {
         // This rights only given to user actor of the post when user is the member of the community
         PostAction postAction = postActionRepository.findByPostActionIdAndCommunity(postId, communityCommonService.getCommunity(communityId));
         if (postActionAccessService.hasAccessToActionsOnPost(postAction)) {
-            return this.hasAccessToPostBaseService(communityId) && postActionAccessService.isUserOwnerOfPost(userCommonService.getUser(), postAction);
+            return this.hasAccessToPosts(communityId) && postActionAccessService.isUserOwnerOfPost(userCommonService.getUser(), postAction);
         }
         return false;
     }

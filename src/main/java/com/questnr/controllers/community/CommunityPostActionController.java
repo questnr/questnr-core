@@ -1,6 +1,6 @@
 package com.questnr.controllers.community;
 
-import com.questnr.access.CommunityPostActionAccessService;
+import com.questnr.access.community.CommunityPostActionAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.PostActionForCommunityDTO;
@@ -64,7 +64,7 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (communityPostActionAccessService.hasAccessToPostCreation(communityId)) {
+        if (communityPostActionAccessService.hasAccessToPosts(communityId)) {
             if (postActionRequestDTO.getFiles() != null && postActionRequestDTO.getFiles().size() > 0) {
                 return communityPostActionService.creatPostAction(postActionMapper.fromPostActionRequestDTO(postActionRequestDTO), postActionRequestDTO.getFiles(), communityId);
             } else {
@@ -92,7 +92,7 @@ public class CommunityPostActionController {
         /*
          * Community Post Security Checking
          * */
-        if (communityPostActionAccessService.hasAccessToPostCreation(communityId)) {
+        if (communityPostActionAccessService.hasAccessToPosts(communityId)) {
             return communityPostActionService.createPollQuestionPost(communityId, postPollQuestionRequest);
         }
         throw new AccessException();

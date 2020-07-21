@@ -1,5 +1,7 @@
-package com.questnr.access;
+package com.questnr.access.user;
 
+import com.questnr.access.PostActionAccessService;
+import com.questnr.access.community.CommunityAccessService;
 import com.questnr.common.enums.PostType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.entities.PostAction;

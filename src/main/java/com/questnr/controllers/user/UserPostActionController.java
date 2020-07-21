@@ -1,6 +1,6 @@
 package com.questnr.controllers.user;
 
-import com.questnr.access.UserPostActionAccessService;
+import com.questnr.access.user.UserPostActionAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.PostActionFeedDTO;

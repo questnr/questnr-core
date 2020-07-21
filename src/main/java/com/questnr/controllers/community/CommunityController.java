@@ -1,6 +1,6 @@
 package com.questnr.controllers.community;
 
-import com.questnr.access.CommunityAccessService;
+import com.questnr.access.community.CommunityAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.dto.community.CommunityCardDTO;

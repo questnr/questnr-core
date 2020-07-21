@@ -1,5 +1,6 @@
 package com.questnr.access;
 
+import com.questnr.access.community.CommunityPostActionAccessService;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
@@ -45,7 +46,7 @@ public class CommentActionAccessService {
         if(this.hasAccessToPostCommentAction(postAction)) {
 
             // If the user is the owner of the post
-            if (communityPostActionAccessService.isUserOwnerOfPost(user, postAction))
+            if (postActionAccessService.isUserOwnerOfPost(user, postAction))
                 return true;
 
             CommentAction commentAction = commentActionRepository.findByCommentActionId(commentId);

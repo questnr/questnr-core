@@ -1,4 +1,4 @@
-package com.questnr.access;
+package com.questnr.access.community;
 
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.Community;

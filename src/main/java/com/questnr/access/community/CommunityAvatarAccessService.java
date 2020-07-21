@@ -1,5 +1,6 @@
-package com.questnr.access;
+package com.questnr.access.community;
 
+import com.questnr.access.user.UserCommonAccessService;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.CommonService;

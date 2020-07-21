@@ -1,4 +1,4 @@
-package com.questnr.access;
+package com.questnr.access.community;
 
 import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.model.entities.Community;

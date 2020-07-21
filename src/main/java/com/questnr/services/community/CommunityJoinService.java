@@ -1,6 +1,6 @@
 package com.questnr.services.community;
 
-import com.questnr.access.CommunityAccessService;
+import com.questnr.access.community.CommunityAccessService;
 import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
@@ -312,8 +312,9 @@ public class CommunityJoinService {
             if (shouldAccept) {
                 this.createCommunityUser(community, user);
             }
+        } else {
+            throw new ResourceNotFoundException("Community user request doesn't exists");
         }
-        throw new ResourceNotFoundException("Community user request doesn't exists");
     }
 
     public void actionOnAllCommunityUserRequest(Community community, boolean shouldAccept) {

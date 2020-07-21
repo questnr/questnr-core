@@ -1,4 +1,4 @@
-package com.questnr.access;
+package com.questnr.access.user;
 
 import com.questnr.common.enums.UserPrivacy;
 import com.questnr.model.entities.User;

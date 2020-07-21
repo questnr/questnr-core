@@ -1,4 +1,4 @@
-package com.questnr.access;
+package com.questnr.access.community;
 
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
