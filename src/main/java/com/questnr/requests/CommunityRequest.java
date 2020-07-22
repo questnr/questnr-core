@@ -1,5 +1,6 @@
 package com.questnr.requests;
 
+import com.questnr.common.enums.CommunityPrivacy;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Nullable;
@@ -10,6 +11,8 @@ public class CommunityRequest {
     private String description;
 
     private MultipartFile[] avatarFile;
+
+    private CommunityPrivacy communityPrivacy;
 
     public String getCommunityName() {
         return communityName;
@@ -34,5 +37,13 @@ public class CommunityRequest {
 
     public void setAvatarFile(@Nullable MultipartFile[] avatarFile) {
         this.avatarFile = avatarFile;
+    }
+
+    public CommunityPrivacy getCommunityPrivacy() {
+        return communityPrivacy;
+    }
+
+    public void setCommunityPrivacy(CommunityPrivacy communityPrivacy) {
+        this.communityPrivacy = communityPrivacy;
     }
 }
