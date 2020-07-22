@@ -23,6 +23,8 @@ public class UserCommonService {
 
     final String USER_AVATAR_DIR = "avt";
 
+    final String USER_BANNER_DIR = "banner";
+
     @Autowired
     JwtTokenUtil jwtTokenUtil;
 
@@ -57,7 +59,14 @@ public class UserCommonService {
 
     public String getAvatarPathToDir(){
         return Paths.get(this.getS3BucketUserFolder(), USER_AVATAR_DIR).toString();
+    }
 
+    public String getBannerPathToDir(){
+        return Paths.get(this.getS3BucketUserFolder(), USER_BANNER_DIR).toString();
+    }
+
+    public String getBannerPathToFile(String fileName){
+        return Paths.get(this.getS3BucketUserFolder(), USER_BANNER_DIR, fileName).toString();
     }
 
     public String getAvatarPathToFile(String fileName){

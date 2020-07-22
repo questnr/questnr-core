@@ -18,6 +18,8 @@ public class UserDTO {
 
     private AvatarDTO avatarDTO;
 
+    private AvatarDTO banner;
+
     private UserMetaDTO userMeta;
 
     public Long getUserId() {
@@ -74,6 +76,14 @@ public class UserDTO {
 
     public void setAvatarDTO(AvatarDTO avatarDTO) {
         this.avatarDTO = avatarDTO;
+    }
+
+    public AvatarDTO getBanner() {
+        return banner;
+    }
+
+    public void setBanner(AvatarDTO banner) {
+        this.banner = banner;
     }
 
     public UserMetaDTO getUserMeta() {

@@ -76,6 +76,10 @@ public class User extends DomainObject {
     @JoinColumn(name = "avatar_id")
     private Avatar avatar;
 
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "banner_id")
+    private Avatar banner;
+
     @Column(name = "slug")
     private String slug;
 
@@ -244,6 +248,14 @@ public class User extends DomainObject {
 
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+    }
+
+    public Avatar getBanner() {
+        return banner;
+    }
+
+    public void setBanner(Avatar banner) {
+        this.banner = banner;
     }
 
     public String getSlug() {
