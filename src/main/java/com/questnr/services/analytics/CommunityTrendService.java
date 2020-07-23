@@ -148,6 +148,7 @@ public class CommunityTrendService implements Runnable {
 
 
         StartingEndingDate startingEndingDate = new StartingEndingDate();
+//        startingEndingDate.setDaysBefore(40);
         startingEndingDate.build();
 
         // Yesterday's Date
@@ -155,6 +156,7 @@ public class CommunityTrendService implements Runnable {
 
         // If this algorithm hasn't been run before for this day.
         if (communityTrendDataRepository.countByObservedDate(datePointer) == 0) {
+//        while (datePointer.getTime() < startingEndingDate.getEndingDate().getTime()) {
             LOGGER.info("Community Trending Algorithm Started!");
 
             // Get day + 1
@@ -170,43 +172,43 @@ public class CommunityTrendService implements Runnable {
                 List<CommunityUser> communityUserList = communityUserRepository.findAllByCommunityAndCreatedAtBetween(community, datePointer, nextDatePointer);
 
                 int totalFollowers = communityUserList.size();
-                if(totalFollowers <= CommunityRankDependents.USER_FOLLOWER_COUNT_THRESHOLD)
+                if (totalFollowers < CommunityRankDependents.USER_FOLLOWER_COUNT_THRESHOLD)
                     continue;
                 List<PostAction> postActionList = postActionRepository.findAllByCommunityAndCreatedAtBetween(community, datePointer, nextDatePointer);
 
                 int totalPosts = postActionList.size();
-                if (totalPosts <= CommunityRankDependents.POST_COUNT_THRESHOLD) continue;
+                if (totalPosts < CommunityRankDependents.POST_COUNT_THRESHOLD) continue;
 
                 Long totalLikes = Long.valueOf(0);
                 for (PostAction postAction : postActionList) {
                     totalLikes += likeActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
                 }
-                if(totalLikes <= CommunityRankDependents.LIKE_COUNT_THRESHOLD)
+                if (totalLikes < CommunityRankDependents.LIKE_COUNT_THRESHOLD)
                     continue;
 
                 Long totalComments = Long.valueOf(0);
                 for (PostAction postAction : postActionList) {
                     totalComments += commentActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
                 }
-                if(totalComments <= CommunityRankDependents.COMMENT_COUNT_THRESHOLD)
+                if (totalComments < CommunityRankDependents.COMMENT_COUNT_THRESHOLD)
                     continue;
 
                 Long totalPostVisits = Long.valueOf(0);
                 for (PostAction postAction : postActionList) {
                     totalPostVisits += postVisitRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
                 }
-                if(totalPostVisits <= CommunityRankDependents.POST_VISIT_COUNT_THRESHOLD)
+                if (totalPostVisits < CommunityRankDependents.POST_VISIT_COUNT_THRESHOLD)
                     continue;
 
                 Long totalPostShared = Long.valueOf(0);
                 for (PostAction postAction : postActionList) {
                     totalPostShared += sharePostActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
                 }
-                if(totalPostShared <= CommunityRankDependents.POST_SHARED_COUNT_THRESHOLD)
+                if (totalPostShared < CommunityRankDependents.POST_SHARED_COUNT_THRESHOLD)
                     continue;
 
 //                int totalVisits = 0;
-//                if(totalVisits <= CommunityRankDependents.VISIT_COUNT_THRESHOLD)
+//                if(totalVisits < CommunityRankDependents.VISIT_COUNT_THRESHOLD)
 //                    continue;
 
                 CommunityRankDTO communityRankDTO = new CommunityRankDTO();
@@ -232,8 +234,10 @@ public class CommunityTrendService implements Runnable {
 
             this.calculateCommunityTrendOverTime();
 
+//            datePointer = nextDatePointer;
             LOGGER.info("Community Trending Algorithm Completed! Decided trend xx community");
-        } else {
+        }
+        else{
             LOGGER.info("Community Trending Algorithm Ignored...");
         }
     }
