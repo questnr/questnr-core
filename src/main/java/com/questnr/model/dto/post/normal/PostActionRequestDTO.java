@@ -11,8 +11,8 @@ public class PostActionRequestDTO {
     private Long postId;
     private String text;
     List<MultipartFile> files;
-    private PublishStatus status;
-    private PostEditorType postEditorType;
+    private PublishStatus status = PublishStatus.publish;
+    private PostEditorType postEditorType = PostEditorType.normal;
 
     public Long getPostId() {
         return postId;

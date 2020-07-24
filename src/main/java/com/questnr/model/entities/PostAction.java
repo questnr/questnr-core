@@ -127,7 +127,7 @@ public class PostAction extends DomainObject implements NotificationBase, PostBa
     @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
     @Enumerated(EnumType.STRING)
     @Column(name = "post_editor_type", nullable = false, columnDefinition = "varchar default 'normal'")
-    private PostEditorType postEditorType;
+    private PostEditorType postEditorType = PostEditorType.normal;
 
     public Long getPostActionId() {
         return postActionId;

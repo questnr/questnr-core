@@ -28,7 +28,7 @@ public class PostPollQuestion {
     private String disagreeText;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "post_poll_question_id")
+    @JoinColumn(name = "post_poll_question_id", nullable = false)
     private List<PostPollAnswer> postPollAnswer = new ArrayList<>();
 
     public Long getPollQuestionActionId() {
