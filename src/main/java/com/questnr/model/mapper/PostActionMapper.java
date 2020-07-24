@@ -40,10 +40,7 @@ public abstract class PostActionMapper {
             @Mapping(source = "commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "metaList", ignore = true),
-            @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
-            @Mapping(target = "totalLikes", expression = "java(postAction.getLikeActionSet().size())"),
-            @Mapping(target = "totalComments", expression = "java(postAction.getCommentActionSet().size())"),
-            @Mapping(target = "totalPostVisits", expression = "java(postAction.getPostVisitSet().size())")
+            @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))")
     })
     abstract public PostActionPublicDTO toPublicDTO(final PostAction postAction);
 
@@ -74,11 +71,9 @@ public abstract class PostActionMapper {
             @Mapping(source = "postAction.commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
-            @Mapping(target = "totalLikes", expression = "java(postAction.getLikeActionSet().size())"),
-            @Mapping(target = "totalComments", expression = "java(postAction.getCommentActionSet().size())"),
-            @Mapping(target = "totalPostVisits", expression = "java(postAction.getPostVisitSet().size())"),
             @Mapping(target = "postActionType", expression = "java(postActionType)"),
-            @Mapping(source = "userWhoShared", target = "userWhoShared")
+            @Mapping(source = "userWhoShared", target = "userWhoShared"),
+            @Mapping(source = "postAction.postEditorType", target = "postEditorType")
     })
     abstract public PostActionFeedDTO toPostActionFeedDTO(final PostAction postAction, PostActionType postActionType, User userWhoShared);
 
@@ -101,9 +96,6 @@ public abstract class PostActionMapper {
             @Mapping(source = "likeActionSet", target = "likeActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(source = "commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
-            @Mapping(target = "totalLikes", expression = "java(postAction.getLikeActionSet().size())"),
-            @Mapping(target = "totalComments", expression = "java(postAction.getCommentActionSet().size())"),
-            @Mapping(target = "totalPostVisits", expression = "java(postAction.getPostVisitSet().size())"),
             @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
     })
     abstract public PostActionForCommunityDTO toPostActionForCommunityDTO(final PostAction postAction);

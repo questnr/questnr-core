@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.questnr.common.NotificationTitles;
-import com.questnr.common.enums.NotificationType;
-import com.questnr.common.enums.PostActionPrivacy;
-import com.questnr.common.enums.PostType;
-import com.questnr.common.enums.PublishStatus;
+import com.questnr.common.enums.*;
 import org.hibernate.annotations.Where;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.*;
@@ -126,6 +123,11 @@ public class PostAction extends DomainObject implements NotificationBase, PostBa
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "post_poll_question_id")
     private PostPollQuestion postPollQuestion;
+
+    @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "post_editor_type", nullable = false, columnDefinition = "varchar default 'normal'")
+    private PostEditorType postEditorType;
 
     public Long getPostActionId() {
         return postActionId;
@@ -298,6 +300,14 @@ public class PostAction extends DomainObject implements NotificationBase, PostBa
 
     public void setPostType(PostType postType) {
         this.postType = postType;
+    }
+
+    public PostEditorType getPostEditorType() {
+        return postEditorType;
+    }
+
+    public void setPostEditorType(PostEditorType postEditorType) {
+        this.postEditorType = postEditorType;
     }
 
     @Override

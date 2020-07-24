@@ -1,5 +1,6 @@
 package com.questnr.model.dto.post.normal;
 
+import com.questnr.common.enums.PostEditorType;
 import com.questnr.model.dto.CommentActionDTO;
 import com.questnr.model.dto.LikeActionDTO;
 import com.questnr.model.dto.PostMediaDTO;
@@ -8,13 +9,19 @@ import com.questnr.model.dto.post.PostBaseDTO;
 import java.util.List;
 
 public class PostActionDTO extends PostBaseDTO {
+    private PostEditorType postEditorType;
     private List<LikeActionDTO> likeActionList;
     private List<CommentActionDTO> commentActionList;
     private List<PostMediaDTO> postMediaList;
-    private int totalLikes;
-    private int totalComments;
-    private int totalPostVisits;
     private PostActionMetaDTO postActionMeta;
+
+    public PostEditorType getPostEditorType() {
+        return postEditorType;
+    }
+
+    public void setPostEditorType(PostEditorType postEditorType) {
+        this.postEditorType = postEditorType;
+    }
 
     public List<LikeActionDTO> getLikeActionList() {
         return likeActionList;
@@ -38,30 +45,6 @@ public class PostActionDTO extends PostBaseDTO {
 
     public void setPostMediaList(List<PostMediaDTO> postMediaList) {
         this.postMediaList = postMediaList;
-    }
-
-    public int getTotalLikes() {
-        return totalLikes;
-    }
-
-    public void setTotalLikes(int totalLikes) {
-        this.totalLikes = totalLikes;
-    }
-
-    public int getTotalComments() {
-        return totalComments;
-    }
-
-    public void setTotalComments(int totalComments) {
-        this.totalComments = totalComments;
-    }
-
-    public int getTotalPostVisits() {
-        return totalPostVisits;
-    }
-
-    public void setTotalPostVisits(int totalPostVisits) {
-        this.totalPostVisits = totalPostVisits;
     }
 
     public PostActionMetaDTO getPostActionMeta() {

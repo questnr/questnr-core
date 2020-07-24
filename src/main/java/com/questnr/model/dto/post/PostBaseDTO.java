@@ -2,6 +2,7 @@ package com.questnr.model.dto.post;
 
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PostActionType;
+import com.questnr.common.enums.PostEditorType;
 import com.questnr.common.enums.PostType;
 import com.questnr.model.dto.MetaDataDTO;
 import com.questnr.model.entities.HashTag;

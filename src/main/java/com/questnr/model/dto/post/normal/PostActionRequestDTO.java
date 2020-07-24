@@ -1,8 +1,7 @@
 package com.questnr.model.dto.post.normal;
 
+import com.questnr.common.enums.PostEditorType;
 import com.questnr.common.enums.PublishStatus;
-import com.questnr.model.entities.Community;
-import com.questnr.model.entities.PostAction;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -13,6 +12,7 @@ public class PostActionRequestDTO {
     private String text;
     List<MultipartFile> files;
     private PublishStatus status;
+    private PostEditorType postEditorType;
 
     public Long getPostId() {
         return postId;
@@ -44,5 +44,13 @@ public class PostActionRequestDTO {
 
     public void setFiles(List<MultipartFile> files) {
         this.files = files;
+    }
+
+    public PostEditorType getPostEditorType() {
+        return postEditorType;
+    }
+
+    public void setPostEditorType(PostEditorType postEditorType) {
+        this.postEditorType = postEditorType;
     }
 }

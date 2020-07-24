@@ -22,6 +22,9 @@ public class PostActionMetaMapper {
             if (likeActionList.size() == 1) {
                 postActionMetaDTO.setLiked(true);
             }
+            postActionMetaDTO.setTotalLikes(postAction.getLikeActionSet().size());
+            postActionMetaDTO.setTotalComments(postAction.getCommentActionSet().size());
+            postActionMetaDTO.setTotalPostVisits(postAction.getPostVisitSet().size());
             return postActionMetaDTO;
         }catch (Exception e){
             return new PostActionMetaDTO();
