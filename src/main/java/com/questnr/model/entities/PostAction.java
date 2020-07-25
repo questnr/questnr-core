@@ -124,6 +124,9 @@ public class PostAction extends DomainObject implements NotificationBase, PostBa
     @JoinColumn(name = "post_poll_question_id")
     private PostPollQuestion postPollQuestion;
 
+    @Column(name = "blog_title", columnDefinition = "TEXT", length = 100)
+    private String blogTitle;
+
     @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
     @Enumerated(EnumType.STRING)
     @Column(name = "post_editor_type", nullable = false, columnDefinition = "varchar default 'normal'")
@@ -300,6 +303,14 @@ public class PostAction extends DomainObject implements NotificationBase, PostBa
 
     public void setPostType(PostType postType) {
         this.postType = postType;
+    }
+
+    public String getBlogTitle() {
+        return blogTitle;
+    }
+
+    public void setBlogTitle(String blogTitle) {
+        this.blogTitle = blogTitle;
     }
 
     public PostEditorType getPostEditorType() {

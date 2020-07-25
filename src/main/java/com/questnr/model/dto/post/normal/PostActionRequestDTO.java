@@ -12,6 +12,7 @@ public class PostActionRequestDTO {
     private String text;
     List<MultipartFile> files;
     private PublishStatus status = PublishStatus.publish;
+    private String blogTitle;
     private PostEditorType postEditorType = PostEditorType.normal;
 
     public Long getPostId() {
@@ -44,6 +45,14 @@ public class PostActionRequestDTO {
 
     public void setFiles(List<MultipartFile> files) {
         this.files = files;
+    }
+
+    public String getBlogTitle() {
+        return blogTitle;
+    }
+
+    public void setBlogTitle(String blogTitle) {
+        this.blogTitle = blogTitle.trim();
     }
 
     public PostEditorType getPostEditorType() {

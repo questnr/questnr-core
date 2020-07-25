@@ -162,16 +162,21 @@ public class PostActionService {
     public PostAction creatPostAction(PostAction postAction, PostType postType) {
         try {
             User user = userCommonService.getUser();
+            if (postAction.getPostEditorType() == PostEditorType.blog) {
+                postAction.setTags(this.getPostActionTitleTag(postAction.getBlogTitle()));
+            } else if (postAction.getPostEditorType() == PostEditorType.normal) {
+                postAction.setTags(this.getPostActionTitleTag(postAction));
+                postAction.setHashTags(this.parsePostText(postAction.getText()));
+                postAction.setBlogTitle(null);
+            }
             postAction.addMetadata();
-            postAction.setHashTags(this.parsePostText(postAction.getText()));
             postAction.setUserActor(user);
-            postAction.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
             postAction.setSlug(this.createPostActionSlug(postAction));
-            postAction.setTags(this.getPostActionTitleTag(postAction));
             postAction.setStatus(PublishStatus.publish);
             postAction.setFeatured(false);
             postAction.setPopular(false);
             postAction.setPostType(postType);
+            postAction.setPostDate(Timestamp.valueOf(LocalDateTime.now()));
             if (postAction.getPostActionPrivacy() == null) {
                 postAction.setPostActionPrivacy(PostActionPrivacy.public_post);
             }
@@ -242,6 +247,9 @@ public class PostActionService {
             postAction.setText(postActionRequest.getText());
             postAction.setHashTags(this.parsePostText(postActionRequest.getText()));
             postAction.setStatus(postActionRequest.getStatus());
+            if (postAction.getPostEditorType() == PostEditorType.blog && !CommonService.isNull(postActionRequest.getBlogTitle())) {
+                postAction.setBlogTitle(postActionRequest.getBlogTitle());
+            }
             postAction.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
             return postActionMapper.toPostActionFeedDTO(postActionRepository.save(postAction), PostActionType.normal, null);
         } catch (Exception e) {

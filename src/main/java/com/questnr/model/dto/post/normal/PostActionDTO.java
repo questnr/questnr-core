@@ -9,11 +9,20 @@ import com.questnr.model.dto.post.PostBaseDTO;
 import java.util.List;
 
 public class PostActionDTO extends PostBaseDTO {
+    private String blogTitle;
     private PostEditorType postEditorType;
     private List<LikeActionDTO> likeActionList;
     private List<CommentActionDTO> commentActionList;
     private List<PostMediaDTO> postMediaList;
     private PostActionMetaDTO postActionMeta;
+
+    public String getBlogTitle() {
+        return blogTitle;
+    }
+
+    public void setBlogTitle(String blogTitle) {
+        this.blogTitle = blogTitle;
+    }
 
     public PostEditorType getPostEditorType() {
         return postEditorType;
