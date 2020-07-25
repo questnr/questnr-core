@@ -1,14 +1,13 @@
 package com.questnr.services;
 
-import com.questnr.common.enums.NotificationType;
-import com.questnr.common.enums.PostActionPrivacy;
-import com.questnr.common.enums.PostType;
-import com.questnr.common.enums.PublishStatus;
+import com.questnr.common.enums.*;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.post.normal.PostActionFeedDTO;
 import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
 import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.entities.*;
+import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.mapper.PostPollQuestionMapper;
 import com.questnr.model.mapper.PostReportMapper;
 import com.questnr.model.repositories.*;
@@ -78,8 +77,12 @@ public class PostActionService {
     @Autowired
     CommunityCommonService communityCommonService;
 
+    @Autowired
+    PostActionMapper postActionMapper;
+
     PostActionService() {
         postReportMapper = Mappers.getMapper(PostReportMapper.class);
+        postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
 
     public PostAction getPostActionById(Long postActionId) {
@@ -225,22 +228,22 @@ public class PostActionService {
         return postActionRepository.findByPostActionId(postActionId);
     }
 
-    public void updatePostAction(Long postActionId, PostActionUpdateRequestDTO postActionRequest) {
-        this.updatePostAction(this.getPostActionUsingId(postActionId), postActionRequest);
+    public PostActionFeedDTO updatePostAction(Long postActionId, PostActionUpdateRequestDTO postActionRequest) {
+        return this.updatePostAction(this.getPostActionUsingId(postActionId), postActionRequest);
     }
 
-    public void updatePostAction(Long postActionId, Long communityId, PostActionUpdateRequestDTO postActionRequest) {
+    public PostActionFeedDTO updatePostAction(Long postActionId, Long communityId, PostActionUpdateRequestDTO postActionRequest) {
         PostAction postAction = postActionRepository.findByPostActionIdAndCommunity(postActionId, communityCommonService.getCommunity(communityId));
-        this.updatePostAction(postAction, postActionRequest);
+        return this.updatePostAction(postAction, postActionRequest);
     }
 
-    public void updatePostAction(PostAction postAction, PostActionUpdateRequestDTO postActionRequest) {
+    public PostActionFeedDTO updatePostAction(PostAction postAction, PostActionUpdateRequestDTO postActionRequest) {
         try {
             postAction.setText(postActionRequest.getText());
             postAction.setHashTags(this.parsePostText(postActionRequest.getText()));
             postAction.setStatus(postActionRequest.getStatus());
             postAction.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
-            postActionRepository.save(postAction);
+            return postActionMapper.toPostActionFeedDTO(postActionRepository.save(postAction), PostActionType.normal, null);
         } catch (Exception e) {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }

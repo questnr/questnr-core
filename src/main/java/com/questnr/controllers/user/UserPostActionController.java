@@ -70,9 +70,9 @@ public class UserPostActionController {
 
     @RequestMapping(value = "/posts/{postId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    void updatePost(@PathVariable Long postId, @Valid @RequestBody PostActionUpdateRequestDTO postActionRequest) {
+    PostActionFeedDTO updatePost(@PathVariable Long postId, @Valid @RequestBody PostActionUpdateRequestDTO postActionRequest) {
         if (userPostActionAccessService.hasAccessToPostModification(postId)) {
-            postActionService.updatePostAction(postId, postActionRequest);
+            return postActionService.updatePostAction(postId, postActionRequest);
         } else {
             throw new AccessException();
         }

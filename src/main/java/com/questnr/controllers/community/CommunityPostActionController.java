@@ -3,7 +3,7 @@ package com.questnr.controllers.community;
 import com.questnr.access.community.CommunityPostActionAccessService;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.post.PostBaseDTO;
-import com.questnr.model.dto.post.normal.PostActionForCommunityDTO;
+import com.questnr.model.dto.post.normal.PostActionFeedDTO;
 import com.questnr.model.dto.post.normal.PostActionRequestDTO;
 import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
 import com.questnr.model.dto.post.question.PollQuestionDTO;
@@ -60,7 +60,7 @@ public class CommunityPostActionController {
     }
 
     @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
-    PostActionForCommunityDTO createPost(@PathVariable long communityId, PostActionRequestDTO postActionRequestDTO) {
+    PostActionFeedDTO createPost(@PathVariable long communityId, PostActionRequestDTO postActionRequestDTO) {
         /*
          * Community Post Security Checking
          * */
@@ -76,12 +76,12 @@ public class CommunityPostActionController {
 
     @RequestMapping(value = "/community/{communityId}/posts/{postId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    void updatePost(@PathVariable long communityId, @PathVariable Long postId, @Valid @RequestBody PostActionUpdateRequestDTO postActionRequest) {
+    PostActionFeedDTO updatePost(@PathVariable long communityId, @PathVariable Long postId, @Valid @RequestBody PostActionUpdateRequestDTO postActionRequest) {
         /*
          * Community Post Security Checking
          * */
         if (communityPostActionAccessService.hasAccessToPostModification(communityId, postId)) {
-            postActionService.updatePostAction(postId, communityId, postActionRequest);
+            return postActionService.updatePostAction(postId, communityId, postActionRequest);
         } else {
             throw new AccessException();
         }

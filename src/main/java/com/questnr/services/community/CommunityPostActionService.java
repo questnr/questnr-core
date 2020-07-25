@@ -6,7 +6,7 @@ import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.post.PostBaseDTO;
-import com.questnr.model.dto.post.normal.PostActionForCommunityDTO;
+import com.questnr.model.dto.post.normal.PostActionFeedDTO;
 import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.*;
@@ -110,7 +110,7 @@ public class CommunityPostActionService {
         throw new ResourceNotFoundException("Community not found!");
     }
 
-    public PostActionForCommunityDTO creatPostAction(PostAction postAction, List<MultipartFile> files, long communityId) {
+    public PostActionFeedDTO creatPostAction(PostAction postAction, List<MultipartFile> files, long communityId) {
         if (postAction != null) {
             List<PostMedia> postMediaList;
             postMediaList = files.stream().map(multipartFile -> {
@@ -160,19 +160,19 @@ public class CommunityPostActionService {
             }).collect(Collectors.toList());
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
             postAction.setPostMediaList(postMediaList);
-            return postActionMapper.toPostActionForCommunityDTO(postActionService.creatPostAction(postAction));
+            return postActionMapper.toPostActionFeedDTO(postActionService.creatPostAction(postAction), PostActionType.normal, null);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
     }
 
-    public PostActionForCommunityDTO creatPostAction(PostAction postAction, long communityId) {
+    public PostActionFeedDTO creatPostAction(PostAction postAction, long communityId) {
         if (postAction != null) {
             if (postAction.getText().length() == 0) {
                 throw new InvalidRequestException("Text can not be empty!");
             }
             postAction.setCommunity(communityCommonService.getCommunity(communityId));
-            return postActionMapper.toPostActionForCommunityDTO(postActionService.creatPostAction(postAction));
+            return postActionMapper.toPostActionFeedDTO(postActionService.creatPostAction(postAction), PostActionType.normal, null);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
