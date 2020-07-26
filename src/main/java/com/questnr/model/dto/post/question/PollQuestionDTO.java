@@ -1,8 +1,6 @@
 package com.questnr.model.dto.post.question;
 
 public class PollQuestionDTO {
-    private String question;
-
     private String agreeText;
 
     private String disagreeText;
@@ -10,14 +8,6 @@ public class PollQuestionDTO {
     private Double agreePercentage = Double.valueOf(0);
 
     private Double disagreePercentage = Double.valueOf(0);
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
 
     public String getAgreeText() {
         return agreeText;

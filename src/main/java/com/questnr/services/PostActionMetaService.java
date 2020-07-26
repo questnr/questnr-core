@@ -142,8 +142,8 @@ public class PostActionMetaService {
 
         String postText = "";
 
-        if (postPollQuestionPublicDTO.getPollQuestion().getQuestion().length() > 0) {
-            postText = postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getPollQuestion().getQuestion());
+        if (postPollQuestionPublicDTO.getQuestionText().length() > 0) {
+            postText = postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText());
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "name",
                     "description",

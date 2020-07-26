@@ -100,7 +100,7 @@ public abstract class PostActionMapper {
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
             @Mapping(target = "postActionType", expression = "java(postActionType)"),
-            @Mapping(source = "postAction.text", target = "pollQuestion.question")
+            @Mapping(source = "postAction.text", target = "questionText")
     })
     abstract public PostPollQuestionFeedDTO toPostPollQuestionFeedDTO(final PostAction postAction, PostActionType postActionType, User userWhoShared);
 
@@ -124,7 +124,7 @@ public abstract class PostActionMapper {
             @Mapping(target = "metaList", ignore = true),
             @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
             @Mapping(source = "postPollQuestion", target = "pollQuestion"),
-            @Mapping(source = "text", target = "pollQuestion.question")
+            @Mapping(source = "text", target = "questionText")
     })
     abstract public PostPollQuestionPublicDTO toPollQuestionPublicDTO(final PostAction postAction);
 
@@ -133,7 +133,7 @@ public abstract class PostActionMapper {
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
             @Mapping(source = "postPollQuestion", target = "pollQuestion"),
-            @Mapping(source = "text", target = "pollQuestion.question")
+            @Mapping(source = "text", target = "questionText")
     })
     abstract public PostPollQuestionForCommunityDTO toPostPollQuestionForCommunityDTO(final PostAction postAction);
 
