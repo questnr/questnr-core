@@ -17,8 +17,7 @@ public class UserCommonAccessService {
     UserFollowerService userFollowerService;
 
     public boolean isUserAccessibleWithPrivacy(User user) {
-        return user.equals(userCommonService.getUser()) ||
-                user.getUserPrivacy() == UserPrivacy.pub ||
+        return user.getUserPrivacy() == UserPrivacy.pub || user.equals(userCommonService.getUser()) ||
                 (user.getUserPrivacy() == UserPrivacy.pri
                         && userFollowerService.isFollowingUser(user, userCommonService.getUser()));
     }
