@@ -25,7 +25,8 @@ import java.util.List;
         MetaDataMapper.class,
         PostActionMetaMapper.class,
         PostPollQuestionMapper.class,
-        PostPollQuestionMetaMapper.class
+        PostPollQuestionMetaMapper.class,
+        NormalPostMapper.class
 }, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public abstract class PostActionMapper {
 
@@ -40,11 +41,12 @@ public abstract class PostActionMapper {
             @Mapping(source = "commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "metaList", ignore = true),
-            @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))")
+            @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
+            @Mapping(target = "postData", expression = "java(NormalPostMapper.getMetaMapper(postAction, false))")
     })
     abstract public PostActionPublicDTO toPublicDTO(final PostAction postAction);
 
-    public PostBaseDTO toPostBasePublicDTO(final PostAction postAction){
+    public PostBaseDTO toPostBasePublicDTO(final PostAction postAction) {
         return postAction.getPostType() == PostType.simple ?
                 this.toPublicDTO(postAction) :
                 this.toPollQuestionPublicDTO(postAction);
@@ -63,6 +65,19 @@ public abstract class PostActionMapper {
     }
 
     @Mappings({
+            @Mapping(source = "postMediaList", target = "postMediaList"),
+            @Mapping(source = "community", target = "communityDTO"),
+            @Mapping(source = "userActor", target = "userDTO"),
+            @Mapping(source = "likeActionSet", target = "likeActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
+            @Mapping(source = "commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
+            @Mapping(target = "metaList", ignore = true),
+            @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
+            @Mapping(target = "postData", expression = "java(NormalPostMapper.getMetaMapper(postAction, true))")
+    })
+    abstract public PostActionPublicDTO toSinglePostPublicDTO(final PostAction postAction);
+
+    @Mappings({
             @Mapping(source = "postAction.slug", target = "slug"),
             @Mapping(source = "postAction.postMediaList", target = "postMediaList"),
             @Mapping(source = "postAction.userActor", target = "userDTO"),
@@ -73,7 +88,7 @@ public abstract class PostActionMapper {
             @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
             @Mapping(target = "postActionType", expression = "java(postActionType)"),
             @Mapping(source = "userWhoShared", target = "userWhoShared"),
-            @Mapping(source = "postAction.postEditorType", target = "postEditorType")
+            @Mapping(target = "postData", expression = "java(NormalPostMapper.getMetaMapper(postAction, false))")
     })
     abstract public PostActionFeedDTO toPostActionFeedDTO(final PostAction postAction, PostActionType postActionType, User userWhoShared);
 
@@ -84,7 +99,8 @@ public abstract class PostActionMapper {
             @Mapping(source = "postAction.postPollQuestion", target = "pollQuestion"),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
-            @Mapping(target = "postActionType", expression = "java(postActionType)")
+            @Mapping(target = "postActionType", expression = "java(postActionType)"),
+            @Mapping(source = "postAction.text", target = "pollQuestion.question")
     })
     abstract public PostPollQuestionFeedDTO toPostPollQuestionFeedDTO(final PostAction postAction, PostActionType postActionType, User userWhoShared);
 
@@ -97,6 +113,7 @@ public abstract class PostActionMapper {
             @Mapping(source = "commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
+            @Mapping(target = "postData", expression = "java(NormalPostMapper.getMetaMapper(postAction, false))")
     })
     abstract public PostActionForCommunityDTO toPostActionForCommunityDTO(final PostAction postAction);
 
@@ -106,7 +123,8 @@ public abstract class PostActionMapper {
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "metaList", ignore = true),
             @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
-            @Mapping(source = "postPollQuestion", target = "pollQuestion")
+            @Mapping(source = "postPollQuestion", target = "pollQuestion"),
+            @Mapping(source = "text", target = "pollQuestion.question")
     })
     abstract public PostPollQuestionPublicDTO toPollQuestionPublicDTO(final PostAction postAction);
 
@@ -114,7 +132,8 @@ public abstract class PostActionMapper {
             @Mapping(source = "userActor", target = "userDTO"),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
             @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
-            @Mapping(source = "postPollQuestion", target = "pollQuestion")
+            @Mapping(source = "postPollQuestion", target = "pollQuestion"),
+            @Mapping(source = "text", target = "pollQuestion.question")
     })
     abstract public PostPollQuestionForCommunityDTO toPostPollQuestionForCommunityDTO(final PostAction postAction);
 

@@ -18,13 +18,13 @@ public class PostActionMetaService {
 
     @Autowired
     PostActionService postActionService;
-    
+
     @Value("${app.name}")
     private String appName;
 
     @Value("${facebook.appid}")
     private String fbAppId;
-    
+
     final int MAX_POST_TEXT_LENGTH = 25;
 
     private PostActionMetaInformation getPostActionMetaInformation(String attrType, String type, String content) {
@@ -42,8 +42,8 @@ public class PostActionMetaService {
 
         String postText = "";
 
-        if(postActionPublicDTO.getText().length() > 0){
-            postText = postActionService.getPostActionTitleTag(postActionPublicDTO.getText());
+        if (postActionPublicDTO.getPostData().getText().length() > 0) {
+            postText = postActionService.getPostActionTitleTag(postActionPublicDTO.getPostData().getText());
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "name",
                     "description",
@@ -81,7 +81,7 @@ public class PostActionMetaService {
                 appName
         ));
 
-        if( postActionPublicDTO.getPostMediaList().size() > 0){
+        if (postActionPublicDTO.getPostMediaList().size() > 0) {
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "property",
                     "og:image",
@@ -106,7 +106,7 @@ public class PostActionMetaService {
                 appName
         ));
 
-        if(postText.length()>0){
+        if (postText.length() > 0) {
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "property",
                     "twitter:description",
@@ -120,7 +120,7 @@ public class PostActionMetaService {
                 sharableLinkService.getCommunitySharableLink(postActionPublicDTO.getSlug()).getClickAction()
         ));
 
-        if( postActionPublicDTO.getPostMediaList().size() > 0) {
+        if (postActionPublicDTO.getPostMediaList().size() > 0) {
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "property",
                     "twitter:image",
@@ -142,8 +142,8 @@ public class PostActionMetaService {
 
         String postText = "";
 
-        if(postPollQuestionPublicDTO.getText().length() > 0){
-            postText = postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getText());
+        if (postPollQuestionPublicDTO.getPollQuestion().getQuestion().length() > 0) {
+            postText = postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getPollQuestion().getQuestion());
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "name",
                     "description",
@@ -199,7 +199,7 @@ public class PostActionMetaService {
                 appName
         ));
 
-        if(postText.length()>0){
+        if (postText.length() > 0) {
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "property",
                     "twitter:description",
@@ -221,6 +221,7 @@ public class PostActionMetaService {
 
         return postActionMetaInformationList;
     }
+
     public PostActionPublicDTO setPostActionMetaInformation(PostActionPublicDTO postActionPublicDTO) {
         if (postActionPublicDTO != null) {
             postActionPublicDTO.getMetaList().addAll(this.getPostActionMetaInformationList(postActionPublicDTO));

@@ -1,6 +1,5 @@
 package com.questnr.model.dto.post.normal;
 
-import com.questnr.common.enums.PostEditorType;
 import com.questnr.model.dto.CommentActionDTO;
 import com.questnr.model.dto.LikeActionDTO;
 import com.questnr.model.dto.PostMediaDTO;
@@ -9,27 +8,18 @@ import com.questnr.model.dto.post.PostBaseDTO;
 import java.util.List;
 
 public class PostActionDTO extends PostBaseDTO {
-    private String blogTitle;
-    private PostEditorType postEditorType;
+    private NormalPostDTO postData;
     private List<LikeActionDTO> likeActionList;
     private List<CommentActionDTO> commentActionList;
     private List<PostMediaDTO> postMediaList;
     private PostActionMetaDTO postActionMeta;
 
-    public String getBlogTitle() {
-        return blogTitle;
+    public NormalPostDTO getPostData() {
+        return postData;
     }
 
-    public void setBlogTitle(String blogTitle) {
-        this.blogTitle = blogTitle;
-    }
-
-    public PostEditorType getPostEditorType() {
-        return postEditorType;
-    }
-
-    public void setPostEditorType(PostEditorType postEditorType) {
-        this.postEditorType = postEditorType;
+    public void setPostData(NormalPostDTO postData) {
+        this.postData = postData;
     }
 
     public List<LikeActionDTO> getLikeActionList() {

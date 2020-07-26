@@ -2,7 +2,6 @@ package com.questnr.model.dto.post;
 
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.common.enums.PostActionType;
-import com.questnr.common.enums.PostEditorType;
 import com.questnr.common.enums.PostType;
 import com.questnr.model.dto.MetaDataDTO;
 import com.questnr.model.entities.HashTag;
@@ -12,7 +11,6 @@ import java.util.Set;
 public class PostBaseDTO {
     private Long postActionId;
     private String slug;
-    private String text;
     private PostActionPrivacy postActionPrivacy;
     private boolean featured;
     private boolean popular;
@@ -36,14 +34,6 @@ public class PostBaseDTO {
 
     public void setSlug(String slug) {
         this.slug = slug;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public PostActionPrivacy getPostActionPrivacy() {

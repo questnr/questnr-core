@@ -5,8 +5,10 @@ import com.questnr.common.enums.PostType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.dto.post.PostBaseDTO;
+import com.questnr.model.dto.post.normal.NormalPostDTO;
 import com.questnr.model.dto.post.normal.PostActionForMediaDTO;
 import com.questnr.model.entities.PostAction;
+import com.questnr.model.mapper.NormalPostMapper;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.requests.PostReportRequest;
 import com.questnr.services.PostActionMetaService;
@@ -45,11 +47,21 @@ public class PostActionController {
         if (postActionAccessService.hasAccessToActionsOnPost(postSlug)) {
             PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
             if (postAction.getPostType() == PostType.simple) {
-                return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPublicDTO(postAction));
+                return postActionMetaService.setPostActionMetaInformation(postActionMapper.toSinglePostPublicDTO(postAction));
             } else if (postAction.getPostType() == PostType.question) {
                 return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPollQuestionPublicDTO(postAction));
             }
             return null;
+        }
+        throw new AccessException();
+    }
+
+    // Get PostAction normal post data
+    @RequestMapping(value = "/post/data/{postId}", method = RequestMethod.GET)
+    NormalPostDTO getPostActionText(@PathVariable Long postId) {
+        if (postActionAccessService.hasAccessToActionsOnPost(postId)) {
+            PostAction postAction = postActionService.getPostActionById(postId);
+            return NormalPostMapper.getMetaMapper(postAction, true);
         }
         throw new AccessException();
     }
