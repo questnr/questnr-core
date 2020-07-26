@@ -163,7 +163,12 @@ public class PostActionService {
         try {
             User user = userCommonService.getUser();
             if (postAction.getPostEditorType() == PostEditorType.blog) {
-                postAction.setTags(this.getPostActionTitleTag(postAction.getBlogTitle()));
+                if(CommonService.isNull(postAction.getBlogTitle()) && postAction.getBlogTitle().length() < 1) {
+                    postAction.setTags(this.getPostActionTitleTag(postAction.getText()));
+                    postAction.setBlogTitle(postAction.getTags().substring(0, Math.min(postAction.getTags().length(), 20))+ "...");
+                }else{
+                    postAction.setTags(this.getPostActionTitleTag(postAction.getBlogTitle()));
+                }
             } else if (postAction.getPostEditorType() == PostEditorType.normal) {
                 postAction.setTags(this.getPostActionTitleTag(postAction));
                 postAction.setHashTags(this.parsePostText(postAction.getText()));
