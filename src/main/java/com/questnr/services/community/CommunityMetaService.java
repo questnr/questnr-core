@@ -72,7 +72,7 @@ public class CommunityMetaService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "og:image",
-                communityDTO.getAvatarDTO().getAvatarLink()
+                communityDTO.getAvatarDTO().getAvatarLink().replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)","")
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
@@ -108,7 +108,7 @@ public class CommunityMetaService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "twitter:image",
-                communityDTO.getAvatarDTO().getAvatarLink()
+                communityDTO.getAvatarDTO().getAvatarLink().replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)","")
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
