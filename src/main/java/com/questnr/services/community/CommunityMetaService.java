@@ -21,6 +21,9 @@ public class CommunityMetaService {
     @Autowired
     private SharableLinkService sharableLinkService;
 
+    @Value("${app.name}")
+    private String appName;
+
     @Value("${facebook.appid}")
     private String fbAppId;
 
@@ -93,6 +96,12 @@ public class CommunityMetaService {
                 "property",
                 "og:type",
                 "website"
+        ));
+
+        communityMetaInformationList.add(this.getCommunityMetaInformation(
+                "property",
+                "og:site_name",
+                appName
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(

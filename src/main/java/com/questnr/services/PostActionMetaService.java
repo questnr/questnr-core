@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.common.enums.PostEditorType;
 import com.questnr.model.dto.post.normal.PostActionPublicDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionPublicDTO;
 import com.questnr.model.entities.MetaInformation;
@@ -39,17 +40,26 @@ public class PostActionMetaService {
 
     private List<PostActionMetaInformation> getPostActionMetaInformationList(PostActionPublicDTO postActionPublicDTO) {
         List<PostActionMetaInformation> postActionMetaInformationList = new ArrayList<>();
+        String defaultTitle = "Questnr Post";
+        boolean isThisBlog = postActionPublicDTO.getPostData().getPostEditorType() == PostEditorType.blog;
 
-        String postText = "";
+        String postText = defaultTitle;
 
         if (postActionPublicDTO.getPostData().getText().length() > 0) {
             postText = postActionService.getPostActionTitleTag(postActionPublicDTO.getPostData().getText());
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "name",
-                    "description",
-                    postText
-            ));
         }
+
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "name",
+                "description",
+                postText
+        ));
+
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "name",
+                "keywords",
+                postActionPublicDTO.getTags()
+        ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "name",
@@ -78,20 +88,35 @@ public class PostActionMetaService {
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "og:title",
-                appName
+                isThisBlog ?
+                        postActionPublicDTO.getPostData().getBlogTitle() :
+                        defaultTitle
+        ));
+
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "name",
+                "og:description",
+                postText
         ));
 
         if (postActionPublicDTO.getPostMediaList().size() > 0) {
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "property",
                     "og:image",
-                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink().replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)","")
+                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink().replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "")
             ));
         }
+
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "og:type",
-                "website"
+                isThisBlog ? "blog" : "website"
+        ));
+
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "property",
+                "og:site_name",
+                appName
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -103,16 +128,16 @@ public class PostActionMetaService {
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "twitter:title",
-                appName
+                postActionPublicDTO.getPostData().getPostEditorType() == PostEditorType.blog ?
+                        postActionPublicDTO.getPostData().getBlogTitle() :
+                        defaultTitle
         ));
 
-        if (postText.length() > 0) {
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "property",
-                    "twitter:description",
-                    postText
-            ));
-        }
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "property",
+                "twitter:description",
+                postText
+        ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
@@ -124,7 +149,7 @@ public class PostActionMetaService {
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "property",
                     "twitter:image",
-                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink().replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)","")
+                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink().replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "")
             ));
         }
 
@@ -133,17 +158,25 @@ public class PostActionMetaService {
 
     private List<PostActionMetaInformation> getPostActionMetaInformationList(PostPollQuestionPublicDTO postPollQuestionPublicDTO) {
         List<PostActionMetaInformation> postActionMetaInformationList = new ArrayList<>();
+        String defaultTitle = "Questnr Post";
 
-        String postText = "";
+        String postText = defaultTitle;
 
         if (postPollQuestionPublicDTO.getQuestionText().length() > 0) {
             postText = postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText());
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "name",
-                    "description",
-                    postText
-            ));
         }
+
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "name",
+                "description",
+                postText
+        ));
+
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "name",
+                "keywords",
+                postPollQuestionPublicDTO.getTags()
+        ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "name",
@@ -177,8 +210,20 @@ public class PostActionMetaService {
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
+                "og:description",
+                postText
+        ));
+
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "property",
                 "og:type",
                 "website"
+        ));
+
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "property",
+                "og:site_name",
+                defaultTitle
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -190,27 +235,19 @@ public class PostActionMetaService {
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "twitter:title",
-                appName
+                defaultTitle
         ));
 
-        if (postText.length() > 0) {
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "property",
-                    "twitter:description",
-                    postText
-            ));
-        }
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "property",
+                "twitter:description",
+                postText
+        ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "twitter:url",
                 sharableLinkService.getCommunitySharableLink(postPollQuestionPublicDTO.getSlug()).getClickAction()
-        ));
-
-        postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                "property",
-                "fb:app_id",
-                fbAppId
         ));
 
         return postActionMetaInformationList;
