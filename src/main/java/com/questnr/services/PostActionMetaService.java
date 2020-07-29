@@ -128,12 +128,6 @@ public class PostActionMetaService {
             ));
         }
 
-        postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                "property",
-                "fb:app_id",
-                fbAppId
-        ));
-
         return postActionMetaInformationList;
     }
 

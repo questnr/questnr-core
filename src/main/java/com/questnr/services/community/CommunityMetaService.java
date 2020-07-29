@@ -125,12 +125,6 @@ public class CommunityMetaService {
                 communityDTO.getAvatarDTO().getAvatarLink().replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)","")
         ));
 
-        communityMetaInformationList.add(this.getCommunityMetaInformation(
-                "property",
-                "fb:app_id",
-                fbAppId
-        ));
-
         return communityMetaInformationList;
     }
     public CommunityDTO setCommunityMetaInformation(CommunityDTO communityDTO) {
