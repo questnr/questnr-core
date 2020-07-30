@@ -27,6 +27,9 @@ public class CommunityMetaService {
     @Value("${facebook.appid}")
     private String fbAppId;
 
+    @Value("${app.logo.link}")
+    private String appLogoLink;
+
     @Autowired
     CommunityMapper communityMapper;
 
@@ -49,6 +52,9 @@ public class CommunityMetaService {
 
     private List<CommunityMetaInformation> getCommunityMetaInformationList(CommunityDTO communityDTO) {
         List<CommunityMetaInformation> communityMetaInformationList = new ArrayList<>();
+        String communityAvatarLink = communityDTO.getAvatarDTO().getAvatarLink() != null ?
+                communityDTO.getAvatarDTO().getAvatarLink() :
+                appLogoLink;
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "name",
@@ -59,7 +65,7 @@ public class CommunityMetaService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "name",
                 "author",
-                communityDTO.getOwnerUserDTO().getFirstName() + " " + communityDTO.getOwnerUserDTO().getFirstName()
+                communityDTO.getOwnerUserDTO().getDisplayName()
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
@@ -89,7 +95,7 @@ public class CommunityMetaService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "og:image",
-                communityDTO.getAvatarDTO().getAvatarLink()
+                communityAvatarLink
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
@@ -102,12 +108,6 @@ public class CommunityMetaService {
                 "property",
                 "og:site_name",
                 appName
-        ));
-
-        communityMetaInformationList.add(this.getCommunityMetaInformation(
-                "property",
-                "fb:app_id",
-                fbAppId
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
@@ -131,7 +131,19 @@ public class CommunityMetaService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "twitter:image",
-                communityDTO.getAvatarDTO().getAvatarLink()
+                communityAvatarLink
+        ));
+
+        communityMetaInformationList.add(this.getCommunityMetaInformation(
+                "property",
+                "twitter:image:src",
+                communityAvatarLink
+        ));
+
+        communityMetaInformationList.add(this.getCommunityMetaInformation(
+                "property",
+                "twitter:card",
+                "summary_large_image"
         ));
 
         return communityMetaInformationList;

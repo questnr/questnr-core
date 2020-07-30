@@ -1,12 +1,15 @@
 package com.questnr.model.dto.user;
 
 import com.questnr.model.dto.AvatarDTO;
+import com.questnr.services.CommonService;
 
 public class UserDTO {
 
     private Long userId;
 
     private String username;
+
+    private String displayName;
 
     private String firstName;
 
@@ -36,6 +39,13 @@ public class UserDTO {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getDisplayName() {
+        if (!CommonService.isNull(this.getFirstName()) && !CommonService.isNull(this.getLastName())) {
+            return this.getFirstName() + " " + this.getLastName();
+        }
+        return this.getUsername();
     }
 
     public String getFirstName() {
