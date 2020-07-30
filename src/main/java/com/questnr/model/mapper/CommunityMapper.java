@@ -1,9 +1,6 @@
 package com.questnr.model.mapper;
 
-import com.questnr.model.dto.community.CommunityCardDTO;
-import com.questnr.model.dto.community.CommunityDTO;
-import com.questnr.model.dto.community.CommunityForPostActionDTO;
-import com.questnr.model.dto.community.CommunityListViewDTO;
+import com.questnr.model.dto.community.*;
 import com.questnr.model.entities.Community;
 import com.questnr.model.repositories.CommunityUserRequestRepository;
 import com.questnr.requests.CommunityRequest;
@@ -28,7 +25,6 @@ public abstract class CommunityMapper {
             @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
             @Mapping(target = "totalMembers", expression = "java(community.getUsers().size())"),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(community.getCreatedAt(), community.getUpdatedAt()))"),
-            @Mapping(target = "metaList", ignore = true),
             @Mapping(target = "communityMeta", expression = "java(CommunityMetaMapper.getMetaMapper(community, this.userCommonService, this.communityUserRequestRepository))")
     })
     public abstract CommunityDTO toDTO(final Community community);
@@ -40,6 +36,15 @@ public abstract class CommunityMapper {
         }
         return communityDTOList;
     }
+
+    @Mappings({
+            @Mapping(source = "ownerUser", target = "ownerUserDTO"),
+            @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
+            @Mapping(target = "totalMembers", expression = "java(community.getUsers().size())"),
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(community.getCreatedAt(), community.getUpdatedAt()))"),
+            @Mapping(target = "communityMeta", expression = "java(CommunityMetaMapper.getMetaMapper(community, this.userCommonService, this.communityUserRequestRepository))")
+    })
+    public abstract CommunityPublicDTO toPublicDTO(final Community community);
 
     @Mapping(target = "avatar", ignore = true)
     public abstract Community toDomain(CommunityRequest communityRequest);

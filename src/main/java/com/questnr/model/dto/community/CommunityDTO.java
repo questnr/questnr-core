@@ -5,10 +5,6 @@ import com.questnr.common.enums.PublishStatus;
 import com.questnr.model.dto.AvatarDTO;
 import com.questnr.model.dto.MetaDataDTO;
 import com.questnr.model.dto.user.UserOtherDTO;
-import com.questnr.model.entities.CommunityMetaInformation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CommunityDTO {
 
@@ -31,8 +27,6 @@ public class CommunityDTO {
     private int totalMembers;
 
     private CommunityPrivacy communityPrivacy;
-
-    private List<CommunityMetaInformation> metaList = new ArrayList<>();
 
     private MetaDataDTO metaData;
 
@@ -108,14 +102,6 @@ public class CommunityDTO {
 
     public void setTotalMembers(int totalMembers) {
         this.totalMembers = totalMembers;
-    }
-
-    public List<CommunityMetaInformation> getMetaList() {
-        return metaList;
-    }
-
-    public void setMetaList(List<CommunityMetaInformation> metaList) {
-        this.metaList = metaList;
     }
 
     public MetaDataDTO getMetaData() {

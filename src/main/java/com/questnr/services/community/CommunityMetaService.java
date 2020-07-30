@@ -1,7 +1,7 @@
 package com.questnr.services.community;
 
-import com.questnr.model.dto.community.CommunityDTO;
 import com.questnr.model.dto.community.CommunityMetaTagCardDTO;
+import com.questnr.model.dto.community.CommunityPublicDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityMetaInformation;
 import com.questnr.model.entities.MetaInformation;
@@ -50,22 +50,22 @@ public class CommunityMetaService {
         return communityMetaInformation;
     }
 
-    private List<CommunityMetaInformation> getCommunityMetaInformationList(CommunityDTO communityDTO) {
+    private List<CommunityMetaInformation> getCommunityMetaInformationList(CommunityPublicDTO communityPublicDTO) {
         List<CommunityMetaInformation> communityMetaInformationList = new ArrayList<>();
-        String communityAvatarLink = communityDTO.getAvatarDTO().getAvatarLink() != null ?
-                communityDTO.getAvatarDTO().getAvatarLink() :
+        String communityAvatarLink = communityPublicDTO.getAvatarDTO().getAvatarLink() != null ?
+                communityPublicDTO.getAvatarDTO().getAvatarLink() :
                 appLogoLink;
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "name",
                 "description",
-                CommonService.removeSpecialCharacters(communityDTO.getDescription())
+                CommonService.removeSpecialCharacters(communityPublicDTO.getDescription())
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "name",
                 "author",
-                communityDTO.getOwnerUserDTO().getDisplayName()
+                communityPublicDTO.getOwnerUserDTO().getDisplayName()
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
@@ -83,13 +83,13 @@ public class CommunityMetaService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "og:url",
-                sharableLinkService.getCommunitySharableLink(communityDTO.getSlug()).getClickAction()
+                sharableLinkService.getCommunitySharableLink(communityPublicDTO.getSlug()).getClickAction()
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "og:title",
-                communityDTO.getCommunityName()
+                communityPublicDTO.getCommunityName()
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
@@ -113,19 +113,19 @@ public class CommunityMetaService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "twitter:title",
-                communityDTO.getCommunityName()
+                communityPublicDTO.getCommunityName()
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "twitter:description",
-                communityDTO.getDescription()
+                communityPublicDTO.getDescription()
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "twitter:url",
-                sharableLinkService.getCommunitySharableLink(communityDTO.getSlug()).getClickAction()
+                sharableLinkService.getCommunitySharableLink(communityPublicDTO.getSlug()).getClickAction()
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
@@ -148,26 +148,30 @@ public class CommunityMetaService {
 
         return communityMetaInformationList;
     }
-    public CommunityDTO setCommunityMetaInformation(CommunityDTO communityDTO) {
-        if (communityDTO != null) {
-            communityDTO.getMetaList().addAll(this.getCommunityMetaInformationList(communityDTO));
+    public CommunityPublicDTO setCommunityMetaInformation(CommunityPublicDTO communityPublicDTO) {
+        if (communityPublicDTO != null) {
+            CommunityMetaTagCardDTO communityMetaTagCardDTO = new CommunityMetaTagCardDTO();
+            communityMetaTagCardDTO.setTitle(communityPublicDTO.getCommunityName());
+            communityMetaTagCardDTO
+                    .getMetaList().addAll(this.getCommunityMetaInformationList(communityPublicDTO));
+            communityPublicDTO.setMetaTagCard(communityMetaTagCardDTO);
         }
-        return communityDTO;
+        return communityPublicDTO;
     }
 
-    public CommunityMetaTagCardDTO getCommunityMetaCard(CommunityDTO communityDTO){
+    public CommunityMetaTagCardDTO getCommunityMetaCard(CommunityPublicDTO communityPublicDTO){
         CommunityMetaTagCardDTO communityMetaCard = new CommunityMetaTagCardDTO();
-        communityMetaCard.setTitle(communityDTO.getCommunityName());
-        communityMetaCard.getMetaList().addAll(this.getCommunityMetaInformationList(communityDTO));
+        communityMetaCard.setTitle(communityPublicDTO.getCommunityName());
+        communityMetaCard.getMetaList().addAll(this.getCommunityMetaInformationList(communityPublicDTO));
         return communityMetaCard;
     }
 
     public CommunityMetaTagCardDTO getCommunityMetaCard(Community community){
-        return this.getCommunityMetaCard(communityMapper.toDTO(community));
+        return this.getCommunityMetaCard(communityMapper.toPublicDTO(community));
     }
 
     public CommunityMetaTagCardDTO getCommunityMetaCard(String communitySlug){
-        return this.getCommunityMetaCard(communityMapper.toDTO(
+        return this.getCommunityMetaCard(communityMapper.toPublicDTO(
                 communityCommonService.getCommunity(communitySlug)));
     }
 }

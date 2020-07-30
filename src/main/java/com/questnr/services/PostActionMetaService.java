@@ -1,6 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.common.enums.PostEditorType;
+import com.questnr.model.dto.post.normal.PostActionMetaTagCardDTO;
 import com.questnr.model.dto.post.normal.PostActionPublicDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionPublicDTO;
 import com.questnr.model.entities.MetaInformation;
@@ -41,12 +42,11 @@ public class PostActionMetaService {
         return postActionMetaInformation;
     }
 
-    private List<PostActionMetaInformation> getPostActionMetaInformationList(PostActionPublicDTO postActionPublicDTO) {
+    private List<PostActionMetaInformation> getPostActionMetaInformationList(String title, PostActionPublicDTO postActionPublicDTO) {
         List<PostActionMetaInformation> postActionMetaInformationList = new ArrayList<>();
-        String defaultTitle = "Post | by @" + postActionPublicDTO.getUserDTO().getUsername();
         boolean isThisBlog = postActionPublicDTO.getPostData().getPostEditorType() == PostEditorType.blog;
 
-        String postText = defaultTitle;
+        String postText = title;
 
         if (postActionPublicDTO.getPostData().getText().length() > 0) {
             postText = postActionService.getPostActionTitleTag(postActionPublicDTO.getPostData().getText());
@@ -91,10 +91,7 @@ public class PostActionMetaService {
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "og:title",
-                isThisBlog ?
-                        postActionPublicDTO.getPostData().getBlogTitle() +
-                                " | by @" + postActionPublicDTO.getUserDTO().getUsername() :
-                        defaultTitle
+                title
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -132,10 +129,7 @@ public class PostActionMetaService {
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "twitter:title",
-                isThisBlog ?
-                        postActionPublicDTO.getPostData().getBlogTitle() +
-                                " | by @" + postActionPublicDTO.getUserDTO().getUsername() :
-                        defaultTitle
+                title
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -188,20 +182,13 @@ public class PostActionMetaService {
         return postActionMetaInformationList;
     }
 
-    private List<PostActionMetaInformation> getPostActionMetaInformationList(PostPollQuestionPublicDTO postPollQuestionPublicDTO) {
+    private List<PostActionMetaInformation> getPostActionMetaInformationList(String title, PostPollQuestionPublicDTO postPollQuestionPublicDTO) {
         List<PostActionMetaInformation> postActionMetaInformationList = new ArrayList<>();
-        String defaultTitle = "Question | by @" + postPollQuestionPublicDTO.getUserDTO().getUsername();
-
-        String postText = defaultTitle;
-
-        if (postPollQuestionPublicDTO.getQuestionText().length() > 0) {
-            postText = postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText());
-        }
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "name",
                 "description",
-                postText
+                postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText())
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -218,7 +205,8 @@ public class PostActionMetaService {
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "name",
-                "robots",
+                "rob" +
+                        "ots",
                 "index, follow, max-image-preview:standard"
         ));
 
@@ -237,13 +225,13 @@ public class PostActionMetaService {
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "og:title",
-                defaultTitle
+                title
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "og:description",
-                postText
+                postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText())
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -261,19 +249,19 @@ public class PostActionMetaService {
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "og:site_name",
-                defaultTitle
+                appName
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "twitter:title",
-                defaultTitle
+                title
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "twitter:description",
-                postText
+                postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText())
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -306,14 +294,26 @@ public class PostActionMetaService {
 
     public PostActionPublicDTO setPostActionMetaInformation(PostActionPublicDTO postActionPublicDTO) {
         if (postActionPublicDTO != null) {
-            postActionPublicDTO.getMetaList().addAll(this.getPostActionMetaInformationList(postActionPublicDTO));
+            PostActionMetaTagCardDTO postActionMetaTagCardDTO = new PostActionMetaTagCardDTO();
+            boolean isThisBlog = postActionPublicDTO.getPostData().getPostEditorType() == PostEditorType.blog;
+            String title = isThisBlog ?
+                    postActionPublicDTO.getPostData().getBlogTitle() +
+                            " | by @" + postActionPublicDTO.getUserDTO().getUsername() :
+                    "Post | by @" + postActionPublicDTO.getUserDTO().getUsername();
+            postActionMetaTagCardDTO.setTitle(title);
+            postActionMetaTagCardDTO.getMetaList().addAll(this.getPostActionMetaInformationList(title, postActionPublicDTO));
+            postActionPublicDTO.setMetaTagCard(postActionMetaTagCardDTO);
         }
         return postActionPublicDTO;
     }
 
     public PostPollQuestionPublicDTO setPostActionMetaInformation(PostPollQuestionPublicDTO postPollQuestionPublicDTO) {
         if (postPollQuestionPublicDTO != null) {
-            postPollQuestionPublicDTO.getMetaList().addAll(this.getPostActionMetaInformationList(postPollQuestionPublicDTO));
+            PostActionMetaTagCardDTO postActionMetaTagCardDTO = new PostActionMetaTagCardDTO();
+            String title = "Question | by @" + postPollQuestionPublicDTO.getUserDTO().getUsername();
+            postActionMetaTagCardDTO.setTitle(title);
+            postActionMetaTagCardDTO.getMetaList().addAll(this.getPostActionMetaInformationList(title, postPollQuestionPublicDTO));
+            postPollQuestionPublicDTO.setMetaTagCard(postActionMetaTagCardDTO);
         }
         return postPollQuestionPublicDTO;
     }

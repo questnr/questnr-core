@@ -5,6 +5,7 @@ import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.dto.community.CommunityCardDTO;
 import com.questnr.model.dto.community.CommunityDTO;
+import com.questnr.model.dto.community.CommunityPublicDTO;
 import com.questnr.model.dto.user.UserOtherDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
@@ -112,8 +113,8 @@ public class CommunityController {
     }
 
     @RequestMapping(value = "/community/{communitySlug}", method = RequestMethod.GET)
-    CommunityDTO getCommunity(@PathVariable String communitySlug) {
-        return communityMetaService.setCommunityMetaInformation(communityMapper.toDTO(communityCommonService.getCommunity(communitySlug)));
+    CommunityPublicDTO getCommunity(@PathVariable String communitySlug) {
+        return communityMetaService.setCommunityMetaInformation(communityMapper.toPublicDTO(communityCommonService.getCommunity(communitySlug)));
     }
 
     @RequestMapping(value = "/user/community/{communityId}", method = RequestMethod.DELETE)

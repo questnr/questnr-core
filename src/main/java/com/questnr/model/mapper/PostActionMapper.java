@@ -40,7 +40,6 @@ public abstract class PostActionMapper {
             @Mapping(source = "likeActionSet", target = "likeActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(source = "commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
-            @Mapping(target = "metaList", ignore = true),
             @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
             @Mapping(target = "postData", expression = "java(NormalPostMapper.getMetaMapper(postAction, false))")
     })
@@ -71,7 +70,6 @@ public abstract class PostActionMapper {
             @Mapping(source = "likeActionSet", target = "likeActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(source = "commentActionSet", target = "commentActionList", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_NULL),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
-            @Mapping(target = "metaList", ignore = true),
             @Mapping(target = "postActionMeta", expression = "java(PostActionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
             @Mapping(target = "postData", expression = "java(NormalPostMapper.getMetaMapper(postAction, true))")
     })
@@ -121,7 +119,6 @@ public abstract class PostActionMapper {
             @Mapping(source = "community", target = "communityDTO"),
             @Mapping(source = "userActor", target = "userDTO"),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
-            @Mapping(target = "metaList", ignore = true),
             @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
             @Mapping(source = "postPollQuestion", target = "pollQuestion"),
             @Mapping(source = "text", target = "questionText")
