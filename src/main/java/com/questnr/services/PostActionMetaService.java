@@ -103,7 +103,7 @@ public class PostActionMetaService {
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "property",
                     "og:image",
-                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink().replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "")
+                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink()
             ));
         }
 
@@ -149,7 +149,7 @@ public class PostActionMetaService {
             postActionMetaInformationList.add(this.getPostActionMetaInformation(
                     "property",
                     "twitter:image",
-                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink().replaceFirst("^(http[s]?://www\\.|http[s]?://|www\\.)", "")
+                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink()
             ));
         }
 

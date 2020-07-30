@@ -21,7 +21,8 @@ public class PostActionUpdateRequestDTO {
     }
 
     public void setBlogTitle(String blogTitle) {
-        this.blogTitle = blogTitle.trim();
+        if (blogTitle != null)
+            this.blogTitle = blogTitle.trim();
     }
 
     public PublishStatus getStatus() {
