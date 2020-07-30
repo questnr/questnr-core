@@ -27,6 +27,9 @@ public class TrendingServices {
     @Autowired
     UserTrendService userTrendService;
 
+    @Value("${server.port}")
+    Integer serverPort;
+
     private Thread communityTrendServiceThread;
 
     private Thread postActionTrendServiceThread;
@@ -44,7 +47,7 @@ public class TrendingServices {
     // @Todo: Set trending services interval time
     @Scheduled(fixedRate = (3600 * 20 * 1000))
     public void scheduledTrendingServices() {
-        if (allowTrendingServices) {
+        if (allowTrendingServices && serverPort.equals(3010)) {
             this.startTrendingServices();
         }
     }
