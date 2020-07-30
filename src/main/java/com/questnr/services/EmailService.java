@@ -109,7 +109,7 @@ public class EmailService {
         Locale locale = Locale.ENGLISH;
         final Context ctx = new Context(locale);
         String loginURL = websiteHomePageURL + "/login";
-        ctx.setVariable("fullName", user.getFullName());
+        ctx.setVariable("fullName", user.getDisplayName());
         ctx.setVariable("username", user.getUsername());
         ctx.setVariable("loginURL", loginURL);
         final String htmlContent = templateEngine.process("mail/sign-up.html", ctx);

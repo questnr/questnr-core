@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.questnr.common.enums.LoginType;
 import com.questnr.common.enums.SignUpSourceType;
 import com.questnr.common.enums.UserPrivacy;
+import com.questnr.services.CommonService;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
@@ -358,8 +359,11 @@ public class User extends DomainObject {
         this.agree = agree;
     }
 
-    public String getFullName() {
-        return this.getFirstName() + " " + this.getLastName();
+    public String getDisplayName() {
+        if (!CommonService.isNull(this.getFirstName()) && !CommonService.isNull(this.getLastName())) {
+            return this.getFirstName() + " " + this.getLastName();
+        }
+        return this.getUsername();
     }
 
     public boolean getPublic(){
