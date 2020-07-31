@@ -1,28 +1,28 @@
 package com.questnr.services.user;
 
+import com.questnr.common.PostMediaHandlingEntity;
 import com.questnr.common.enums.PostActionType;
 import com.questnr.common.enums.PostType;
-import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.PostActionFeedDTO;
 import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionFeedDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
-import com.questnr.model.entities.*;
+import com.questnr.model.entities.PostAction;
+import com.questnr.model.entities.PostPollQuestion;
+import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.mapper.PostPollQuestionMapper;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.PostPollQuestionRepository;
 import com.questnr.requests.PostPollAnswerRequest;
 import com.questnr.requests.PostPollQuestionRequest;
-import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.PostActionService;
+import com.questnr.services.PostMediaService;
 import com.questnr.services.community.CommunityCommonService;
-import com.questnr.util.ImageCompression;
-import com.questnr.util.VideoCompression;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,11 +33,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserPostActionService {
@@ -69,6 +66,9 @@ public class UserPostActionService {
 
     @Autowired
     PostPollQuestionRepository postPollQuestionRepository;
+
+    @Autowired
+    PostMediaService postMediaService;
 
     UserPostActionService() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
@@ -136,54 +136,7 @@ public class UserPostActionService {
         User user = userCommonService.getUser();
         if (postAction != null) {
             postAction.setUserActor(user);
-            List<PostMedia> postMediaList;
-            postMediaList = files.stream().map(multipartFile -> {
-                ResourceStorageData resourceStorageData = new ResourceStorageData();
-                try {
-                    File file = commonService.convertMultiPartToFile(multipartFile);
-                    if (commonService.checkIfFileIsImage(file)) {
-                        try {
-                            if (commonService.getFileExtension(file).equals("png")) {
-                                resourceStorageData = this.amazonS3Client.uploadFile(file);
-                                resourceStorageData.setResourceType(ResourceType.image);
-                            } else {
-                                ImageCompression imageCompression = new ImageCompression();
-                                imageCompression.setInputFile(file);
-                                File compressedFile = imageCompression.doCompression();
-                                if (file.exists()) file.delete();
-                                resourceStorageData = this.amazonS3Client.uploadFile(compressedFile);
-                                resourceStorageData.setResourceType(ResourceType.image);
-                            }
-                        } catch (Exception e) {
-
-                        }
-                    } else {
-                        String fileName = "out_" + commonService.generateFileName(file);
-                        File target = new File(fileName);
-                        try {
-                            VideoCompression videoCompression = new VideoCompression(file, target);
-                            Thread videoCompressionThread = new Thread(videoCompression, fileName);
-                            videoCompressionThread.start();
-                            videoCompressionThread.join();
-                            resourceStorageData = this.amazonS3Client.uploadFile(target);
-                            resourceStorageData.setResourceType(ResourceType.video);
-                            if (file.exists()) file.delete();
-                        } catch (InterruptedException e) {
-
-                        }
-                    }
-                    if (resourceStorageData.getKey() != null && !CommonService.isNull(resourceStorageData.getKey())) {
-                        PostMedia postMedia = new PostMedia();
-                        postMedia.setMediaKey(resourceStorageData.getKey());
-                        postMedia.setResourceType(resourceStorageData.getResourceType());
-                        return postMedia;
-                    }
-                } catch (IOException ex) {
-
-                }
-                return null;
-            }).collect(Collectors.toList());
-            postAction.setPostMediaList(postMediaList);
+            postAction.setPostMediaList(this.postMediaService.handleFiles(files, new PostMediaHandlingEntity()));
             return postActionMapper.toPostActionFeedDTO(postActionService.creatPostAction(postAction), PostActionType.normal, null);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");
