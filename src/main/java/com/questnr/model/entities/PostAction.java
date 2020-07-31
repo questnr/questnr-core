@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.questnr.common.NotificationTitles;
 import com.questnr.common.enums.*;
+import com.questnr.model.entities.media.PostMedia;
 import org.hibernate.annotations.Where;
 import org.hibernate.search.annotations.Index;
 import org.hibernate.search.annotations.*;

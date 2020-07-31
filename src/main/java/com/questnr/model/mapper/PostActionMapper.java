@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mapper(uses = {
-        PostMediaMapper.class,
+        MediaMapper.class,
         CommunityMapper.class,
         UserMapper.class,
         LikeActionDefaultMapper.class,

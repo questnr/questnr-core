@@ -1,4 +1,4 @@
-package com.questnr.model.entities.media;
+package com.questnr.common.media;
 
 public class VideoMetaObject {
     private Integer bitRate;

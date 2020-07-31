@@ -2,8 +2,11 @@ package com.questnr.services;
 
 import com.questnr.common.PostMediaHandlingEntity;
 import com.questnr.common.enums.ResourceType;
-import com.questnr.model.entities.PostMedia;
+import com.questnr.model.entities.media.CommentMedia;
+import com.questnr.model.entities.media.Media;
+import com.questnr.model.entities.media.PostMedia;
 import com.questnr.responses.ResourceStorageData;
+import com.questnr.services.user.UserCommonService;
 import com.questnr.util.ImageCompression;
 import com.questnr.util.VideoCompression;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +28,25 @@ public class PostMediaService {
     @Autowired
     AmazonS3Client amazonS3Client;
 
-    public List<PostMedia> handleFiles(List<MultipartFile> files, PostMediaHandlingEntity postMediaHandlingEntity) {
-        List<PostMedia> postMediaList;
+    @Autowired
+    UserCommonService userCommonService;
+
+    public ResourceStorageData handleFile(File file, PostMediaHandlingEntity postMediaHandlingEntity){
+        ResourceStorageData resourceStorageData;
+        if (postMediaHandlingEntity.isBelongCommunity())
+
+            resourceStorageData = this.amazonS3Client.uploadFile(file,
+                    postMediaHandlingEntity.getEntityId());
+        else if(postMediaHandlingEntity.isBelongComment())
+            resourceStorageData = this.amazonS3Client.uploadFileToPath(file,
+                    userCommonService.getCommentPathToFile(commonService.generateFileName(file)));
+        else
+            resourceStorageData = this.amazonS3Client.uploadFile(file);
+        return resourceStorageData;
+    }
+
+    public List<Media> handleFiles(List<MultipartFile> files, PostMediaHandlingEntity postMediaHandlingEntity) {
+        List<Media> postMediaList;
         postMediaList = files.stream().map(multipartFile -> {
             ResourceStorageData resourceStorageData = new ResourceStorageData();
             try {
@@ -34,27 +54,23 @@ public class PostMediaService {
                 if (commonService.checkIfFileIsImage(file)) {
                     try {
                         if (commonService.getFileExtension(file).equals("png")) {
-                            if (postMediaHandlingEntity.isBelongCommunity())
-                                resourceStorageData = this.amazonS3Client.uploadFile(file,
-                                        postMediaHandlingEntity.getEntityId());
-                            else
-                                resourceStorageData = this.amazonS3Client.uploadFile(file);
+                            resourceStorageData = this.handleFile(file, postMediaHandlingEntity);
                         } else {
                             ImageCompression imageCompression = new ImageCompression();
                             imageCompression.setInputFile(file);
                             File compressedFile = imageCompression.doCompression();
                             if (file.exists()) file.delete();
-                            if (postMediaHandlingEntity.isBelongCommunity())
-                                resourceStorageData = this.amazonS3Client.uploadFile(compressedFile,
-                                        postMediaHandlingEntity.getEntityId());
-                            else
-                                resourceStorageData = this.amazonS3Client.uploadFile(compressedFile);
+                            resourceStorageData = this.handleFile(compressedFile, postMediaHandlingEntity);
                         }
                         resourceStorageData.setResourceType(ResourceType.image);
                     } catch (Exception e) {
 
                     }
-                } else {
+                } else if(!postMediaHandlingEntity.isBelongComment()){
+                    /*
+                    Comment can not have video files
+                     */
+
                     String fileName = "out_" + commonService.generateFileName(file);
                     File target = new File(fileName);
                     try {
@@ -62,11 +78,7 @@ public class PostMediaService {
                         Thread videoCompressionThread = new Thread(videoCompression, fileName);
                         videoCompressionThread.start();
                         videoCompressionThread.join();
-                        if (postMediaHandlingEntity.isBelongCommunity())
-                            resourceStorageData = this.amazonS3Client.uploadFile(target,
-                                    postMediaHandlingEntity.getEntityId());
-                        else
-                            resourceStorageData = this.amazonS3Client.uploadFile(target);
+                        resourceStorageData = this.handleFile(target, postMediaHandlingEntity);
                         resourceStorageData.setResourceType(ResourceType.video);
                         if (file.exists()) file.delete();
                     } catch (InterruptedException e) {
@@ -74,10 +86,18 @@ public class PostMediaService {
                     }
                 }
                 if (resourceStorageData.getKey() != null && !CommonService.isNull(resourceStorageData.getKey())) {
-                    PostMedia postMedia = new PostMedia();
-                    postMedia.setMediaKey(resourceStorageData.getKey());
-                    postMedia.setResourceType(resourceStorageData.getResourceType());
-                    return postMedia;
+                    Media media;
+                    if(postMediaHandlingEntity.isBelongComment()){
+                        media = new CommentMedia();
+                        media.setMediaKey(resourceStorageData.getKey());
+                        media.setResourceType(resourceStorageData.getResourceType());
+                        return media;
+                    }else {
+                        media = new PostMedia();
+                        media.setMediaKey(resourceStorageData.getKey());
+                        media.setResourceType(resourceStorageData.getResourceType());
+                        return media;
+                    }
                 }
             } catch (IOException ex) {
 

@@ -3,14 +3,13 @@ package com.questnr.model.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.questnr.common.NotificationTitles;
 import com.questnr.common.enums.NotificationType;
+import com.questnr.model.entities.media.CommentMedia;
 import org.hibernate.annotations.Where;
 import org.hibernate.search.annotations.Indexed;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Indexed
@@ -47,6 +46,10 @@ public class CommentAction extends DomainObject implements NotificationBase {
 
     @Column(name = "is_child_comment")
     private boolean childComment;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "comment_action_id", nullable = false)
+    private List<CommentMedia> commentMediaList = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -126,6 +129,14 @@ public class CommentAction extends DomainObject implements NotificationBase {
 
     public void setLikeCommentActionSet(Set<LikeCommentAction> likeCommentActionSet) {
         this.likeCommentActionSet = likeCommentActionSet;
+    }
+
+    public List<CommentMedia> getCommentMediaList() {
+        return commentMediaList;
+    }
+
+    public void setCommentMediaList(List<CommentMedia> commentMediaList) {
+        this.commentMediaList = commentMediaList;
     }
 
     @JsonIgnore

@@ -12,6 +12,7 @@ import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.PostPollQuestion;
 import com.questnr.model.entities.User;
+import com.questnr.model.entities.media.PostMedia;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.mapper.PostPollQuestionMapper;
 import com.questnr.model.repositories.PostActionRepository;
@@ -35,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserPostActionService {
@@ -136,7 +138,9 @@ public class UserPostActionService {
         User user = userCommonService.getUser();
         if (postAction != null) {
             postAction.setUserActor(user);
-            postAction.setPostMediaList(this.postMediaService.handleFiles(files, new PostMediaHandlingEntity()));
+            postAction.setPostMediaList(this.postMediaService.handleFiles(files, new PostMediaHandlingEntity()).stream().map(media ->
+                    (PostMedia) media
+            ).collect(Collectors.toList()));
             return postActionMapper.toPostActionFeedDTO(postActionService.creatPostAction(postAction), PostActionType.normal, null);
         } else {
             throw new InvalidRequestException("Error occurred. Please, try again!");

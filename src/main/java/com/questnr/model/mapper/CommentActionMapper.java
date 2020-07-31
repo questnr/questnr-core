@@ -10,7 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mapper(uses = {UserMapper.class, MetaDataMapper.class, CommentActionMetaMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
+@Mapper(uses = {UserMapper.class,
+        MetaDataMapper.class,
+        CommentActionMetaMapper.class,
+        MediaMapper.class
+}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public abstract class CommentActionMapper {
 
     @Autowired

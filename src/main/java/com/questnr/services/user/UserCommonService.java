@@ -25,6 +25,8 @@ public class UserCommonService {
 
     final String USER_BANNER_DIR = "banner";
 
+    final String USER_COMMENT_DIR = "comment";
+
     @Autowired
     JwtTokenUtil jwtTokenUtil;
 
@@ -63,6 +65,10 @@ public class UserCommonService {
 
     public String getBannerPathToDir(){
         return Paths.get(this.getS3BucketUserFolder(), USER_BANNER_DIR).toString();
+    }
+
+    public String getCommentPathToFile(String fileName){
+        return Paths.get(this.getS3BucketUserFolder(), USER_COMMENT_DIR, fileName).toString();
     }
 
     public String getBannerPathToFile(String fileName){

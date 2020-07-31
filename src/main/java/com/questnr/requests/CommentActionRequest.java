@@ -1,9 +1,14 @@
 package com.questnr.requests;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+
 public class CommentActionRequest {
-    Long postId;
-    Long parentCommentId;
-    String commentObject;
+    private Long postId;
+    private Long parentCommentId;
+    private String commentObject;
+    private List<MultipartFile> files;
 
     public CommentActionRequest() {
     }
@@ -45,5 +50,13 @@ public class CommentActionRequest {
 
     public void setCommentObject(String commentObject) {
         this.commentObject = commentObject;
+    }
+
+    public List<MultipartFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<MultipartFile> files) {
+        this.files = files;
     }
 }

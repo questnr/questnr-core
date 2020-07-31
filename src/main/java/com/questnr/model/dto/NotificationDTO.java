@@ -15,7 +15,7 @@ public class NotificationDTO {
 
     private CommunityListViewDTO community;
 
-    private PostMediaDTO postMedia;
+    private MediaDTO postMedia;
 
     private String message;
 
@@ -60,11 +60,11 @@ public class NotificationDTO {
         this.community = community;
     }
 
-    public PostMediaDTO getPostMedia() {
+    public MediaDTO getPostMedia() {
         return postMedia;
     }
 
-    public void setPostMedia(PostMediaDTO postMedia) {
+    public void setPostMedia(MediaDTO postMedia) {
         this.postMedia = postMedia;
     }
 

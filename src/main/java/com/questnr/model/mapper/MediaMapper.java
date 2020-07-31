@@ -1,8 +1,9 @@
 package com.questnr.model.mapper;
 
 import com.questnr.common.enums.PostActionPrivacy;
-import com.questnr.model.dto.PostMediaDTO;
-import com.questnr.model.entities.PostMedia;
+import com.questnr.model.dto.MediaDTO;
+import com.questnr.model.entities.media.Media;
+import com.questnr.model.entities.media.PostMedia;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
@@ -15,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class PostMediaMapper {
+public class MediaMapper {
 
     @Autowired
     AmazonS3Client amazonS3Client;
@@ -32,14 +33,14 @@ public class PostMediaMapper {
     @Autowired
     PostActionRepository postActionRepository;
 
-    public PostMediaDTO toPostMediaDTO(PostMedia postMedia) {
-        PostMediaDTO postMediaDTO = new PostMediaDTO();
-        postMediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(postMedia.getMediaKey(), PostActionPrivacy.public_post));
-        postMediaDTO.setResourceType(postMedia.getResourceType());
-        return postMediaDTO;
+    public MediaDTO toPostMediaDTO(Media media) {
+        MediaDTO mediaDTO = new MediaDTO();
+        mediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(media.getMediaKey(), PostActionPrivacy.public_post));
+        mediaDTO.setResourceType(media.getResourceType());
+        return mediaDTO;
     }
 
-    public List<PostMediaDTO> toPostMediaDTOList(List<PostMedia> postMediaList) {
+    public List<MediaDTO> toPostMediaDTOList(List<PostMedia> postMediaList) {
         return postMediaList.stream().map(this::toPostMediaDTO).collect(Collectors.toList());
     }
 }

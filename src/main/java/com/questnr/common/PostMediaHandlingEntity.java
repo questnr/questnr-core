@@ -11,7 +11,7 @@ public class PostMediaHandlingEntity {
     }
 
     public PostMediaHandlingEntity(PostMediaHandlingEntityType postMediaHandlingEntityType, Long entityId) {
-        this.postMediaHandlingEntityType = PostMediaHandlingEntityType.community;
+        this.postMediaHandlingEntityType = postMediaHandlingEntityType;
         this.entityId = entityId;
     }
 

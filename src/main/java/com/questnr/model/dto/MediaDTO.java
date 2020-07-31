@@ -2,7 +2,7 @@ package com.questnr.model.dto;
 
 import com.questnr.common.enums.ResourceType;
 
-public class PostMediaDTO {
+public class MediaDTO {
     private String postMediaLink;
 
     private ResourceType resourceType;

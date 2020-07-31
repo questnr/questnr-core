@@ -11,6 +11,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -52,14 +53,18 @@ public class CommentActionController {
         throw new AccessException();
     }
 
-    @RequestMapping(value = "/user/posts/{postId}/comment", method = RequestMethod.POST)
-    CommentActionDTO createComment(@PathVariable Long postId, @RequestBody CommentActionRequest commentActionRequest) {
+    @RequestMapping(value = "/user/posts/{postId}/comment", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    CommentActionDTO createComment(@PathVariable Long postId, CommentActionRequest commentActionRequest) {
         /*
          * Post Comment Security Checking
          * */
         if (commentActionAccessService.hasAccessToCommentCreation(postId)) {
             commentActionRequest.setPostId(postId);
-            return commentActionMapper.toDTO(commentActionService.createCommentAction(commentActionRequest));
+            if (commentActionRequest.getFiles() != null && commentActionRequest.getFiles().size() > 0) {
+                return commentActionMapper.toDTO(commentActionService.createCommentAction(commentActionRequest, commentActionRequest.getFiles()));
+            } else {
+                return commentActionMapper.toDTO(commentActionService.createCommentAction(commentActionRequest));
+            }
         }
         throw new AccessException(errorMessage);
     }

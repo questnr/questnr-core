@@ -2,7 +2,7 @@ package com.questnr.model.dto.post.normal;
 
 import com.questnr.model.dto.CommentActionDTO;
 import com.questnr.model.dto.LikeActionDTO;
-import com.questnr.model.dto.PostMediaDTO;
+import com.questnr.model.dto.MediaDTO;
 import com.questnr.model.dto.post.PostBaseDTO;
 
 import java.util.List;
@@ -11,7 +11,7 @@ public class PostActionDTO extends PostBaseDTO {
     private NormalPostDTO postData;
     private List<LikeActionDTO> likeActionList;
     private List<CommentActionDTO> commentActionList;
-    private List<PostMediaDTO> postMediaList;
+    private List<MediaDTO> postMediaList;
     private PostActionMetaDTO postActionMeta;
 
     public NormalPostDTO getPostData() {
@@ -38,11 +38,11 @@ public class PostActionDTO extends PostBaseDTO {
         this.commentActionList = commentActionList;
     }
 
-    public List<PostMediaDTO> getPostMediaList() {
+    public List<MediaDTO> getPostMediaList() {
         return postMediaList;
     }
 
-    public void setPostMediaList(List<PostMediaDTO> postMediaList) {
+    public void setPostMediaList(List<MediaDTO> postMediaList) {
         this.postMediaList = postMediaList;
     }
 

@@ -1,11 +1,14 @@
 package com.questnr.services;
 
+import com.questnr.common.PostMediaHandlingEntity;
 import com.questnr.common.enums.NotificationType;
+import com.questnr.common.enums.PostMediaHandlingEntityType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.CommentAction;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
+import com.questnr.model.entities.media.CommentMedia;
 import com.questnr.model.repositories.CommentActionRepository;
 import com.questnr.model.repositories.NotificationRepository;
 import com.questnr.model.repositories.PostActionRepository;
@@ -19,8 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CommentActionService {
@@ -47,6 +53,9 @@ public class CommentActionService {
     @Autowired
     NotificationRepository notificationRepository;
 
+    @Autowired
+    PostMediaService postMediaService;
+
     public Page<CommentAction> getPublicCommentsByPostId(String postSlug, Pageable pageable) {
         PostAction postAction = postActionRepository.findFirstBySlug(postSlug);
         if (postAction != null)
@@ -60,6 +69,15 @@ public class CommentActionService {
         if (postAction != null)
             return commentActionRepository.findAllByPostActionAndChildComment(postAction, false, pageable);
         throw new ResourceNotFoundException("Post not found!");
+    }
+
+    public CommentAction createCommentAction(CommentActionRequest commentActionRequest, List<MultipartFile> files) {
+        CommentAction commentAction = this.createCommentAction(commentActionRequest);
+        commentAction.setCommentMediaList(postMediaService.handleFiles(files, new PostMediaHandlingEntity(PostMediaHandlingEntityType.comment,
+                commentAction.getCommentActionId())).stream().map(media ->
+                (CommentMedia) media
+        ).collect(Collectors.toList()));
+        return commentActionRepository.save(commentAction);
     }
 
     public CommentAction createCommentAction(CommentActionRequest commentActionRequest) {
@@ -125,7 +143,7 @@ public class CommentActionService {
     // If user has made the comment, then he and the post owner can only take action on the same comment
     public CommentAction getCommentActionUsingPostActionAndUserIdAndCommentId(PostAction postAction, Long userId, Long commentId) {
         try {
-            if (postAction.getUserActor().getUserId() == userId) {
+            if (postAction.getUserActor().getUserId().equals(userId)) {
                 return commentActionRepository.findByCommentActionId(commentId);
             } else {
                 return commentActionRepository.findByPostActionAndUserActorAndCommentActionId(postAction, userRepository.findByUserId(userId), commentId);

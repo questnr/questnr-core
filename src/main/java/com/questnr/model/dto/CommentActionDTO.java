@@ -3,12 +3,15 @@ package com.questnr.model.dto;
 import com.questnr.model.dto.user.UserOtherDTO;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 public class CommentActionDTO {
     private Long commentActionId;
 
     private String commentObject;
+
+    private List<MediaDTO> commentMediaList;
 
     private UserOtherDTO userActorDTO;
 
@@ -36,6 +39,14 @@ public class CommentActionDTO {
 
     public void setCommentObject(String commentObject) {
         this.commentObject = commentObject;
+    }
+
+    public List<MediaDTO> getCommentMediaList() {
+        return commentMediaList;
+    }
+
+    public void setCommentMediaList(List<MediaDTO> commentMediaList) {
+        this.commentMediaList = commentMediaList;
     }
 
     public UserOtherDTO getUserActorDTO() {

@@ -1,14 +1,13 @@
-package com.questnr.model.entities;
+package com.questnr.model.entities.media;
 
 import com.questnr.common.enums.ResourceType;
-import org.hibernate.search.annotations.Indexed;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
-@Entity
-@Indexed
-@Table(name = "qr_post_media")
-public class PostMedia {
+@MappedSuperclass
+@EntityListeners(AuditingEntityListener.class)
+public class Media {
     @Id
     @Column(name = "post_media_id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_media_seq")
