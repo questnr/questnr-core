@@ -98,6 +98,7 @@ public class PostMediaService {
                     }
                     media.setMediaKey(resourceStorageData.getKey());
                     media.setResourceType(resourceStorageData.getResourceType());
+                    media.setFileExtension(commonService.getFileExtension(file));
                     return media;
                 }
             } catch (IOException ex) {

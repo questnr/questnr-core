@@ -37,6 +37,7 @@ public class MediaMapper {
         MediaDTO mediaDTO = new MediaDTO();
         mediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(media.getMediaKey(), PostActionPrivacy.public_post));
         mediaDTO.setResourceType(media.getResourceType());
+        mediaDTO.setFileExtension(media.getFileExtension());
         return mediaDTO;
     }
 

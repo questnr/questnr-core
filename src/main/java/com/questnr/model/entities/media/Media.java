@@ -20,6 +20,9 @@ public class Media {
     @Column(name = "resource_type", columnDefinition = "int4 default 0")
     private ResourceType resourceType = ResourceType.image;
 
+    @Column(name = "file_extension")
+    private String fileExtension;
+
     public Long getPostMediaId() {
         return postMediaId;
     }
@@ -42,5 +45,13 @@ public class Media {
 
     public void setResourceType(ResourceType resourceType) {
         this.resourceType = resourceType;
+    }
+
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    public void setFileExtension(String fileExtension) {
+        this.fileExtension = fileExtension;
     }
 }

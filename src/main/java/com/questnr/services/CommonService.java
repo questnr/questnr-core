@@ -5,6 +5,7 @@ import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.PostAction;
 import com.questnr.responses.TimeData;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.text.WordUtils;
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
@@ -132,8 +133,9 @@ public class CommonService {
     }
 
     public String getFileExtension(File file) {
-        String mimetype = new MimetypesFileTypeMap().getContentType(file);
-        return mimetype.split("/")[1];
+//        String mimetype = new MimetypesFileTypeMap().getContentType(file);
+//        return mimetype.split("/")[1];
+        return FilenameUtils.getExtension(file.getName());
     }
 
     public String generateFileName(File file) {
