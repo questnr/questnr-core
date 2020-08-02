@@ -119,6 +119,18 @@ public class CommonService {
         return type.equals("image");
     }
 
+    public boolean checkIfFileIsVideo(File file) {
+        String mimetype = new MimetypesFileTypeMap().getContentType(file);
+        String type = mimetype.split("/")[0];
+        return type.equals("video");
+    }
+
+    public boolean checkIfFileIsApplication(File file) {
+        String mimetype = new MimetypesFileTypeMap().getContentType(file);
+        String type = mimetype.split("/")[0];
+        return type.equals("application");
+    }
+
     public String getFileExtension(File file) {
         String mimetype = new MimetypesFileTypeMap().getContentType(file);
         return mimetype.split("/")[1];

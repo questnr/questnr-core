@@ -2,7 +2,8 @@ package com.questnr.common.enums;
 
 public enum ResourceType {
     image("image"),
-    video("video");
+    video("video"),
+    application("application");
 
     public String jsonValue;
 

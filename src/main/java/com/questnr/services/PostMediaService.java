@@ -66,7 +66,8 @@ public class PostMediaService {
                     } catch (Exception e) {
 
                     }
-                } else if(!postMediaHandlingEntity.isBelongComment()){
+                } else if(!postMediaHandlingEntity.isBelongComment()
+                && commonService.checkIfFileIsVideo(file)){
                     /*
                     Comment can not have video files
                      */
@@ -84,20 +85,20 @@ public class PostMediaService {
                     } catch (InterruptedException e) {
 
                     }
+                } else if(commonService.checkIfFileIsApplication(file)){
+                    resourceStorageData = this.handleFile(file, postMediaHandlingEntity);
+                    resourceStorageData.setResourceType(ResourceType.application);
                 }
                 if (resourceStorageData.getKey() != null && !CommonService.isNull(resourceStorageData.getKey())) {
                     Media media;
                     if(postMediaHandlingEntity.isBelongComment()){
                         media = new CommentMedia();
-                        media.setMediaKey(resourceStorageData.getKey());
-                        media.setResourceType(resourceStorageData.getResourceType());
-                        return media;
                     }else {
                         media = new PostMedia();
-                        media.setMediaKey(resourceStorageData.getKey());
-                        media.setResourceType(resourceStorageData.getResourceType());
-                        return media;
                     }
+                    media.setMediaKey(resourceStorageData.getKey());
+                    media.setResourceType(resourceStorageData.getResourceType());
+                    return media;
                 }
             } catch (IOException ex) {
 
