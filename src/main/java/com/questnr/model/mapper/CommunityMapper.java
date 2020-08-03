@@ -49,7 +49,10 @@ public abstract class CommunityMapper {
     @Mapping(target = "avatar", ignore = true)
     public abstract Community toDomain(CommunityRequest communityRequest);
 
-    @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
+    @Mappings({
+            @Mapping(source = "ownerUser", target = "ownerUserDTO"),
+            @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
+    })
     public abstract CommunityForPostActionDTO toCommunityForPostAction(Community community);
 
     @Mappings({
