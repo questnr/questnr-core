@@ -13,12 +13,16 @@ import com.questnr.model.entities.Avatar;
 import com.questnr.responses.ResourceStorageData;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
+import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -28,6 +32,8 @@ import java.util.List;
 
 @Service
 public class AmazonS3Client {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     UserCommonService userCommonService;
@@ -71,7 +77,8 @@ public class AmazonS3Client {
     }
 
     private void uploadFileToS3bucket(String pathToFile, File file, CannedAccessControlList cannedAccessControlList) {
-        this.s3Client.putObject(new PutObjectRequest(bucketName, pathToFile, file).withCannedAcl(cannedAccessControlList));
+//        this.s3Client.putObject(new PutObjectRequest(bucketName, pathToFile, file).withCannedAcl(cannedAccessControlList));
+        this.uploadObjectWithSSEEncryption(file, pathToFile, cannedAccessControlList);
 //        if(file.exists()) file.delete();
     }
 
@@ -142,7 +149,7 @@ public class AmazonS3Client {
     }
 
     public ResourceStorageData uploadFileToPath(File file, String path) {
-        return this.uploadFile(file, path, PostActionPrivacy.public_post);
+        return this.uploadFileToPath(file, path, PostActionPrivacy.public_post);
     }
 
     public ResourceStorageData uploadFileToPath(File file, String path, PostActionPrivacy postActionPrivacy) {
@@ -215,4 +222,25 @@ public class AmazonS3Client {
 //    public final void handleAmazonS3Exception(AmazonS3Exception ex, WebRequest request) {
 //        throw new AmazonS3APIError(UNPROCESSABLE_ENTITY, ex.getLocalizedMessage());
 //    }
+
+    private void uploadObjectWithSSEEncryption(File file, String pathToFile,
+                                               CannedAccessControlList cannedAccessControlList)  {
+        try {
+            byte[] objectBytes = FileUtils.readFileToByteArray(file);
+
+            // Specify server-side encryption.
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(objectBytes.length);
+            objectMetadata.setSSEAlgorithm(ObjectMetadata.AES_256_SERVER_SIDE_ENCRYPTION);
+            PutObjectRequest putRequest = new PutObjectRequest(this.bucketName,
+                    pathToFile,
+                    new ByteArrayInputStream(objectBytes),
+                    objectMetadata).withCannedAcl(cannedAccessControlList);
+
+            // Upload the object and check its encryption status.
+            this.s3Client.putObject(putRequest);
+        }catch (IOException ioException){
+            LOGGER.error("uploadObjectWithSSEEncryption: File Upload Error. User Id: "+userCommonService.getUserId());
+        }
+    }
 }
