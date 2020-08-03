@@ -110,7 +110,7 @@ public class PostActionService {
     }
 
     private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
-        List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));
+        List<String> titleChunks = Arrays.asList(text.split("\\s"));
         int maxTitleChunk = titleChunks.size();
         if (maxTitleChunk > maxChunk) {
             maxTitleChunk = maxChunk;
@@ -149,6 +149,15 @@ public class PostActionService {
                 timeStamp.toString().substring(timeStamp.toString().length() - 6, timeStamp.toString().length() - 1);
     }
 
+    private String createPostActionSlug(String blogTitle) {
+        Long timeStamp = new Date().getTime();
+        return CommonService.removeSpecialCharacters(String.join("-", this.makeChunkFromText(blogTitle, 5, 10))) +
+                "-" +
+                secureRandomService.getSecureRandom().toString() +
+                "-" +
+                timeStamp.toString().substring(timeStamp.toString().length() - 6, timeStamp.toString().length() - 1);
+    }
+
     private String getPostActionTitleTag(PostAction postAction) {
         return this.getPostActionTitleTag(postAction.getText());
     }
@@ -163,20 +172,24 @@ public class PostActionService {
         try {
             User user = userCommonService.getUser();
             if (postAction.getPostEditorType() == PostEditorType.blog) {
+                String blogTitle;
                 if(CommonService.isNull(postAction.getBlogTitle()) && postAction.getBlogTitle().length() < 1) {
+                    blogTitle = postAction.getTags().substring(0, Math.min(postAction.getTags().length(), 20));
                     postAction.setTags(this.getPostActionTitleTag(postAction.getText()));
-                    postAction.setBlogTitle(postAction.getTags().substring(0, Math.min(postAction.getTags().length(), 20))+ "...");
+                    postAction.setBlogTitle(blogTitle+ "...");
                 }else{
-                    postAction.setTags(this.getPostActionTitleTag(postAction.getBlogTitle()));
+                    blogTitle = this.getPostActionTitleTag(postAction.getBlogTitle());
+                    postAction.setTags(blogTitle);
                 }
+                postAction.setSlug(this.createPostActionSlug(blogTitle));
             } else if (postAction.getPostEditorType() == PostEditorType.normal) {
                 postAction.setTags(this.getPostActionTitleTag(postAction));
                 postAction.setHashTags(this.parsePostText(postAction.getText()));
                 postAction.setBlogTitle(null);
+                postAction.setSlug(this.createPostActionSlug(postAction));
             }
             postAction.addMetadata();
             postAction.setUserActor(user);
-            postAction.setSlug(this.createPostActionSlug(postAction));
             postAction.setStatus(PublishStatus.publish);
             postAction.setFeatured(false);
             postAction.setPopular(false);
