@@ -5,7 +5,7 @@ public class LoginRequest {
   String password;
 
   public String getEmailId() {
-    return emailId;
+    return emailId.toLowerCase();
   }
 
   public void setEmailId(String emailId) {
