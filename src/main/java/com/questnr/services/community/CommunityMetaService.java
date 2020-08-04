@@ -6,7 +6,6 @@ import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityMetaInformation;
 import com.questnr.model.entities.MetaInformation;
 import com.questnr.model.mapper.CommunityMapper;
-import com.questnr.services.CommonService;
 import com.questnr.services.SharableLinkService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +58,17 @@ public class CommunityMetaService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "name",
                 "description",
-                CommonService.removeSpecialCharacters(communityPublicDTO.getDescription())
+                communityPublicDTO.getDescription().substring(0, Math.min(
+                        communityPublicDTO.getDescription().length(), 40
+                ))
+        ));
+
+        communityMetaInformationList.add(this.getCommunityMetaInformation(
+                "name",
+                "keywords",
+                communityPublicDTO.getDescription().substring(0, Math.min(
+                        communityPublicDTO.getDescription().length(), 60
+                ))
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
@@ -94,6 +103,14 @@ public class CommunityMetaService {
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
+                "og:description",
+                communityPublicDTO.getDescription().substring(0, Math.min(
+                        communityPublicDTO.getDescription().length(), 40
+                ))
+        ));
+
+        communityMetaInformationList.add(this.getCommunityMetaInformation(
+                "property",
                 "og:image",
                 communityAvatarLink
         ));
@@ -119,7 +136,9 @@ public class CommunityMetaService {
         communityMetaInformationList.add(this.getCommunityMetaInformation(
                 "property",
                 "twitter:description",
-                communityPublicDTO.getDescription()
+                communityPublicDTO.getDescription().substring(0, Math.min(
+                        communityPublicDTO.getDescription().length(), 40
+                ))
         ));
 
         communityMetaInformationList.add(this.getCommunityMetaInformation(
