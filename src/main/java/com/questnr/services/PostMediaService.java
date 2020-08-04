@@ -66,8 +66,7 @@ public class PostMediaService {
                     } catch (Exception e) {
 
                     }
-                } else if(!postMediaHandlingEntity.isBelongComment()
-                && commonService.checkIfFileIsVideo(file)){
+                } else if(commonService.checkIfFileIsVideo(file)){
                     /*
                     Comment can not have video files
                      */

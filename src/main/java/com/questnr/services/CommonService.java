@@ -12,10 +12,10 @@ import org.hibernate.proxy.HibernateProxy;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -115,21 +115,38 @@ public class CommonService {
     }
 
     public boolean checkIfFileIsImage(File file) {
-        String mimetype = new MimetypesFileTypeMap().getContentType(file);
-        String type = mimetype.split("/")[0];
-        return type.equals("image");
+//        String mimetype = new MimetypesFileTypeMap().getContentType(file);
+        try{
+            String mimetype = Files.probeContentType(file.toPath());
+            String type = mimetype.split("/")[0];
+            return type.equals("image");
+        }catch (Exception e){
+
+        }
+        return false;
     }
 
     public boolean checkIfFileIsVideo(File file) {
-        String mimetype = new MimetypesFileTypeMap().getContentType(file);
-        String type = mimetype.split("/")[0];
-        return type.equals("video");
+        try{
+            String mimetype = Files.probeContentType(file.toPath());
+            String type = mimetype.split("/")[0];
+            return type.equals("video");
+        }catch (Exception e){
+
+        }
+        return false;
     }
 
     public boolean checkIfFileIsApplication(File file) {
-        String mimetype = new MimetypesFileTypeMap().getContentType(file);
-        String type = mimetype.split("/")[0];
-        return type.equals("application");
+        try{
+            String mimetype = Files.probeContentType(file.toPath());
+            String type = mimetype.split("/")[0];
+            return type.equals("application");
+        }catch (Exception e){
+
+        }
+        // By default, in the end file is application
+        return true;
     }
 
     public String getFileExtension(File file) {
