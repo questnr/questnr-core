@@ -5,7 +5,10 @@ import com.questnr.services.CommonService;
 import com.questnr.services.QuestnrTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/v1/admin")
@@ -40,4 +43,10 @@ public class QuestnrTestController {
 //    public Map<String, Integer> makeBlogTitle(){
 //        return questnrTestService.makeBlogTitle();
 //    }
+
+    // Set blog title if user has blog title as null
+    @RequestMapping(value = "/copy/objects", method = RequestMethod.POST)
+    public Map<String, String> copyAvatars(){
+        return questnrTestService.copyAvatars();
+    }
 }

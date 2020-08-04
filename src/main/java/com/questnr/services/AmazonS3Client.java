@@ -1,6 +1,8 @@
 package com.questnr.services;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
+import com.amazonaws.SdkClientException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -67,8 +69,10 @@ public class AmazonS3Client {
     @Value("${app.large-prefix}")
     private String LARGE_PREFIX;
 
-    final String UNPROCESSABLE_ENTITY = "Requested file can not be processed";
+    @Value("${amazonProperties.publicAssetPath}")
+    String publicAssetPath;
 
+    final String UNPROCESSABLE_ENTITY = "Requested file can not be processed";
 
     @PostConstruct
     private void initializeAmazon() {
@@ -109,7 +113,7 @@ public class AmazonS3Client {
     }
 
     public String getS3BucketUrl(String pathToFile, PostActionPrivacy postActionPrivacy) {
-        if(this.checkIfKeyExistsOnS3(pathToFile)) {
+        if (this.checkIfKeyExistsOnS3(pathToFile)) {
             if (postActionPrivacy == PostActionPrivacy.private_post) {
                 return this.getS3BucketUrl(pathToFile);
             }
@@ -118,7 +122,7 @@ public class AmazonS3Client {
         return null;
     }
 
-    public boolean checkIfKeyExistsOnS3(String key){
+    public boolean checkIfKeyExistsOnS3(String key) {
         try {
             ObjectMetadata object = this.s3Client.getObjectMetadata(bucketName, key);
             return true;
@@ -127,7 +131,7 @@ public class AmazonS3Client {
                 // bucket/key does not exist
                 return false;
             } else {
-               return false;
+                return false;
             }
         }
     }
@@ -199,21 +203,21 @@ public class AmazonS3Client {
         return "Successfully deleted";
     }
 
-    public void deleteAvatarFromS3(Avatar avatar){
+    public void deleteAvatarFromS3(Avatar avatar) {
         List<String> keys = new ArrayList<>();
-        if(!CommonService.isNull(avatar.getFileName())){
+        if (!CommonService.isNull(avatar.getFileName())) {
             keys.add(Paths.get(avatar.getPathToDir(), avatar.getFileName()).toString());
-            keys.add(Paths.get(avatar.getPathToDir(), ICON_PREFIX+avatar.getFileName()).toString());
-            keys.add(Paths.get(avatar.getPathToDir(), SMALL_PREFIX+avatar.getFileName()).toString());
-            keys.add(Paths.get(avatar.getPathToDir(), MEDIUM_PREFIX+avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), ICON_PREFIX + avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), SMALL_PREFIX + avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), MEDIUM_PREFIX + avatar.getFileName()).toString());
             this.deleteFileFromS3BucketUsingPathToFile(keys);
-        }else if(!CommonService.isNull(avatar.getAvatarKey())){
+        } else if (!CommonService.isNull(avatar.getAvatarKey())) {
             this.deleteFileFromS3BucketUsingPathToFile(avatar.getAvatarKey());
         }
     }
 
     public String deleteFileFromS3BucketUsingPathToFile(List<String> keys) {
-        for(int i=0;i < keys.size(); i++){
+        for (int i = 0; i < keys.size(); i++) {
             this.deleteFileFromS3BucketUsingPathToFile(keys.get(i));
         }
         return "Successfully deleted";
@@ -224,7 +228,7 @@ public class AmazonS3Client {
 //    }
 
     private void uploadObjectWithSSEEncryption(File file, String pathToFile,
-                                               CannedAccessControlList cannedAccessControlList)  {
+                                               CannedAccessControlList cannedAccessControlList) {
         try {
             byte[] objectBytes = FileUtils.readFileToByteArray(file);
 
@@ -239,8 +243,41 @@ public class AmazonS3Client {
 
             // Upload the object and check its encryption status.
             this.s3Client.putObject(putRequest);
-        }catch (IOException ioException){
-            LOGGER.error("uploadObjectWithSSEEncryption: File Upload Error. User Id: "+userCommonService.getUserId());
+        } catch (IOException ioException) {
+            LOGGER.error("uploadObjectWithSSEEncryption: File Upload Error. User Id: " + userCommonService.getUserId());
+        }
+    }
+
+    public void copyToPublicAssets(List<String> sourceKeyList){
+        for(String sourceKey: sourceKeyList) {
+            this.copyToPublicAssets(sourceKey);
+        }
+    }
+
+    public void copyToPublicAssets(String sourceKey){
+        this.copyObject(sourceKey, Paths.get(publicAssetPath, sourceKey).toString(), CannedAccessControlList.PublicRead);
+    }
+
+    public void copyObject(String sourceKey, String destinationKey, CannedAccessControlList cannedAccessControlList) {
+        this.copyObject(bucketName, sourceKey, bucketName, destinationKey, cannedAccessControlList);
+    }
+
+    public void copyObject(String sourceBucketName, String sourceKey, String destinationBucketName, String destinationKey, CannedAccessControlList cannedAccessControlList) {
+        try {
+            // Copy the object into a new object in the same bucket.
+            CopyObjectRequest copyObjRequest = new CopyObjectRequest(sourceBucketName, sourceKey, destinationBucketName, destinationKey)
+                    .withCannedAccessControlList(cannedAccessControlList);
+            this.s3Client.copyObject(copyObjRequest);
+        } catch (AmazonServiceException e) {
+            // The call was transmitted successfully, but Amazon S3 couldn't process
+            // it, so it returned an error response.
+            e.printStackTrace();
+            LOGGER.error("copyObject" + e.getErrorMessage());
+        } catch (SdkClientException e) {
+            // Amazon S3 couldn't be contacted for a response, or the client
+            // couldn't parse the response from Amazon S3.
+            e.printStackTrace();
+            LOGGER.error("copyObject" + e.getMessage());
         }
     }
 }
