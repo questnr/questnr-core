@@ -100,19 +100,19 @@ public class PostActionMetaService {
                 postText
         ));
 
-        if (postActionPublicDTO.getPostMediaList().size() > 0) {
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "property",
-                    "og:image",
-                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink()
-            ));
-        } else {
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "property",
-                    "og:image",
-                    appLogoLink
-            ));
-        }
+//        if (postActionPublicDTO.getPostMediaList().size() > 0) {
+//            postActionMetaInformationList.add(this.getPostActionMetaInformation(
+//                    "property",
+//                    "og:image",
+//                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink()
+//            ));
+//        } else {
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "property",
+                "og:image",
+                appLogoLink
+        ));
+//        }
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
@@ -144,33 +144,33 @@ public class PostActionMetaService {
                 sharableLinkService.getCommunitySharableLink(postActionPublicDTO.getSlug()).getClickAction()
         ));
 
-        if (postActionPublicDTO.getPostMediaList().size() > 0) {
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "property",
-                    "twitter:image",
-                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink()
-            ));
-        } else {
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "property",
-                    "twitter:image",
-                    appLogoLink
-            ));
-        }
+//        if (postActionPublicDTO.getPostMediaList().size() > 0) {
+//            postActionMetaInformationList.add(this.getPostActionMetaInformation(
+//                    "property",
+//                    "twitter:image",
+//                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink()
+//            ));
+//        } else {
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "property",
+                "twitter:image",
+                appLogoLink
+        ));
+//        }
 
-        if (postActionPublicDTO.getPostMediaList().size() > 0) {
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "property",
-                    "twitter:image:src",
-                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink()
-            ));
-        } else {
-            postActionMetaInformationList.add(this.getPostActionMetaInformation(
-                    "property",
-                    "twitter:image:src",
-                    appLogoLink
-            ));
-        }
+//        if (postActionPublicDTO.getPostMediaList().size() > 0) {
+//            postActionMetaInformationList.add(this.getPostActionMetaInformation(
+//                    "property",
+//                    "twitter:image:src",
+//                    postActionPublicDTO.getPostMediaList().get(0).getPostMediaLink()
+//            ));
+//        } else {
+        postActionMetaInformationList.add(this.getPostActionMetaInformation(
+                "property",
+                "twitter:image:src",
+                appLogoLink
+        ));
+//        }
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
