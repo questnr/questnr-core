@@ -39,6 +39,8 @@ public class ImageResizeWorker extends Thread {
 
     private final String MEDIUM_PREFIX = "medium";
 
+    private String publicAssetPath = "public_assets";
+
     public ImageResizeWorker(int id, AmazonS3Client amazonS3Client) {
         super("ImageResizeWorker-" + id);
         setDaemon(true);

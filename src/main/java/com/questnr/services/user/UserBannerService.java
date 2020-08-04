@@ -18,11 +18,13 @@ import com.questnr.util.ImageResizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 @Service
 public class UserBannerService {
@@ -46,15 +48,18 @@ public class UserBannerService {
     @Autowired
     AvatarMapper avatarMapper;
 
+    @Value("${amazonProperties.publicAssetPath}")
+    private String publicAssetPath;
+
     public AvatarDTO uploadBanner(MultipartFile multipartFile) {
         User user = userCommonService.getUser();
         try {
             Avatar avatar = new Avatar();
-            if(user.getBanner() != null){
+            if (user.getBanner() != null) {
                 avatar.updateMetadata();
                 this.deleteBannerFromS3(user);
                 avatar = user.getBanner();
-            }else{
+            } else {
                 avatar.addMetadata();
             }
             File file = commonService.convertMultiPartToFile(multipartFile);
@@ -75,7 +80,7 @@ public class UserBannerService {
                         ImageCompression imageCompression = new ImageCompression();
                         imageCompression.setInputFile(file);
                         File compressedFile = imageCompression.doCompression();
-                        if(file.exists()) file.delete();
+                        if (file.exists()) file.delete();
                         imageResizer.setInputFile(compressedFile);
                         imageResizeJobRequest.setFormat(imageCompression.getFormat());
                         resourceStorageData = this.amazonS3Client.uploadFileToPath(compressedFile,
@@ -84,7 +89,10 @@ public class UserBannerService {
                     }
 
                     imageResizeJobRequest.setImageResizer(imageResizer);
-                    imageResizeJobRequest.setPathToDir(userCommonService.getBannerPathToDir());
+                    imageResizeJobRequest.setPathToDir(
+                            Paths.get(
+                                    publicAssetPath,
+                                    userCommonService.getBannerPathToDir()).toString());
                     imageResizeJob.createImageResizeJob(imageResizeJobRequest);
 
                     avatar.setAvatarKey(null);
@@ -92,7 +100,7 @@ public class UserBannerService {
                     avatar.setPathToDir(userCommonService.getBannerPathToDir());
                     user.setBanner(avatar);
                     User savedUser = userRepository.save(user);
-                   return avatarMapper.toAvatarDTO(savedUser.getBanner());
+                    return avatarMapper.toAvatarDTO(savedUser.getBanner());
                 } catch (Exception e) {
                     LOGGER.error(UserBannerService.class.getName() + " Exception Occurred");
                     throw new InvalidRequestException("Error occurred. Please, try again!");
@@ -135,14 +143,14 @@ public class UserBannerService {
     }
 
     public void deleteBanner() {
-       this.deleteBanner(userCommonService.getUser());
+        this.deleteBanner(userCommonService.getUser());
     }
 
-    public void deleteBannerFromS3(User user){
+    public void deleteBannerFromS3(User user) {
         this.amazonS3Client.deleteAvatarFromS3(user.getBanner());
     }
 
-    public void deleteBannerFromS3(){
+    public void deleteBannerFromS3() {
         this.deleteBannerFromS3(userCommonService.getUser());
     }
 }

@@ -32,6 +32,9 @@ public class AvatarMapper {
     @Value("${app.large-prefix}")
     private String LARGE_PREFIX;
 
+    @Value("${amazonProperties.publicAssetPath}")
+    private String publicAssetPath;
+
     public AvatarDTO toAvatarDTO(Avatar avatar) {
         try{
             if(avatar == null || !(CommonService.isNull(avatar.getFileName()) || CommonService.isNull(avatar.getAvatarKey()))) {
@@ -53,23 +56,23 @@ public class AvatarMapper {
 //                }
                 avatarDTO.setAvatarLink(
                         this.amazonS3Client.getS3BucketUrl(
-                                avatar.getAvatarKey(),
+                                Paths.get(publicAssetPath, avatar.getAvatarKey()).toString(),
                                 PostActionPrivacy.public_post));
             }else{
                 fileName = avatar.getFileName();
                 pathToDir = avatar.getPathToDir();
                 avatarDTO.setAvatarLink(
                         this.amazonS3Client.getS3BucketUrl(
-                                Paths.get(pathToDir, fileName).toString(),
+                                Paths.get(publicAssetPath, pathToDir, fileName).toString(),
                                 PostActionPrivacy.public_post));
                 avatarDTO.setIconLink(this.amazonS3Client.getS3BucketUrl(
-                        Paths.get(pathToDir, ICON_PREFIX+fileName).toString(),
+                        Paths.get(publicAssetPath, pathToDir, ICON_PREFIX+fileName).toString(),
                         PostActionPrivacy.public_post));
                 avatarDTO.setSmallLink(this.amazonS3Client.getS3BucketUrl(
-                        Paths.get(pathToDir, SMALL_PREFIX+fileName).toString(),
+                        Paths.get(publicAssetPath, pathToDir, SMALL_PREFIX+fileName).toString(),
                         PostActionPrivacy.public_post));
                 avatarDTO.setMediumLink(this.amazonS3Client.getS3BucketUrl(
-                        Paths.get(pathToDir, MEDIUM_PREFIX+fileName).toString(),
+                        Paths.get(publicAssetPath, pathToDir, MEDIUM_PREFIX+fileName).toString(),
                         PostActionPrivacy.public_post));
             }
             return avatarDTO;

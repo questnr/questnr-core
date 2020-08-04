@@ -8,6 +8,7 @@ import com.questnr.services.CommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,8 @@ public class UserCommonService {
     @Autowired
     private CommonService commonService;
 
+    @Value("${amazonProperties.publicAssetPath}")
+    private String publicAssetPath;
 
     public User getUser() {
         long userId = jwtTokenUtil.getLoggedInUserID();
@@ -72,7 +75,7 @@ public class UserCommonService {
     }
 
     public String getBannerPathToFile(String fileName){
-        return Paths.get(this.getS3BucketUserFolder(), USER_BANNER_DIR, fileName).toString();
+        return Paths.get(publicAssetPath, this.getS3BucketUserFolder(), USER_BANNER_DIR, fileName).toString();
     }
 
     public String getAvatarPathToFile(String fileName){
@@ -81,7 +84,7 @@ public class UserCommonService {
 //        while(ps.hasNext()){
 //            System.out.println(ps.next());
 //        }
-        return Paths.get(this.getS3BucketUserFolder(), USER_AVATAR_DIR, fileName).toString();
+        return Paths.get(publicAssetPath, this.getS3BucketUserFolder(), USER_AVATAR_DIR, fileName).toString();
     }
 
     public Page<User> searchUserString(String userString, Pageable pageable) {
