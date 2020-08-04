@@ -49,7 +49,7 @@ public class PostActionMetaService {
         String postText = title;
 
         if (postActionPublicDTO.getPostData().getText().length() > 0) {
-            postText = postActionService.getPostActionTitleTag(postActionPublicDTO.getPostData().getText());
+            postText = postActionService.getPostActionTitleTag(postActionPublicDTO.getPostData().getText(), false);
         }
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -184,11 +184,12 @@ public class PostActionMetaService {
 
     private List<PostActionMetaInformation> getPostActionMetaInformationList(String title, PostPollQuestionPublicDTO postPollQuestionPublicDTO) {
         List<PostActionMetaInformation> postActionMetaInformationList = new ArrayList<>();
+        String postText = postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText(), false);
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "name",
                 "description",
-                postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText())
+                postText
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -231,7 +232,7 @@ public class PostActionMetaService {
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "og:description",
-                postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText())
+                postText
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -261,7 +262,7 @@ public class PostActionMetaService {
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "property",
                 "twitter:description",
-                postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText())
+                postText
         ));
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(

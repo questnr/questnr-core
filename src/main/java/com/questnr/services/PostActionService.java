@@ -109,8 +109,9 @@ public class PostActionService {
         throw new ResourceNotFoundException("Post not found!");
     }
 
-    private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
-        List<String> titleChunks = Arrays.asList(text.split("\\s"));
+    private List<String> makeChunkFromText(String text, boolean preprocess, int maxChunk, int maxLengthOfWord) {
+        text = preprocess ? text.toLowerCase() : text;
+        List<String> titleChunks = Arrays.asList(text.toLowerCase().split("\\s"));
         int maxTitleChunk = titleChunks.size();
         if (maxTitleChunk > maxChunk) {
             maxTitleChunk = maxChunk;
@@ -138,6 +139,10 @@ public class PostActionService {
         return finalChunks;
     }
 
+    private List<String> makeChunkFromText(String text, int maxChunk, int maxLengthOfWord) {
+        return this.makeChunkFromText(text, true, maxChunk, maxLengthOfWord);
+    }
+
     private String createPostActionSlug(PostAction postAction) {
         Long timeStamp = new Date().getTime();
         return postAction.getUserActor().getUsername().toLowerCase() +
@@ -151,7 +156,8 @@ public class PostActionService {
 
     private String createPostActionSlug(String blogTitle) {
         Long timeStamp = new Date().getTime();
-        return CommonService.removeSpecialCharacters(String.join("-", this.makeChunkFromText(blogTitle, 5, 10))) +
+        return CommonService.removeSpecialCharacters(String.join("-",
+                this.makeChunkFromText(blogTitle, 5, 10))) +
                 "-" +
                 secureRandomService.getSecureRandom().toString() +
                 "-" +
@@ -160,6 +166,12 @@ public class PostActionService {
 
     private String getPostActionTitleTag(PostAction postAction) {
         return this.getPostActionTitleTag(postAction.getText());
+    }
+
+    public String getPostActionTitleTag(String postText, boolean preprocess) {
+        // Remove html tags
+        String postActionText = postText.replaceAll("\\<.*?\\>", "");
+        return CommonService.removeSpecialCharacters(String.join(" ", this.makeChunkFromText(postActionText, preprocess, 10, 10)));
     }
 
     public String getPostActionTitleTag(String postText) {
