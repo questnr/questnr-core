@@ -49,7 +49,7 @@ public class PostActionMetaService {
         String postText = title;
 
         if (postActionPublicDTO.getPostData().getText().length() > 0) {
-            postText = postActionService.getPostActionTitleTag(postActionPublicDTO.getPostData().getText(), false);
+            postText = postActionService.getPostActionTitleTag(postActionPublicDTO.getPostData().getText());
         }
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
@@ -184,7 +184,7 @@ public class PostActionMetaService {
 
     private List<PostActionMetaInformation> getPostActionMetaInformationList(String title, PostPollQuestionPublicDTO postPollQuestionPublicDTO) {
         List<PostActionMetaInformation> postActionMetaInformationList = new ArrayList<>();
-        String postText = postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText(), false);
+        String postText = postActionService.getPostActionTitleTag(postPollQuestionPublicDTO.getQuestionText());
 
         postActionMetaInformationList.add(this.getPostActionMetaInformation(
                 "name",
