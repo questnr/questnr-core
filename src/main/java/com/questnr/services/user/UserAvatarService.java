@@ -1,5 +1,6 @@
 package com.questnr.services.user;
 
+import com.questnr.common.enums.ObjectAccess;
 import com.questnr.common.enums.ResourceType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
@@ -69,7 +70,7 @@ public class UserAvatarService {
                         imageResizer.setInputFile(file);
                         imageResizeJobRequest.setFormat("png");
                         resourceStorageData = this.amazonS3Client.uploadFileToPath(file,
-                                userCommonService.getAvatarPathToFile(fileName));
+                                userCommonService.getAvatarPathToFile(fileName), ObjectAccess.public_object);
                         resourceStorageData.setResourceType(ResourceType.image);
                     } else {
                         ImageCompression imageCompression = new ImageCompression();
@@ -79,7 +80,7 @@ public class UserAvatarService {
                         imageResizer.setInputFile(compressedFile);
                         imageResizeJobRequest.setFormat(imageCompression.getFormat());
                         resourceStorageData = this.amazonS3Client.uploadFileToPath(compressedFile,
-                                userCommonService.getAvatarPathToFile(fileName));
+                                userCommonService.getAvatarPathToFile(fileName), ObjectAccess.public_object);
                         resourceStorageData.setResourceType(ResourceType.image);
                     }
 

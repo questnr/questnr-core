@@ -10,6 +10,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
+import com.questnr.common.enums.ObjectAccess;
 import com.questnr.common.enums.PostActionPrivacy;
 import com.questnr.model.entities.Avatar;
 import com.questnr.responses.ResourceStorageData;
@@ -72,6 +73,9 @@ public class AmazonS3Client {
     @Value("${amazonProperties.publicAssetPath}")
     String publicAssetPath;
 
+    @Autowired
+    AmazonS3Service amazonS3Service;
+
     final String UNPROCESSABLE_ENTITY = "Requested file can not be processed";
 
     @PostConstruct
@@ -80,14 +84,19 @@ public class AmazonS3Client {
         this.s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(Regions.AP_SOUTHEAST_1).build();
     }
 
-    private void uploadFileToS3bucket(String pathToFile, File file, CannedAccessControlList cannedAccessControlList) {
+    private void uploadFileToS3bucket(String pathToFile, File file, List<Tag> tagList, CannedAccessControlList cannedAccessControlList) {
 //        this.s3Client.putObject(new PutObjectRequest(bucketName, pathToFile, file).withCannedAcl(cannedAccessControlList));
-        this.uploadObjectWithSSEEncryption(file, pathToFile, cannedAccessControlList);
+        this.uploadObjectWithSSEEncryption(file, pathToFile, tagList, cannedAccessControlList);
+//        if(file.exists()) file.delete();
+    }
+
+    private void uploadFileToS3bucket(String pathToFile, File file, List<Tag> tagList) {
+        this.uploadFileToS3bucket(pathToFile, file, tagList, CannedAccessControlList.PublicRead);
 //        if(file.exists()) file.delete();
     }
 
     private void uploadFileToS3bucket(String pathToFile, File file) {
-        this.uploadFileToS3bucket(pathToFile, file, CannedAccessControlList.PublicRead);
+        this.uploadFileToS3bucket(pathToFile, file, new ArrayList<>(), CannedAccessControlList.PublicRead);
 //        if(file.exists()) file.delete();
     }
 
@@ -136,43 +145,46 @@ public class AmazonS3Client {
         }
     }
 
-    public ResourceStorageData uploadFile(File file, PostActionPrivacy postActionPrivacy) {
+    public ResourceStorageData uploadFile(File file, ObjectAccess objectAccess) {
         String fileName = commonService.generateFileName(file);
         String pathToFile = userCommonService.joinPathToFile(fileName);
-        return this.uploadFile(file, pathToFile, postActionPrivacy);
+        return this.uploadFile(file, pathToFile, objectAccess);
     }
 
-    public ResourceStorageData uploadFile(File file, long communityId, PostActionPrivacy postActionPrivacy) {
+    public ResourceStorageData uploadFile(File file, long communityId, ObjectAccess objectAccess) {
         String fileName = commonService.generateFileName(file);
         String pathToFile = communityCommonService.joinPathToFile(fileName, communityId);
-        return this.uploadFile(file, pathToFile, postActionPrivacy);
+        return this.uploadFile(file, pathToFile, objectAccess);
     }
 
     public ResourceStorageData uploadFile(File file) {
-        return this.uploadFile(file, PostActionPrivacy.public_post);
+        return this.uploadFile(file, ObjectAccess.private_object);
     }
 
     public ResourceStorageData uploadFileToPath(File file, String path) {
-        return this.uploadFileToPath(file, path, PostActionPrivacy.public_post);
+        return this.uploadFileToPath(file, path, ObjectAccess.private_object);
     }
 
-    public ResourceStorageData uploadFileToPath(File file, String path, PostActionPrivacy postActionPrivacy) {
-        return this.uploadFile(file, path, postActionPrivacy);
+    public ResourceStorageData uploadFileToPath(File file, String path, ObjectAccess objectAccess) {
+        return this.uploadFile(file, path, objectAccess);
     }
 
     public ResourceStorageData uploadFile(File file, long communityId) {
-        return this.uploadFile(file, communityId, PostActionPrivacy.public_post);
+        return this.uploadFile(file, communityId, ObjectAccess.private_object);
     }
 
-    private ResourceStorageData uploadFile(File file, String pathToFile, PostActionPrivacy postActionPrivacy) {
+    private ResourceStorageData uploadFile(File file, String pathToFile, ObjectAccess objectAccess) {
         ResourceStorageData resourceStorageData = new ResourceStorageData();
         try {
             resourceStorageData.setKey(pathToFile);
             resourceStorageData.setUrl(this.getS3BucketUrl(pathToFile));
-            if (postActionPrivacy == PostActionPrivacy.public_post)
+            if (objectAccess == ObjectAccess.public_object){
+                this.uploadFileToS3bucket(pathToFile, file, this.amazonS3Service.getPublicObjectTags());
+            }
+            else{
+                //this.uploadFileToS3bucket(pathToFile, file, CannedAccessControlList.Private);
                 this.uploadFileToS3bucket(pathToFile, file);
-            else
-                this.uploadFileToS3bucket(pathToFile, file, CannedAccessControlList.Private);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -228,6 +240,13 @@ public class AmazonS3Client {
 //    }
 
     private void uploadObjectWithSSEEncryption(File file, String pathToFile,
+                                               CannedAccessControlList cannedAccessControlList)
+    {
+        this.uploadObjectWithSSEEncryption(file, pathToFile, new ArrayList<>(), cannedAccessControlList);
+    }
+
+    private void uploadObjectWithSSEEncryption(File file, String pathToFile,
+                                               List<Tag> tags,
                                                CannedAccessControlList cannedAccessControlList) {
         try {
             byte[] objectBytes = FileUtils.readFileToByteArray(file);
@@ -240,6 +259,9 @@ public class AmazonS3Client {
                     pathToFile,
                     new ByteArrayInputStream(objectBytes),
                     objectMetadata).withCannedAcl(cannedAccessControlList);
+
+            if(tags.size() > 0)
+            putRequest.setTagging(new ObjectTagging(tags));
 
             // Upload the object and check its encryption status.
             this.s3Client.putObject(putRequest);
@@ -278,6 +300,44 @@ public class AmazonS3Client {
             // couldn't parse the response from Amazon S3.
             e.printStackTrace();
             LOGGER.error("copyObject" + e.getMessage());
+        }
+    }
+
+    public void makeObjectPublic(List<String> keyNameList){
+        for(String keyName: keyNameList) {
+            this.makeObjectPublic(keyName);
+        }
+    }
+
+    public void makeObjectPublic(String keyName){
+        this.makeObjectPublic(this.bucketName, keyName);
+    }
+
+    public void makeObjectPublic(String bucketName, String keyName){
+        try {
+            GetObjectTaggingRequest getTaggingRequest = new GetObjectTaggingRequest(bucketName, keyName);
+            GetObjectTaggingResult getTagsResult = s3Client.getObjectTagging(getTaggingRequest);
+
+            List<Tag> tagList = getTagsResult.getTagSet();
+            List<Tag> publicTags = this.amazonS3Service.getPublicObjectTags();
+            for(Tag tag: publicTags){
+                if(!tagList.contains(tag)){
+                    tagList.add(tag);
+                }
+            }
+            // Replace the object's tags with two new tags.
+            s3Client.setObjectTagging(new SetObjectTaggingRequest(bucketName, keyName,
+                    new ObjectTagging(tagList)));
+        } catch (AmazonServiceException e) {
+            // The call was transmitted successfully, but Amazon S3 couldn't process
+            // it, so it returned an error response.
+            e.printStackTrace();
+            LOGGER.error("makeObjectPublic" + e.getErrorMessage());
+        } catch (SdkClientException e) {
+            // Amazon S3 couldn't be contacted for a response, or the client
+            // couldn't parse the response from Amazon S3.
+            e.printStackTrace();
+            LOGGER.error("makeObjectPublic" + e.getMessage());
         }
     }
 }

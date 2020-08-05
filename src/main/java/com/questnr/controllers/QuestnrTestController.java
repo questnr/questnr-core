@@ -5,10 +5,7 @@ import com.questnr.services.CommonService;
 import com.questnr.services.QuestnrTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/v1/admin")
@@ -44,9 +41,15 @@ public class QuestnrTestController {
 //        return questnrTestService.makeBlogTitle();
 //    }
 
-    // Set blog title if user has blog title as null
-    @RequestMapping(value = "/copy/objects", method = RequestMethod.POST)
-    public Map<String, String> copyAvatars(){
-        return questnrTestService.copyAvatars();
-    }
+//    // Copy community avatar, user avatar and banner to public_assets
+//    @RequestMapping(value = "/copy/objects", method = RequestMethod.POST)
+//    public Map<String, String> copyAvatars(){
+//        return questnrTestService.copyAvatars();
+//    }
+
+//    // Give public tags to community avatar, user avatar and banner
+//    @RequestMapping(value = "/public/objects", method = RequestMethod.POST)
+//    public Map<String, String> setPublicTagToExisting(){
+//        return questnrTestService.setPublicTagToExisting();
+//    }
 }

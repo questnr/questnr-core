@@ -164,4 +164,82 @@ public class QuestnrTestService {
         }
         return response;
     }
+
+    public Map<String, String> setPublicTagToExisting(){
+        Map<String, String> response = new HashMap<>();
+        List<Community> communityList = communityRepository.findAll();
+        for(Community community: communityList){
+            if(!(community.getAvatar() == null || !(CommonService.isNull(community.getAvatar().getFileName()) || CommonService.isNull(community.getAvatar().getAvatarKey())))) {
+                try{
+                    String key = "";
+                    if(CommonService.isNull(community.getAvatar().getFileName())) {
+                        key = community.getAvatar().getAvatarKey();
+                        this.amazonS3Client.makeObjectPublic(key);
+//                        this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(community.getAvatar().getAvatarKey());
+                    } else {
+                        List <String> fileList = new ArrayList<>();
+                        String fileName = community.getAvatar().getFileName();
+                        String pathToDir = community.getAvatar().getPathToDir();
+                        key = Paths.get(pathToDir, fileName).toString();
+                        fileList.add(Paths.get(pathToDir, fileName).toString());
+                        fileList.add(Paths.get(pathToDir, ICON_PREFIX+fileName).toString());
+                        fileList.add(Paths.get(pathToDir, SMALL_PREFIX+fileName).toString());
+                        fileList.add(Paths.get(pathToDir, MEDIUM_PREFIX+fileName).toString());
+                        this.amazonS3Client.makeObjectPublic(fileList);
+//                        this.amazonS3Client.deleteAvatarFromS3(community.getAvatar());
+                    }
+                    response.put("Community: " + community.getCommunityId(), key);
+                }catch (Exception e){
+                    response.put("Community Avatar Error: " + community.getCommunityId().toString(), e.getMessage());
+                }
+            }
+        }
+
+        List<User> userList = userRepository.findAll();
+        for(User user: userList){
+            try{
+                if(!(user.getAvatar() == null || !(CommonService.isNull(user.getAvatar().getFileName()) || CommonService.isNull(user.getAvatar().getAvatarKey())))) {
+                    String key = "";
+                    if(CommonService.isNull(user.getAvatar().getFileName())) {
+                        key = user.getAvatar().getAvatarKey();
+                        this.amazonS3Client.makeObjectPublic(key);
+//                        this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(community.getAvatar().getAvatarKey());
+                    } else {
+                        List <String> fileList = new ArrayList<>();
+                        String fileName = user.getAvatar().getFileName();
+                        String pathToDir = user.getAvatar().getPathToDir();
+                        key = Paths.get(pathToDir, fileName).toString();
+                        fileList.add(Paths.get(pathToDir, fileName).toString());
+                        fileList.add(Paths.get(pathToDir, ICON_PREFIX+fileName).toString());
+                        fileList.add(Paths.get(pathToDir, SMALL_PREFIX+fileName).toString());
+                        fileList.add(Paths.get(pathToDir, MEDIUM_PREFIX+fileName).toString());
+                        this.amazonS3Client.makeObjectPublic(fileList);
+//                        this.amazonS3Client.deleteAvatarFromS3(community.getAvatar());
+                    }
+                    response.put("User Avatar: " + user.getUserId(), key);
+                }
+            }catch (Exception e){
+                response.put("User Avatar Error: " + user.getUserId().toString(), e.getMessage());
+            }
+
+            try{
+                if(!(user.getBanner() == null || CommonService.isNull(user.getBanner().getFileName()))) {
+                    List <String> fileList = new ArrayList<>();
+                    String fileName = user.getBanner().getFileName();
+                    String pathToDir = user.getBanner().getPathToDir();
+                    String key = Paths.get(pathToDir, fileName).toString();
+                    fileList.add(Paths.get(pathToDir, fileName).toString());
+                    fileList.add(Paths.get(pathToDir, ICON_PREFIX+fileName).toString());
+                    fileList.add(Paths.get(pathToDir, SMALL_PREFIX+fileName).toString());
+                    fileList.add(Paths.get(pathToDir, MEDIUM_PREFIX+fileName).toString());
+                    this.amazonS3Client.makeObjectPublic(fileList);
+//                        this.amazonS3Client.deleteAvatarFromS3(community.getAvatar());
+                    response.put("User Banner: " + user.getUserId(), key);
+                }
+            }catch (Exception e){
+                response.put("User Banner Error: " + user.getUserId().toString(), e.getMessage());
+            }
+        }
+        return response;
+    }
 }
