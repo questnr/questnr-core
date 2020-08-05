@@ -70,7 +70,7 @@ public class AmazonS3Client {
     private String LARGE_PREFIX;
 
     @Value("${amazonProperties.publicAssetPath}")
-    private String publicAssetPath;
+    String publicAssetPath;
 
     final String UNPROCESSABLE_ENTITY = "Requested file can not be processed";
 
@@ -206,10 +206,10 @@ public class AmazonS3Client {
     public void deleteAvatarFromS3(Avatar avatar) {
         List<String> keys = new ArrayList<>();
         if (!CommonService.isNull(avatar.getFileName())) {
-            keys.add(Paths.get(publicAssetPath, avatar.getPathToDir(), avatar.getFileName()).toString());
-            keys.add(Paths.get(publicAssetPath, avatar.getPathToDir(), ICON_PREFIX + avatar.getFileName()).toString());
-            keys.add(Paths.get(publicAssetPath, avatar.getPathToDir(), SMALL_PREFIX + avatar.getFileName()).toString());
-            keys.add(Paths.get(publicAssetPath, avatar.getPathToDir(), MEDIUM_PREFIX + avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), ICON_PREFIX + avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), SMALL_PREFIX + avatar.getFileName()).toString());
+            keys.add(Paths.get(avatar.getPathToDir(), MEDIUM_PREFIX + avatar.getFileName()).toString());
             this.deleteFileFromS3BucketUsingPathToFile(keys);
         } else if (!CommonService.isNull(avatar.getAvatarKey())) {
             this.deleteFileFromS3BucketUsingPathToFile(avatar.getAvatarKey());

@@ -8,7 +8,6 @@ import com.questnr.services.user.UserCommonService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.Paths;
@@ -29,9 +28,6 @@ public class CommunityCommonService {
 
     @Autowired
     CommunityJoinService communityJoinService;
-
-    @Value("${amazonProperties.publicAssetPath}")
-    private String publicAssetPath;
 
     public Community getCommunity(long communityId) {
         Community community = communityRepository.findByCommunityId(communityId);
@@ -72,7 +68,7 @@ public class CommunityCommonService {
 //        while(ps.hasNext()){
 //            System.out.println(ps.next());
 //        }
-        return Paths.get(publicAssetPath, this.getS3BucketUserFolder(communityId), COMMUNITY_AVATAR_DIR, fileName).toString();
+        return Paths.get(this.getS3BucketUserFolder(communityId), COMMUNITY_AVATAR_DIR, fileName).toString();
     }
 
     public boolean isUserOwnerOfCommunity(Long communityId) {
