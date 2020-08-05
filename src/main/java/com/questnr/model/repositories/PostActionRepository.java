@@ -88,6 +88,8 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             , nativeQuery = true)
     List<Object[]> findAllByCommunityPosts(@Param("communityId") Long communityId, @Param("offset") int offset, @Param("limit") int limit);
 
+    List<PostAction> findByCommunity(Community community);
+
     Page<PostAction> findAllByCommunityAndPostTypeOrderByCreatedAtDesc(Community community, PostType postType, Pageable pageable);
 
     int countAllByCommunityAndPostType(Community community, PostType postType);

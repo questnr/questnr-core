@@ -65,7 +65,7 @@ public class UserController {
         return new PageImpl<>(userMapper.toOthersDTOs(userPage.getContent()), pageable, userPage.getTotalElements());
     }
 
-    @RequestMapping(value = "/user/delete/{userId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/admin/user/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deleteUser(@PathVariable long userId) {
         userService.deleteUser(userId);

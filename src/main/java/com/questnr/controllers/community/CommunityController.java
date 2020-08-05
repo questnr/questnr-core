@@ -117,7 +117,7 @@ public class CommunityController {
         return communityMetaService.setCommunityMetaInformation(communityMapper.toPublicDTO(communityCommonService.getCommunity(communitySlug)));
     }
 
-    @RequestMapping(value = "/user/community/{communityId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/admin/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void deleteCommunity(@PathVariable long communityId) {
         /*

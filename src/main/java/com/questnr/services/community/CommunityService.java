@@ -7,10 +7,12 @@ import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.user.UserOtherDTO;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityUser;
+import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityUserRepository;
+import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.requests.CommunityUpdateRequest;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
@@ -68,6 +70,9 @@ public class CommunityService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private PostActionRepository postActionRepository;
 
     public CommunityService() {
         this.userMapper = Mappers.getMapper(UserMapper.class);
@@ -158,6 +163,10 @@ public class CommunityService {
                 } catch (Exception e) {
                     LOGGER.error(CommunityService.class.getName() + " Exception Occurred. Couldn't able to delete resources of community on the cloud.");
                 }
+            }
+            List<PostAction> postActionList = postActionRepository.findByCommunity(community);
+            for(PostAction postAction: postActionList){
+                postActionRepository.delete(postAction);
             }
             communityRepository.delete(community);
         } catch (Exception e) {
