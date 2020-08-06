@@ -9,10 +9,7 @@ import com.questnr.services.user.UserFeedService;
 import com.questnr.services.user.UserHomeService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,7 +43,8 @@ public class UserHomeController {
 
     @RequestMapping(value = "/community/trending-community-list", method = RequestMethod.GET)
     Page<CommunityCardDTO> getTrendingCommunityList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("community.createdAt").descending()
+                .and(Sort.by("trendRank")));
         Page<Community> communityPage = userHomeService.getTrendingCommunityList(pageable);
         return new PageImpl<>(communityMapper.toCommunityCards(communityPage.getContent()), pageable, communityPage.getTotalElements());
     }
@@ -61,13 +59,16 @@ public class UserHomeController {
 
     @RequestMapping(value = "/user/explore", method = RequestMethod.GET)
     Page<PostBaseDTO> getTrendingPostsOfTheWeek(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size,
+                Sort.by("postAction.createdAt").descending()
+                .and(Sort.by("trendRank")));
         return userHomeService.getTrendingPostList(pageable);
     }
 
     @RequestMapping(value = "/user/explore/question", method = RequestMethod.GET)
     Page<PostBaseDTO> getTrendingPostPollQuestionsOfTheWeek(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("postAction.createdAt").descending()
+                .and(Sort.by("trendRank")));
         return userHomeService.getTrendingPostPollQuestionList(pageable);
     }
 }

@@ -104,7 +104,7 @@ public class CommunityTrendService implements Runnable {
 //        communityTrendDataList.sort(communityTrendDataComparator.reversed());
 
         StartingEndingDate startingEndingDate = new StartingEndingDate();
-        startingEndingDate.setDaysBefore(40);
+        startingEndingDate.setDaysBefore(10);
         startingEndingDate.build();
 
         List<CommunityTrendData> communityTrendDataList = communityTrendDataRepository.findAllByObservedDateBetween(startingEndingDate.getStartingDate(), startingEndingDate.getEndingDate());

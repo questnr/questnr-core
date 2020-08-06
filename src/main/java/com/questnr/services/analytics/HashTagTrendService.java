@@ -77,7 +77,7 @@ public class HashTagTrendService implements Runnable {
         // Can be improved this by only finding the slope for those who has new data
 
         StartingEndingDate startingEndingDate = new StartingEndingDate();
-        startingEndingDate.setDaysBefore(40);
+        startingEndingDate.setDaysBefore(10);
         startingEndingDate.build();
 
         List<HashTagTrendData> hashTagTrendDataList = hashTagTrendDataRepository.findAllByObservedDateBetween(startingEndingDate.getStartingDate(), startingEndingDate.getEndingDate());
