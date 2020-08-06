@@ -148,7 +148,7 @@ public class PostActionService {
         return postAction.getUserActor().getUsername().toLowerCase() +
                 "_" +
                 CommonService.removeSpecialCharacters(String.join("-",
-                        this.makeChunkFromText(postAction.getText(), 5, 10))) +
+                        this.makeChunkFromText(postAction.getText(), 5, 30))) +
                 "-" +
                 secureRandomService.getSecureRandom().toString() +
                 "-" +
@@ -158,7 +158,7 @@ public class PostActionService {
     private String createPostActionBlogSlug(String blogTitle) {
         long timeStamp = new Date().getTime();
         return CommonService.removeSpecialCharacters(String.join("-",
-                this.makeChunkFromText(blogTitle, 5, 10))) +
+                this.makeChunkFromText(blogTitle, 5, 30))) +
                 "-" +
                 secureRandomService.getSecureRandom().toString() +
                 "-" +
@@ -172,7 +172,7 @@ public class PostActionService {
     public String getPostActionTitleTag(String postText) {
         // Remove html tags
         String postActionText = postText.replaceAll("\\<.*?\\>", "");
-        return CommonService.removeSpecialCharacters(String.join(" ", this.makeChunkFromText(postActionText, false, 10, 10)));
+        return CommonService.removeSpecialCharacters(String.join(" ", this.makeChunkFromText(postActionText, false, 10, 30)));
     }
 
     public PostAction creatPostAction(PostAction postAction, PostType postType) {
