@@ -13,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
-
 @RestController
 @RequestMapping(value = "/api/v1")
 public class HashTagController {
@@ -29,8 +27,9 @@ public class HashTagController {
     }
 
     @RequestMapping(value = "/search/hash-tag", method = RequestMethod.GET)
-    Set<HashTagProjection> searchHashTag(@RequestParam String hashTag) {
-        return hashTagService.searchHashTag(hashTag);
+    Page<HashTagProjection> searchHashTag(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String hashTag) {
+        Pageable pageable = PageRequest.of(page, size);
+        return hashTagService.searchHashTag(hashTag, pageable);
     }
 
     @RequestMapping(value = "/user/trending-hash-tag-list", method = RequestMethod.GET)

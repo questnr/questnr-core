@@ -45,8 +45,8 @@ public class HashTagService {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
 
-    public Set<HashTagProjection> searchHashTag(String hashTag) {
-        return hashTagRepository.findByHashTagValueContaining(hashTag.toLowerCase());
+    public Page<HashTagProjection> searchHashTag(String hashTag, Pageable pageable) {
+        return hashTagRepository.findByHashTagValueContaining(hashTag.toLowerCase(), pageable);
     }
 
     public Page<HashTag> getTrendingHashTagList(Pageable pageable) {

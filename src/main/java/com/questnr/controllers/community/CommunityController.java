@@ -145,7 +145,7 @@ public class CommunityController {
 
     // Get community list from community name like string.
     @RequestMapping(value = "/user/search/communities", method = RequestMethod.GET)
-    Page<CommunityCardDTO> getCommunitiesFromLikeString(@RequestParam String communityString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    Page<CommunityCardDTO> getCommunitiesFromLikeString(@RequestParam String communityString, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Community> communityPage = communityService.getCommunitiesFromLikeString(communityString, pageable);
         return new PageImpl<>(communityMapper.toCommunityCards(communityPage.getContent()), pageable, communityPage.getTotalElements());
