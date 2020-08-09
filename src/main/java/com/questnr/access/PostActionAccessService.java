@@ -2,6 +2,8 @@ package com.questnr.access;
 
 import com.questnr.access.community.CommunityCommonAccessService;
 import com.questnr.access.user.UserCommonAccessService;
+import com.questnr.common.enums.PostEditorType;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.services.PostActionService;
@@ -37,5 +39,11 @@ public class PostActionAccessService {
         if (postActionService.isPostActionBelongsToCommunity(postAction)) {
             return communityCommonAccessService.isCommunityAccessibleWithPrivacy(postAction.getCommunity());
         } else return userCommonAccessService.isUserAccessibleWithPrivacy(postAction.getUserActor());
+    }
+
+    public void commonPostAccessStrategy(PostAction postAction){
+        if (postAction.getPostEditorType() == PostEditorType.blog) {
+            throw new InvalidRequestException("Blogs can not be edited");
+        }
     }
 }

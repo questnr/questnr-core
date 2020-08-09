@@ -125,7 +125,7 @@ public class PostAction extends DomainObject implements NotificationBase, PostBa
     @JoinColumn(name = "post_poll_question_id")
     private PostPollQuestion postPollQuestion;
 
-    @Column(name = "blog_title", columnDefinition = "TEXT", length = 100)
+    @Column(name = "blog_title", columnDefinition = "TEXT", length = 200)
     private String blogTitle;
 
     @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)

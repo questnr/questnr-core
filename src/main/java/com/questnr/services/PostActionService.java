@@ -1,5 +1,6 @@
 package com.questnr.services;
 
+import com.questnr.access.PostActionAccessService;
 import com.questnr.common.enums.*;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
@@ -79,6 +80,9 @@ public class PostActionService {
 
     @Autowired
     PostActionMapper postActionMapper;
+
+    @Autowired
+    PostActionAccessService postActionAccessService;
 
     PostActionService() {
         postReportMapper = Mappers.getMapper(PostReportMapper.class);
@@ -268,6 +272,7 @@ public class PostActionService {
     }
 
     public PostActionFeedDTO updatePostAction(PostAction postAction, PostActionUpdateRequestDTO postActionRequest) {
+        postActionAccessService.commonPostAccessStrategy(postAction);
         try {
             postAction.setText(postActionRequest.getText());
             postAction.setHashTags(this.parsePostText(postActionRequest.getText()));
