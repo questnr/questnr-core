@@ -29,7 +29,7 @@ public class Community extends DomainObject {
     @Column(name = "community_name", length = 100, unique = true)
     private String communityName;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition = "TEXT", length = 200)
     private String description;
 
     @Column(name = "rules")
