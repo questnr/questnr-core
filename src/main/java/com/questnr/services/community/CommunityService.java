@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -132,15 +133,38 @@ public class CommunityService {
         return null;
     }
 
+    public String[] getCommunityTags(String communityTags){
+        String[] communityTagArray = communityTags.split(",");
+        return communityTagArray;
+    }
+
+    public List<String> parseCommunityTags(List<String> tagList){
+        List<String> newTagList = new ArrayList<>();
+        for(String tag: tagList){
+            newTagList.add(tag.replaceAll("\\<.*?\\>", ""));
+        }
+        return newTagList;
+    }
+
     public Community createCommunity(Community community) {
         if (community != null) {
             if (this.checkCommunityNameExists(community.getCommunityName())) {
+                if(community.getTags() != null) {
+                    List<String> tagList = Arrays.asList(this.getCommunityTags(community.getTags()));
+                    if (tagList.size() >= 5
+                            || tagList.size() < 2) {
+                        throw new InvalidRequestException("Community Tags are not valid");
+                    }
+                    tagList = this.parseCommunityTags(tagList);
+                    community.setTags(String.join(" ", tagList));
+                }else{
+                    throw new InvalidRequestException("Community Tags are not valid");
+                }
                 try {
                     community.setCommunityPrivacy(CommunityPrivacy.pub);
                     community.setOwnerUser(userCommonService.getUser());
                     community.addMetadata();
                     community.setSlug(this.createCommunitySlug(community));
-                    community.setTags(this.getCommunityTags(community));
                     return communityRepository.saveAndFlush(community);
                 } catch (Exception e) {
                     LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
