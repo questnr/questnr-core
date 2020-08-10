@@ -12,7 +12,7 @@ public interface HashTagRepository extends JpaRepository<HashTag, Long> {
 
     HashTag findByHashTagValue(String hashTag);
 
-    @Query("Select h from HashTag h where LOWER(h.hashTagValue) like :hashTag%")
+    @Query("select distinct h from HashTag h where LOWER(h.hashTagValue) like :hashTag%")
     Page<HashTagProjection> findByHashTagValueContaining(@Param("hashTag") String hashTag, Pageable pageable);
 
     @Query(value = "select h.hash_tag_value as hashTagValue, COUNT(postHashTag.hash_tag_id) as hashTagRank " +
