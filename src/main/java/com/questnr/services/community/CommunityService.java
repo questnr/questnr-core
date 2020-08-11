@@ -17,6 +17,7 @@ import com.questnr.requests.CommunityUpdateRequest;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.CustomPageService;
+import com.questnr.services.EntityTagService;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.SecureRandomService;
 import org.mapstruct.factory.Mappers;
@@ -74,6 +75,9 @@ public class CommunityService {
 
     @Autowired
     private PostActionRepository postActionRepository;
+
+    @Autowired
+    private EntityTagService entityTagService;
 
     public CommunityService() {
         this.userMapper = Mappers.getMapper(UserMapper.class);
@@ -133,15 +137,23 @@ public class CommunityService {
         return null;
     }
 
-    public String[] getCommunityTags(String communityTags){
+    public String[] getCommunityTags(String communityTags) {
         String[] communityTagArray = communityTags.split(",");
         return communityTagArray;
     }
 
-    public List<String> parseCommunityTags(List<String> tagList){
+    public List<String> parseCommunityTags(List<String> tagList) {
         List<String> newTagList = new ArrayList<>();
-        for(String tag: tagList){
-            newTagList.add(tag.replaceAll("\\<.*?\\>", ""));
+        for (String tag : tagList) {
+            if (tag != null) {
+                String newTag = tag.replaceAll("\\<.*?\\>", "").trim().toUpperCase();
+                try {
+                    this.entityTagService.saveEntityTag(newTag);
+                } catch (Exception e) {
+                    LOGGER.error(CommunityService.class.getName() + ": Error in saving EntityTag");
+                }
+                newTagList.add(newTag);
+            }
         }
         return newTagList;
     }
@@ -149,7 +161,7 @@ public class CommunityService {
     public Community createCommunity(Community community) {
         if (community != null) {
             if (this.checkCommunityNameExists(community.getCommunityName())) {
-                if(community.getTags() != null) {
+                if (community.getTags() != null) {
                     List<String> tagList = Arrays.asList(this.getCommunityTags(community.getTags()));
                     if (tagList.size() >= 5
                             || tagList.size() < 2) {
@@ -157,7 +169,7 @@ public class CommunityService {
                     }
                     tagList = this.parseCommunityTags(tagList);
                     community.setTags(String.join(" ", tagList));
-                }else{
+                } else {
                     throw new InvalidRequestException("Community Tags are not valid");
                 }
                 try {
@@ -189,7 +201,7 @@ public class CommunityService {
                 }
             }
             List<PostAction> postActionList = postActionRepository.findByCommunity(community);
-            for(PostAction postAction: postActionList){
+            for (PostAction postAction : postActionList) {
                 postActionRepository.delete(postAction);
             }
             communityRepository.delete(community);
