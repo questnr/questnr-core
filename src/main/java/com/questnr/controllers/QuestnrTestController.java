@@ -5,6 +5,7 @@ import com.questnr.services.CommonService;
 import com.questnr.services.QuestnrTestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -52,4 +53,9 @@ public class QuestnrTestController {
 //    public Map<String, String> setPublicTagToExisting(){
 //        return questnrTestService.setPublicTagToExisting();
 //    }
+
+    @RequestMapping(value = "/static/interest", method = RequestMethod.POST)
+    public void storeUserInterest(){
+         questnrTestService.storeAllUserInterest();
+    }
 }

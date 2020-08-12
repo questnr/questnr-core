@@ -1,14 +1,19 @@
 package com.questnr.services;
 
+import com.questnr.common.UserInterests;
 import com.questnr.common.enums.PostEditorType;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.PostAction;
+import com.questnr.model.entities.StaticInterest;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.PostActionRepository;
+import com.questnr.model.repositories.StaticInterestRepository;
 import com.questnr.model.repositories.UserRepository;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.VideoCompression;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +29,7 @@ import java.util.Map;
 
 @Service
 public class QuestnrTestService {
+    private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     UserCommonService userCommonService;
@@ -54,6 +60,9 @@ public class QuestnrTestService {
 
     @Value("${app.medium-prefix}")
     private String MEDIUM_PREFIX;
+
+    @Autowired
+    private StaticInterestRepository staticInterestRepository;
 
     public String manipulateVideo(MultipartFile multipartFile, int quality) throws IOException, InterruptedException {
         File source = commonService.convertMultiPartToFile(multipartFile);
@@ -241,5 +250,20 @@ public class QuestnrTestService {
             }
         }
         return response;
+    }
+
+    public void storeUserInterest(String interest){
+        try{
+            staticInterestRepository.save(new StaticInterest(interest));
+        }catch (Exception e){
+            LOGGER.error("storeUserInterest: Error while storing interest - "+interest);
+        }
+    }
+
+    public void storeAllUserInterest(){
+        List<String> interestList = UserInterests.getUserInterests();
+        for(String interest: interestList) {
+            this.storeUserInterest(interest);
+        }
     }
 }
