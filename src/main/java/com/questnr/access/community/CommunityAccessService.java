@@ -3,6 +3,7 @@ package com.questnr.access.community;
 import com.questnr.access.user.UserCommonAccessService;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
+import com.questnr.model.entities.UserSecondaryDetails;
 import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
@@ -26,7 +27,7 @@ public class CommunityAccessService {
     @Autowired
     CommunityCommonAccessService communityCommonAccessService;
 
-    public boolean hasAccessToCommunityBasic(Long communityId){
+    public boolean hasAccessToCommunityBasic(Long communityId) {
         User user = userCommonService.getUser();
         Community community = communityCommonService.getCommunity(communityId);
         return communityCommonService.isUserMemberOfCommunity(user, community);
@@ -39,8 +40,8 @@ public class CommunityAccessService {
 
     public Community hasAccessToCommunityUpdate(Long communityId) {
         Community community = communityRepository.findByCommunityId(communityId);
-        if(communityCommonService.isUserOwnerOfCommunity(userCommonService.getUser(),
-                community)){
+        if (communityCommonService.isUserOwnerOfCommunity(userCommonService.getUser(),
+                community)) {
             return community;
         }
         return null;
@@ -48,7 +49,7 @@ public class CommunityAccessService {
 
     public User getCommunityListOfUser(Long userId) {
         User user = userCommonService.getUser(userId);
-        if(userCommonAccessService.isUserAccessibleWithPrivacy(user)){
+        if (userCommonAccessService.isUserAccessibleWithPrivacy(user)) {
             return user;
         }
         return null;
@@ -68,5 +69,13 @@ public class CommunityAccessService {
 
     public boolean hasAccessToGetCommunityUsers(String communitySlug) {
         return this.hasAccessToCommunity(communitySlug);
+    }
+
+    public boolean toCommunitySuggestionsForGuide() {
+        UserSecondaryDetails userSecondaryDetails = userCommonService.getUser().getUserSecondaryDetails();
+        if (userSecondaryDetails != null) {
+            return userSecondaryDetails.isCommunitySuggestion();
+        }
+        return true;
     }
 }

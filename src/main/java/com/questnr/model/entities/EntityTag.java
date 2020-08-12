@@ -4,6 +4,8 @@ package com.questnr.model.entities;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "qr_entity_tags")
@@ -17,6 +19,15 @@ public class EntityTag extends DomainObject {
 
     @Column(name = "tag_value", length = 50, unique = true)
     private String tagValue;
+
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "entityTag", orphanRemoval = true)
+    private Set<CommunityTag> communityTags = new HashSet<>();
+
+    public EntityTag() {
+
+    }
 
     public EntityTag(String tagValue) {
         this.tagValue = tagValue;

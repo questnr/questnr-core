@@ -38,8 +38,10 @@ public class Community extends DomainObject {
     @Column(name = "slug", unique = true)
     private String slug;
 
-    @Column(name = "community_tags")
-    private String tags;
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "community", orphanRemoval = true)
+    private List<CommunityTag> tags;
 
     @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
     @Enumerated(EnumType.STRING)
@@ -114,11 +116,11 @@ public class Community extends DomainObject {
         this.slug = slug;
     }
 
-    public String getTags() {
+    public List<CommunityTag> getTags() {
         return tags;
     }
 
-    public void setTags(String tags) {
+    public void setTags(List<CommunityTag> tags) {
         this.tags = tags;
     }
 

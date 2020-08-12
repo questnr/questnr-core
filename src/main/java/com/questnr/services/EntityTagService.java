@@ -18,16 +18,16 @@ public class EntityTagService {
     @Autowired
     private EntityTagRepository entityTagRepository;
 
-    public void saveEntityTag(String tagValue) {
-        this.saveEntityTag(new EntityTag(tagValue));
+    public EntityTag saveEntityTag(String tagValue) {
+        return this.saveEntityTag(new EntityTag(tagValue));
     }
 
-    public void saveEntityTag(EntityTag entityTag) {
+    public EntityTag saveEntityTag(EntityTag entityTag) {
         try {
-            if (!this.entityTagRepository.existsByTagValue(entityTag.getTagValue()))
-                entityTagRepository.save(entityTag);
+            return entityTagRepository.save(entityTag);
         } catch (Exception e) {
             LOGGER.error(EntityTagService.class.getName() + ": Error in saving EntityTag");
         }
+        return null;
     }
 }

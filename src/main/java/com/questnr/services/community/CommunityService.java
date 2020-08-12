@@ -4,20 +4,22 @@ import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
+import com.questnr.model.dto.community.CommunityCardDTO;
 import com.questnr.model.dto.user.UserOtherDTO;
-import com.questnr.model.entities.Community;
-import com.questnr.model.entities.CommunityUser;
-import com.questnr.model.entities.PostAction;
-import com.questnr.model.entities.User;
+import com.questnr.model.entities.*;
+import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.CommunityRepository;
+import com.questnr.model.repositories.CommunityTagRepository;
 import com.questnr.model.repositories.CommunityUserRepository;
 import com.questnr.model.repositories.PostActionRepository;
+import com.questnr.model.specifications.CommunityEntityTagSpecifications;
+import com.questnr.requests.CommunityRequest;
 import com.questnr.requests.CommunityUpdateRequest;
+import com.questnr.requests.UserInterestsRequest;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.CustomPageService;
-import com.questnr.services.EntityTagService;
 import com.questnr.services.user.UserCommonService;
 import com.questnr.util.SecureRandomService;
 import org.mapstruct.factory.Mappers;
@@ -31,7 +33,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,10 +78,17 @@ public class CommunityService {
     private PostActionRepository postActionRepository;
 
     @Autowired
-    private EntityTagService entityTagService;
+    private CommunityTagService communityTagService;
+
+    @Autowired
+    private CommunityTagRepository communityTagRepository;
+
+    @Autowired
+    private CommunityMapper communityMapper;
 
     public CommunityService() {
         this.userMapper = Mappers.getMapper(UserMapper.class);
+        this.communityMapper = Mappers.getMapper(CommunityMapper.class);
     }
 
     final private String COMMUNITY_PATH = "community";
@@ -113,8 +121,10 @@ public class CommunityService {
         throw new AlreadyExistsException("Community already exists");
     }
 
-    public Community createCommunity(Community community, MultipartFile multipartFile) {
-        Community communitySaved = this.createCommunity(community);
+    public Community createCommunity(Community community,
+                                     MultipartFile multipartFile,
+                                     CommunityRequest communityRequest) {
+        Community communitySaved = this.createCommunity(community, communityRequest);
         try {
             if (!multipartFile.isEmpty()) {
                 communityAvatarService.uploadAvatar(communitySaved.getCommunityId(), multipartFile);
@@ -137,47 +147,26 @@ public class CommunityService {
         return null;
     }
 
-    public String[] getCommunityTags(String communityTags) {
-        String[] communityTagArray = communityTags.split(",");
-        return communityTagArray;
-    }
-
-    public List<String> parseCommunityTags(List<String> tagList) {
-        List<String> newTagList = new ArrayList<>();
-        for (String tag : tagList) {
-            if (tag != null) {
-                String newTag = tag.replaceAll("\\<.*?\\>", "").trim().toUpperCase();
-                try {
-                    this.entityTagService.saveEntityTag(newTag);
-                } catch (Exception e) {
-                    LOGGER.error(CommunityService.class.getName() + ": Error in saving EntityTag");
-                }
-                newTagList.add(newTag);
-            }
-        }
-        return newTagList;
-    }
-
-    public Community createCommunity(Community community) {
+    public Community createCommunity(Community community, CommunityRequest communityRequest) {
         if (community != null) {
             if (this.checkCommunityNameExists(community.getCommunityName())) {
-                if (community.getTags() != null) {
-                    List<String> tagList = Arrays.asList(this.getCommunityTags(community.getTags()));
+                try {
+                    assert communityRequest.getCommunityTags() != null;
+                    List<String> tagList = Arrays.asList(
+                            communityTagService.getCommunityTags(communityRequest.getCommunityTags()));
                     if (tagList.size() >= 5
                             || tagList.size() < 2) {
                         throw new InvalidRequestException("Community Tags are not valid");
                     }
-                    tagList = this.parseCommunityTags(tagList);
-                    community.setTags(String.join(" ", tagList));
-                } else {
-                    throw new InvalidRequestException("Community Tags are not valid");
-                }
-                try {
+                    List<CommunityTag> communityTagList = communityTagService.parseAndStoreCommunityTags(tagList, community);
+                    community.setTags(communityTagList);
                     community.setCommunityPrivacy(CommunityPrivacy.pub);
                     community.setOwnerUser(userCommonService.getUser());
                     community.addMetadata();
                     community.setSlug(this.createCommunitySlug(community));
-                    return communityRepository.saveAndFlush(community);
+                    Community savedCommunity = communityRepository.saveAndFlush(community);
+
+                    return savedCommunity;
                 } catch (Exception e) {
                     LOGGER.error(CommunityService.class.getName() + " Exception Occurred");
                 }
@@ -193,7 +182,7 @@ public class CommunityService {
     public void deleteCommunity(long communityId) {
         Community community = communityCommonService.getCommunity(communityId);
         try {
-            if (!commonService.isNull(community.getAvatar().getAvatarKey())) {
+            if (!CommonService.isNull(community.getAvatar().getAvatarKey())) {
                 try {
                     this.amazonS3Client.deleteFileFromS3BucketUsingPathToFile(community.getAvatar().getAvatarKey());
                 } catch (Exception e) {
@@ -259,5 +248,17 @@ public class CommunityService {
             e.printStackTrace();
             throw new InvalidRequestException("Error occurred. Please, try again!");
         }
+    }
+
+    public Page<CommunityCardDTO> getCommunitySuggestionsForGuide(UserInterestsRequest userInterestsRequest,
+                                                                  Pageable pageable){
+        List<String> tagList = Arrays.asList(this.communityTagService.getCommunityTags(userInterestsRequest.getUserInterests()));
+        tagList = this.communityTagService.parseCommunityTags(tagList);
+        Page<CommunityTag> communityTagPage = communityTagRepository.findAll(
+                CommunityEntityTagSpecifications.findEntityTagInList(tagList)
+        , pageable);
+        List<Community> communityList = communityTagPage.stream().filter(entityTag ->
+                entityTag.getCommunity()!=null).map(CommunityTag::getCommunity).collect(Collectors.toList());
+        return new PageImpl<>(this.communityMapper.toCommunityCards(communityList), pageable, communityTagPage.getTotalElements());
     }
 }

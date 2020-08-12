@@ -14,7 +14,7 @@ public class CommunityRequest {
 
     private CommunityPrivacy communityPrivacy;
 
-    private String tags;
+    private String communityTags;
 
     public String getCommunityName() {
         return communityName;
@@ -49,11 +49,11 @@ public class CommunityRequest {
         this.communityPrivacy = communityPrivacy;
     }
 
-    public String getTags() {
-        return tags;
+    public String getCommunityTags() {
+        return communityTags;
     }
 
-    public void setTags(String tags) {
-        this.tags = tags;
+    public void setCommunityTags(String communityTags) {
+        this.communityTags = communityTags;
     }
 }

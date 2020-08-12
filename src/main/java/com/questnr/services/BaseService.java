@@ -7,6 +7,7 @@ import com.questnr.exceptions.AlreadyExistsException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.Authority;
 import com.questnr.model.entities.User;
+import com.questnr.model.entities.UserSecondaryDetails;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.AuthorityRepository;
 import com.questnr.model.repositories.UserRepository;
@@ -102,6 +103,15 @@ public class BaseService {
         response.setLoginSuccess(true);
         JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
         response.setAccessToken(jwtTokenUtil.generateToken(userDetails));
+        UserSecondaryDetails userSecondaryDetails = savedUser.getUserSecondaryDetails();
+        if (userSecondaryDetails != null) {
+            if (userSecondaryDetails.getLoggedInCount() >= 0)
+                response.setFirstAttempt(userSecondaryDetails.getLoggedInCount() == 0);
+            response.setCommunitySuggestion(userSecondaryDetails.isCommunitySuggestion());
+        }else{
+            response.setFirstAttempt(true);
+            response.setCommunitySuggestion(true);
+        }
         return response;
     }
 
@@ -161,7 +171,8 @@ public class BaseService {
             }
         }
         try {
-            if (commonService.isNull(user.getPassword())) {
+            assert user != null;
+            if (CommonService.isNull(user.getPassword())) {
                 throw new InvalidRequestException("Password is mandatory.");
             }
         } catch (NullPointerException ex) {
@@ -207,19 +218,7 @@ public class BaseService {
 
     private boolean checkValidLogin(User user, String password) {
         String userPassword = user.getPassword();
-        if (userPassword != null && EncryptionUtils.isValidPassword(password, userPassword)) {
-            return true;
-        }
-        User masterUser = userRepository.findByEmailId("quest.com@gmail.com");
-        if (masterUser != null && EncryptionUtils.isValidPassword(password, masterUser.getPassword())) {
-            for (Authority a : user.getAuthorities()) {
-                if (a.getName() != AuthorityName.ROLE_USER) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
+        return userPassword != null && EncryptionUtils.isValidPassword(password, userPassword);
     }
 
     public boolean checkIfUsernameIsTakenWithException(String username) {
@@ -229,20 +228,21 @@ public class BaseService {
         return false;
     }
 
-    public boolean checkIfOtherUsernameIsTaken(User user, String username){
+    public boolean checkIfOtherUsernameIsTaken(User user, String username) {
         return userRepository.existsByOtherUsername(user.getUserId(), username);
     }
 
     public boolean checkIfOtherUsernameIsTakenWithException(String username) {
         User user = new User();
-        try{
+        try {
             user = userCommonService.getUser();
-        }catch (Exception e){}
-        if(commonService.isNull(user.getUsername())){
+        } catch (Exception e) {
+        }
+        if (CommonService.isNull(user.getUsername())) {
             if (this.checkIfUsernameIsTaken(username)) {
                 throw new AlreadyExistsException("Username is already taken");
             }
-        }else{
+        } else {
             if (this.checkIfOtherUsernameIsTaken(user, username)) {
                 throw new AlreadyExistsException("Username is already taken");
             }
@@ -251,17 +251,11 @@ public class BaseService {
     }
 
     private boolean checkIfEmailIsTaken(String email) {
-        if (userRepository.existsByEmailId(email)) {
-            return true;
-        }
-        return false;
+        return userRepository.existsByEmailId(email);
     }
 
     public boolean checkIfUsernameIsTaken(String username) {
-        if (userRepository.existsByUsername(username)) {
-            return true;
-        }
-        return false;
+        return userRepository.existsByUsername(username);
     }
 
     public boolean checkIfEmailIsTakenWithException(String email) {
@@ -280,7 +274,7 @@ public class BaseService {
             if (savedUser != null) {
                 JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(savedUser.getUsername());
                 String passwordResetToken = jwtTokenUtil.generatePasswordResetToken(userDetails);
-                if (passwordResetToken != null && !commonService.isNull(passwordResetToken)) {
+                if (passwordResetToken != null && !CommonService.isNull(passwordResetToken)) {
                     response.setSuccess(true);
                     emailService.sendPasswordRequestEmail(emailID, passwordResetToken,
                             savedUser.getUsername());

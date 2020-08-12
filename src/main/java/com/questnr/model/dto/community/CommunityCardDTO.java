@@ -14,8 +14,6 @@ public class CommunityCardDTO {
 
     public String slug;
 
-    private UserOtherDTO ownerUserDTO;
-
     private PublishStatus status;
 
     private AvatarDTO avatarDTO;
@@ -52,14 +50,6 @@ public class CommunityCardDTO {
 
     public void setSlug(String slug) {
         this.slug = slug;
-    }
-
-    public UserOtherDTO getOwnerUserDTO() {
-        return ownerUserDTO;
-    }
-
-    public void setOwnerUserDTO(UserOtherDTO ownerUserDTO) {
-        this.ownerUserDTO = ownerUserDTO;
     }
 
     public PublishStatus getStatus() {

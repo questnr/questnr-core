@@ -33,7 +33,7 @@ public class CommonService {
     }
 
     public Long getCommunityId(PostAction postAction) {
-        if (postAction.getCommunity() != null && this.isNull(postAction.getCommunity().getCommunityId().toString())) {
+        if (postAction.getCommunity() != null && isNull(postAction.getCommunity().getCommunityId().toString())) {
             return postAction.getCommunity().getCommunityId();
         }
         return null;
@@ -210,5 +210,9 @@ public class CommonService {
 
     public static String getRandomNumber(){
         return CommonService.getRandomNumber(6);
+    }
+
+    public static String removeHTMLChars(String inputString){
+        return inputString.replaceAll("\\<.*?\\>", "");
     }
 }

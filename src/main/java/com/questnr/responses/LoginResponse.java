@@ -6,6 +6,8 @@ public class LoginResponse {
   String accessToken;
   String userName;
   String errorMessage;
+  boolean isFirstAttempt = true;
+  boolean communitySuggestion = false;
 
   public LoginResponse() {
 
@@ -37,6 +39,22 @@ public class LoginResponse {
 
   public void setAccessToken(String accessToken) {
     this.accessToken = accessToken;
+  }
+
+  public boolean isFirstAttempt() {
+    return isFirstAttempt;
+  }
+
+  public void setFirstAttempt(boolean firstAttempt) {
+    isFirstAttempt = firstAttempt;
+  }
+
+  public boolean isCommunitySuggestion() {
+    return communitySuggestion;
+  }
+
+  public void setCommunitySuggestion(boolean communitySuggestion) {
+    this.communitySuggestion = communitySuggestion;
   }
 
   @Override

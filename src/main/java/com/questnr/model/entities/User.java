@@ -137,7 +137,11 @@ public class User extends DomainObject {
 
     @JsonIgnoreProperties(value = "user")
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    Set<Notification> notificationSet;
+    private Set<Notification> notificationSet;
+
+    @OneToOne
+    @JoinColumn(name = "user_secondary_details_id")
+    private UserSecondaryDetails userSecondaryDetails = new UserSecondaryDetails();
 
     public Long getUserId() {
         return userId;
@@ -357,6 +361,14 @@ public class User extends DomainObject {
 
     public void setAgree(Boolean agree) {
         this.agree = agree;
+    }
+
+    public UserSecondaryDetails getUserSecondaryDetails() {
+        return userSecondaryDetails;
+    }
+
+    public void setUserSecondaryDetails(UserSecondaryDetails userSecondaryDetails) {
+        this.userSecondaryDetails = userSecondaryDetails;
     }
 
     public String getDisplayName() {

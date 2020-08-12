@@ -14,6 +14,7 @@ import com.questnr.model.mapper.UserMapper;
 import com.questnr.requests.CommunityNameRequest;
 import com.questnr.requests.CommunityRequest;
 import com.questnr.requests.CommunityUpdateRequest;
+import com.questnr.requests.UserInterestsRequest;
 import com.questnr.services.SharableLinkService;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityMetaService;
@@ -68,9 +69,9 @@ public class CommunityController {
          * */
         if (communityAccessService.hasAccessToCommunityCreation()) {
             if (communityRequest.getAvatarFile() == null || communityRequest.getAvatarFile().length == 0) {
-                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequest)));
+                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequest), communityRequest));
             } else {
-                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequest), communityRequest.getAvatarFile()[0]));
+                return communityMapper.toDTO(communityService.createCommunity(communityMapper.toDomain(communityRequest), communityRequest.getAvatarFile()[0], communityRequest));
             }
         }
         throw new AccessException();
@@ -132,7 +133,9 @@ public class CommunityController {
 
     // Get users of a single community.
     @RequestMapping(value = "/user/community/{communitySlug}/users", method = RequestMethod.GET)
-    Page<UserOtherDTO> getUsersOfCommunity(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @PathVariable String communitySlug) {
+    Page<UserOtherDTO> getUsersOfCommunity(@RequestParam(defaultValue = "0") int page,
+                                           @RequestParam(defaultValue = "10") int size,
+                                           @PathVariable String communitySlug) {
         /*
          * Community Users Fetching Security Checking
          * */
@@ -168,5 +171,17 @@ public class CommunityController {
     @RequestMapping(value = "/user/community/{communityId}/link", method = RequestMethod.GET)
     SharableLinkDTO getCommunitySharableLink(@PathVariable Long communityId) {
         return sharableLinkService.getCommunitySharableLink(communityId);
+    }
+
+    // Get community suggestions for user first login
+    @RequestMapping(value = "/user/community/suggestion/guide", method = RequestMethod.POST)
+    Page<CommunityCardDTO> getCommunitySuggestionsForGuide(@RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int size,
+                                                           @RequestBody UserInterestsRequest userInterestsRequest) {
+        if (communityAccessService.toCommunitySuggestionsForGuide()) {
+            Pageable pageable = PageRequest.of(page, size);
+            return this.communityService.getCommunitySuggestionsForGuide(userInterestsRequest, pageable);
+        }
+        return null;
     }
 }

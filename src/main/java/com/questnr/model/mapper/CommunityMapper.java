@@ -56,7 +56,6 @@ public abstract class CommunityMapper {
     public abstract CommunityForPostActionDTO toCommunityForPostAction(Community community);
 
     @Mappings({
-            @Mapping(source = "ownerUser", target = "ownerUserDTO"),
             @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
             @Mapping(target = "totalMembers", expression = "java(community.getUsers().size())")
     })
