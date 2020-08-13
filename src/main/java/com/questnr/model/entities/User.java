@@ -143,6 +143,11 @@ public class User extends DomainObject {
     @JoinColumn(name = "user_secondary_details_id")
     private UserSecondaryDetails userSecondaryDetails = new UserSecondaryDetails();
 
+    @OneToMany(cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            mappedBy = "user", orphanRemoval = true)
+    private Set<UserInterest> userInterest;
+
     public Long getUserId() {
         return userId;
     }
@@ -369,6 +374,14 @@ public class User extends DomainObject {
 
     public void setUserSecondaryDetails(UserSecondaryDetails userSecondaryDetails) {
         this.userSecondaryDetails = userSecondaryDetails;
+    }
+
+    public Set<UserInterest> getUserInterest() {
+        return userInterest;
+    }
+
+    public void setUserInterest(Set<UserInterest> userInterest) {
+        this.userInterest = userInterest;
     }
 
     public String getDisplayName() {

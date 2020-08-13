@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -24,7 +25,11 @@ public class CommunityTagService {
         return communityTags.split(",");
     }
 
-    public String getCommunityTag(String inputTag) {
+    public List<String> getCommunityTags(String communityTags, boolean asList) {
+        return Arrays.asList(communityTags.split(","));
+    }
+
+    public String makeCommunityTag(String inputTag) {
         return CommonService.removeHTMLChars(inputTag).trim().toLowerCase();
     }
 
@@ -32,7 +37,7 @@ public class CommunityTagService {
         List<String> newTagList = new ArrayList<>();
         for (String tag : tagList) {
             if (tag != null) {
-                newTagList.add(this.getCommunityTag(tag));
+                newTagList.add(this.makeCommunityTag(tag));
             }
         }
         return newTagList;
@@ -43,7 +48,7 @@ public class CommunityTagService {
         List<CommunityTag> communityTagList = new ArrayList<>();
         for (String tag : tagList) {
             if (tag != null) {
-                String newTag = this.getCommunityTag(tag);
+                String newTag = this.makeCommunityTag(tag);
                 try {
                     EntityTag entityTag = this.entityTagService.saveEntityTag(newTag);
 
