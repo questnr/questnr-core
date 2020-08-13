@@ -24,6 +24,10 @@ public class EntityTagService {
 
     public EntityTag saveEntityTag(EntityTag entityTag) {
         try {
+            EntityTag existingEntityTag = this.entityTagRepository.findByTagValue(entityTag.getTagValue());
+            if (existingEntityTag != null && existingEntityTag.getEntityTagId() != null) {
+                return existingEntityTag;
+            }
             return entityTagRepository.save(entityTag);
         } catch (Exception e) {
             LOGGER.error(EntityTagService.class.getName() + ": Error in saving EntityTag");
