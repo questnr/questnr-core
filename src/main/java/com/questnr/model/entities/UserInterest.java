@@ -16,8 +16,8 @@ public class UserInterest {
     private Long userInterestId;
 
     @ManyToOne
-    @JoinColumn(name = "static_interest_id")
-    private StaticInterest staticInterest;
+    @JoinColumn(name = "entity_tag_id")
+    private EntityTag entityTag;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -34,12 +34,12 @@ public class UserInterest {
         this.userInterestId = userInterestId;
     }
 
-    public StaticInterest getStaticInterest() {
-        return staticInterest;
+    public EntityTag getEntityTag() {
+        return entityTag;
     }
 
-    public void setStaticInterest(StaticInterest staticInterest) {
-        this.staticInterest = staticInterest;
+    public void setEntityTag(EntityTag entityTag) {
+        this.entityTag = entityTag;
     }
 
     public User getUser() {
