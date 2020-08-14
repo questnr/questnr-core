@@ -1,12 +1,12 @@
 package com.questnr.services.user;
 
+import com.questnr.common.enums.CommunitySuggestionDialogActionType;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.StaticInterestDTO;
-import com.questnr.model.entities.EntityTag;
-import com.questnr.model.entities.StaticInterest;
-import com.questnr.model.entities.User;
-import com.questnr.model.entities.UserInterest;
+import com.questnr.model.entities.*;
 import com.questnr.model.repositories.StaticInterestRepository;
 import com.questnr.model.repositories.UserInterestRepository;
+import com.questnr.model.repositories.UserSecondaryDetailsRepository;
 import com.questnr.requests.UserInterestsRequest;
 import com.questnr.services.CommonService;
 import com.questnr.services.EntityTagService;
@@ -40,6 +40,9 @@ public class UserInterestService {
     @Autowired
     private EntityTagService entityTagService;
 
+    @Autowired
+    private UserSecondaryDetailsRepository userSecondaryDetailsRepository;
+
     public List<StaticInterestDTO> searchUserInterest(String interestString) {
         Pageable pageable = PageRequest.of(0, 6);
         try {
@@ -54,6 +57,7 @@ public class UserInterestService {
 
     public void storeUserInterests(UserInterestsRequest userInterestsRequest) {
         User user = userCommonService.getUser();
+        this.communitySuggestionDialogAction(user, CommunitySuggestionDialogActionType.completed);
         List<String> userInterests = communityTagService.parseCommunityTags(
                 communityTagService.getCommunityTags(userInterestsRequest.getUserInterests(), true));
         for (String userInterestString : userInterests) {
@@ -71,5 +75,21 @@ public class UserInterestService {
                         " " + userInterestString);
             }
         }
+    }
+
+    public void communitySuggestionDialogAction(User user,
+                                                CommunitySuggestionDialogActionType communitySuggestionDialogActionType){
+        try{
+            UserSecondaryDetails userSecondaryDetails = user.getUserSecondaryDetails();
+            userSecondaryDetails.setCommunitySuggestion(communitySuggestionDialogActionType);
+            userSecondaryDetailsRepository.save(userSecondaryDetails);
+        }catch (Exception e){
+            throw new InvalidRequestException("Something went wrong!");
+        }
+    }
+
+    public void communitySuggestionDialogAction(CommunitySuggestionDialogActionType communitySuggestionDialogActionType){
+        User user = userCommonService.getUser();
+        this.communitySuggestionDialogAction(user, communitySuggestionDialogActionType);
     }
 }

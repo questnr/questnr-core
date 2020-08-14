@@ -1,6 +1,7 @@
 package com.questnr.access.community;
 
 import com.questnr.access.user.UserCommonAccessService;
+import com.questnr.common.enums.CommunitySuggestionDialogActionType;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import com.questnr.model.entities.UserSecondaryDetails;
@@ -74,7 +75,8 @@ public class CommunityAccessService {
     public boolean toCommunitySuggestionsForGuide() {
         UserSecondaryDetails userSecondaryDetails = userCommonService.getUser().getUserSecondaryDetails();
         if (userSecondaryDetails != null) {
-            return userSecondaryDetails.isCommunitySuggestion();
+            return userSecondaryDetails.getCommunitySuggestion() ==
+                    CommunitySuggestionDialogActionType.skipped;
         }
         return true;
     }

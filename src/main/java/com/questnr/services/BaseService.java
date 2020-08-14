@@ -1,6 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.common.enums.AuthorityName;
+import com.questnr.common.enums.CommunitySuggestionDialogActionType;
 import com.questnr.common.enums.SignUpSourceType;
 import com.questnr.common.enums.UserPrivacy;
 import com.questnr.exceptions.AlreadyExistsException;
@@ -107,7 +108,8 @@ public class BaseService {
         if (userSecondaryDetails != null) {
             if (userSecondaryDetails.getLoggedInCount() >= 0)
                 response.setFirstAttempt(userSecondaryDetails.getLoggedInCount() == 0);
-            response.setCommunitySuggestion(userSecondaryDetails.isCommunitySuggestion());
+            response.setCommunitySuggestion(userSecondaryDetails.getCommunitySuggestion()
+             == CommunitySuggestionDialogActionType.remained);
         }else{
             response.setFirstAttempt(true);
             response.setCommunitySuggestion(true);

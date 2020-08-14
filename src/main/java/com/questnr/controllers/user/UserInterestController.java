@@ -1,5 +1,6 @@
 package com.questnr.controllers.user;
 
+import com.questnr.common.enums.CommunitySuggestionDialogActionType;
 import com.questnr.model.dto.StaticInterestDTO;
 import com.questnr.requests.UserInterestsRequest;
 import com.questnr.services.user.UserInterestService;
@@ -27,4 +28,9 @@ public class UserInterestController {
         this.userInterestService.storeUserInterests(userInterestsRequest);
     }
 
+    // User Skips Suggestion dialog
+    @RequestMapping(value = "/user/interest", method = RequestMethod.DELETE)
+    void storeUserInterests(){
+        this.userInterestService.communitySuggestionDialogAction(CommunitySuggestionDialogActionType.skipped);
+    }
 }

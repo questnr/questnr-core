@@ -1,5 +1,6 @@
 package com.questnr.model.entities;
 
+import com.questnr.common.enums.CommunitySuggestionDialogActionType;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -18,8 +19,8 @@ public class UserSecondaryDetails extends DomainObject {
     @Column(name = "logged_in_count", columnDefinition = "integer default 0")
     private Integer loggedInCount;
 
-    @Column(name = "community_suggestion", columnDefinition = "bool default true")
-    private boolean communitySuggestion;
+    @Column(name = "community_suggestion", columnDefinition = "integer default 0")
+    private CommunitySuggestionDialogActionType communitySuggestion;
 
     @OneToOne(mappedBy = "userSecondaryDetails")
     private User user;
@@ -44,11 +45,11 @@ public class UserSecondaryDetails extends DomainObject {
         this.loggedInCount = loggedInCount;
     }
 
-    public boolean isCommunitySuggestion() {
+    public CommunitySuggestionDialogActionType getCommunitySuggestion() {
         return communitySuggestion;
     }
 
-    public void setCommunitySuggestion(boolean communitySuggestion) {
+    public void setCommunitySuggestion(CommunitySuggestionDialogActionType communitySuggestion) {
         this.communitySuggestion = communitySuggestion;
     }
 
