@@ -148,7 +148,7 @@ public class CommunityTrendService implements Runnable {
 
 
         StartingEndingDate startingEndingDate = new StartingEndingDate();
-//        startingEndingDate.setDaysBefore(40);
+//        startingEndingDate.setDaysBefore(4);
         startingEndingDate.build();
 
         // Yesterday's Date
@@ -172,18 +172,20 @@ public class CommunityTrendService implements Runnable {
                 List<CommunityUser> communityUserList = communityUserRepository.findAllByCommunityAndCreatedAtBetween(community, datePointer, nextDatePointer);
 
                 int totalFollowers = communityUserList.size();
-                if (totalFollowers < CommunityRankDependents.USER_FOLLOWER_COUNT_THRESHOLD)
-                    continue;
+//                if (totalFollowers < CommunityRankDependents.USER_FOLLOWER_COUNT_THRESHOLD) continue;
                 List<PostAction> postActionList = postActionRepository.findAllByCommunityAndCreatedAtBetween(community, datePointer, nextDatePointer);
 
                 int totalPosts = postActionList.size();
-                if (totalPosts < CommunityRankDependents.POST_COUNT_THRESHOLD) continue;
+//                if (totalPosts < CommunityRankDependents.POST_COUNT_THRESHOLD) continue;
 
                 Long totalLikes = Long.valueOf(0);
                 for (PostAction postAction : postActionList) {
                     totalLikes += likeActionRepository.countAllByPostActionAndCreatedAtBetween(postAction, datePointer, nextDatePointer);
                 }
-                if (totalLikes < CommunityRankDependents.LIKE_COUNT_THRESHOLD)
+
+                if (totalLikes < CommunityRankDependents.LIKE_COUNT_THRESHOLD
+                && totalFollowers < CommunityRankDependents.USER_FOLLOWER_COUNT_THRESHOLD
+                && totalPosts < CommunityRankDependents.POST_COUNT_THRESHOLD)
                     continue;
 
                 Long totalComments = Long.valueOf(0);
