@@ -32,7 +32,7 @@ public class HashTagController {
         return hashTagService.searchHashTag(hashTag, pageable);
     }
 
-    @RequestMapping(value = "/user/trending-hash-tag-list", method = RequestMethod.GET)
+    @RequestMapping(value = "/trending-hash-tag-list", method = RequestMethod.GET)
     Page<HashTag> getTrendingHashTagList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         if (size > 20) size = 20;
         Pageable pageable = PageRequest.of(page, size);
