@@ -139,9 +139,9 @@ public class User extends DomainObject {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Notification> notificationSet;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "user_secondary_details_id")
-    private UserSecondaryDetails userSecondaryDetails = new UserSecondaryDetails();
+    private UserSecondaryDetails userSecondaryDetails;
 
     @OneToMany(cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,

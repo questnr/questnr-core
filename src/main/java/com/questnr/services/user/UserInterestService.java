@@ -6,6 +6,7 @@ import com.questnr.model.dto.StaticInterestDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.StaticInterestRepository;
 import com.questnr.model.repositories.UserInterestRepository;
+import com.questnr.model.repositories.UserRepository;
 import com.questnr.model.repositories.UserSecondaryDetailsRepository;
 import com.questnr.requests.UserInterestsRequest;
 import com.questnr.services.CommonService;
@@ -43,6 +44,9 @@ public class UserInterestService {
     @Autowired
     private UserSecondaryDetailsRepository userSecondaryDetailsRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<StaticInterestDTO> searchUserInterest(String interestString) {
         Pageable pageable = PageRequest.of(0, 6);
         try {
@@ -56,19 +60,25 @@ public class UserInterestService {
     }
 
     public void storeUserInterests(UserInterestsRequest userInterestsRequest) {
-        User user = userCommonService.getUser();
-        this.communitySuggestionDialogAction(user, CommunitySuggestionDialogActionType.completed);
         List<String> userInterests = communityTagService.parseCommunityTags(
                 communityTagService.getCommunityTags(userInterestsRequest.getUserInterests(), true));
+        this.storeUserInterests(userInterests);
+    }
+
+    public void storeUserInterests(List<String> userInterests) {
+        User user = userCommonService.getUser();
+        this.communitySuggestionDialogAction(user, CommunitySuggestionDialogActionType.completed);
         for (String userInterestString : userInterests) {
             try {
                 EntityTag entityTag =
                         entityTagService.saveEntityTag(userInterestString.toLowerCase());
                 if (entityTag != null && !CommonService.isNull(entityTag.getTagValue())) {
-                    UserInterest userInterest = new UserInterest();
-                    userInterest.setEntityTag(entityTag);
-                    userInterest.setUser(user);
-                    this.userInterestRepository.save(userInterest);
+                    if(!this.userInterestRepository.existsByEntityTagAndUser(entityTag, user)) {
+                        UserInterest userInterest = new UserInterest();
+                        userInterest.setEntityTag(entityTag);
+                        userInterest.setUser(user);
+                        this.userInterestRepository.save(userInterest);
+                    }
                 }
             } catch (Exception e) {
                 LOGGER.error("storeUserInterests: ERROR, userID: " + user.getUserId() + "," +
@@ -80,9 +90,25 @@ public class UserInterestService {
     public void communitySuggestionDialogAction(User user,
                                                 CommunitySuggestionDialogActionType communitySuggestionDialogActionType){
         try{
-            UserSecondaryDetails userSecondaryDetails = user.getUserSecondaryDetails();
-            userSecondaryDetails.setCommunitySuggestion(communitySuggestionDialogActionType);
-            userSecondaryDetailsRepository.save(userSecondaryDetails);
+            UserSecondaryDetails userSecondaryDetails = new UserSecondaryDetails();
+            if(user.getUserSecondaryDetails() == null
+                    || user.getUserSecondaryDetails().getLoggedInCount() == null){
+                UserSecondaryDetails newUserSecondaryDetails = new UserSecondaryDetails();
+                newUserSecondaryDetails.defaultData();
+                newUserSecondaryDetails.setCommunitySuggestion(communitySuggestionDialogActionType);
+                newUserSecondaryDetails.setUser(user);
+                newUserSecondaryDetails.addMetadata();
+                user.setUserSecondaryDetails(newUserSecondaryDetails);
+                userRepository.save(user);
+            }
+            else{
+                userSecondaryDetails = user.getUserSecondaryDetails();
+                userSecondaryDetails.setCommunitySuggestion(communitySuggestionDialogActionType);
+                userSecondaryDetails.updateMetadata();
+                user.setUserSecondaryDetails(userSecondaryDetails);
+                userRepository.save(user);
+            }
+
         }catch (Exception e){
             throw new InvalidRequestException("Something went wrong!");
         }

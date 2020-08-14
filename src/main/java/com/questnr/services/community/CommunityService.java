@@ -21,6 +21,7 @@ import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
 import com.questnr.services.CustomPageService;
 import com.questnr.services.user.UserCommonService;
+import com.questnr.services.user.UserInterestService;
 import com.questnr.util.SecureRandomService;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -84,7 +85,10 @@ public class CommunityService {
     private CommunityTagRepository communityTagRepository;
 
     @Autowired
-    private CommunityMapper communityMapper;
+    private final CommunityMapper communityMapper;
+
+    @Autowired
+    private UserInterestService userInterestService;
 
     public CommunityService() {
         this.userMapper = Mappers.getMapper(UserMapper.class);
@@ -252,10 +256,11 @@ public class CommunityService {
 
     public Page<CommunityCardDTO> getCommunitySuggestionsForGuide(UserInterestsRequest userInterestsRequest,
                                                                   Pageable pageable){
-        List<String> tagList = Arrays.asList(this.communityTagService.getCommunityTags(userInterestsRequest.getUserInterests()));
-        tagList = this.communityTagService.parseCommunityTags(tagList);
+        List<String> userInterests = communityTagService.parseCommunityTags(
+                communityTagService.getCommunityTags(userInterestsRequest.getUserInterests(), true));
+        userInterestService.storeUserInterests(userInterests);
         Page<CommunityTag> communityTagPage = communityTagRepository.findAll(
-                CommunityEntityTagSpecifications.findEntityTagInList(tagList)
+                CommunityEntityTagSpecifications.findEntityTagInList(userInterests)
         , pageable);
         List<Community> communityList = communityTagPage.stream().filter(entityTag ->
                 entityTag.getCommunity()!=null).map(CommunityTag::getCommunity).collect(Collectors.toList());

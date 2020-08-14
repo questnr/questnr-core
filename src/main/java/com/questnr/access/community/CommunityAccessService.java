@@ -75,8 +75,8 @@ public class CommunityAccessService {
     public boolean toCommunitySuggestionsForGuide() {
         UserSecondaryDetails userSecondaryDetails = userCommonService.getUser().getUserSecondaryDetails();
         if (userSecondaryDetails != null) {
-            return userSecondaryDetails.getCommunitySuggestion() ==
-                    CommunitySuggestionDialogActionType.skipped;
+            return userSecondaryDetails.getCommunitySuggestion() !=
+                    CommunitySuggestionDialogActionType.completed;
         }
         return true;
     }

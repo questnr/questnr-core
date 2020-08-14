@@ -1,15 +1,15 @@
 package com.questnr.common.enums;
 
 public enum CommunitySuggestionDialogActionType {
-  skipped(-1), completed(1), remained(0);
+  skipped("skipped"), completed("completed"), remained("remained");
 
-  public int jsonValue;
+  public String jsonValue;
 
-  private CommunitySuggestionDialogActionType(int json) {
+  private CommunitySuggestionDialogActionType(String json) {
     this.jsonValue = json;
   }
 
-  public int getJsonValue() {
+  public String getJsonValue() {
     return jsonValue;
   }
 }

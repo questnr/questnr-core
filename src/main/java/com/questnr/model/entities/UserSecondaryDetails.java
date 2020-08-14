@@ -1,6 +1,10 @@
 package com.questnr.model.entities;
 
 import com.questnr.common.enums.CommunitySuggestionDialogActionType;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Store;
+import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.springframework.stereotype.Indexed;
 
 import javax.persistence.*;
@@ -19,14 +23,18 @@ public class UserSecondaryDetails extends DomainObject {
     @Column(name = "logged_in_count", columnDefinition = "integer default 0")
     private Integer loggedInCount;
 
-    @Column(name = "community_suggestion", columnDefinition = "integer default 0")
+    @Field(bridge = @FieldBridge(impl = EnumBridge.class), store = Store.YES)
+    @Column(name = "community_suggestion", columnDefinition = "varchar default 'remained'")
+    @Enumerated(EnumType.STRING)
     private CommunitySuggestionDialogActionType communitySuggestion;
 
-    @OneToOne(mappedBy = "userSecondaryDetails")
+    @OneToOne(mappedBy = "userSecondaryDetails",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
     private User user;
 
     public UserSecondaryDetails() {
-        this.loggedInCount = 0;
     }
 
     public Long getUserSecondaryDetailsId() {
@@ -59,5 +67,10 @@ public class UserSecondaryDetails extends DomainObject {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void defaultData(){
+        this.loggedInCount = 0;
+        this.communitySuggestion = CommunitySuggestionDialogActionType.remained;
     }
 }
