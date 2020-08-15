@@ -13,6 +13,7 @@ import com.questnr.model.entities.*;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.*;
+import com.questnr.responses.CommunityJoinResponse;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import org.mapstruct.factory.Mappers;
@@ -149,9 +150,11 @@ public class CommunityJoinService {
         throw new AccessException("You don not have access to send an invitation.");
     }
 
-    public void joinCommunity(Long communityId) {
+    public CommunityJoinResponse joinCommunity(Long communityId) {
         User user = userCommonService.getUser();
         Community community = communityCommonService.getCommunity(communityId);
+        CommunityJoinResponse communityJoinResponse = new CommunityJoinResponse();
+        communityJoinResponse.setCommunityPrivacy(community.getCommunityPrivacy());
         if (community.getCommunityPrivacy() == CommunityPrivacy.pri) {
             if (communityUserRequestRepository.existsByCommunityAndUser(community, user)) {
                 throw new AlreadyExistsException("Request has already been sent");
@@ -160,15 +163,16 @@ public class CommunityJoinService {
                 communityUserRequest.setCommunity(community);
                 communityUserRequest.setUser(user);
                 CommunityUserRequest savedCommunityUserRequest = communityUserRequestRepository.save(communityUserRequest);
-
+                communityJoinResponse.setRelationShipType(RelationShipType.requested);
                 // @Todo create notification for requests
             }
         } else {
             CommunityUser savedCommunityUser = this.createCommunityUser(community, user);
+            communityJoinResponse.setRelationShipType(RelationShipType.followed);
             // Notification job created and assigned to Notification Processor.
             notificationJob.createNotificationJob(savedCommunityUser);
         }
-
+        return communityJoinResponse;
     }
 
     private void inviteUserToJoinCommunity(Long communityId, User user) {

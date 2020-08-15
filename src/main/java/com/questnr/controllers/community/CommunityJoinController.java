@@ -10,6 +10,7 @@ import com.questnr.model.entities.User;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.requests.UserEmailRequest;
 import com.questnr.requests.UserIdRequest;
+import com.questnr.responses.CommunityJoinResponse;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityJoinService;
 import org.mapstruct.factory.Mappers;
@@ -60,9 +61,9 @@ public class CommunityJoinController {
 
     // Join user to the community
     @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.POST)
-    void joinCommunity(@PathVariable long communityId) {
+    CommunityJoinResponse joinCommunity(@PathVariable long communityId) {
         if (communityJoinAccessService.hasAccessToJoinCommunity(communityId)) {
-            communityJoinService.joinCommunity(communityId);
+            return communityJoinService.joinCommunity(communityId);
         } else {
             throw new AccessException();
         }
