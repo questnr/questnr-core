@@ -1,6 +1,7 @@
 package com.questnr.controllers.community;
 
 import com.questnr.model.dto.community.CommunityMetaTagCardDTO;
+import com.questnr.requests.UserInterestsRequest;
 import com.questnr.responses.CommunityMetaProfileResponse;
 import com.questnr.services.community.CommunityMetaService;
 import com.questnr.services.community.CommunityProfileService;
@@ -31,5 +32,11 @@ public class CommunityProfileController {
     CommunityMetaProfileResponse getCommunityProfileDetails(@PathVariable String communitySlug,
                                                             @RequestParam(defaultValue = "") String params) {
         return this.communityProfileService.getCommunityProfileDetails(communitySlug, params);
+    }
+
+    // Store user interests
+    @RequestMapping(value = "/admin/community/{communityId}/tags", method = RequestMethod.POST)
+    void storeUserInterests(@PathVariable Long communityId, @RequestBody UserInterestsRequest userInterestsRequest){
+        this.communityProfileService.storeCommunityTag(communityId, userInterestsRequest);
     }
 }

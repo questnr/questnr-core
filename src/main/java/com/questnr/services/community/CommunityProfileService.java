@@ -2,16 +2,22 @@ package com.questnr.services.community;
 
 import com.questnr.common.enums.PostType;
 import com.questnr.model.entities.Community;
+import com.questnr.model.entities.CommunityTag;
 import com.questnr.model.entities.CommunityTrendLinearData;
+import com.questnr.model.repositories.CommunityRepository;
 import com.questnr.model.repositories.CommunityTrendLinearDataRepository;
 import com.questnr.model.repositories.CommunityUserRepository;
 import com.questnr.model.repositories.PostActionRepository;
+import com.questnr.requests.UserInterestsRequest;
 import com.questnr.responses.CommunityMetaProfileResponse;
+import com.questnr.services.user.UserCommonService;
 import com.questnr.services.user.UserHomeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CommunityProfileService {
@@ -32,6 +38,15 @@ public class CommunityProfileService {
     @Autowired
     UserHomeService userHomeService;
 
+    @Autowired
+    CommunityTagService communityTagService;
+
+    @Autowired
+    UserCommonService userCommonService;
+
+    @Autowired
+    CommunityRepository communityRepository;
+
     public CommunityMetaProfileResponse getCommunityProfileDetails(String communitySlug) {
         return this.getCommunityProfileDetails(communityCommonService.getCommunity(communitySlug));
     }
@@ -43,7 +58,7 @@ public class CommunityProfileService {
     public CommunityMetaProfileResponse getCommunityProfileDetails(Community community, String params) {
         String[] paramArray = params.split(",");
         CommunityMetaProfileResponse communityMetaProfileResponse = new CommunityMetaProfileResponse();
-        for(String param: paramArray){
+        for (String param : paramArray) {
             this.setCommunityMetaProfileProperty(community, communityMetaProfileResponse, param.trim());
         }
         return communityMetaProfileResponse;
@@ -51,7 +66,7 @@ public class CommunityProfileService {
 
     public CommunityMetaProfileResponse setCommunityMetaProfileProperty(Community community,
                                                                         CommunityMetaProfileResponse communityMetaProfileResponse,
-                                                                        String param){
+                                                                        String param) {
         switch (param) {
             case "followers":
                 communityMetaProfileResponse.setFollowers(this.getCommunityMemberCount(community));
@@ -91,16 +106,36 @@ public class CommunityProfileService {
         return communityMetaProfileResponse;
     }
 
-    public int getCommunityMemberCount(Community community){
+    public int getCommunityMemberCount(Community community) {
         return communityUserRepository.countByCommunity(community);
     }
 
-    public int getPostCount(Community community){
+    public int getPostCount(Community community) {
         return postActionRepository.countByCommunity(community);
     }
 
-    public int getPostPollQuestionCount(Community community){
+    public int getPostPollQuestionCount(Community community) {
         return postActionRepository.countAllByCommunityAndPostType(community,
                 PostType.question);
+    }
+
+    public void storeCommunityTag(Long communityId, UserInterestsRequest userInterestsRequest) {
+        List<String> communityTags = communityTagService.parseCommunityTags(
+                communityTagService.getCommunityTags(userInterestsRequest.getUserInterests(), true));
+        this.storeCommunityTag(communityId, communityTags);
+    }
+
+    public void storeCommunityTag(Long communityId, List<String> communityTags) {
+        Community community = communityCommonService.getCommunity(communityId);
+        for (String communityTagString : communityTags) {
+            try {
+                List<CommunityTag> communityTagList = communityTagService.parseAndStoreCommunityTags(communityTags, community);
+                community.setTags(communityTagList);
+                communityRepository.save(community);
+            } catch (Exception e) {
+                LOGGER.error("storeUserInterests: ERROR, Community ID: " + community.getCommunityId()
+                        + "," + " " + communityTagString);
+            }
+        }
     }
 }
