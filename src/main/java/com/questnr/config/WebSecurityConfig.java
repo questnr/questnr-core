@@ -115,6 +115,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/v1/post/*").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/user/profile/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1/push-notification/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/activity/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/activity/**/*").permitAll()
 
                 .antMatchers(HttpMethod.GET, "/api/v1/admin/*").access("hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.GET, "/api/v1/admin/*/**").access("hasRole('ROLE_ADMIN')")
