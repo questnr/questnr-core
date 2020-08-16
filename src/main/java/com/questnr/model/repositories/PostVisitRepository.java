@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface PostVisitRepository extends JpaRepository<PostVisit, Long> {
     Long countByPostActionAndUserActor(PostAction postAction, User user);
 
+    boolean existsByPostActionAndUserActor(PostAction postAction, User user);
+
     Page<PostVisit> findByPostAction(PostAction postAction, Pageable pageable);
 
     Optional<PostVisit> findByPostActionAndUserActor(PostAction postAction, User user);
