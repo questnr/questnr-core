@@ -70,6 +70,7 @@ public class UserActivityService {
                 postActivity.setPostAction(postActionService.getPostActionById(
                         userActivityRequest.getEntityId()));
                 postActivity.setUserActor(user);
+                postActivity.setReferrer(userActivityRequest.getReferrer());
                 PostActivity savedPostActivity = postActivityRepository.save(postActivity);
                 userActivityResponse.setTrackingId(savedPostActivity.getPostActivityId());
             } catch (Exception e) {
@@ -105,6 +106,7 @@ public class UserActivityService {
                 communityActivity.setCommunity(communityCommonService.getCommunity(
                         userActivityRequest.getEntityId()));
                 communityActivity.setUserActor(user);
+                communityActivity.setReferrer(userActivityRequest.getReferrer());
                 CommunityActivity savedCommunityActivity = communityActivityRepository.save(communityActivity);
                 userActivityResponse.setTrackingId(savedCommunityActivity.getCommunityActivityId());
             } catch (Exception e) {
@@ -140,6 +142,7 @@ public class UserActivityService {
                 userActivity.setUser(userCommonService.getUser(
                         userActivityRequest.getEntityId()));
                 userActivity.setUserActor(user);
+                userActivity.setReferrer(userActivityRequest.getReferrer());
                 UserActivity savedUserActivity = userActivityRepository.save(userActivity);
                 userActivityResponse.setTrackingId(savedUserActivity.getUserActivityId());
             } catch (Exception e) {

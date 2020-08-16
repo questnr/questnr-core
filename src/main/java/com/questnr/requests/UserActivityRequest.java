@@ -3,6 +3,7 @@ package com.questnr.requests;
 public class UserActivityRequest {
     private Long entityId;
     private Long trackingId;
+    private String referrer;
     private boolean updateRequest;
 
     public Long getEntityId() {
@@ -19,6 +20,14 @@ public class UserActivityRequest {
 
     public void setTrackingId(Long trackingId) {
         this.trackingId = trackingId;
+    }
+
+    public String getReferrer() {
+        return referrer;
+    }
+
+    public void setReferrer(String referrer) {
+        this.referrer = referrer;
     }
 
     public boolean isUpdateRequest() {

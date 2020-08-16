@@ -38,6 +38,9 @@ public class UserActivity {
     @LastModifiedDate
     private Date lastTrack;
 
+    @Column(name = "referrer")
+    private String referrer;
+
     public UserActivity() {
         this.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         this.setLastTrack();
@@ -85,5 +88,13 @@ public class UserActivity {
 
     public void setLastTrack() {
         this.lastTrack = Timestamp.valueOf(LocalDateTime.now());
+    }
+
+    public String getReferrer() {
+        return referrer;
+    }
+
+    public void setReferrer(String referrer) {
+        this.referrer = referrer;
     }
 }
