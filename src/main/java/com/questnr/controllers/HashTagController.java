@@ -33,9 +33,10 @@ public class HashTagController {
     }
 
     @RequestMapping(value = "/trending-hash-tag-list", method = RequestMethod.GET)
-    Page<HashTag> getTrendingHashTagList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    Page<HashTag> getTrendingHashTagList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         if (size > 20) size = 20;
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Sort.by("hashTag.createdAt").descending()
+                .and(Sort.by("trendRank")));
         return hashTagService.getTrendingHashTagList(pageable);
     }
 
