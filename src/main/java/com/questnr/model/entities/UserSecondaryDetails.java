@@ -28,6 +28,9 @@ public class UserSecondaryDetails extends DomainObject {
     @Enumerated(EnumType.STRING)
     private CommunitySuggestionDialogActionType communitySuggestion;
 
+    @Column(name = "public_entity_id")
+    private Long publicEntityId;
+
     @OneToOne(mappedBy = "userSecondaryDetails",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
@@ -59,6 +62,14 @@ public class UserSecondaryDetails extends DomainObject {
 
     public void setCommunitySuggestion(CommunitySuggestionDialogActionType communitySuggestion) {
         this.communitySuggestion = communitySuggestion;
+    }
+
+    public Long getPublicEntityId() {
+        return publicEntityId;
+    }
+
+    public void setPublicEntityId(Long publicEntityId) {
+        this.publicEntityId = publicEntityId;
     }
 
     public User getUser() {

@@ -7,7 +7,6 @@ import com.questnr.model.entities.*;
 import com.questnr.model.repositories.StaticInterestRepository;
 import com.questnr.model.repositories.UserInterestRepository;
 import com.questnr.model.repositories.UserRepository;
-import com.questnr.model.repositories.UserSecondaryDetailsRepository;
 import com.questnr.requests.UserInterestsRequest;
 import com.questnr.services.CommonService;
 import com.questnr.services.EntityTagService;
@@ -42,7 +41,7 @@ public class UserInterestService {
     private EntityTagService entityTagService;
 
     @Autowired
-    private UserSecondaryDetailsRepository userSecondaryDetailsRepository;
+    private UserSecondaryDetailsService userSecondaryDetailsService;
 
     @Autowired
     private UserRepository userRepository;
@@ -73,7 +72,7 @@ public class UserInterestService {
                 EntityTag entityTag =
                         entityTagService.saveEntityTag(userInterestString.toLowerCase());
                 if (entityTag != null && !CommonService.isNull(entityTag.getTagValue())) {
-                    if(!this.userInterestRepository.existsByEntityTagAndUser(entityTag, user)) {
+                    if (!this.userInterestRepository.existsByEntityTagAndUser(entityTag, user)) {
                         UserInterest userInterest = new UserInterest();
                         userInterest.setEntityTag(entityTag);
                         userInterest.setUser(user);
@@ -88,33 +87,25 @@ public class UserInterestService {
     }
 
     public void communitySuggestionDialogAction(User user,
-                                                CommunitySuggestionDialogActionType communitySuggestionDialogActionType){
-        try{
-            UserSecondaryDetails userSecondaryDetails = new UserSecondaryDetails();
-            if(user.getUserSecondaryDetails() == null
-                    || user.getUserSecondaryDetails().getLoggedInCount() == null){
-                UserSecondaryDetails newUserSecondaryDetails = new UserSecondaryDetails();
-                newUserSecondaryDetails.defaultData();
-                newUserSecondaryDetails.setCommunitySuggestion(communitySuggestionDialogActionType);
-                newUserSecondaryDetails.setUser(user);
-                newUserSecondaryDetails.addMetadata();
-                user.setUserSecondaryDetails(newUserSecondaryDetails);
-                userRepository.save(user);
-            }
-            else{
+                                                CommunitySuggestionDialogActionType communitySuggestionDialogActionType) {
+        try {
+            UserSecondaryDetails userSecondaryDetails;
+            if (user.getUserSecondaryDetails() == null
+                    || user.getUserSecondaryDetails().getLoggedInCount() == null) {
+                userSecondaryDetails = this.userSecondaryDetailsService.createUserSecondaryDetails(user);
+            } else {
                 userSecondaryDetails = user.getUserSecondaryDetails();
-                userSecondaryDetails.setCommunitySuggestion(communitySuggestionDialogActionType);
                 userSecondaryDetails.updateMetadata();
-                user.setUserSecondaryDetails(userSecondaryDetails);
-                userRepository.save(user);
             }
-
-        }catch (Exception e){
+            userSecondaryDetails.setCommunitySuggestion(communitySuggestionDialogActionType);
+            user.setUserSecondaryDetails(userSecondaryDetails);
+            userRepository.save(user);
+        } catch (Exception e) {
             throw new InvalidRequestException("Something went wrong!");
         }
     }
 
-    public void communitySuggestionDialogAction(CommunitySuggestionDialogActionType communitySuggestionDialogActionType){
+    public void communitySuggestionDialogAction(CommunitySuggestionDialogActionType communitySuggestionDialogActionType) {
         User user = userCommonService.getUser();
         this.communitySuggestionDialogAction(user, communitySuggestionDialogActionType);
     }
