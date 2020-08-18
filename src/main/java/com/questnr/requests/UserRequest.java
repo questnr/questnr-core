@@ -33,6 +33,8 @@ public class UserRequest {
 
     private Date dob;
 
+    private Long publicEntityId;
+
     public String getUsername() {
         return username;
     }
@@ -79,5 +81,13 @@ public class UserRequest {
 
     public void setDob(Date dob) {
         this.dob = dob;
+    }
+
+    public Long getPublicEntityId() {
+        return publicEntityId;
+    }
+
+    public void setPublicEntityId(Long publicEntityId) {
+        this.publicEntityId = publicEntityId;
     }
 }

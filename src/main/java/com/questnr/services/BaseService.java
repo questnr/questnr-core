@@ -19,6 +19,7 @@ import com.questnr.responses.ResetPasswordResponse;
 import com.questnr.security.JwtTokenUtil;
 import com.questnr.security.JwtUser;
 import com.questnr.services.user.UserCommonService;
+import com.questnr.services.user.UserSecondaryDetailsService;
 import com.questnr.util.EncryptionUtils;
 import com.questnr.util.SecureRandomService;
 import org.apache.commons.text.WordUtils;
@@ -61,6 +62,9 @@ public class BaseService {
 
     @Autowired
     UserCommonService userCommonService;
+
+    @Autowired
+    UserSecondaryDetailsService userSecondaryDetailsService;
 
     public BaseService() {
         userMapper = Mappers.getMapper(UserMapper.class);
@@ -109,8 +113,8 @@ public class BaseService {
             if (userSecondaryDetails.getLoggedInCount() >= 0)
                 response.setFirstAttempt(userSecondaryDetails.getLoggedInCount() == 0);
             response.setCommunitySuggestion(userSecondaryDetails.getCommunitySuggestion()
-             == CommunitySuggestionDialogActionType.remained);
-        }else{
+                    == CommunitySuggestionDialogActionType.remained);
+        } else {
             response.setFirstAttempt(true);
             response.setCommunitySuggestion(true);
         }
@@ -140,8 +144,8 @@ public class BaseService {
     }
 
     private User processUserInformation(User user) {
-
-        if (!(commonService.isNull(user.getFirstName()) || commonService.isNull(user.getLastName()))) {
+        if (!(CommonService.isNull(user.getFirstName())
+                || CommonService.isNull(user.getLastName()))) {
             user.setSlug(this.createSlug(user.getFirstName() + " " + user.getLastName()));
         } else {
             user.setSlug(this.createSlug(user.getUsername()));
@@ -193,7 +197,22 @@ public class BaseService {
             user.setPassword(encPassword);
         }
 
-        User savedUser = userRepository.saveAndFlush(user);
+        User savedUser = userRepository.save(user);
+
+        try {
+            UserSecondaryDetails userSecondaryDetails = new UserSecondaryDetails();
+            userSecondaryDetails.defaultData();
+            userSecondaryDetails.addMetadata();
+            userSecondaryDetails.setUser(savedUser);
+            if (userRequest.getPublicEntityId() != null) {
+                userSecondaryDetails.setPublicEntityId(userRequest.getPublicEntityId());
+            }
+            savedUser.setUserSecondaryDetails(userSecondaryDetails);
+            userRepository.saveAndFlush(savedUser);
+        } catch (Exception e) {
+            LOGGER.error("ERROR WHILE SIGNING UP USER");
+        }
+
         this.emailService.sendEmailOnSignUp(user);
         return this.createSuccessLoginResponse(savedUser);
     }
