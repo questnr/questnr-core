@@ -1,5 +1,6 @@
 package com.questnr.services.notification;
 
+import com.questnr.common.enums.NotificationType;
 import com.questnr.model.dto.NotificationDTO;
 import com.questnr.model.entities.CommunityInvitedUser;
 import com.questnr.model.entities.Notification;
@@ -88,7 +89,8 @@ public class NotificationWorker extends Thread {
                 }
                 try {
                     NotificationDTO notificationDTO = this.notificationMapper.toNotificationDTO(item);
-                    if (!notificationDTO.getUserActor().getUserId().equals(notificationDTO.getUser().getUserId())) {
+                    if (!notificationDTO.getUserActor().getUserId().equals(notificationDTO.getUser().getUserId()) ||
+                            notificationDTO.getNotificationType() == NotificationType.communityAccepted) {
                         try {
                             UserNotificationSettings userNotificationSettings = userNotificationSettingsRepository.findByUser(notificationDTO.getUser());
                             if (userNotificationSettings == null || userNotificationSettings.isReceivingNotification()) {
@@ -115,7 +117,7 @@ public class NotificationWorker extends Thread {
                                     ex.getMessage());
                         }
                         try {
-                            if(item.getNotificationBase() instanceof CommunityInvitedUser){
+                            if (item.getNotificationBase() instanceof CommunityInvitedUser) {
                                 this.emailService.sendInvitationEmailToUserToJoinCommunity(notificationDTO);
                             }
                             this.notificationRepository.save(item);
@@ -124,7 +126,7 @@ public class NotificationWorker extends Thread {
                                     ex.getMessage());
                         }
                     }
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     LOG.log(Level.SEVERE, "Exception while mapping to NotificationDTO ...{0}",
                             ex.getMessage());
                 }

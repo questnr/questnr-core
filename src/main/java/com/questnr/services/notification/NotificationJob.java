@@ -104,6 +104,10 @@ public class NotificationJob {
         this.createNotificationJob(new Notification(postPollAnswer), toCreate);
     }
 
+    public void createNotificationJob(CommunityUserRequest communityUserRequest, boolean toCreate) {
+        this.createNotificationJob(new Notification(communityUserRequest), toCreate);
+    }
+
     public void createNotificationJob(PostAction postAction) {
         this.createNotificationJob(postAction, true);
     }
@@ -134,5 +138,9 @@ public class NotificationJob {
 
     public void createNotificationJob(PostPollAnswer postPollAnswer) {
         this.createNotificationJob(postPollAnswer, true);
+    }
+
+    public void createNotificationJob(CommunityUserRequest communityUserRequest) {
+        this.createNotificationJob(new Notification(communityUserRequest), true);
     }
 }

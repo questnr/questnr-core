@@ -64,11 +64,11 @@ public class CommunityUserRequest implements NotificationBase{
 
     @JsonIgnore
     public NotificationType getNotificationType() {
-        return NotificationType.followRequestCommunity;
+        return NotificationType.requestedCommunity;
     }
 
     @JsonIgnore
     public String getNotificationTitles() {
-        return NotificationTitles.FOLLOWED_COMMUNITY;
+        return NotificationTitles.REQUESTED_COMMUNITY;
     }
 }

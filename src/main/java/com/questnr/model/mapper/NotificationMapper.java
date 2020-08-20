@@ -92,7 +92,8 @@ public class NotificationMapper {
         } else if (notificationBase instanceof CommunityUser) {
             CommunityUser communityUser = (CommunityUser) notificationBase;
             // Need String.format to insert community name
-            notificationDTO.setMessage(String.format(communityUser.getNotificationTitles(), communityUser.getCommunity().getCommunityName()));
+            notificationDTO.setMessage(String.format(communityUser.getNotificationTitles(),
+                    communityUser.getCommunity().getCommunityName()));
             notificationDTO.setNotificationType(communityUser.getNotificationType());
             notificationDTO.setUserActor(userMapper.toOthersDTO(communityUser.getUser()));
             notificationDTO.setCommunity(communityMapper.toCommunityListView(communityUser.getCommunity()));
@@ -111,6 +112,14 @@ public class NotificationMapper {
             notificationDTO.setNotificationType(postPollAnswer.getNotificationType());
             notificationDTO.setUserActor(userMapper.toOthersDTO(postPollAnswer.getUserActor()));
             notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(postPollAnswer.getPostAction().getSlug()).getClickAction());
+        } else if (notificationBase instanceof CommunityUserRequest) {
+            CommunityUserRequest communityUserRequest = (CommunityUserRequest) notificationBase;
+            // Need String.format to insert community name
+            notificationDTO.setMessage(String.format(communityUserRequest.getNotificationTitles(),
+                    communityUserRequest.getCommunity().getCommunityName()));
+            notificationDTO.setNotificationType(communityUserRequest.getNotificationType());
+            notificationDTO.setUserActor(userMapper.toOthersDTO(communityUserRequest.getUser()));
+            notificationDTO.setClickAction(sharableLinkService.getCommunitySharableLink(communityUserRequest.getCommunity().getSlug()).getClickAction());
         }
         notificationDTO.setOpened(notification.isRead());
         notificationDTO.setNotificationId(notification.getNotificationId());

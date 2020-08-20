@@ -2,6 +2,7 @@ package com.questnr.services.community;
 
 import com.questnr.access.community.CommunityAccessService;
 import com.questnr.common.enums.CommunityPrivacy;
+import com.questnr.common.enums.NotificationType;
 import com.questnr.common.enums.RelationShipType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.AlreadyExistsException;
@@ -103,12 +104,17 @@ public class CommunityJoinService {
 //    }
 
     private CommunityUser createCommunityUser(Community community, User user) {
+        return this.createCommunityUser(community, user, NotificationType.followedCommunity);
+    }
+
+    private CommunityUser createCommunityUser(Community community, User user, NotificationType notificationType) {
         if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
             throw new AlreadyExistsException("You are already been joined!");
         else {
             CommunityUser communityUser = new CommunityUser();
             communityUser.setUser(user);
             communityUser.setCommunity(community);
+            communityUser.setNotificationType(notificationType);
             return communityUserRepository.save(communityUser);
         }
     }
@@ -164,7 +170,8 @@ public class CommunityJoinService {
                 communityUserRequest.setUser(user);
                 CommunityUserRequest savedCommunityUserRequest = communityUserRequestRepository.save(communityUserRequest);
                 communityJoinResponse.setRelationShipType(RelationShipType.requested);
-                // @Todo create notification for requests
+                // Notification job created and assigned to Notification Processor.
+                notificationJob.createNotificationJob(savedCommunityUserRequest);
             }
         } else {
             CommunityUser savedCommunityUser = this.createCommunityUser(community, user);
@@ -313,8 +320,19 @@ public class CommunityJoinService {
         CommunityUserRequest communityUserRequest = communityUserRequestRepository.findByCommunityAndUser(community, user);
         if (communityUserRequest != null) {
             communityUserRequestRepository.delete(communityUserRequest);
+            try {
+                notificationRepository.deleteByNotificationBaseAndType(
+                        communityUserRequest.getCommunityUserRequestId(),
+                        communityUserRequest.getNotificationType().getJsonValue()
+                );
+            } catch (Exception e) {
+
+            }
             if (shouldAccept) {
-                this.createCommunityUser(community, user);
+                CommunityUser savedCommunityUser = this.createCommunityUser(community, user,
+                        NotificationType.communityAccepted);
+                // Notification job created and assigned to Notification Processor.
+                notificationJob.createNotificationJob(savedCommunityUser);
             }
         } else {
             throw new ResourceNotFoundException("Community user request doesn't exists");

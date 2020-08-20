@@ -8,7 +8,8 @@ public interface NotificationTitles {
     String LIKE_COMMENT_ACTION = "liked your comment";
     String INVITATION_ACTION = "invited you to join %s";
     String FOLLOWED_COMMUNITY = "started following %s";
-    String FOLLOW_REQUEST_COMMUNITY = "wants to follow %s";
+    String REQUESTED_COMMUNITY = "wants to follow %s";
     String FOLLOWED_USER = "started following you";
     String POLL_ANSWER = "answered on your question";
+    String COMMUNITY_ACCEPTED = "%s has accepted your request";
 }

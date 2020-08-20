@@ -1,7 +1,11 @@
 package com.questnr.model.entities;
 
 import com.questnr.common.enums.NotificationFunctionality;
-import org.hibernate.annotations.*;
+import com.questnr.common.enums.NotificationType;
+import org.hibernate.annotations.Any;
+import org.hibernate.annotations.AnyMetaDef;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.MetaValue;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
@@ -9,8 +13,6 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.search.bridge.builtin.EnumBridge;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.*;
 
 @Entity
@@ -40,10 +42,11 @@ public class Notification extends DomainObject {
                     @MetaValue(value = "I", targetEntity = CommunityInvitedUser.class),
                     @MetaValue(value = "FC", targetEntity = CommunityUser.class),
                     @MetaValue(value = "FU", targetEntity = UserFollower.class),
-                    @MetaValue(value = "PA", targetEntity = PostPollAnswer.class)
+                    @MetaValue(value = "PA", targetEntity = PostPollAnswer.class),
+                    @MetaValue(value = "RC", targetEntity = CommunityUserRequest.class)
             }
     )
-    @Cascade( { org.hibernate.annotations.CascadeType.MERGE } )
+    @Cascade({org.hibernate.annotations.CascadeType.MERGE})
     @JoinColumn(name = "notification_base_id")
     private NotificationBase notificationBase;
 
@@ -111,16 +114,32 @@ public class Notification extends DomainObject {
     }
 
     public Notification(CommunityUser communityUser) {
-        this.user = communityUser.getCommunity().getOwnerUser();
-        this.notificationBase = communityUser;
-        this.isRead = false;
-        this.addMetadata();
-        this.setNotificationFunctionality(NotificationFunctionality.normal);
+        if (communityUser.getNotificationType() == NotificationType.followedCommunity) {
+            this.user = communityUser.getCommunity().getOwnerUser();
+            this.notificationBase = communityUser;
+            this.isRead = false;
+            this.addMetadata();
+            this.setNotificationFunctionality(NotificationFunctionality.normal);
+        } else if (communityUser.getNotificationType() == NotificationType.communityAccepted) {
+            this.user = communityUser.getUser();
+            this.notificationBase = communityUser;
+            this.isRead = false;
+            this.addMetadata();
+            this.setNotificationFunctionality(NotificationFunctionality.normal);
+        }
     }
 
     public Notification(UserFollower userFollower) {
         this.user = userFollower.getUser();
         this.notificationBase = userFollower;
+        this.isRead = false;
+        this.addMetadata();
+        this.setNotificationFunctionality(NotificationFunctionality.normal);
+    }
+
+    public Notification(CommunityUserRequest communityUserRequest) {
+        this.user = communityUserRequest.getCommunity().getOwnerUser();
+        this.notificationBase = communityUserRequest;
         this.isRead = false;
         this.addMetadata();
         this.setNotificationFunctionality(NotificationFunctionality.normal);

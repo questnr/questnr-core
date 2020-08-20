@@ -28,10 +28,15 @@ public class CommunityUser implements NotificationBase{
     @JoinColumn(name = "community_id")
     private Community community;
 
+    @Column(name = "community_user_type")
+    private NotificationType notificationType;
+
     @Basic(optional = false)
     @Column(name = "created_at", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt = Timestamp.valueOf(LocalDateTime.now());
+
+
 
     public Long getCommunityUserId() {
         return communityUserId;
@@ -62,13 +67,21 @@ public class CommunityUser implements NotificationBase{
         return createdAt;
     }
 
-    @JsonIgnore
-    public NotificationType getNotificationType() {
-        return NotificationType.followedCommunity;
+    public void setNotificationType(NotificationType notificationType) {
+        this.notificationType = notificationType;
     }
 
     @JsonIgnore
+    @Override
+    public NotificationType getNotificationType() {
+        return this.notificationType;
+    }
+
+    @JsonIgnore
+    @Override
     public String getNotificationTitles() {
+        if(this.getNotificationType() == NotificationType.communityAccepted)
+            return NotificationTitles.COMMUNITY_ACCEPTED;
         return NotificationTitles.FOLLOWED_COMMUNITY;
     }
 }
