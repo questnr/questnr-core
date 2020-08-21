@@ -98,6 +98,13 @@ public class CommunityJoinController {
          communityJoinService.actionOnCommunityUserRequest(communityId, userId, false);
     }
 
+    // Accept community user request from list of user requests
+    @RequestMapping(value = "/user/community/{communityId}/users/request", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    void cancelUserOwnedRequest(@PathVariable Long communityId) {
+        communityJoinService.cancelUserOwnedRequest(communityId);
+    }
+
     // Ask user to join the community
     @RequestMapping(value = "/user/join/community/{communityId}/invite", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)

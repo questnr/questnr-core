@@ -316,6 +316,12 @@ public class CommunityJoinService {
         this.actionOnCommunityUserRequest(communityUserRequest.getCommunity(), communityUserRequest.getUser(), shouldAccept);
     }
 
+    public void cancelUserOwnedRequest(Long communityId) {
+        User user = userCommonService.getUser();
+        Community community = communityCommonService.getCommunity(communityId);
+        this.actionOnCommunityUserRequest(community, user, false);
+    }
+
     public void actionOnCommunityUserRequest(Community community, User user, boolean shouldAccept) {
         CommunityUserRequest communityUserRequest = communityUserRequestRepository.findByCommunityAndUser(community, user);
         if (communityUserRequest != null) {
