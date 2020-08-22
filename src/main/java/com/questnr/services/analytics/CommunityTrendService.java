@@ -7,6 +7,7 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvException;
 import com.questnr.common.CommunityRankDependents;
 import com.questnr.common.StartingEndingDate;
+import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.model.dto.community.CommunityRankDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.repositories.*;
@@ -169,7 +170,10 @@ public class CommunityTrendService implements Runnable {
 
             for (Community community : communityList) {
 
-                List<CommunityUser> communityUserList = communityUserRepository.findAllByCommunityAndCreatedAtBetween(community, datePointer, nextDatePointer);
+                List<CommunityUser> communityUserList = communityUserRepository.findAllByCommunityAndCommunity_CommunityPrivacyAndCreatedAtBetween(community,
+                        CommunityPrivacy.pub,
+                        datePointer,
+                        nextDatePointer);
 
                 int totalFollowers = communityUserList.size();
 //                if (totalFollowers < CommunityRankDependents.USER_FOLLOWER_COUNT_THRESHOLD) continue;
