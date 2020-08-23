@@ -31,7 +31,11 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             " from qr_users qrUser " +
             " left outer join qr_post_actions pa on " +
             " pa.user_id=qrUser.id " +
-            " where qrUser.id=:userId and pa.deleted=false group by pa.post_action_id" +
+            " left outer join qr_community co on co.community_id=pa.community_id " +
+            " left outer join qr_community_users cou on cou.community_id=co.community_id " +
+            " where qrUser.id=:userId and (pa.community_id IS NULL or (pa.community_id IS NOT NULL " +
+            " and ( co.privacy='pub' or co.owner_user_id=:thisUserId or (co.privacy='pri' and cou.user_id=:thisUserId)))) " +
+            " and pa.deleted=false group by pa.post_action_id " +
             " union " +
             " select spa.post_action_id as postActionId, 1 as postType, pa.user_id as userWhoShared, spa.created_at as createdAt" +
             " from qr_users qrUser " +
@@ -42,7 +46,10 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
             " where qrUser.id=:userId and pa.deleted=false " +
             " order by 4 desc offset :offset limit :limit"
             , nativeQuery = true)
-    List<Object[]> getUserPosts(@Param("userId") Long userId, @Param("offset") int offset, @Param("limit") int limit);
+    List<Object[]> getUserPosts(@Param("userId") Long userId,
+                                @Param("thisUserId") Long thisUserId,
+                                @Param("offset") int offset,
+                                @Param("limit") int limit);
 
     @Query(value = " select pa.post_action_id as postActionId, 0 as postType, null as userWhoShared, pa.created_at as createdAt " +
             " from qr_users qrUser " +

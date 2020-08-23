@@ -77,7 +77,8 @@ public class UserPostActionService {
     }
 
     public Page<PostBaseDTO> getAllPostsByUserId(User user, Pageable pageable) {
-        List<Object[]> postActionList = postActionRepository.getUserPosts(user.getUserId(), pageable.getPageSize() * pageable.getPageNumber(), pageable.getPageSize());
+        Long thisUserId = userCommonService.getUserId();
+        List<Object[]> postActionList = postActionRepository.getUserPosts(user.getUserId(),thisUserId, pageable.getPageSize() * pageable.getPageNumber(), pageable.getPageSize());
 
         List<PostBaseDTO> postBaseDTOArrayList = new ArrayList<>();
         for (Object[] object : postActionList) {
