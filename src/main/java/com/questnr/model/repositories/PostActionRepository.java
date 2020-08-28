@@ -10,14 +10,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.query.Param;
-import th.co.geniustree.springdata.jpa.repository.JpaSpecificationExecutorWithProjection;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
-public interface PostActionRepository extends JpaRepository<PostAction, Long>, JpaSpecificationExecutorWithProjection<PostAction> {
+public interface PostActionRepository extends JpaRepository<PostAction, Long>,
+        QuerydslPredicateExecutor<PostAction> {
 
     Set<PostActionProjection> findAllBySlugOrderByCreatedAtDesc(String slug);
 
@@ -157,6 +159,9 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>, J
     Long countAllByHashTagsAndCreatedAtBetween(HashTag hashTag, Date startingDate, Date endingDate);
 
     Page<PostAction> findByHashTags(HashTag hashTag, Pageable pageable);
+
+    @Query("select p from PostAction p join HashTag h on h in(p.hashTags) where p.hashTags in :hashTagList")
+    Page<PostAction> findByHashTagsIn(@Param("hashTagList") List<HashTag> hashTagList, Pageable pageable);
 
     int countByUserActorAndCommunity(User user, Community community);
 

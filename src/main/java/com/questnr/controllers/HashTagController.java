@@ -40,9 +40,9 @@ public class HashTagController {
         return hashTagService.getTrendingHashTagList(pageable);
     }
 
-    @RequestMapping(value = "/user/hash-tag/{hashTagValue}/posts", method = RequestMethod.GET)
-    Page<PostBaseDTO> getPostActionListUsingHashTag(@PathVariable String hashTagValue, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    @RequestMapping(value = "/user/hash-tag/posts", method = RequestMethod.GET)
+    Page<PostBaseDTO> getPostActionListUsingHashTag(@RequestParam() String hashTags, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
-        return hashTagService.getPostActionListUsingHashTag(hashTagValue, pageable);
+        return hashTagService.getPostActionListUsingHashTag(hashTags, pageable);
     }
 }

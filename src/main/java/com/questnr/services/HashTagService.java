@@ -10,6 +10,7 @@ import com.questnr.model.repositories.HashTagRepository;
 import com.questnr.model.repositories.HashTagTrendLinearDataRepository;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
+import com.questnr.model.specifications.PostActionSpecifications;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,9 +57,14 @@ public class HashTagService {
         return new PageImpl<>(hashTagTrendLinearDataPage.getContent().stream().map(HashTagTrendLinearData::getHashTag).collect(Collectors.toList()), pageable, hashTagTrendLinearDataPage.getTotalElements());
     }
 
-    public Page<PostBaseDTO> getPostActionListUsingHashTag(String hashTagValue, Pageable pageable) {
-
-        Page<PostAction> postActionPage = postActionRepository.findByHashTags(hashTagRepository.findByHashTagValue(hashTagValue), pageable);
+    public Page<PostBaseDTO> getPostActionListUsingHashTag(String hashTags, Pageable pageable) {
+        String[] hashTagArray = hashTags.split(",");
+        List<HashTag> hashTagList = new ArrayList<>();
+        for (String hashTag : hashTagArray) {
+            hashTagList.add(hashTagRepository.findByHashTagValue(hashTag.toLowerCase()));
+        }
+//        Page<PostAction> postActionPage = postActionRepository.findAll(PostActionSpecifications.findUsingHashTagList(hashTagList), pageable);
+        Page<PostAction> postActionPage = postActionRepository.findAll(PostActionSpecifications.hasHashTag(hashTagList), pageable);
         return new PageImpl<>(postActionMapper.toPublicDTOs(postActionPage.getContent()), pageable, postActionPage.getTotalElements());
     }
 }

@@ -397,7 +397,6 @@ public class User extends DomainObject {
 
     @Override
     public boolean equals(Object o) {
-        System.out.println("equals called");
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
