@@ -1,13 +1,11 @@
 package com.questnr.services.community;
 
+import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.common.enums.PostType;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityTag;
 import com.questnr.model.entities.CommunityTrendLinearData;
-import com.questnr.model.repositories.CommunityRepository;
-import com.questnr.model.repositories.CommunityTrendLinearDataRepository;
-import com.questnr.model.repositories.CommunityUserRepository;
-import com.questnr.model.repositories.PostActionRepository;
+import com.questnr.model.repositories.*;
 import com.questnr.requests.UserInterestsRequest;
 import com.questnr.responses.CommunityMetaProfileResponse;
 import com.questnr.services.user.UserCommonService;
@@ -47,6 +45,9 @@ public class CommunityProfileService {
     @Autowired
     CommunityRepository communityRepository;
 
+    @Autowired
+    CommunityUserRequestRepository communityUserRequestRepository;
+
     public CommunityMetaProfileResponse getCommunityProfileDetails(String communitySlug) {
         return this.getCommunityProfileDetails(communityCommonService.getCommunity(communitySlug));
     }
@@ -77,6 +78,10 @@ public class CommunityProfileService {
             case "totalQuestions":
                 communityMetaProfileResponse.setTotalQuestions(this.getPostPollQuestionCount(community));
                 break;
+            case "totalRequests":
+                if (community.getCommunityPrivacy() == CommunityPrivacy.pri)
+                    communityMetaProfileResponse.setTotalRequests(this.getCommunityJoiningRequestCount(community));
+                break;
             case "isInTrend":
             case "trendRank":
                 CommunityTrendLinearData communityTrendLinearData = communityTrendLinearDataRepository.findByCommunity(community);
@@ -96,6 +101,8 @@ public class CommunityProfileService {
         communityMetaProfileResponse.setFollowers(this.getCommunityMemberCount(community));
         communityMetaProfileResponse.setPosts(this.getPostCount(community));
         communityMetaProfileResponse.setTotalQuestions(this.getPostPollQuestionCount(community));
+        if (community.getCommunityPrivacy() == CommunityPrivacy.pri)
+            communityMetaProfileResponse.setTotalRequests(this.getCommunityJoiningRequestCount(community));
         CommunityTrendLinearData communityTrendLinearData = communityTrendLinearDataRepository.findByCommunity(community);
         if (communityTrendLinearData != null) {
             communityMetaProfileResponse.setInTrend(true);
@@ -106,17 +113,21 @@ public class CommunityProfileService {
         return communityMetaProfileResponse;
     }
 
-    public int getCommunityMemberCount(Community community) {
+    public Long getCommunityMemberCount(Community community) {
         return communityUserRepository.countByCommunity(community);
     }
 
-    public int getPostCount(Community community) {
+    public Long getPostCount(Community community) {
         return postActionRepository.countByCommunity(community);
     }
 
-    public int getPostPollQuestionCount(Community community) {
+    public Long getPostPollQuestionCount(Community community) {
         return postActionRepository.countAllByCommunityAndPostType(community,
                 PostType.question);
+    }
+
+    public Long getCommunityJoiningRequestCount(Community community) {
+        return communityUserRequestRepository.countAllByCommunity(community);
     }
 
     public void storeCommunityTag(Long communityId, UserInterestsRequest userInterestsRequest) {

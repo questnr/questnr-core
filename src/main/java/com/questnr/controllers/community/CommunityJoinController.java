@@ -90,7 +90,7 @@ public class CommunityJoinController {
         communityJoinService.actionOnCommunityUserRequest(communityId, userId, true);
     }
 
-    // Accept community user request from list of user requests
+    // Decline community user request from list of user requests
     @RequestMapping(value = "/user/community/{communityId}/users/{userId}/request", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void declineCommunityUserRequest(@PathVariable Long communityId,
@@ -98,7 +98,7 @@ public class CommunityJoinController {
          communityJoinService.actionOnCommunityUserRequest(communityId, userId, false);
     }
 
-    // Accept community user request from list of user requests
+    // Cancel sent community join request
     @RequestMapping(value = "/user/community/{communityId}/users/request", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void cancelUserOwnedRequest(@PathVariable Long communityId) {

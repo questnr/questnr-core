@@ -101,7 +101,7 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>,
 
     Page<PostAction> findAllByCommunityAndPostTypeOrderByCreatedAtDesc(Community community, PostType postType, Pageable pageable);
 
-    int countAllByCommunityAndPostType(Community community, PostType postType);
+    Long countAllByCommunityAndPostType(Community community, PostType postType);
 
     PostAction findByPostActionIdAndCommunity(long postActionId, Community community);
 
@@ -167,5 +167,5 @@ public interface PostActionRepository extends JpaRepository<PostAction, Long>,
 
     int countByUserActor(User user);
 
-    int countByCommunity(Community community);
+    Long countByCommunity(Community community);
 }

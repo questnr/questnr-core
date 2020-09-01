@@ -17,4 +17,6 @@ public interface CommunityUserRequestRepository extends JpaRepository<CommunityU
     List<CommunityUserRequest> findByCommunity(Community community);
 
     Page<CommunityUserRequest> findByCommunity(Community community, Pageable pageable);
+
+    Long countAllByCommunity(Community community);
 }

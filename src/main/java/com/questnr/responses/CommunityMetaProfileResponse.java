@@ -1,38 +1,48 @@
 package com.questnr.responses;
 
 public class CommunityMetaProfileResponse {
-    private int followers;
+    private Long followers;
 
-    private int posts;
+    private Long posts;
 
-    private int totalQuestions;
+    private Long totalQuestions;
+
+    private Long totalRequests;
 
     private boolean isInTrend;
 
     private int trendRank;
 
-    public int getFollowers() {
+    public Long getFollowers() {
         return followers;
     }
 
-    public void setFollowers(int followers) {
+    public void setFollowers(Long followers) {
         this.followers = followers;
     }
 
-    public int getPosts() {
+    public Long getPosts() {
         return posts;
     }
 
-    public void setPosts(int posts) {
+    public void setPosts(Long posts) {
         this.posts = posts;
     }
 
-    public int getTotalQuestions() {
+    public Long getTotalQuestions() {
         return totalQuestions;
     }
 
-    public void setTotalQuestions(int totalQuestions) {
+    public void setTotalQuestions(Long totalQuestions) {
         this.totalQuestions = totalQuestions;
+    }
+
+    public Long getTotalRequests() {
+        return totalRequests;
+    }
+
+    public void setTotalRequests(Long totalRequests) {
+        this.totalRequests = totalRequests;
     }
 
     public boolean isInTrend() {

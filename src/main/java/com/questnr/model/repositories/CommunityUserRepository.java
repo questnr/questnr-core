@@ -37,7 +37,7 @@ public interface CommunityUserRepository extends JpaRepository<CommunityUser, Lo
 
     int countByUser(User user);
 
-    int countByCommunity(Community community);
+    Long countByCommunity(Community community);
 
     @Query("select distinct uf.followingUser from CommunityUser cu " +
             " join UserFollower uf " +
