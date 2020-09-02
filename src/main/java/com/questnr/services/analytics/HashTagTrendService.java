@@ -111,17 +111,13 @@ public class HashTagTrendService implements Runnable {
             hashTagTrendLinearData.setTrendRank(trendRank++);
         }
 
-        if(subListHashTagTrendLinearDataArrayList.size() > 0){
+        if (subListHashTagTrendLinearDataArrayList.size() > 0) {
             hashTagTrendLinearDataRepository.deleteAll();
         }
         hashTagTrendLinearDataRepository.saveAll(subListHashTagTrendLinearDataArrayList);
     }
 
     public void run() {
-
-        List<HashTag> hashTagList = hashTagRepository.findAll();
-
-
         StartingEndingDate startingEndingDate = new StartingEndingDate();
 //        startingEndingDate.setDaysBefore(13);
         startingEndingDate.build();
@@ -132,46 +128,47 @@ public class HashTagTrendService implements Runnable {
         // If this algorithm hasn't been run before for this day.
         if (hashTagTrendDataRepository.countByObservedDate(datePointer) == 0) {
 //            while (datePointer.getTime() < startingEndingDate.getEndingDate().getTime()) {
-                LOGGER.info("HashTag Trending Algorithm Started!");
+            LOGGER.info("HashTag Trending Algorithm Started!");
 
-                // Get day + 1
-                Calendar c = Calendar.getInstance();
-                c.setTime(datePointer);
-                c.add(Calendar.DATE, 1);
+            List<HashTag> hashTagList = hashTagRepository.findAll();
 
-                // Today's Date
-                Date nextDatePointer = c.getTime();
-                Long totalTimeBeingUsed;
+            // Get day + 1
+            Calendar c = Calendar.getInstance();
+            c.setTime(datePointer);
+            c.add(Calendar.DATE, 1);
 
-                for (HashTag hashTag : hashTagList) {
+            // Today's Date
+            Date nextDatePointer = c.getTime();
+            Long totalTimeBeingUsed;
 
-                    totalTimeBeingUsed = postActionRepository.countAllByHashTagsAndCreatedAtBetween(hashTag, datePointer, nextDatePointer);
+            for (HashTag hashTag : hashTagList) {
 
-                    if (totalTimeBeingUsed <= HashTagRankDependents.TIME_BEING_USED_THRESHOLD)
-                        continue;
+                totalTimeBeingUsed = postActionRepository.countAllByHashTagsAndCreatedAtBetween(hashTag, datePointer, nextDatePointer);
 
-                    HashTagRankDTO hashTagRankDTO = new HashTagRankDTO();
-                    hashTagRankDTO.setHashTagId(hashTag.getHashTagId());
-                    hashTagRankDTO.setTotalTimeBeingUsed(totalTimeBeingUsed);
-                    hashTagRankDTO.setRank(this.calculateHashTagRank(hashTagRankDTO));
-                    hashTagRankDTO.setDate(datePointer);
+                if (totalTimeBeingUsed <= HashTagRankDependents.TIME_BEING_USED_THRESHOLD)
+                    continue;
 
-                    if (hashTagRankDTO.getRank() > HashTagRankDependents.MIN_THRESHOLD) {
-                        HashTagTrendData hashTagTrendData = new HashTagTrendData();
-                        hashTagTrendData.setHashTag(hashTag);
-                        hashTagTrendData.setObservedDate(datePointer);
-                        hashTagTrendData.setRank(hashTagRankDTO.getRank());
-                        hashTagTrendDataRepository.save(hashTagTrendData);
-                    }
+                HashTagRankDTO hashTagRankDTO = new HashTagRankDTO();
+                hashTagRankDTO.setHashTagId(hashTag.getHashTagId());
+                hashTagRankDTO.setTotalTimeBeingUsed(totalTimeBeingUsed);
+                hashTagRankDTO.setRank(this.calculateHashTagRank(hashTagRankDTO));
+                hashTagRankDTO.setDate(datePointer);
 
+                if (hashTagRankDTO.getRank() > HashTagRankDependents.MIN_THRESHOLD) {
+                    HashTagTrendData hashTagTrendData = new HashTagTrendData();
+                    hashTagTrendData.setHashTag(hashTag);
+                    hashTagTrendData.setObservedDate(datePointer);
+                    hashTagTrendData.setRank(hashTagRankDTO.getRank());
+                    hashTagTrendDataRepository.save(hashTagTrendData);
                 }
 
-                this.calculateHashTagTrendOverTime();
+            }
+
+            this.calculateHashTagTrendOverTime();
 
 //                datePointer = nextDatePointer;
-                LOGGER.info("Post Action Trending Algorithm Completed!");
-        }
-        else {
+            LOGGER.info("Post Action Trending Algorithm Completed!");
+        } else {
             LOGGER.info("Post Action Trending Algorithm Ignored...");
         }
     }

@@ -127,10 +127,6 @@ public class UserTrendService implements Runnable {
     }
 
     public void run() {
-
-        List<User> userList = userRepository.findAll();
-
-
         StartingEndingDate startingEndingDate = new StartingEndingDate();
 //        startingEndingDate.setDaysBefore(5);
         startingEndingDate.build();
@@ -142,6 +138,8 @@ public class UserTrendService implements Runnable {
         if (userTrendDataRepository.countByObservedDate(datePointer) == 0) {
 //            while (datePointer.getTime() < startingEndingDate.getEndingDate().getTime()) {
             LOGGER.info("User Trending Algorithm Started!");
+
+            List<User> userList = userRepository.findAll();
 
             // Get day + 1
             Calendar c = Calendar.getInstance();

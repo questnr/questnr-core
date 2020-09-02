@@ -144,9 +144,6 @@ public class CommunityTrendService implements Runnable {
     }
 
     public void run() {
-        // Only public communities are allowed for Trending Features.
-        List<Community> communityList = communityRepository.findAllByCommunity_CommunityPrivacy(CommunityPrivacy.pub);
-
         StartingEndingDate startingEndingDate = new StartingEndingDate();
 //        startingEndingDate.setDaysBefore(4);
         startingEndingDate.build();
@@ -158,6 +155,9 @@ public class CommunityTrendService implements Runnable {
         if (communityTrendDataRepository.countByObservedDate(datePointer) == 0) {
 //        while (datePointer.getTime() < startingEndingDate.getEndingDate().getTime()) {
             LOGGER.info("Community Trending Algorithm Started!");
+
+            // Only public communities are allowed for Trending Features.
+            List<Community> communityList = communityRepository.findAllByCommunity_CommunityPrivacy(CommunityPrivacy.pub);
 
             // Get day + 1
             Calendar c = Calendar.getInstance();

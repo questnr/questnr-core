@@ -131,11 +131,6 @@ public class PostActionTrendService implements Runnable {
     }
 
     public void run() {
-        this.calculatePostActionTrendOverTime();
-
-        List<PostAction> postActionList = postActionRepository.findAll();
-
-
         StartingEndingDate startingEndingDate = new StartingEndingDate();
 //        startingEndingDate.setDaysBefore(40);
         startingEndingDate.build();
@@ -147,6 +142,8 @@ public class PostActionTrendService implements Runnable {
         if (postActionTrendDataRepository.countByObservedDate(datePointer) == 0) {
 //        while(datePointer.getTime() < startingEndingDate.getEndingDate().getTime()){
             LOGGER.info("Post Action Trending Algorithm Started!");
+
+            List<PostAction> postActionList = postActionRepository.findAll();
 
             // Get day + 1
             Calendar c = Calendar.getInstance();
