@@ -1,5 +1,6 @@
 package com.questnr.model.repositories;
 
+import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.User;
 import org.springframework.data.domain.Page;
@@ -8,7 +9,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface CommunityRepository extends JpaRepository<Community, Long> {
+    @Query("select c from Community c where c.communityPrivacy=:communityPrivacy")
+    List<Community> findAllByCommunity_CommunityPrivacy(@Param("communityPrivacy") CommunityPrivacy communityPrivacy);
 
     Community findByCommunityId(long communityId);
 

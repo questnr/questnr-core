@@ -144,9 +144,8 @@ public class CommunityTrendService implements Runnable {
     }
 
     public void run() {
-
-        List<Community> communityList = communityRepository.findAll();
-
+        // Only public communities are allowed for Trending Features.
+        List<Community> communityList = communityRepository.findAllByCommunity_CommunityPrivacy(CommunityPrivacy.pub);
 
         StartingEndingDate startingEndingDate = new StartingEndingDate();
 //        startingEndingDate.setDaysBefore(4);
@@ -170,8 +169,7 @@ public class CommunityTrendService implements Runnable {
 
             for (Community community : communityList) {
 
-                List<CommunityUser> communityUserList = communityUserRepository.findAllByCommunityAndCommunity_CommunityPrivacyAndCreatedAtBetween(community,
-                        CommunityPrivacy.pub,
+                List<CommunityUser> communityUserList = communityUserRepository.findAllByCommunityAndCreatedAtBetween(community,
                         datePointer,
                         nextDatePointer);
 

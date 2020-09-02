@@ -1,6 +1,5 @@
 package com.questnr.model.repositories;
 
-import com.questnr.common.enums.CommunityPrivacy;
 import com.questnr.model.entities.Community;
 import com.questnr.model.entities.CommunityUser;
 import com.questnr.model.entities.User;
@@ -28,11 +27,6 @@ public interface CommunityUserRepository extends JpaRepository<CommunityUser, Lo
 
     List<CommunityUser> findAllByCommunityAndCreatedAtBetween(Community community, Date startingDate, Date endingDate);
 
-    List<CommunityUser> findAllByCommunityAndCommunity_CommunityPrivacyAndCreatedAtBetween(Community community,
-                                                                                           CommunityPrivacy communityPrivacy,
-                                                                                           Date startingDate,
-                                                                                           Date endingDate);
-
     CommunityUser findByCommunityAndUser(Community community, User user);
 
     int countByUser(User user);
@@ -46,5 +40,5 @@ public interface CommunityUserRepository extends JpaRepository<CommunityUser, Lo
             " uf.user=:user and cu.user <> uf.followingUser " + // Users
             "  ")
     Page<User> getAllByCommunityAndInviteUser(@Param("community") Community community,
-                                                      @Param("user") User user, Pageable pageable);
+                                              @Param("user") User user, Pageable pageable);
 }
