@@ -17,8 +17,16 @@ public class UserCommonAccessService {
     UserFollowerService userFollowerService;
 
     public boolean isUserAccessibleWithPrivacy(User user) {
-        return user.getUserPrivacy() == UserPrivacy.pub || user.equals(userCommonService.getUser()) ||
-                (user.getUserPrivacy() == UserPrivacy.pri
-                        && userFollowerService.isFollowingUser(user, userCommonService.getUser()));
+        User thisUser;
+        try {
+            thisUser = userCommonService.getUser();
+        } catch (Exception e) {
+            return false;
+        }
+        if (thisUser != null)
+            return user.getUserPrivacy() == UserPrivacy.pub || user.equals(thisUser) ||
+                    (user.getUserPrivacy() == UserPrivacy.pri
+                            && userFollowerService.isFollowingUser(user, thisUser));
+        return false;
     }
 }

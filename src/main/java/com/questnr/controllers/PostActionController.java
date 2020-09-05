@@ -7,7 +7,9 @@ import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.NormalPostDTO;
 import com.questnr.model.dto.post.normal.PostActionForMediaDTO;
+import com.questnr.model.dto.post.normal.PostNotAccessibleDTO;
 import com.questnr.model.entities.PostAction;
+import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.NormalPostMapper;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.requests.PostReportRequest;
@@ -37,8 +39,12 @@ public class PostActionController {
     @Autowired
     PostActionAccessService postActionAccessService;
 
+    @Autowired
+    CommunityMapper communityMapper;
+
     PostActionController() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
+        communityMapper = Mappers.getMapper(CommunityMapper.class);
     }
 
     // Get PostAction using post slug
@@ -52,6 +58,17 @@ public class PostActionController {
                 return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPollQuestionPublicDTO(postAction));
             }
             return null;
+        } else {
+            PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
+            if (postAction.getPostType() == PostType.simple) {
+                PostNotAccessibleDTO postBaseDTO = new PostNotAccessibleDTO();
+                postBaseDTO.setCommunityDTO(communityMapper.toDTO(postAction.getCommunity()));
+                return postBaseDTO;
+            } else if (postAction.getPostType() == PostType.question) {
+                PostNotAccessibleDTO postBaseDTO = new PostNotAccessibleDTO();
+                postBaseDTO.setCommunityDTO(communityMapper.toDTO(postAction.getCommunity()));
+                return postBaseDTO;
+            }
         }
         throw new AccessException();
     }
