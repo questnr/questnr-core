@@ -174,7 +174,7 @@ public class CommonService {
         throw new InvalidRequestException("File name is not valid!");
     }
 
-    public String titleCase(String input){
+    public static String titleCase(String input){
         final char[] delimiters = { ' ', '_' };
         return WordUtils.capitalizeFully(input, delimiters);
     }
