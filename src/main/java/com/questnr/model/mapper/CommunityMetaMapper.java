@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class CommunityMapperHelper {
+public class CommunityMetaMapper {
 
     public static CommunityMetaDTO getMetaMapper(final Community community,
                                                  final UserCommonService userCommonService,
@@ -41,9 +41,5 @@ public class CommunityMapperHelper {
         } catch (Exception e) {
             return new CommunityMetaDTO();
         }
-    }
-
-    public static String getAuthorName(Community community){
-        return community.getOwnerUser().getDisplayName();
     }
 }
