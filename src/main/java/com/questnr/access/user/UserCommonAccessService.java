@@ -17,6 +17,9 @@ public class UserCommonAccessService {
     UserFollowerService userFollowerService;
 
     public boolean isUserAccessibleWithPrivacy(User user) {
+        if(user.getUserPrivacy() == UserPrivacy.pub){
+            return true;
+        }
         User thisUser;
         try {
             thisUser = userCommonService.getUser();

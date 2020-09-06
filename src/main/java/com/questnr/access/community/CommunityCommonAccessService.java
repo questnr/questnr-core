@@ -18,6 +18,9 @@ public class CommunityCommonAccessService {
     CommunityJoinService communityJoinService;
 
     public boolean isCommunityAccessibleWithPrivacy(Community community) {
+        if(community.getCommunityPrivacy() == CommunityPrivacy.pub){
+            return true;
+        }
         User user;
         try{
             user =userCommonService.getUser();
