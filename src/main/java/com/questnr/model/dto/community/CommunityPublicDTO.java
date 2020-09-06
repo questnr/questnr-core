@@ -1,7 +1,19 @@
 package com.questnr.model.dto.community;
 
-public class CommunityPublicDTO extends CommunityDTO {
+import com.questnr.model.dto.user.UserOtherDTO;
+
+public class CommunityPublicDTO extends CommunityPublicWithoutMetaDTO{
+    private UserOtherDTO ownerUserDTO;
+
     private CommunityMetaTagCardDTO metaTagCard;
+
+    public UserOtherDTO getOwnerUserDTO() {
+        return ownerUserDTO;
+    }
+
+    public void setOwnerUserDTO(UserOtherDTO ownerUserDTO) {
+        this.ownerUserDTO = ownerUserDTO;
+    }
 
     public CommunityMetaTagCardDTO getMetaTagCard() {
         return metaTagCard;

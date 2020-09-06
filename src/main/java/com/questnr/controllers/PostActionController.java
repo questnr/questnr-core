@@ -62,11 +62,11 @@ public class PostActionController {
             PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
             if (postAction.getPostType() == PostType.simple) {
                 PostNotAccessibleDTO postBaseDTO = new PostNotAccessibleDTO();
-                postBaseDTO.setCommunityDTO(communityMapper.toDTO(postAction.getCommunity()));
+                postBaseDTO.setCommunityDTO(communityMapper.toPublicDTO(postAction.getCommunity()));
                 return postBaseDTO;
             } else if (postAction.getPostType() == PostType.question) {
                 PostNotAccessibleDTO postBaseDTO = new PostNotAccessibleDTO();
-                postBaseDTO.setCommunityDTO(communityMapper.toDTO(postAction.getCommunity()));
+                postBaseDTO.setCommunityDTO(communityMapper.toPublicDTO(postAction.getCommunity()));
                 return postBaseDTO;
             }
         }
