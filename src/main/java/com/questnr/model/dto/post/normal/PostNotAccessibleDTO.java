@@ -1,12 +1,12 @@
 package com.questnr.model.dto.post.normal;
 
-import com.questnr.model.dto.community.CommunityPublicWithoutMetaDTO;
+import com.questnr.model.dto.community.CommunityDTO;
 import com.questnr.model.dto.post.PostBaseDTO;
 
 public class PostNotAccessibleDTO extends PostBaseDTO {
     private final boolean hasError = true;
     private String errorMessage = "Not Accessible";
-    private CommunityPublicWithoutMetaDTO communityDTO;
+    private CommunityDTO communityDTO;
 
     public boolean isHasError() {
         return hasError;
@@ -20,11 +20,11 @@ public class PostNotAccessibleDTO extends PostBaseDTO {
         this.errorMessage = errorMessage;
     }
 
-    public CommunityPublicWithoutMetaDTO getCommunityDTO() {
+    public CommunityDTO getCommunityDTO() {
         return communityDTO;
     }
 
-    public void setCommunityDTO(CommunityPublicWithoutMetaDTO communityDTO) {
+    public void setCommunityDTO(CommunityDTO communityDTO) {
         this.communityDTO = communityDTO;
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mapper(uses = {UserMapper.class, AvatarMapper.class, MetaDataMapper.class, CommunityMapperHelper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
+@Mapper(uses = {UserMapper.class, AvatarMapper.class, MetaDataMapper.class, CommunityMetaMapper.class}, unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = "spring")
 public abstract class CommunityMapper {
 
     @Autowired
@@ -25,7 +25,7 @@ public abstract class CommunityMapper {
             @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
             @Mapping(target = "totalMembers", expression = "java(community.getUsers().size())"),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(community.getCreatedAt(), community.getUpdatedAt()))"),
-            @Mapping(target = "communityMeta", expression = "java(CommunityMapperHelper.getMetaMapper(community, this.userCommonService, this.communityUserRequestRepository))")
+            @Mapping(target = "communityMeta", expression = "java(CommunityMetaMapper.getMetaMapper(community, this.userCommonService, this.communityUserRequestRepository))")
     })
     public abstract CommunityDTO toDTO(final Community community);
 
@@ -40,7 +40,9 @@ public abstract class CommunityMapper {
     @Mappings({
             @Mapping(source = "ownerUser", target = "ownerUserDTO"),
             @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
-            @Mapping(target = "communityMeta", expression = "java(CommunityMapperHelper.getMetaMapper(community, this.userCommonService, this.communityUserRequestRepository))")
+            @Mapping(target = "totalMembers", expression = "java(community.getUsers().size())"),
+            @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(community.getCreatedAt(), community.getUpdatedAt()))"),
+            @Mapping(target = "communityMeta", expression = "java(CommunityMetaMapper.getMetaMapper(community, this.userCommonService, this.communityUserRequestRepository))")
     })
     public abstract CommunityPublicDTO toPublicDTO(final Community community);
 
