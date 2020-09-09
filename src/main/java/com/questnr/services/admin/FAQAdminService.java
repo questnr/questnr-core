@@ -31,6 +31,7 @@ public class FAQAdminService {
                 FAQClassification faqClassification = new FAQClassification();
                 faqClassification.setAdmin(admin);
                 faqClassification.setCategory(category);
+                faqClassification.setDescription(faqClassificationRequest.getDescription());
                 faqClassification.addMetadata();
                 return faqClassificationRepository.save(faqClassification);
             } else {

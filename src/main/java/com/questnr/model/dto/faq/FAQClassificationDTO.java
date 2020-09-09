@@ -8,6 +8,8 @@ public class FAQClassificationDTO {
 
     private String category;
 
+    private String description;
+
     private UserInternalDTO admin;
 
     public Long getFaqClassificationId() {
@@ -24,6 +26,14 @@ public class FAQClassificationDTO {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public UserInternalDTO getAdmin() {

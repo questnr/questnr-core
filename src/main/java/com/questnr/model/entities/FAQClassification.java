@@ -19,11 +19,14 @@ public class FAQClassification extends DomainObject {
     @SequenceGenerator(name = "faq_classification_seq",
             sequenceName = "faq_classification_seq",
             allocationSize = 1,
-    initialValue = 1001)
+            initialValue = 1001)
     private Long faqClassificationId;
 
     @Column(name = "category")
     private String category;
+
+    @Column(name = "description", columnDefinition = "TEXT", length = 1000)
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", nullable = false)
@@ -43,6 +46,14 @@ public class FAQClassification extends DomainObject {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public User getAdmin() {

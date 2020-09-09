@@ -1,6 +1,6 @@
 package com.questnr.controllers;
 
-import com.questnr.model.dto.faq.FAQItemDTO;
+import com.questnr.model.dto.faq.FAQItemAdminDTO;
 import com.questnr.model.dto.faq.FAQItemPageDTO;
 import com.questnr.services.FAQService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ public class FAQController {
     FAQService faqService;
 
     @RequestMapping(value = "/search/faq", method = RequestMethod.GET)
-    public Page<FAQItemDTO> searchFAQ(@RequestParam(defaultValue = "0") int page,
+    public Page<FAQItemAdminDTO> searchFAQ(@RequestParam(defaultValue = "0") int page,
                                       @RequestParam(defaultValue = "5") int size,
                                       @RequestParam(defaultValue = "") String q) {
         Pageable pageable = PageRequest.of(page, size);
@@ -25,7 +25,7 @@ public class FAQController {
     }
 
     @RequestMapping(value = "/faq/{classificationId}", method = RequestMethod.GET)
-    public Page<FAQItemPageDTO> getFAQItems(@RequestParam(defaultValue = "0") int page,
+    public FAQItemPageDTO getFAQItems(@RequestParam(defaultValue = "0") int page,
                                             @RequestParam(defaultValue = "all") String size,
                                             @PathVariable Long classificationId) {
         Pageable pageable;

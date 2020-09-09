@@ -6,6 +6,9 @@ public class FAQClassificationRequest {
     @NotBlank(message = "category is mandatory")
     private String category;
 
+    @NotBlank(message = "description is mandatory")
+    private String description;
+
     public String getCategory() {
         if (category != null)
             return category.toLowerCase().trim();
@@ -14,5 +17,13 @@ public class FAQClassificationRequest {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

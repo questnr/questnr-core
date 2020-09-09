@@ -1,7 +1,7 @@
 package com.questnr.controllers.admin;
 
 import com.questnr.model.dto.faq.FAQClassificationDTO;
-import com.questnr.model.dto.faq.FAQItemDTO;
+import com.questnr.model.dto.faq.FAQItemAdminDTO;
 import com.questnr.model.mapper.FAQClassificationMapper;
 import com.questnr.model.mapper.FAQItemMapper;
 import com.questnr.requests.FAQClassificationRequest;
@@ -38,7 +38,7 @@ public class FAQAdminController {
     }
 
     @RequestMapping(value = "/faq/item", method = RequestMethod.POST)
-    public FAQItemDTO createFAQItem(@RequestBody() FAQItemRequest faqItemRequest){
+    public FAQItemAdminDTO createFAQItem(@RequestBody() FAQItemRequest faqItemRequest){
         return faqItemMapper.toDTO(faqAdminService.createFAQItem(faqItemRequest));
     }
 }

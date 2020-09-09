@@ -1,23 +1,36 @@
 package com.questnr.model.dto.faq;
 
+import com.questnr.services.CommonService;
+import org.springframework.data.domain.Page;
+
 public class FAQItemPageDTO {
-    private String question;
+    private String category;
 
-    private String answer;
+    private String description;
 
-    public String getQuestion() {
-        return question;
+    private Page<FAQItemDTO> faqItemPage;
+
+    public String getCategory() {
+        return CommonService.titleCase(category);
     }
 
-    public void setQuestion(String question) {
-        this.question = question;
+    public void setCategory(String category) {
+        this.category = category;
     }
 
-    public String getAnswer() {
-        return answer;
+    public String getDescription() {
+        return description;
     }
 
-    public void setAnswer(String answer) {
-        this.answer = answer;
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Page<FAQItemDTO> getFaqItemPage() {
+        return faqItemPage;
+    }
+
+    public void setFaqItemPage(Page<FAQItemDTO> faqItemPage) {
+        this.faqItemPage = faqItemPage;
     }
 }

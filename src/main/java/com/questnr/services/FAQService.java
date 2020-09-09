@@ -1,6 +1,7 @@
 package com.questnr.services;
 
 import com.questnr.exceptions.InvalidRequestException;
+import com.questnr.model.dto.faq.FAQItemAdminDTO;
 import com.questnr.model.dto.faq.FAQItemDTO;
 import com.questnr.model.dto.faq.FAQItemPageDTO;
 import com.questnr.model.entities.FAQClassification;
@@ -30,8 +31,8 @@ public class FAQService {
         this.faqItemMapper = Mappers.getMapper(FAQItemMapper.class);
     }
 
-    public Page<FAQItemDTO> searchFAQItem(String q, Pageable pageable) {
-        if(q != null && q.length() > 0){
+    public Page<FAQItemAdminDTO> searchFAQItem(String q, Pageable pageable) {
+        if (q != null && q.length() > 0) {
             Page<FAQItem> faqItemPage = faqItemRepository.findByQuestionContaining(q.toLowerCase().trim(), pageable);
             return new PageImpl<>(faqItemMapper.toDTOs(faqItemPage.getContent()),
                     pageable,
@@ -40,12 +41,21 @@ public class FAQService {
         throw new InvalidRequestException("Invalid query");
     }
 
-    public Page<FAQItemPageDTO> getFAQItems(Long classificationId, Pageable pageable){
+    public FAQItemPageDTO getFAQItems(Long classificationId, Pageable pageable) {
         FAQClassification faqClassification =
                 faqClassificationRepository.findByFaqClassificationId(classificationId);
-        Page<FAQItem> faqItemPage = faqItemRepository.findByFaqClassification(faqClassification, pageable);
-        return new PageImpl<>(faqItemMapper.toPageDTOs(faqItemPage.getContent()),
-                pageable,
-                faqItemPage.getTotalElements());
+        if (faqClassification != null) {
+            Page<FAQItem> faqItemPage = faqItemRepository.findByFaqClassification(faqClassification, pageable);
+            Page<FAQItemDTO> faqItemDTOPage = new PageImpl<>(faqItemMapper.toStandaloneDTOs(faqItemPage.getContent()),
+                    pageable,
+                    faqItemPage.getTotalElements());
+            FAQItemPageDTO faqItemPageDTO = new FAQItemPageDTO();
+            faqItemPageDTO.setCategory(faqClassification.getCategory());
+            faqItemPageDTO.setDescription(faqClassification.getDescription());
+            faqItemPageDTO.setFaqItemPage(faqItemDTOPage);
+            return faqItemPageDTO;
+        } else {
+            return new FAQItemPageDTO();
+        }
     }
 }
