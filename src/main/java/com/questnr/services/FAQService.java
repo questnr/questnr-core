@@ -1,9 +1,9 @@
 package com.questnr.services;
 
 import com.questnr.exceptions.InvalidRequestException;
-import com.questnr.model.dto.faq.FAQItemAdminDTO;
 import com.questnr.model.dto.faq.FAQItemDTO;
 import com.questnr.model.dto.faq.FAQItemPageDTO;
+import com.questnr.model.dto.faq.search.FAQItemSearchDTO;
 import com.questnr.model.entities.FAQClassification;
 import com.questnr.model.entities.FAQItem;
 import com.questnr.model.mapper.FAQItemMapper;
@@ -31,10 +31,10 @@ public class FAQService {
         this.faqItemMapper = Mappers.getMapper(FAQItemMapper.class);
     }
 
-    public Page<FAQItemAdminDTO> searchFAQItem(String q, Pageable pageable) {
+    public Page<FAQItemSearchDTO> searchFAQItem(String q, Pageable pageable) {
         if (q != null && q.length() > 0) {
             Page<FAQItem> faqItemPage = faqItemRepository.findByQuestionContaining(q.toLowerCase().trim(), pageable);
-            return new PageImpl<>(faqItemMapper.toDTOs(faqItemPage.getContent()),
+            return new PageImpl<>(faqItemMapper.toSearchDTOs(faqItemPage.getContent()),
                     pageable,
                     faqItemPage.getTotalElements());
         }
