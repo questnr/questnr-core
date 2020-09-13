@@ -13,4 +13,6 @@ public interface PostPollAnswerRepository extends JpaRepository<PostPollAnswer, 
     PostPollAnswer findFirstByPostActionAndUserActor(PostAction postAction, User user);
 
     Long countAllByPostActionAndCreatedAtBetween(PostAction postAction, Date startingDate, Date endingDate);
+
+    Long countByPostAction(PostAction postAction);
 }

@@ -6,10 +6,10 @@ import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.post.normal.PostActionFeedDTO;
 import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
-import com.questnr.model.dto.post.question.PollQuestionDTO;
+import com.questnr.model.dto.post.question.PostPollQuestionMetaDTO;
 import com.questnr.model.entities.*;
 import com.questnr.model.mapper.PostActionMapper;
-import com.questnr.model.mapper.PostPollQuestionMapper;
+import com.questnr.model.mapper.PostPollQuestionMetaMapper;
 import com.questnr.model.mapper.PostReportMapper;
 import com.questnr.model.repositories.*;
 import com.questnr.requests.PostPollAnswerRequest;
@@ -67,7 +67,7 @@ public class PostActionService {
     PostReportMapper postReportMapper;
 
     @Autowired
-    PostPollQuestionMapper postPollQuestionMapper;
+    PostPollQuestionMetaMapper postPollQuestionMetaMapper;
 
     @Autowired
     PostPollQuestionRepository postPollQuestionRepository;
@@ -114,7 +114,7 @@ public class PostActionService {
     }
 
     private List<String> makeChunkFromText(String text, boolean preprocess, int maxChunk, int maxLengthOfWord) {
-        String newText = preprocess &&  text!= null && text.length() > 0 ? text.toLowerCase() : text;
+        String newText = preprocess && text != null && text.length() > 0 ? text.toLowerCase() : text;
         List<String> titleChunks = Arrays.asList(newText.split("\\s"));
         int maxTitleChunk = titleChunks.size();
         if (maxTitleChunk > maxChunk) {
@@ -339,7 +339,7 @@ public class PostActionService {
         }
     }
 
-    public PollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
+    public PostPollQuestionMetaDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
         User user = userCommonService.getUser();
         if (postPollAnswerRequest != null) {
             if (!postPollAnswerRepository.existsByPostActionAndUserActor(postAction, user)) {
@@ -350,12 +350,12 @@ public class PostActionService {
                 postPollAnswer.addMetadata();
                 PostPollQuestion postPollQuestion = postAction.getPostPollQuestion();
                 postPollQuestion.getPostPollAnswer().add(postPollAnswer);
-                PostPollQuestion savedPostPollQuestion = postPollQuestionRepository.save(postPollQuestion);
+                postPollQuestionRepository.save(postPollQuestion);
 
                 // Notification job created and assigned to Notification Processor.
                 notificationJob.createNotificationJob(postPollAnswerRepository.findFirstByPostActionAndUserActor(postAction, user));
 
-                return postPollQuestionMapper.toDTO(savedPostPollQuestion);
+                return PostPollQuestionMetaMapper.getMetaMapper(postAction, userCommonService, postPollAnswerRepository);
             } else {
                 throw new InvalidRequestException("Already submitted the answer");
             }

@@ -9,6 +9,7 @@ import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionPublicDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
+import com.questnr.model.repositories.PostPollAnswerRepository;
 import com.questnr.services.user.UserCommonService;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,9 @@ public abstract class PostActionMapper {
 
     @Autowired
     UserCommonService userCommonService;
+
+    @Autowired
+    PostPollAnswerRepository postPollAnswerRepository;
 
     @Mappings({
             @Mapping(source = "postMediaList", target = "postMediaList"),
@@ -96,7 +100,7 @@ public abstract class PostActionMapper {
             @Mapping(source = "postAction.community", target = "communityDTO"),
             @Mapping(source = "postAction.postPollQuestion", target = "pollQuestion"),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
-            @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
+            @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService, this.postPollAnswerRepository))"),
             @Mapping(target = "postActionType", expression = "java(postActionType)"),
             @Mapping(source = "postAction.text", target = "questionText")
     })
@@ -119,7 +123,7 @@ public abstract class PostActionMapper {
             @Mapping(source = "community", target = "communityDTO"),
             @Mapping(source = "userActor", target = "userDTO"),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
-            @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
+            @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService, this.postPollAnswerRepository))"),
             @Mapping(source = "postPollQuestion", target = "pollQuestion"),
             @Mapping(source = "text", target = "questionText")
     })
@@ -128,7 +132,7 @@ public abstract class PostActionMapper {
     @Mappings({
             @Mapping(source = "userActor", target = "userDTO"),
             @Mapping(target = "metaData", expression = "java(MetaDataMapper.getMetaDataMapper(postAction.getCreatedAt(), postAction.getUpdatedAt()))"),
-            @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService))"),
+            @Mapping(target = "pollQuestionMeta", expression = "java(PostPollQuestionMetaMapper.getMetaMapper(postAction, this.userCommonService, this.postPollAnswerRepository))"),
             @Mapping(source = "postPollQuestion", target = "pollQuestion"),
             @Mapping(source = "text", target = "questionText")
     })
