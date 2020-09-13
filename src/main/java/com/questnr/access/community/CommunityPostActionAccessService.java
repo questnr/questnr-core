@@ -57,9 +57,4 @@ public class CommunityPostActionAccessService {
     public boolean hasAccessToPostDeletion(Long communityId, Long postId) {
         return this.hasAccessToPostModification(communityId, postId);
     }
-
-    public boolean hasAccessToAnswerOnPollQuestion(Long communityId, Long postId) {
-        PostAction postAction = postActionRepository.findByPostActionIdAndCommunity(postId, communityCommonService.getCommunity(communityId));
-        return postActionAccessService.hasAccessToActionsOnPost(postAction);
-    }
 }

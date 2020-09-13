@@ -6,13 +6,10 @@ import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.PostActionFeedDTO;
 import com.questnr.model.dto.post.normal.PostActionRequestDTO;
 import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
-import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionFeedDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
-import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;
-import com.questnr.requests.PostPollAnswerRequest;
 import com.questnr.requests.PostPollQuestionRequest;
 import com.questnr.services.PostActionService;
 import com.questnr.services.user.UserPostActionService;
@@ -81,15 +78,6 @@ public class UserPostActionController {
     @RequestMapping(value = "/posts/poll/question", method = RequestMethod.POST)
     PostPollQuestionForCommunityDTO createPollQuestionPost(@Valid @RequestBody PostPollQuestionRequest postPollQuestionRequest) {
         return userPostActionService.createPollQuestionPost(postPollQuestionRequest);
-    }
-
-    @RequestMapping(value = "/posts/{postId}/poll/answer", method = RequestMethod.POST)
-    PollQuestionDTO createPollAnswerPost(@PathVariable Long postId, @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
-        PostAction postAction = userPostActionAccessService.createPollAnswerPost(postId);
-        if (postAction != null) {
-            return userPostActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
-        }
-        throw new AccessException();
     }
 
 //    @RequestMapping(value = "/posts/question/poll/{postId}", method = RequestMethod.PUT)

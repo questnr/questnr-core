@@ -6,11 +6,9 @@ import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.PostActionFeedDTO;
 import com.questnr.model.dto.post.normal.PostActionRequestDTO;
 import com.questnr.model.dto.post.normal.PostActionUpdateRequestDTO;
-import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.PostActionMapper;
-import com.questnr.requests.PostPollAnswerRequest;
 import com.questnr.requests.PostPollQuestionRequest;
 import com.questnr.services.CommonService;
 import com.questnr.services.PostActionService;
@@ -98,15 +96,15 @@ public class CommunityPostActionController {
         throw new AccessException();
     }
 
-    @RequestMapping(value = "/community/{communityId}/posts/{postId}/poll/answer", method = RequestMethod.POST)
-    PollQuestionDTO createPollAnswerPost(@PathVariable Long communityId,
-                                         @PathVariable Long postId,
-                                         @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
-        if (communityPostActionAccessService.hasAccessToAnswerOnPollQuestion(communityId, postId)) {
-            return communityPostActionService.createPollAnswerPost(postId, postPollAnswerRequest);
-        }
-        throw new AccessException();
-    }
+//    @RequestMapping(value = "/community/{communityId}/posts/{postId}/poll/answer", method = RequestMethod.POST)
+//    PollQuestionDTO createPollAnswerPost(@PathVariable Long communityId,
+//                                         @PathVariable Long postId,
+//                                         @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
+//        if (communityPostActionAccessService.hasAccessToAnswerOnPollQuestion(communityId, postId)) {
+//            return communityPostActionService.createPollAnswerPost(postId, postPollAnswerRequest);
+//        }
+//        throw new AccessException();
+//    }
 
     @RequestMapping(value = "/community/{communityId}/posts/{postId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)

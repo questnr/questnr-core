@@ -6,7 +6,6 @@ import com.questnr.common.enums.PostType;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.PostActionFeedDTO;
-import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionFeedDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionForCommunityDTO;
 import com.questnr.model.entities.PostAction;
@@ -17,7 +16,6 @@ import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.mapper.PostPollQuestionMapper;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.PostPollQuestionRepository;
-import com.questnr.requests.PostPollAnswerRequest;
 import com.questnr.requests.PostPollQuestionRequest;
 import com.questnr.services.AmazonS3Client;
 import com.questnr.services.CommonService;
@@ -174,7 +172,7 @@ public class UserPostActionService {
         }
     }
 
-    public PollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
-        return this.postActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
-    }
+//    public PollQuestionDTO createPollAnswerPost(PostAction postAction, PostPollAnswerRequest postPollAnswerRequest) {
+//        return this.postActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+//    }
 }

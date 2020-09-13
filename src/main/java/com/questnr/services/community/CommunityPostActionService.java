@@ -154,9 +154,9 @@ public class CommunityPostActionService {
         }
     }
 
-    public PollQuestionDTO createPollAnswerPost(Long postActionId, PostPollAnswerRequest postPollAnswerRequest) {
-        return this.postActionService.createPollAnswerPost(postActionService.getPostActionByIdAndType(postActionId, PostType.question), postPollAnswerRequest);
-    }
+//    public PollQuestionDTO createPollAnswerPost(Long postActionId, PostPollAnswerRequest postPollAnswerRequest) {
+//        return this.postActionService.createPollAnswerPost(postActionService.getPostActionByIdAndType(postActionId, PostType.question), postPollAnswerRequest);
+//    }
 
     public Page<PostAction> getAllPostPollQuestion(Long communityId, Pageable pageable) {
         Community community = communityCommonService.getCommunity(communityId);

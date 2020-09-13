@@ -2,8 +2,6 @@ package com.questnr.access.user;
 
 import com.questnr.access.PostActionAccessService;
 import com.questnr.access.community.CommunityAccessService;
-import com.questnr.common.enums.PostType;
-import com.questnr.exceptions.AccessException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.repositories.PostActionRepository;
@@ -62,14 +60,5 @@ public class UserPostActionAccessService {
 
     public boolean hasAccessToPostDeletion(Long postId) {
         return this.hasAccessToPostModification(postId);
-    }
-
-    public PostAction createPollAnswerPost(Long postId) {
-        User user = userCommonService.getUser();
-        PostAction postAction = postActionService.getPostActionByIdAndType(postId, PostType.question);
-        if (postAction.getUserActor().equals(user) || userFollowerService.existsUserFollower(postAction.getUserActor(), user)) {
-            return postAction;
-        }
-        throw new AccessException("You are not following the user");
     }
 }

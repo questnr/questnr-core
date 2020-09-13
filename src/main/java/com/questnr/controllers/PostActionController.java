@@ -8,10 +8,12 @@ import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.NormalPostDTO;
 import com.questnr.model.dto.post.normal.PostActionForMediaDTO;
 import com.questnr.model.dto.post.normal.PostNotAccessibleDTO;
+import com.questnr.model.dto.post.question.PollQuestionDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.NormalPostMapper;
 import com.questnr.model.mapper.PostActionMapper;
+import com.questnr.requests.PostPollAnswerRequest;
 import com.questnr.requests.PostReportRequest;
 import com.questnr.services.PostActionMetaService;
 import com.questnr.services.PostActionService;
@@ -20,6 +22,8 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -107,5 +111,14 @@ public class PostActionController {
         } else {
             throw new AccessException();
         }
+    }
+
+    @RequestMapping(value = "user/posts/{postId}/poll/answer", method = RequestMethod.POST)
+    PollQuestionDTO createPollAnswerPost(@PathVariable Long postId, @Valid @RequestBody PostPollAnswerRequest postPollAnswerRequest) {
+        PostAction postAction = postActionAccessService.createPollAnswerPost(postId);
+        if (postAction != null) {
+            return postActionService.createPollAnswerPost(postAction, postPollAnswerRequest);
+        }
+        throw new AccessException();
     }
 }
