@@ -4,6 +4,7 @@ import com.questnr.access.community.CommunityCommonAccessService;
 import com.questnr.access.user.UserCommonAccessService;
 import com.questnr.common.enums.PostEditorType;
 import com.questnr.common.enums.PostType;
+import com.questnr.common.message.helper.messages.PostPollAnswerMessages;
 import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.PostAction;
@@ -59,12 +60,12 @@ public class PostActionAccessService {
             if (communityCommonAccessService.isCommunityAccessibleWithPrivacy(postAction.getCommunity())) {
                 return postAction;
             } else {
-                throw new AccessException("You don't have permission to answer this question");
+                throw new AccessException(PostPollAnswerMessages.PPA100);
             }
         } else {
             User user = userCommonService.getUser();
             if(user.equals(postAction.getUserActor())){
-                throw new InvalidRequestException("You have created this question, can be answered by you");
+                throw new InvalidRequestException(PostPollAnswerMessages.PPA101);
             }
             return postAction;
         }

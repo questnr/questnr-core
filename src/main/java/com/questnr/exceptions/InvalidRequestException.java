@@ -1,6 +1,7 @@
 package com.questnr.exceptions;
 
 
+import com.questnr.common.message.helper.Message;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -12,6 +13,10 @@ public class InvalidRequestException extends RuntimeException {
 
     public InvalidRequestException(String message) {
         super(message);
+    }
+
+    public InvalidRequestException(Message message) {
+        super(message.getText());
     }
 
     public InvalidRequestException(String message, Throwable cause) {
