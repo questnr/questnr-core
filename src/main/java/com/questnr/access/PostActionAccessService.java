@@ -9,6 +9,7 @@ import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.services.PostActionService;
+import com.questnr.services.user.UserCommonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,9 @@ public class PostActionAccessService {
 
     @Autowired
     UserCommonAccessService userCommonAccessService;
+
+    @Autowired
+    UserCommonService userCommonService;
 
     public boolean isUserOwnerOfPost(User user, PostAction postAction) {
         return user.equals(postAction.getUserActor());
@@ -50,7 +54,6 @@ public class PostActionAccessService {
     }
 
     public PostAction createPollAnswerPost(Long postId) {
-//        User user = userCommonService.getUser();
         PostAction postAction = postActionService.getPostActionByIdAndType(postId, PostType.question);
         if (postActionService.isPostActionBelongsToCommunity(postAction)) {
             if (communityCommonAccessService.isCommunityAccessibleWithPrivacy(postAction.getCommunity())) {
@@ -59,6 +62,10 @@ public class PostActionAccessService {
                 throw new AccessException("You don't have permission to answer this question");
             }
         } else {
+            User user = userCommonService.getUser();
+            if(user.equals(postAction.getUserActor())){
+                throw new InvalidRequestException("You have created this question, can be answered by you");
+            }
             return postAction;
         }
         // uncomment to restrict only answers from users who are followers of the owner of the post
