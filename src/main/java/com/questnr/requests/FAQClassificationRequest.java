@@ -11,7 +11,7 @@ public class FAQClassificationRequest {
 
     public String getCategory() {
         if (category != null)
-            return category.toLowerCase().trim();
+            return category.trim();
         return null;
     }
 

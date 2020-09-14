@@ -1,7 +1,6 @@
 package com.questnr.model.dto.faq;
 
 import com.questnr.model.dto.user.UserInternalDTO;
-import com.questnr.services.CommonService;
 
 public class FAQClassificationDTO {
     private Long faqClassificationId;
@@ -21,7 +20,7 @@ public class FAQClassificationDTO {
     }
 
     public String getCategory() {
-        return CommonService.titleCase(this.category);
+        return this.category;
     }
 
     public void setCategory(String category) {

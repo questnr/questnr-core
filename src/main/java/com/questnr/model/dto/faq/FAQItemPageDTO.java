@@ -1,6 +1,5 @@
 package com.questnr.model.dto.faq;
 
-import com.questnr.services.CommonService;
 import org.springframework.data.domain.Page;
 
 public class FAQItemPageDTO {
@@ -11,7 +10,7 @@ public class FAQItemPageDTO {
     private Page<FAQItemDTO> faqItemPage;
 
     public String getCategory() {
-        return CommonService.titleCase(category);
+        return category;
     }
 
     public void setCategory(String category) {
