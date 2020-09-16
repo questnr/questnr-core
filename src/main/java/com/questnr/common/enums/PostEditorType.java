@@ -4,7 +4,7 @@ public enum PostEditorType {
   normal("normal"),
   blog("blog");
 
-  public String jsonValue;
+  private String jsonValue;
 
   private PostEditorType(String json) {
     this.jsonValue = json;

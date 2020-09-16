@@ -4,9 +4,12 @@ import com.questnr.access.community.CommunityCommonAccessService;
 import com.questnr.access.user.UserCommonAccessService;
 import com.questnr.common.enums.PostEditorType;
 import com.questnr.common.enums.PostType;
+import com.questnr.common.enums.SimplifiedPostType;
+import com.questnr.common.message.helper.messages.PostActionMessages;
 import com.questnr.common.message.helper.messages.PostPollAnswerMessages;
 import com.questnr.exceptions.AccessException;
 import com.questnr.exceptions.InvalidRequestException;
+import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.services.PostActionService;
@@ -42,6 +45,21 @@ public class PostActionAccessService {
         return this.hasAccessToActionsOnPost(postActionService.getPostActionFromSlug(postSlug));
     }
 
+    public boolean hasAccessToActionsOnPost(String postSlug, SimplifiedPostType postType) {
+        PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
+        if ((postAction.getPostType() == PostType.simple &&
+                ((postAction.getPostEditorType() == PostEditorType.normal
+                        && postType == SimplifiedPostType.post)
+                        || (postAction.getPostEditorType() == PostEditorType.blog
+                        && postType == SimplifiedPostType.blog))) ||
+                (postAction.getPostType() == PostType.question
+                        && postType == SimplifiedPostType.question)) {
+            return this.hasAccessToActionsOnPost(postAction);
+        } else {
+            throw new ResourceNotFoundException(PostActionMessages.PA100);
+        }
+    }
+
     public boolean hasAccessToActionsOnPost(PostAction postAction) {
         if (postActionService.isPostActionBelongsToCommunity(postAction)) {
             return communityCommonAccessService.isCommunityAccessibleWithPrivacy(postAction.getCommunity());
@@ -64,7 +82,7 @@ public class PostActionAccessService {
             }
         } else {
             User user = userCommonService.getUser();
-            if(user.equals(postAction.getUserActor())){
+            if (user.equals(postAction.getUserActor())) {
                 throw new InvalidRequestException(PostPollAnswerMessages.PPA101);
             }
             return postAction;

@@ -1,13 +1,12 @@
 package com.questnr.controllers;
 
 import com.questnr.access.PostActionAccessService;
-import com.questnr.common.enums.PostType;
+import com.questnr.common.enums.SimplifiedPostType;
 import com.questnr.exceptions.AccessException;
 import com.questnr.model.dto.SharableLinkDTO;
 import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.dto.post.normal.NormalPostDTO;
 import com.questnr.model.dto.post.normal.PostActionForMediaDTO;
-import com.questnr.model.dto.post.normal.PostNotAccessibleDTO;
 import com.questnr.model.dto.post.question.PostPollQuestionMetaDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.mapper.CommunityMapper;
@@ -17,6 +16,7 @@ import com.questnr.requests.PostPollAnswerRequest;
 import com.questnr.requests.PostReportRequest;
 import com.questnr.services.PostActionMetaService;
 import com.questnr.services.PostActionService;
+import com.questnr.services.PostActionSlugParsingService;
 import com.questnr.services.SharableLinkService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,35 +46,42 @@ public class PostActionController {
     @Autowired
     CommunityMapper communityMapper;
 
+    @Autowired
+    PostActionSlugParsingService postActionSlugParsingService;
+
     PostActionController() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
         communityMapper = Mappers.getMapper(CommunityMapper.class);
     }
 
-    // Get PostAction using post slug
+    // Get Post Type PostAction using post slug
     @RequestMapping(value = "/post/{postSlug}", method = RequestMethod.GET)
-    PostBaseDTO getPostActionFromSlug(@PathVariable String postSlug) {
-        if (postActionAccessService.hasAccessToActionsOnPost(postSlug)) {
-            PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
-            if (postAction.getPostType() == PostType.simple) {
-                return postActionMetaService.setPostActionMetaInformation(postActionMapper.toSinglePostPublicDTO(postAction));
-            } else if (postAction.getPostType() == PostType.question) {
-                return postActionMetaService.setPostActionMetaInformation(postActionMapper.toPollQuestionPublicDTO(postAction));
-            }
-            return null;
+    PostBaseDTO getNormalTypePostActionFromSlug(@PathVariable String postSlug) {
+        if (postActionAccessService.hasAccessToActionsOnPost(postSlug, SimplifiedPostType.post)) {
+            return postActionSlugParsingService.getPostBase(postSlug);
         } else {
-            PostAction postAction = postActionService.getPostActionFromSlug(postSlug);
-            if (postAction.getPostType() == PostType.simple) {
-                PostNotAccessibleDTO postBaseDTO = new PostNotAccessibleDTO();
-                postBaseDTO.setCommunityDTO(communityMapper.toDTO(postAction.getCommunity()));
-                return postBaseDTO;
-            } else if (postAction.getPostType() == PostType.question) {
-                PostNotAccessibleDTO postBaseDTO = new PostNotAccessibleDTO();
-                postBaseDTO.setCommunityDTO(communityMapper.toDTO(postAction.getCommunity()));
-                return postBaseDTO;
-            }
+            return postActionSlugParsingService.postNotAccessible(postSlug);
         }
-        throw new AccessException();
+    }
+
+    // Get Blog Type PostAction using post slug
+    @RequestMapping(value = "/blog/{postSlug}", method = RequestMethod.GET)
+    PostBaseDTO getBlogTypePostActionFromSlug(@PathVariable String postSlug) {
+        if (postActionAccessService.hasAccessToActionsOnPost(postSlug, SimplifiedPostType.blog)) {
+            return postActionSlugParsingService.getPostBase(postSlug);
+        } else {
+            return postActionSlugParsingService.postNotAccessible(postSlug);
+        }
+    }
+
+    // Get Blog Type PostAction using post slug
+    @RequestMapping(value = "/question/{postSlug}", method = RequestMethod.GET)
+    PostBaseDTO getQuestionTypePostActionFromSlug(@PathVariable String postSlug) {
+        if (postActionAccessService.hasAccessToActionsOnPost(postSlug, SimplifiedPostType.question)) {
+            return postActionSlugParsingService.getPostBase(postSlug);
+        } else {
+            return postActionSlugParsingService.postNotAccessible(postSlug);
+        }
     }
 
     // Get PostAction normal post data
