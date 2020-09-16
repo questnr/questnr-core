@@ -7,4 +7,8 @@ public class CommonMessages {
     public final static Message C100 = new Message(
             "You don't have access for the particular operation",
             MessageType.Error);
+
+    public final static Message C101 = new Message(
+            "Error occurred. Please, try again!",
+            MessageType.Error);
 }

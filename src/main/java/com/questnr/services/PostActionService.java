@@ -2,6 +2,8 @@ package com.questnr.services;
 
 import com.questnr.access.PostActionAccessService;
 import com.questnr.common.enums.*;
+import com.questnr.common.message.helper.messages.PostActionMessages;
+import com.questnr.common.message.helper.messages.PostPollAnswerMessages;
 import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.exceptions.ResourceNotFoundException;
 import com.questnr.model.dto.post.normal.PostActionFeedDTO;
@@ -94,7 +96,7 @@ public class PostActionService {
         if (postAction != null) {
             return postAction;
         }
-        throw new ResourceNotFoundException("Post not found!");
+        throw new ResourceNotFoundException(PostActionMessages.PA101);
     }
 
     public boolean isPostActionBelongsToCommunity(Long postActionId) {
@@ -217,7 +219,7 @@ public class PostActionService {
         } catch (Exception e) {
             LOGGER.error(PostAction.class.getName() + " Exception Occurred");
         }
-        throw new InvalidRequestException("Error occurred. Please, try again!");
+        throw new InvalidRequestException();
     }
 
     public PostAction creatPostAction(PostAction postAction) {
@@ -255,7 +257,7 @@ public class PostActionService {
         if (postAction != null) {
             return postAction;
         }
-        throw new ResourceNotFoundException("Post is deleted or link is not correct");
+        throw new ResourceNotFoundException(PostActionMessages.PA100);
     }
 
     public PostAction getPostActionMediaList(Long postActionId) {
@@ -283,7 +285,7 @@ public class PostActionService {
             postAction.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
             return postActionMapper.toPostActionFeedDTO(postActionRepository.save(postAction), PostActionType.normal, null);
         } catch (Exception e) {
-            throw new InvalidRequestException("Error occurred. Please, try again!");
+            throw new InvalidRequestException();
         }
     }
 
@@ -313,7 +315,7 @@ public class PostActionService {
             postAction.setDeleted(true);
             postActionRepository.save(postAction);
         } else {
-            throw new InvalidRequestException("Post not found!");
+            throw new InvalidRequestException(PostActionMessages.PA101);
         }
     }
 
@@ -322,7 +324,7 @@ public class PostActionService {
         if (postAction != null) {
             return postAction;
         }
-        throw new ResourceNotFoundException("Post not found!");
+        throw new ResourceNotFoundException(PostActionMessages.PA101);
     }
 
     public void reportPost(Long postId, PostReportRequest postReportRequest) {
@@ -335,7 +337,7 @@ public class PostActionService {
             postReport.addMetadata();
             this.postReportRepository.save(postReport);
         } catch (Exception e) {
-            throw new InvalidRequestException("Error occurred. Please, try again!");
+            throw new InvalidRequestException();
         }
     }
 
@@ -357,10 +359,10 @@ public class PostActionService {
 
                 return PostPollQuestionMetaMapper.getMetaMapper(postAction, userCommonService, postPollAnswerRepository);
             } else {
-                throw new InvalidRequestException("Already submitted the answer");
+                throw new InvalidRequestException(PostPollAnswerMessages.PPA102);
             }
         } else {
-            throw new InvalidRequestException("Error occurred. Please, try again!");
+            throw new InvalidRequestException();
         }
     }
 }

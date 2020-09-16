@@ -8,6 +8,10 @@ public class PostPollAnswerMessages {
             "You don't have permission to answer this question",
             MessageType.Error);
     public final static Message PPA101 = new Message(
-                    "Sorry, you can not answer your question!",
-                    MessageType.Error);
+            "Sorry, you can not answer your question!",
+            MessageType.Error);
+    public final static Message PPA102 = new Message(
+            "Already submitted the answer",
+            MessageType.Error
+    );
 }
