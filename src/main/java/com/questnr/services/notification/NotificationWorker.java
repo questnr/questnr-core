@@ -2,10 +2,7 @@ package com.questnr.services.notification;
 
 import com.questnr.common.enums.NotificationType;
 import com.questnr.model.dto.NotificationDTO;
-import com.questnr.model.entities.CommunityInvitedUser;
-import com.questnr.model.entities.Notification;
-import com.questnr.model.entities.UserNotificationSettings;
-import com.questnr.model.entities.UserNotificationTokenRegistry;
+import com.questnr.model.entities.*;
 import com.questnr.model.entities.notification.PushNotificationRequest;
 import com.questnr.model.mapper.NotificationMapper;
 import com.questnr.model.repositories.NotificationRepository;
@@ -103,14 +100,24 @@ public class NotificationWorker extends Thread {
                                     pushNotificationRequest.setImgURL(notificationDTO.getPostMedia().getPostMediaLink());
                                 }
                                 pushNotificationRequest.setClickAction(notificationDTO.getClickAction());
-
                                 List<UserNotificationTokenRegistry> userNotificationTokenRegistryList = this.userNotificationControlRepository.findAllByUserActor(notificationDTO.getUser());
                                 List<String> tokenList = userNotificationTokenRegistryList.stream().map(UserNotificationTokenRegistry::getToken).collect(Collectors.toList());
-                                pushNotificationRequest.setTokenList(tokenList);
-                                Map<String, String> data = new HashMap<>();
-                                data.put("isNotification", "true");
-                                data.put("type", item.getNotificationFunctionality().getJsonValue());
-                                this.pushNotificationService.multicastPushNotificationToTokenWithData(data, pushNotificationRequest);
+                                if (tokenList.size() > 0) {
+                                    pushNotificationRequest.setTokenList(tokenList);
+                                    Map<String, String> data = new HashMap<>();
+                                    data.put("isNotification", "true");
+                                    data.put("type", item.getNotificationFunctionality().getJsonValue());
+                                    // If notification belongs to creation of post
+                                    if (item.getNotificationBase() instanceof PostAction) {
+                                        PostAction postAction = (PostAction) item.getNotificationBase();
+                                        // If the post is a community post
+                                        if (postAction.getCommunity().getSlug() != null) {
+                                            data.put("communitySlug", postAction.getCommunity().getSlug());
+                                            data.put("postId", postAction.getPostActionId().toString());
+                                        }
+                                    }
+                                    this.pushNotificationService.multicastPushNotificationToTokenWithData(data, pushNotificationRequest);
+                                }
                             }
                         } catch (Exception ex) {
                             LOG.log(Level.SEVERE, "Exception while sending Notification via firebase ...{0}",
