@@ -10,10 +10,7 @@ import com.questnr.services.user.UserHomeService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api/v1")
@@ -39,6 +36,24 @@ public class UserHomeController {
     Page<PostBaseDTO> getUserFeed(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "4") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return userFeedService.getUserFeed(pageable);
+    }
+
+    // Get feed posts using string of post ids separated by coma
+    @RequestMapping(value = "/user/feed/notification/posts", method = RequestMethod.GET)
+    Page<PostBaseDTO> getUserFeedUsingId(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "4") int size,
+                                               @RequestParam String posts) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userFeedService.getUserFeedUsingId(posts, null, pageable);
+    }
+
+    // Get feed posts using last post id
+    @RequestMapping(value = "/user/feed/notification/last/posts", method = RequestMethod.GET)
+    Page<PostBaseDTO> getUserFeedUsingLastPostId(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "4") int size,
+                                                 @RequestParam Long lastPostId) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userFeedService.getUserFeedUsingId(null, lastPostId, pageable);
     }
 
     @RequestMapping(value = "/community/trending-community-list", method = RequestMethod.GET)

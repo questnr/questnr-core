@@ -25,21 +25,17 @@ public class NotificationWorker extends Thread {
 
     private final Queue<Notification> queue = new LinkedList<>();
 
-    private Notification item;
+    private final NotificationRepository notificationRepository;
 
-    private final int MAX_SLEEP_TIME = 3 * 60 * 60 * 1000; //3 hours
+    private final UserNotificationControlRepository userNotificationControlRepository;
 
-    private NotificationRepository notificationRepository;
+    private final UserNotificationSettingsRepository userNotificationSettingsRepository;
 
-    private UserNotificationControlRepository userNotificationControlRepository;
+    private final PushNotificationService pushNotificationService;
 
-    private UserNotificationSettingsRepository userNotificationSettingsRepository;
+    private final NotificationMapper notificationMapper;
 
-    private PushNotificationService pushNotificationService;
-
-    private NotificationMapper notificationMapper;
-
-    private EmailService emailService;
+    private final EmailService emailService;
 
     private final int id;
 
@@ -73,13 +69,15 @@ public class NotificationWorker extends Thread {
                     // Sleep for it, if there is nothing to do
                     LOG.log(Level.INFO, "Waiting for Notification to send...{0}", CommonService.getTime());
                     try {
+                        // 2 minutes
+                        int MAX_SLEEP_TIME = 2 * 60 * 1000;
                         queue.wait(MAX_SLEEP_TIME);
                     } catch (InterruptedException e) {
                         LOG.log(Level.INFO, "Interrupted...{0}", CommonService.getTime());
                     }
                 }
                 // Take new item from the top of the queue
-                item = queue.poll();
+                Notification item = queue.poll();
                 // Null if queue is empty
                 if (item == null) {
                     continue;
@@ -112,6 +110,7 @@ public class NotificationWorker extends Thread {
                                         PostAction postAction = (PostAction) item.getNotificationBase();
                                         // If the post is a community post
                                         if (postAction.getCommunity().getSlug() != null) {
+                                            data.put("purposeType", "post_created");
                                             data.put("communitySlug", postAction.getCommunity().getSlug());
                                             data.put("postId", postAction.getPostActionId().toString());
                                         }

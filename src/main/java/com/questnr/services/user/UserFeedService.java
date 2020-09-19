@@ -1,24 +1,26 @@
 package com.questnr.services.user;
 
-import com.questnr.common.enums.PostActionType;
-import com.questnr.common.enums.PostType;
+import com.questnr.access.PostActionAccessService;
+import com.questnr.exceptions.InvalidRequestException;
 import com.questnr.model.dto.post.PostBaseDTO;
 import com.questnr.model.entities.PostAction;
 import com.questnr.model.entities.User;
 import com.questnr.model.mapper.PostActionMapper;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.model.repositories.UserRepository;
+import com.questnr.services.PostActionService;
+import com.questnr.services.PostActionUserViewableService;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserFeedService {
@@ -36,6 +38,15 @@ public class UserFeedService {
     @Autowired
     PostActionMapper postActionMapper;
 
+    @Autowired
+    PostActionUserViewableService postActionUserViewableService;
+
+    @Autowired
+    PostActionAccessService postActionAccessService;
+
+    @Autowired
+    PostActionService postActionService;
+
     UserFeedService() {
         postActionMapper = Mappers.getMapper(PostActionMapper.class);
     }
@@ -43,38 +54,32 @@ public class UserFeedService {
     public Page<PostBaseDTO> getUserFeed(Pageable pageable) {
         User user = userCommonService.getUser();
         List<Object[]> postActionList = postActionRepository.getUserFeed(user.getUserId(), pageable.getPageSize() * pageable.getPageNumber(), pageable.getPageSize());
+        return this.postActionUserViewableService.getUserViewablePosts(postActionList, pageable);
+    }
 
-        List<PostBaseDTO> postActionFeedDTOList = new ArrayList<>();
-        for (Object[] object : postActionList) {
-            User userWhoShared;
-            PostActionType postActionType;
-            PostAction postAction = postActionRepository.findByPostActionId(Long.parseLong(object[0].toString()));
-            if (Integer.parseInt(object[1].toString()) == 1) {
-                userWhoShared = userCommonService.getUser(Long.parseLong(object[2].toString()));
-                postActionType = PostActionType.shared;
-            } else {
-                userWhoShared = null;
-                postActionType = PostActionType.normal;
+    public Page<PostBaseDTO> getUserFeedUsingId(String posts,
+                                                Long lastPostId,
+                                                Pageable pageable) {
+        User user = userCommonService.getUser();
+        if (lastPostId != null) {
+            PostAction postAction = postActionService.getPostActionById(lastPostId);
+            if (postAction != null) {
+                List<Object[]> postActionList = postActionRepository.getUserFeedByLastPost(
+                        user.getUserId(),
+                        postAction.getCreatedAt());
+                List<String> postIdList = postActionList.stream().map(objects ->
+                        objects[0].toString()
+                ).filter(postId ->
+                        !postAction.getPostActionId().equals(Long.parseLong(postId))
+                ).collect(Collectors.toList());
+                List<String> slicedPostIdList = postIdList.subList(0, Math.min(4, postIdList.size()));
+                return this.postActionUserViewableService.getPostBaseDTOPageFromPostId(slicedPostIdList,
+                        pageable, postIdList.size());
             }
-            try{
-                if (postAction.getPostType() == PostType.simple) {
-                    postActionFeedDTOList.add(postActionMapper.toPostActionFeedDTO(
-                            postAction,
-                            postActionType,
-                            userWhoShared
-                    ));
-                } else {
-                    postActionFeedDTOList.add(postActionMapper.toPostPollQuestionFeedDTO(
-                            postAction,
-                            postActionType,
-                            userWhoShared
-                    ));
-                }
-            }catch (Exception e){
-                LOGGER.error(UserFeedService.class.getName() + " Post Parsing Error, "+
-                        postAction.getPostActionId());
-            }
+            throw new InvalidRequestException();
+        } else {
+            List<String> postIdStringList = Arrays.asList(posts.split(","));
+            return this.postActionUserViewableService.getPostBaseDTOPageFromPostId(postIdStringList, pageable);
         }
-        return new PageImpl<>(postActionFeedDTOList, pageable, postActionFeedDTOList.size());
     }
 }

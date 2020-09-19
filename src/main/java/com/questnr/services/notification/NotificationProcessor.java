@@ -26,23 +26,21 @@ public class NotificationProcessor extends Thread {
 
     private final Queue<Notification> queue = new LinkedList<>();
 
-    private final int MAX_SLEEP_TIME = 3 * 60 * 60 * 1000; //3 hours
-
     private final int MAX_WORKERS = 40; // @Todo: Set SES workers as required
 
     private int current = 0;
 
-    private NotificationRepository notificationRepository;
+    private final NotificationRepository notificationRepository;
 
-    private UserNotificationControlRepository userNotificationControlRepository;
+    private final UserNotificationControlRepository userNotificationControlRepository;
 
-    private UserNotificationSettingsRepository userNotificationSettingsRepository;
+    private final UserNotificationSettingsRepository userNotificationSettingsRepository;
 
-    private PushNotificationService pushNotificationService;
+    private final PushNotificationService pushNotificationService;
 
-    private NotificationMapper notificationMapper;
+    private final NotificationMapper notificationMapper;
 
-    private EmailService emailService;
+    private final EmailService emailService;
 
     private NotificationProcessor(NotificationRepository notificationRepository,
                                   UserNotificationControlRepository userNotificationControlRepository,
@@ -73,6 +71,8 @@ public class NotificationProcessor extends Thread {
                     // Sleep for it, if there is nothing to do
                     LOG.log(Level.INFO, "Waiting for Notification to send...{0}", CommonService.getTime());
                     try {
+                        // 2 minutes
+                        int MAX_SLEEP_TIME = 2 * 60 * 1000;
                         queue.wait(MAX_SLEEP_TIME);
                     } catch (InterruptedException e) {
                         LOG.log(Level.INFO, "Interrupted...{0}", CommonService.getTime());

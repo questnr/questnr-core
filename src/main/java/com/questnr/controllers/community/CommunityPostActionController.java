@@ -57,6 +57,32 @@ public class CommunityPostActionController {
         throw new AccessException();
     }
 
+    // Get community posts using string of post ids separated by coma
+    @RequestMapping(value = "/community/{communityId}/notification/posts", method = RequestMethod.GET)
+    Page<PostBaseDTO> getCommunityPostsUsingIdList(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "4") int size,
+                                                   @PathVariable long communityId,
+                                                   @RequestParam String posts) {
+        if (communityPostActionAccessService.hasAccessToPosts(communityId)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            return communityPostActionService.getCommunityPostsUsingIdList(communityId, posts, null, pageable);
+        }
+        throw new AccessException();
+    }
+
+    // Get community posts using last post id
+    @RequestMapping(value = "/community/{communityId}/notification/last/posts", method = RequestMethod.GET)
+    Page<PostBaseDTO> getCommunityPostsUsingLastPostId(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "4") int size,
+                                                   @PathVariable long communityId,
+                                                   @RequestParam Long lastPostId) {
+        if (communityPostActionAccessService.hasAccessToPosts(communityId)) {
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            return communityPostActionService.getCommunityPostsUsingIdList(communityId, null, lastPostId, pageable);
+        }
+        throw new AccessException();
+    }
+
     @RequestMapping(value = "/community/{communityId}/posts", method = RequestMethod.POST, consumes = {MediaType.MULTIPART_FORM_DATA_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     PostActionFeedDTO createPost(@PathVariable long communityId, PostActionRequestDTO postActionRequestDTO) {
         /*
