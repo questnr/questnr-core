@@ -1,6 +1,10 @@
 package com.questnr.services;
 
+import com.questnr.common.enums.PostEditorType;
+import com.questnr.common.enums.PostType;
+import com.questnr.common.enums.SimplifiedPostType;
 import com.questnr.model.dto.SharableLinkDTO;
+import com.questnr.model.entities.PostAction;
 import com.questnr.model.repositories.PostActionRepository;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.user.UserCommonService;
@@ -29,6 +33,10 @@ public class SharableLinkService {
 
     final private String POST_ACTION_PATH = "post";
 
+    final private String POST_BLOG_ACTION_PATH = "blog";
+
+    final private String POST_QUESTION_ACTION_PATH = "question";
+
     final private String USER_PATH = "user";
 
 
@@ -45,13 +53,22 @@ public class SharableLinkService {
     }
 
     public SharableLinkDTO getPostActionSharableLink(Long postActionId) {
-        String postActionSlug = postActionRepository.findByPostActionId(postActionId).getSlug();
-        return this.getPostActionSharableLink(postActionSlug);
+        return this.getPostActionSharableLink(postActionRepository.findByPostActionId(postActionId));
     }
 
-    public SharableLinkDTO getPostActionSharableLink(String postActionSlug) {
+    public SharableLinkDTO getPostActionSharableLink(PostAction postAction) {
+        SimplifiedPostType simplifiedPostType = SimplifiedPostType.post;
+        if (postAction.getPostEditorType() == PostEditorType.blog) {
+            simplifiedPostType = SimplifiedPostType.blog;
+        } else if (postAction.getPostType() == PostType.question) {
+            simplifiedPostType = SimplifiedPostType.question;
+        }
+        return this.getPostActionSharableLink(postAction.getSlug(), simplifiedPostType);
+    }
+
+    public SharableLinkDTO getPostActionSharableLink(String postActionSlug, SimplifiedPostType simplifiedPostType) {
         SharableLinkDTO sharableLinkDTO = new SharableLinkDTO();
-        String sharableLink = QUEST_NR_DOMAIN + "/" + Paths.get(POST_ACTION_PATH, postActionSlug).toString();
+        String sharableLink = QUEST_NR_DOMAIN + "/" + Paths.get(simplifiedPostType.jsonValue, postActionSlug).toString();
         sharableLinkDTO.setClickAction(sharableLink);
         return sharableLinkDTO;
     }

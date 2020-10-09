@@ -47,7 +47,7 @@ public class NotificationMapper {
                 notificationDTO.setMessage(String.format(postAction.getNotificationTitles(), postAction.getCommunity().getCommunityName()));
                 notificationDTO.setNotificationType(postAction.getNotificationType());
                 notificationDTO.setUserActor(userActor);
-                notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(postAction.getSlug()).getClickAction());
+                notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(postAction).getClickAction());
                 if (this.checkIfPostMediaListIsNotEmpty(postAction))
                     notificationDTO.setPostMedia(mediaMapper.toPostMediaDTO(postAction.getPostMediaList().get(0)));
             }
@@ -57,7 +57,7 @@ public class NotificationMapper {
             notificationDTO.setMessage(likeAction.getNotificationTitles());
             notificationDTO.setNotificationType(likeAction.getNotificationType());
             notificationDTO.setUserActor(userActor);
-            notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(likeAction.getPostAction().getSlug()).getClickAction());
+            notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(likeAction.getPostAction()).getClickAction());
             if (this.checkIfPostMediaListIsNotEmpty(likeAction.getPostAction()))
                 notificationDTO.setPostMedia(mediaMapper.toPostMediaDTO(likeAction.getPostAction().getPostMediaList().get(0)));
         } else if (notificationBase instanceof CommentAction) {
@@ -69,7 +69,7 @@ public class NotificationMapper {
             }
             notificationDTO.setNotificationType(commentAction.getNotificationType());
             notificationDTO.setUserActor(userMapper.toOthersDTO(commentAction.getUserActor()));
-            notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(commentAction.getPostAction().getSlug()).getClickAction());
+            notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(commentAction.getPostAction()).getClickAction());
             if (this.checkIfPostMediaListIsNotEmpty(commentAction.getPostAction()))
                 notificationDTO.setPostMedia(mediaMapper.toPostMediaDTO(commentAction.getPostAction().getPostMediaList().get(0)));
         } else if (notificationBase instanceof LikeCommentAction) {
@@ -77,7 +77,7 @@ public class NotificationMapper {
             notificationDTO.setMessage(likeCommentAction.getNotificationTitles());
             notificationDTO.setNotificationType(likeCommentAction.getNotificationType());
             notificationDTO.setUserActor(userMapper.toOthersDTO(likeCommentAction.getUserActor()));
-            notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(likeCommentAction.getCommentAction().getPostAction().getSlug()).getClickAction());
+            notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(likeCommentAction.getCommentAction().getPostAction()).getClickAction());
             if (this.checkIfPostMediaListIsNotEmpty(likeCommentAction.getCommentAction().getPostAction()))
                 notificationDTO.setPostMedia(mediaMapper.toPostMediaDTO(likeCommentAction.getCommentAction().getPostAction().getPostMediaList().get(0)));
         } else if (notificationBase instanceof CommunityInvitedUser) {
@@ -111,7 +111,7 @@ public class NotificationMapper {
             notificationDTO.setMessage(postPollAnswer.getNotificationTitles());
             notificationDTO.setNotificationType(postPollAnswer.getNotificationType());
             notificationDTO.setUserActor(userMapper.toOthersDTO(postPollAnswer.getUserActor()));
-            notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(postPollAnswer.getPostAction().getSlug()).getClickAction());
+            notificationDTO.setClickAction(sharableLinkService.getPostActionSharableLink(postPollAnswer.getPostAction()).getClickAction());
         } else if (notificationBase instanceof CommunityUserRequest) {
             CommunityUserRequest communityUserRequest = (CommunityUserRequest) notificationBase;
             // Need String.format to insert community name
