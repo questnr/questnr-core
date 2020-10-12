@@ -94,8 +94,8 @@ public class CommunityJoinController {
     @RequestMapping(value = "/user/community/{communityId}/users/{userId}/request", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     void declineCommunityUserRequest(@PathVariable Long communityId,
-                                    @PathVariable Long userId) {
-         communityJoinService.actionOnCommunityUserRequest(communityId, userId, false);
+                                     @PathVariable Long userId) {
+        communityJoinService.actionOnCommunityUserRequest(communityId, userId, false);
     }
 
     // Cancel sent community join request
@@ -161,6 +161,8 @@ public class CommunityJoinController {
     void revokeJoinFromUser(@PathVariable long communityId, @RequestBody UserIdRequest userIdRequest) {
         if (communityJoinAccessService.revokeJoinFromUser(communityId, userIdRequest.getUserId())) {
             communityJoinService.revokeJoinFromUser(communityId, userIdRequest.getUserId());
+        } else {
+            throw new AccessException();
         }
     }
 
