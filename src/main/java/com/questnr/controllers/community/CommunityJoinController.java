@@ -11,6 +11,7 @@ import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.requests.UserEmailRequest;
 import com.questnr.requests.UserIdRequest;
 import com.questnr.responses.CommunityJoinResponse;
+import com.questnr.responses.CommunityMetaProfileResponse;
 import com.questnr.services.community.CommunityCommonService;
 import com.questnr.services.community.CommunityJoinService;
 import org.mapstruct.factory.Mappers;
@@ -158,9 +159,9 @@ public class CommunityJoinController {
     // Revoke join operation
     @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    void revokeJoinFromUser(@PathVariable long communityId, @RequestBody UserIdRequest userIdRequest) {
+    CommunityMetaProfileResponse revokeJoinFromUser(@PathVariable long communityId, @RequestBody UserIdRequest userIdRequest) {
         if (communityJoinAccessService.revokeJoinFromUser(communityId, userIdRequest.getUserId())) {
-            communityJoinService.revokeJoinFromUser(communityId, userIdRequest.getUserId());
+            return communityJoinService.revokeJoinFromUser(communityId, userIdRequest.getUserId());
         } else {
             throw new AccessException();
         }

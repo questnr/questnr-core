@@ -15,6 +15,7 @@ import com.questnr.model.mapper.CommunityMapper;
 import com.questnr.model.mapper.UserMapper;
 import com.questnr.model.repositories.*;
 import com.questnr.responses.CommunityJoinResponse;
+import com.questnr.responses.CommunityMetaProfileResponse;
 import com.questnr.services.notification.NotificationJob;
 import com.questnr.services.user.UserCommonService;
 import org.mapstruct.factory.Mappers;
@@ -75,6 +76,9 @@ public class CommunityJoinService {
 
     @Autowired
     CommunityUserRequestRepository communityUserRequestRepository;
+
+    @Autowired
+    CommunityProfileService communityProfileService;
 
     CommunityJoinService() {
         communityMapper = Mappers.getMapper(CommunityMapper.class);
@@ -233,30 +237,25 @@ public class CommunityJoinService {
         this.actionOnInvitationFromCommunity(communityId, userCommonService.getUser(userEmail), hasAccepted);
     }
 
-    public void revokeJoinFromUser(Long communityId, Long userId) {
+    public CommunityMetaProfileResponse revokeJoinFromUser(Long communityId, Long userId) {
         User user = userCommonService.getUser(userId);
-        communityRepository.findById(communityId).map(community -> {
-            CommunityUser communityUser = communityUserRepository.findByCommunityAndUser(community, user);
-            if (communityUser != null) {
-
-                // Notification job created and assigned to Notification Processor.
-//                notificationJob.createNotificationJob(thisCommunityUser, false);
-                try {
-                    notificationRepository.deleteByNotificationBaseAndType(
-                            communityUser.getCommunityUserId(),
-                            communityUser.getNotificationType().getJsonValue()
-                    );
-                } catch (Exception e) {
-
-                }
-                communityUserRepository.delete(communityUser);
-                return community;
-            } else {
-                throw new InvalidRequestException("You are not member of this community");
+        Community community = communityCommonService.getCommunity(communityId);
+        CommunityUser communityUser = communityUserRepository.findByCommunityAndUser(community, user);
+        if (communityUser != null) {
+            // Notification job created and assigned to Notification Processor.
+//            notificationJob.createNotificationJob(thisCommunityUser, false);
+            try {
+                notificationRepository.deleteByNotificationBaseAndType(
+                        communityUser.getCommunityUserId(),
+                        communityUser.getNotificationType().getJsonValue()
+                );
+            } catch (Exception e) {
             }
-        }).orElseThrow(() -> {
-            throw new ResourceNotFoundException("Error in accepting the invitation");
-        });
+            communityUserRepository.delete(communityUser);
+            return communityProfileService.getCommunityProfileDetails(community, "followers");
+        } else {
+            throw new InvalidRequestException("You are not member of this community");
+        }
     }
 
     public RelationShipType getUserRelationShipWithCommunity(Long communityId) {
