@@ -151,8 +151,12 @@ public class BaseService {
             user.setSlug(this.createSlug(user.getUsername()));
         }
 
-        user.setFirstName(commonService.titleCase(user.getFirstName()));
-        user.setLastName(commonService.titleCase(user.getLastName()));
+        if (user.getFirstName() != null &&
+                user.getFirstName().length() > 0)
+            user.setFirstName(CommonService.titleCase(user.getFirstName()));
+        if (user.getLastName() != null &&
+                user.getLastName().length() > 0)
+            user.setLastName(CommonService.titleCase(user.getLastName()));
 
         user.setEnabled(true);
         user.setAuthorities(this.createAuthoritySet());
