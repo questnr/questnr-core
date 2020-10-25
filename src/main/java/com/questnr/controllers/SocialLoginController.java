@@ -79,7 +79,7 @@ public class SocialLoginController {
     }
 
     @GetMapping("/facebook/login/token")
-    public ResponseEntity<?> faccebookLoginWithIdToken(@RequestParam("authToken") String authToken,  @RequestParam("source") String source) {
+    public ResponseEntity<?> facebookLoginWithIdToken(@RequestParam("authToken") String authToken,  @RequestParam("source") String source) {
         LOGGER.info("Entering FACEBOOK login service");
 
         // @TODO validate csrf too

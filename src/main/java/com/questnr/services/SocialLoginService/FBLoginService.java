@@ -55,8 +55,22 @@ public class FBLoginService {
 
     public LoginResponse facebookLoginWithAuthToken(String authToken, String source){
         LOGGER.debug("Token appears to be valid, fetching user details from token");
+        String fbAppAccessToken;
+        fbAppAccessToken = getFBAppAccessToken();
+        FBAccessTokenData fbAccessTokenData = inspectFBAccessToken(authToken, fbAppAccessToken);
+        LOGGER.info("Verify token = {}", fbAccessTokenData);
+        if (!fbAccessTokenData.isIs_valid() || fbAccessTokenData.getApp_id() != Long.valueOf(APP_ID)) {
+            return baseService.createErrorLoginResponse("Wrong Facebook credentials");
+        }
 
-        return this.saveLoginWithFacebook(this.getUserDetailsFromAccessToken(authToken), source);
+        LOGGER.debug("Token appears to be valid, fetching user details from token");
+        FBUserDetails fbUserDetails;
+        fbUserDetails = getUserDetailsFromAccessToken(authToken);
+
+
+        LOGGER.info("In this case, use doesn't exist, lets create a new user");
+
+        return this.saveLoginWithFacebook(fbUserDetails, source);
     }
 
     public LoginResponse facebookLogin(String fbAccessCode, String source) {
@@ -155,9 +169,9 @@ public class FBLoginService {
 
         Map<String, String> urlParams = new HashMap<>();
         urlParams.put("access_token", accessToken);
-        urlParams.put("fields", "id,email,birthday,first_name,last_name");
+        urlParams.put("fields", "id,email,first_name,last_name");
         LOGGER.info("Retrieving user details with {} and {}", accessToken, urlParams);
-        return restTemplate.getForObject("https://graph.facebook.com/v3.0/me/?access_token={access_token}&fields={fields}",
+        return restTemplate.getForObject("https://graph.facebook.com/v6.0/me/?access_token={access_token}&fields={fields}",
                 FBUserDetails.class, urlParams);
     }
 
