@@ -8,11 +8,16 @@ import com.questnr.services.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Component
 public class SocialUserDetails {
 
     @Autowired
     BaseService baseService;
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     private String processName(String name) {
         if (name != null) {
@@ -22,12 +27,35 @@ public class SocialUserDetails {
         return null;
     }
 
+    private String getUsernameFromEmail(String email) {
+        if (email != null) {
+            email = email.trim();
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
+            return matcher.group(1);
+        }
+        return null;
+    }
+
     public User getUser(GoogleUserDetails googleUserDetails) {
         User user = new User();
         user.setSocialId(googleUserDetails.getSub());
         user.setEmailId(googleUserDetails.getEmail());
 //        user.setFullName(googleUserDetails.getName());
-        user.setUsername(baseService.createUsername(googleUserDetails.getName()));
+
+        // Create username
+        if (googleUserDetails.getName() != null)
+            user.setUsername(baseService.createUsername(googleUserDetails.getName()));
+        else if (googleUserDetails.getGiven_name() != null || googleUserDetails.getFamily_name() != null) {
+            if (googleUserDetails.getGiven_name() != null && googleUserDetails.getFamily_name() != null) {
+                user.setUsername(baseService.createUsername(googleUserDetails.getGiven_name() + googleUserDetails.getGiven_name()));
+            } else if (googleUserDetails.getGiven_name() != null && googleUserDetails.getFamily_name() == null) {
+                user.setUsername(baseService.createUsername(googleUserDetails.getGiven_name()));
+            } else if (googleUserDetails.getGiven_name() == null && googleUserDetails.getFamily_name() != null) {
+                user.setUsername(baseService.createUsername(googleUserDetails.getFamily_name()));
+            }
+        } else
+            user.setUsername(baseService.createUsername(this.getUsernameFromEmail(googleUserDetails/**/.getEmail())));
+
         user.setFirstName(this.processName(googleUserDetails.getGiven_name()));
         user.setLastName(this.processName(googleUserDetails.getFamily_name()));
         user.setEmailVerified(googleUserDetails.getEmail_verified());
@@ -40,7 +68,21 @@ public class SocialUserDetails {
         user.setSocialId(fbUserDetails.getId());
         user.setEmailId(fbUserDetails.getEmail());
 //        user.setFullName(fbUserDetails.getName());
-        user.setUsername(baseService.createUsername(fbUserDetails.getName()));
+
+        // Create username
+        if (fbUserDetails.getName() != null)
+            user.setUsername(baseService.createUsername(fbUserDetails.getName()));
+        else if (fbUserDetails.getFirst_name() != null || fbUserDetails.getLast_name() != null) {
+            if (fbUserDetails.getFirst_name() != null && fbUserDetails.getLast_name() != null) {
+                user.setUsername(baseService.createUsername(fbUserDetails.getFirst_name() + fbUserDetails.getLast_name()));
+            } else if (fbUserDetails.getFirst_name() != null && fbUserDetails.getLast_name() == null) {
+                user.setUsername(baseService.createUsername(fbUserDetails.getFirst_name()));
+            } else if (fbUserDetails.getFirst_name() == null && fbUserDetails.getLast_name() != null) {
+                user.setUsername(baseService.createUsername(fbUserDetails.getLast_name()));
+            }
+        } else
+            user.setUsername(baseService.createUsername(this.getUsernameFromEmail(fbUserDetails.getEmail())));
+
         user.setFirstName(this.processName(fbUserDetails.getFirst_name()));
         user.setLastName(this.processName(fbUserDetails.getLast_name()));
         user.setEmailVerified(true);
