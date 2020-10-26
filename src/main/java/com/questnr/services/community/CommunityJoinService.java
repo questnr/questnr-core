@@ -187,21 +187,17 @@ public class CommunityJoinService {
     }
 
     private void inviteUserToJoinCommunity(Long communityId, User user) {
-        communityRepository.findById(communityId).map(community -> {
-            if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
-                throw new AlreadyExistsException("User is already member!");
+        Community community = communityCommonService.getCommunity(communityId);
+        if (this.existsCommunityUser(community, user) || community.getOwnerUser().equals(user))
+            throw new AlreadyExistsException("User is already member!");
 //            if (this.existsCommunityInvitation(community, user))
 //                throw new AlreadyExistsException("User have already been invited!");
-            if (this.hasCommunityInvitationAccess(userCommonService.getUserId(), community.getOwnerUser().getUserId())) {
-                communityRepository.save(this.addInvitationFromCommunity(community, user));
+        if (this.hasCommunityInvitationAccess(userCommonService.getUserId(), community.getOwnerUser().getUserId())) {
+            communityRepository.save(this.addInvitationFromCommunity(community, user));
 
-                // Notification job created and assigned to Notification Processor.
-                notificationJob.createNotificationJob(communityInvitedUserRepository.findFirstByCommunityAndUser(community, user));
-            }
-            return community;
-        }).orElseThrow(() -> {
-            throw new ResourceNotFoundException("Error in inviting the user");
-        });
+            // Notification job created and assigned to Notification Processor.
+            notificationJob.createNotificationJob(communityInvitedUserRepository.findFirstByCommunityAndUser(community, user));
+        }
     }
 
     public void inviteUserToJoinCommunity(Long communityId, Long userId) {
@@ -213,20 +209,17 @@ public class CommunityJoinService {
     }
 
     private void actionOnInvitationFromCommunity(Long communityId, User user, boolean hasAccepted) {
-        communityRepository.findById(communityId).map(community -> {
-            if (this.existsCommunityInvitation(community, user)) {
-                community = this.removeThisUserFromInvitationList(community, user);
-                if (hasAccepted) {
+        Community community = communityCommonService.getCommunity(communityId);
+        if (this.existsCommunityInvitation(community, user)) {
+            community = this.removeThisUserFromInvitationList(community, user);
+            if (hasAccepted) {
 //                    community = this.addUserToCommunity(community, user);
-                    this.createCommunityUser(community, user);
-                }
-//                return communityRepository.save(community);
-                return community;
+                this.createCommunityUser(community, user);
             }
+//                return communityRepository.save(community);
+        } else {
             throw new InvalidRequestException("You don't have invitation from this community");
-        }).orElseThrow(() -> {
-            throw new ResourceNotFoundException("Error in accepting the invitation");
-        });
+        }
     }
 
     public void actionOnInvitationFromCommunity(Long communityId, boolean hasAccepted) {
