@@ -4,6 +4,7 @@ public class PostActionMetaDTO {
     private int totalLikes;
     private int totalComments;
     private int totalPostVisits;
+    private boolean isVisited = false;
     private boolean isLiked = false;
 
     public int getTotalLikes() {
@@ -28,6 +29,14 @@ public class PostActionMetaDTO {
 
     public void setTotalPostVisits(int totalPostVisits) {
         this.totalPostVisits = totalPostVisits;
+    }
+
+    public boolean isVisited() {
+        return isVisited;
+    }
+
+    public void setVisited(boolean visited) {
+        isVisited = visited;
     }
 
     public boolean isLiked() {
