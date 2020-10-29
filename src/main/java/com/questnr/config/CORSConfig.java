@@ -26,6 +26,8 @@ public class CORSConfig {
         allowedOrigins.add("https://questnr.com");
         allowedOrigins.add("https://www.questnr.com");
 
+        isProd = false;
+
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
