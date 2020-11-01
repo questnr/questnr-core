@@ -5,6 +5,8 @@ import com.questnr.common.enums.ResourceType;
 public class MediaDTO {
     private String postMediaLink;
 
+    private String postMediaKey;
+
     private ResourceType resourceType;
 
     private String fileExtension;
@@ -15,6 +17,14 @@ public class MediaDTO {
 
     public void setPostMediaLink(String postMediaLink) {
         this.postMediaLink = postMediaLink;
+    }
+
+    public String getPostMediaKey() {
+        return postMediaKey;
+    }
+
+    public void setPostMediaKey(String postMediaKey) {
+        this.postMediaKey = postMediaKey;
     }
 
     public ResourceType getResourceType() {

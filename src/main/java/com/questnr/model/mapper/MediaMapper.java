@@ -49,6 +49,7 @@ public class MediaMapper {
         if (!(user == null && media.getResourceType() == ResourceType.application)) {
             mediaDTO.setPostMediaLink(this.amazonS3Client.getS3BucketUrl(media.getMediaKey(), PostActionPrivacy.public_post));
         }
+        mediaDTO.setPostMediaKey(media.getMediaKey());
         return mediaDTO;
     }
 

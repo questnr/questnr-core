@@ -58,19 +58,33 @@ public class AvatarMapper {
             }else{
                 fileName = avatar.getFileName();
                 pathToDir = avatar.getPathToDir();
+
+                String key;
+
+                key = Paths.get(pathToDir, fileName).toString();
                 avatarDTO.setAvatarLink(
                         this.amazonS3Client.getS3BucketUrl(
-                                Paths.get(pathToDir, fileName).toString(),
+                                key,
                                 PostActionPrivacy.public_post));
+                avatarDTO.setAvatarKey(key);
+
+                key = Paths.get(pathToDir, ICON_PREFIX+fileName).toString();
                 avatarDTO.setIconLink(this.amazonS3Client.getS3BucketUrl(
-                        Paths.get(pathToDir, ICON_PREFIX+fileName).toString(),
+                        key,
                         PostActionPrivacy.public_post));
+                avatarDTO.setIconKey(key);
+
+                key = Paths.get(pathToDir, SMALL_PREFIX+fileName).toString();
                 avatarDTO.setSmallLink(this.amazonS3Client.getS3BucketUrl(
-                        Paths.get(pathToDir, SMALL_PREFIX+fileName).toString(),
+                        key,
                         PostActionPrivacy.public_post));
+                avatarDTO.setSmallKey(key);
+
+                key = Paths.get(pathToDir, MEDIUM_PREFIX+fileName).toString();
                 avatarDTO.setMediumLink(this.amazonS3Client.getS3BucketUrl(
-                        Paths.get(pathToDir, MEDIUM_PREFIX+fileName).toString(),
+                        key,
                         PostActionPrivacy.public_post));
+                avatarDTO.setMediumKey(key);
             }
             return avatarDTO;
         }catch (Exception e) {
@@ -79,8 +93,8 @@ public class AvatarMapper {
     }
 
     public List<AvatarDTO> toAvatarDTOList(List<Avatar> avatarList) {
-        return avatarList.stream().map((Avatar avatar) ->
-            this.toAvatarDTO(avatar)
+        return avatarList.stream().map(
+                this::toAvatarDTO
         ).collect(Collectors.toList());
     }
 }
