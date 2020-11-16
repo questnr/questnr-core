@@ -20,6 +20,8 @@ public class CommunityForPostActionDTO {
 
     private UserOtherDTO ownerUserDTO;
 
+    private CommunityMetaDTO communityMeta;
+
     public Long getCommunityId() {
         return communityId;
     }
@@ -74,5 +76,13 @@ public class CommunityForPostActionDTO {
 
     public void setOwnerUserDTO(UserOtherDTO ownerUserDTO) {
         this.ownerUserDTO = ownerUserDTO;
+    }
+
+    public CommunityMetaDTO getCommunityMeta() {
+        return communityMeta;
+    }
+
+    public void setCommunityMeta(CommunityMetaDTO communityMeta) {
+        this.communityMeta = communityMeta;
     }
 }

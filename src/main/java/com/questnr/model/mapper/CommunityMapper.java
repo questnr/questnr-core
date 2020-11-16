@@ -51,7 +51,8 @@ public abstract class CommunityMapper {
 
     @Mappings({
             @Mapping(source = "ownerUser", target = "ownerUserDTO"),
-            @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT)
+            @Mapping(source = "avatar", target = "avatarDTO", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.SET_TO_DEFAULT),
+            @Mapping(target = "communityMeta", expression = "java(CommunityMetaMapper.getMetaMapper(community, this.userCommonService, this.communityUserRequestRepository))")
     })
     public abstract CommunityForPostActionDTO toCommunityForPostAction(Community community);
 
