@@ -149,19 +149,39 @@ public class CommunityJoinController {
         communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest.getEmail(), true);
     }
 
+//    // Decline the invitation sent to the user, using user email id
+//    @RequestMapping(value = "/user/join/community/{communityId}/invitation/email", method = RequestMethod.DELETE)
+//    @ResponseStatus(HttpStatus.OK)
+//    void declineInvitationFromCommunity(@PathVariable long communityId, @RequestBody UserEmailRequest userEmailRequest) {
+//        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest.getEmail(), false);
+//    }
+
+    // DELETE request with no body
     // Decline the invitation sent to the user, using user email id
     @RequestMapping(value = "/user/join/community/{communityId}/invitation/email", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    void declineInvitationFromCommunity(@PathVariable long communityId, @RequestBody UserEmailRequest userEmailRequest) {
-        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest.getEmail(), false);
+    void declineInvitationFromCommunity(@PathVariable long communityId, @RequestParam(defaultValue = "") String userEmailRequest) {
+        communityJoinService.actionOnInvitationFromCommunity(communityId, userEmailRequest, false);
     }
 
+//    // Revoke join operation
+//    @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.DELETE)
+//    @ResponseStatus(HttpStatus.OK)
+//    CommunityMetaProfileResponse revokeJoinFromUser(@PathVariable long communityId, @RequestBody UserIdRequest userIdRequest) {
+//        if (communityJoinAccessService.revokeJoinFromUser(communityId, userIdRequest.getUserId())) {
+//            return communityJoinService.revokeJoinFromUser(communityId, userIdRequest.getUserId());
+//        } else {
+//            throw new AccessException();
+//        }
+//    }
+
+    // DELETE request with no body
     // Revoke join operation
-    @RequestMapping(value = "/user/join/community/{communityId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/{requestUserId}/join/community/{communityId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    CommunityMetaProfileResponse revokeJoinFromUser(@PathVariable long communityId, @RequestBody UserIdRequest userIdRequest) {
-        if (communityJoinAccessService.revokeJoinFromUser(communityId, userIdRequest.getUserId())) {
-            return communityJoinService.revokeJoinFromUser(communityId, userIdRequest.getUserId());
+    CommunityMetaProfileResponse revokeJoinFromUser(@PathVariable long communityId, @PathVariable Long requestUserId) {
+        if (communityJoinAccessService.revokeJoinFromUser(communityId, requestUserId)) {
+            return communityJoinService.revokeJoinFromUser(communityId, requestUserId);
         } else {
             throw new AccessException();
         }

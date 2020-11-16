@@ -71,12 +71,24 @@ public class UserFollowerController {
         }
     }
 
+//    // Undo follow user
+//    @RequestMapping(value = "/follow/user/{userId}", method = RequestMethod.DELETE)
+//    @ResponseStatus(HttpStatus.OK)
+//    void undoFollowUser(@PathVariable long userId, @RequestBody UserIdRequest userIdRequest) {
+//        if (userFollowerAccessService.undoFollowUser(userIdRequest.getUserId(), userId)) {
+//            userFollowerService.undoFollowUser(userIdRequest.getUserId(), userId);
+//        } else {
+//            throw new AccessException();
+//        }
+//    }
+
+    // DELETE request with no body
     // Undo follow user
-    @RequestMapping(value = "/follow/user/{userId}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{requestUserId}/follow/user/{userId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    void undoFollowUser(@PathVariable long userId, @RequestBody UserIdRequest userIdRequest) {
-        if (userFollowerAccessService.undoFollowUser(userIdRequest.getUserId(), userId)) {
-            userFollowerService.undoFollowUser(userIdRequest.getUserId(), userId);
+    void undoFollowUser(@PathVariable long userId, @PathVariable long requestUserId) {
+        if (userFollowerAccessService.undoFollowUser(requestUserId, userId)) {
+            userFollowerService.undoFollowUser(requestUserId, userId);
         } else {
             throw new AccessException();
         }
