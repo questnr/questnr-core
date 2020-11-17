@@ -69,6 +69,18 @@ public class CommentActionController {
         throw new AccessException(errorMessage);
     }
 
+    @RequestMapping(value = "/user/posts/{postId}/comment/normal", method = RequestMethod.POST)
+    CommentActionDTO createNormalComment(@PathVariable Long postId, @RequestBody CommentActionRequest commentActionRequest) {
+        /*
+         * Post Comment Security Checking
+         * */
+        if (commentActionAccessService.hasAccessToCommentCreation(postId)) {
+            commentActionRequest.setPostId(postId);
+            return commentActionMapper.toDTO(commentActionService.createCommentAction(commentActionRequest));
+        }
+        throw new AccessException(errorMessage);
+    }
+
     @RequestMapping(value = "/user/posts/{postId}/comment/{commentId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteComment(@PathVariable Long postId, @PathVariable Long commentId) {
