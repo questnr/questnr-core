@@ -1,8 +1,12 @@
+Open for contribution!
+
+# All the credentials have been revoked!
+
 # Project Setup
 - Make directory path
->> sudo mkdir /var/quest_nr/indexes
+> sudo mkdir /var/quest_nr/indexes
 - Give permission to access and write permission
->> sudo chmod a+rwx /var/quest_nr/indexes
+> sudo chmod a+rwx /var/quest_nr/indexes
 
 # Run postgres locally
 1. Install Postgres
